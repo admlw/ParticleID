@@ -1,5 +1,18 @@
-art_make(
-  MODULE_LIBRARIES larcore_Geometry
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
+
+# define ROOTLIB
+set( ROOTLIB -L$ENV{ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl)
+
+link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB})
+
+art_make( BASENAME_ONLY
+  LIBRARY_NAME uboonecode_uboone_ParticleID
+  LIB_LIBRARIES
+  uboonecode_uboone_ParticleID_Algorithms
+
+  MODULE_LIBRARIES 
+  uboonecode_uboone_ParticleID_Algorithms
+  larcore_Geometry
   larcore_Geometry_Geometry_service
   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
   larsim_MCCheater_BackTracker_service
@@ -13,9 +26,6 @@ art_make(
   SignalShapingServiceMicroBooNE_service
   nusimdata_SimulationBase
   uboone_RawData
-  uboonecode_uboone_NuMuSelection_Algos
-  uboonecode_uboone_UBXSec_Algorithms
-  uboonecode_uboone_UBXSec_DataTypes
   ${LARRECO_LIB}
   ${LARDATA_LIB}
   ${ART_FRAMEWORK_CORE}
