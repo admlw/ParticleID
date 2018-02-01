@@ -34,6 +34,7 @@
 #include "lardataobj/RecoBase/Shower.h"
 #include "lardataobj/RecoBase/Track.h"
 
+#include "TMath.h"
 
 int GetNDaughterTracks(std::vector<recob::Track> trk_handle, int trkID, double cutdist, double cutfrac);
 int GetNDaughterShowers(std::vector<recob::Track> trk_handle, int trkID, std::vector<recob::Shower> shwr_handle, double cutdist, double cutfrac);
