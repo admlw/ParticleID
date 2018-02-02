@@ -56,8 +56,8 @@ class UBPID::ParticleId : public art::EDProducer {
     void beginJob() override;
     void endJob() override;
 
-    double xl, xh, yl, yh, zl, zh;
-
+    std::vector<double> fv;
+  
   private:
 
     // fcl
@@ -68,7 +68,6 @@ class UBPID::ParticleId : public art::EDProducer {
     // fidvol related
     fidvol::fiducialVolume fid;
     particleid::PIDA pida;
-    std::vector<double> fv;
 
     //other
     bool isData;
@@ -83,8 +82,8 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
 
-  fid.setFiducialVolume(xl, xh, yl, yh, zl, zh, fv, p);
-  fid.printFiducialVolume(xl, xh, yl, yh, zl, zh);
+  fv = fid.setFiducialVolume(fv, p);
+  fid.printFiducialVolume(fv);
 
   // this module produces a anab::ParticleID object and
   // an association to the track which produced it
