@@ -21,6 +21,7 @@
 // data products
 #include "lardataobj/AnalysisBase/ParticleID.h"
 #include "lardataobj/RecoBase/Track.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
 // UBXSec includes
 #include "uboone/UBXSec/DataTypes/SelectionResult.h"
@@ -29,17 +30,23 @@
 // local includes
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
 #include "uboone/ParticleID/Algorithms/fiducialVolume.h"
+#include "uboone/ParticleID/Algorithms/PIDA.h"
+
+// root includes
+#include "TVector3.h"
 
 // cpp includes
 #include <memory>
 
-class ParticleId;
+namespace UBPID{
+  class ParticleId;
+}
 
-
-class ParticleId : public art::EDProducer {
+class UBPID::ParticleId : public art::EDProducer {
   public:
     explicit ParticleId(fhicl::ParameterSet const & p);
 
+    ParticleId();
     ParticleId(ParticleId const &) = delete;
     ParticleId(ParticleId &&) = delete;
     ParticleId & operator = (ParticleId const &) = delete;
@@ -63,6 +70,8 @@ class ParticleId : public art::EDProducer {
 
     // fidvol related
     fidvol::fiducialVolume fid;
+    particleid::PIDA pida;
+    std::vector<double> fv;
 
     // ubxsec related
     ubana::SelectionResult selRes;
@@ -72,7 +81,7 @@ class ParticleId : public art::EDProducer {
 };
 
 
-ParticleId::ParticleId(fhicl::ParameterSet const & p)
+UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
 {
 
 
@@ -82,21 +91,21 @@ ParticleId::ParticleId(fhicl::ParameterSet const & p)
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
 
-  fid.setFiducialVolume(xl, xh, yl, yh, zl, zh, p);
+  fid.setFiducialVolume(xl, xh, yl, yh, zl, zh, fv, p);
   fid.printFiducialVolume(xl, xh, yl, yh, zl, zh);
-
+  
   // this module produces a anab::ParticleID object and
   // an association to the track which produced it
   produces< std::vector<anab::ParticleID> >();
 
 }
 
-void ParticleId::beginJob()
+void UBPID::ParticleId::beginJob()
 {
   // Implementation of optional member function here.
 }
 
-void ParticleId::produce(art::Event & e)
+void UBPID::ParticleId::produce(art::Event & e)
 {
 
   bool isData = e.isRealData();
@@ -144,20 +153,57 @@ void ParticleId::produce(art::Event & e)
     for (size_t i = 0; i < selectedTracks.size(); i++){
 
       const recob::Track& track = selectedTracks.at(i);
+      TVector3 trackStart = track.Vertex();
+      TVector3 trackEnd = track.End();
 
       int nDaughters = GetNDaughterTracks(selectedTracks, track.ID(), fCutDistance, fCutFraction);
 
       std::cout << nDaughters << std::endl;
 
+      if (nDaughters == 1 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
+
+        int pdg = 0;
+        int ndf = 0;
+        double minchi2 = 0.0;
+        double deltachi2 = 0.0;
+        double chi2proton = 0.0;
+        double chi2kaon = 0.0;
+        double chi2pion = 0.0;
+        double chi2muon = 0.0;
+        double missingE = 0.0;
+        double missingEAvg = 0.0;
+        double pidaVal = pida.getPida();
+        
+        geo::PlaneID planeid(0,0,0);
+
+        particleIDCollection->push_back(anab::ParticleID(
+            pdg,
+            ndf,
+            minchi2,
+            deltachi2,
+            chi2proton,
+            chi2kaon,
+            chi2pion,
+            chi2muon,
+            missingE,
+            missingEAvg,
+            pidaVal,
+            planeid));
+
+      }
+
     }
   
   }
 
+        std::cout << "found track in FV!" << std::endl;
+  e.put(std::move(particleIDCollection));
+
 }
 
-void ParticleId::endJob()
+void UBPID::ParticleId::endJob()
 {
   // Implementation of optional member function here.
 }
 
-DEFINE_ART_MODULE(ParticleId)
+DEFINE_ART_MODULE(UBPID::ParticleId)
