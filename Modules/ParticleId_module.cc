@@ -17,6 +17,7 @@
 #include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#include "lardata/Utilities/AssociationUtil.h"
 
 // data products
 #include "lardataobj/AnalysisBase/ParticleID.h"
@@ -88,7 +89,7 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   // this module produces a anab::ParticleID object and
   // an association to the track which produced it
   produces< std::vector<anab::ParticleID> >();
-//  produces< art::Assns< recob::Track, anab::ParticleID> >();
+  produces< art::Assns< recob::Track, anab::ParticleID> >();
 
 }
 
@@ -102,10 +103,11 @@ void UBPID::ParticleId::produce(art::Event & e)
 
   bool isData = e.isRealData();
 
-  if (!isData) std::cout << ">> Running Simulated Data" << std::endl;
+  if (!isData) std::cout << "[ParticleID]  Running Simulated Data" << std::endl;
 
   // produce collection of particleID objects
   std::unique_ptr< std::vector<anab::ParticleID> > particleIDCollection( new std::vector<anab::ParticleID> );
+  std::unique_ptr< art::Assns <recob::Track, anab::ParticleID> > trackParticleIdAssn( new art::Assns<recob::Track, anab::ParticleID> );
 
   //
   // get handles to needed information
@@ -115,51 +117,67 @@ void UBPID::ParticleId::produce(art::Event & e)
   art::Handle < std::vector<recob::Track> > trackHandle;
   e.getByLabel(fTrackingAlgo, trackHandle);
 
-  for (auto const& track : (*trackHandle)){
+  std::vector< art::Ptr<recob::Track> > trackCollection;
+  art::fill_ptr_vector(trackCollection, trackHandle);
 
-    TVector3 trackStart = track.Vertex();
-    TVector3 trackEnd = track.End();
+  std::vector< anab::ParticleID > pidVector;
 
-    int nDaughters = GetNDaughterTracks((*trackHandle), track.ID(), fCutDistance, fCutFraction);
+  for (auto& track : trackCollection){
 
-    std::cout << nDaughters << std::endl;
+    TVector3 trackStart = track->Vertex();
+    TVector3 trackEnd = track->End();
 
-    if (nDaughters == 1 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
+    int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
 
-      int pdg = 0;
-      int ndf = 0;
-      double minchi2 = 0.0;
-      double deltachi2 = 0.0;
-      double chi2proton = 0.0;
-      double chi2kaon = 0.0;
-      double chi2pion = 0.0;
-      double chi2muon = 0.0;
-      double missingE = 0.0;
-      double missingEAvg = 0.0;
-      double pidaVal = pida.getPida();
+    std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
 
-      geo::PlaneID planeid(0,0,0);
+    int pdg = 0;
+    int ndf = 0;
+    double minchi2 = 0.0;
+    double deltachi2 = 0.0;
+    double chi2proton = 0.0;
+    double chi2kaon = 0.0;
+    double chi2pion = 0.0;
+    double chi2muon = 0.0;
+    double missingE = 0.0;
+    double missingEAvg = 0.0;
+    double pidaVal = -1.0;
 
-      particleIDCollection->push_back(anab::ParticleID(
-            pdg,
-            ndf,
-            minchi2,
-            deltachi2,
-            chi2proton,
-            chi2kaon,
-            chi2pion,
-            chi2muon,
-            missingE,
-            missingEAvg,
-            pidaVal,
-            planeid));
+    // if track is fully contained and is not reinteracting then fill PIDA
+    if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
 
+      std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
+
+      pidaVal = pida.getPida();
 
     }
+
+    geo::PlaneID planeid(0,0,0);
+
+    particleIDCollection->push_back(anab::ParticleID(
+          pdg,
+          ndf,
+          minchi2,
+          deltachi2,
+          chi2proton,
+          chi2kaon,
+          chi2pion,
+          chi2muon,
+          missingE,
+          missingEAvg,
+          pidaVal,
+          planeid));
+
+
+    std::cout << "[ParticleID]  >> Making assn... " << std::endl;
+
+    util::CreateAssn(*this, e, *particleIDCollection, track, *trackParticleIdAssn);
 
   }
 
   e.put(std::move(particleIDCollection));
+  e.put(std::move(trackParticleIdAssn));
+
 }
 
 
