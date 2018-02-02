@@ -2,14 +2,14 @@
 
 namespace fidvol{
 
-  void fiducialVolume::setFiducialVolume(double xl, double xh, double yl, double yh, double zl, double zh, std::vector<double> fv, fhicl::ParameterSet const & p){
+  std::vector<double> fiducialVolume::setFiducialVolume(std::vector<double> fv, fhicl::ParameterSet const & p){
 
-    xl = p.get< double > ("X_LOW");
-    xh = p.get< double > ("X_HIGH");
-    yl = p.get< double > ("Y_LOW");
-    yh = p.get< double > ("Y_HIGH");
-    zl = p.get< double > ("Z_LOW");
-    zh = p.get< double > ("Z_HIGH");
+    double xl = p.get< double > ("X_LOW");
+    double xh = p.get< double > ("X_HIGH");
+    double yl = p.get< double > ("Y_LOW");
+    double yh = p.get< double > ("Y_HIGH");
+    double zl = p.get< double > ("Z_LOW");
+    double zh = p.get< double > ("Z_HIGH");
 
     fv.push_back(xl);
     fv.push_back(xh);
@@ -18,17 +18,19 @@ namespace fidvol{
     fv.push_back(zl);
     fv.push_back(zh);
 
+    return fv;
+
   }
 
-  void fiducialVolume::printFiducialVolume(double xl, double xh, double yl, double yh, double zl, double zh){
+  void fiducialVolume::printFiducialVolume(std::vector<double> fv){
 
     std::cout << "----- PRINTING FIDUCIAL VOLUME INFORMATION -----" << std::endl;
-    std::cout << "X_LOW: " << xl << std::endl;
-    std::cout << "X_HIGH: " << xh << std::endl;
-    std::cout << "Y_LOW: " << yl << std::endl;
-    std::cout << "Y_HIGH: " << yh << std::endl;
-    std::cout << "Z_LOW: " << zl << std::endl;
-    std::cout << "Z_HIGH: " << zh << std::endl;
+    std::cout << "X_LOW: " << fv.at(0) << std::endl;
+    std::cout << "X_HIGH: " << fv.at(1) << std::endl;
+    std::cout << "Y_LOW: " << fv.at(2) << std::endl;
+    std::cout << "Y_HIGH: " << fv.at(3) << std::endl;
+    std::cout << "Z_LOW: " << fv.at(4) << std::endl;
+    std::cout << "Z_HIGH: " << fv.at(5) << std::endl;
     std::cout << "------------------------------------------------" << std::endl;
 
   }
