@@ -21,6 +21,7 @@
 
 // data products
 #include "lardataobj/AnalysisBase/ParticleID.h"
+#include "lardataobj/AnalysisBase/Calorimetry.h"
 #include "lardataobj/RecoBase/Track.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
@@ -62,6 +63,8 @@ class UBPID::ParticleId : public art::EDProducer {
 
     // fcl
     std::string fTrackingAlgo; 
+    std::string fCaloLabel;
+    std::string fPidaType;
     double fCutDistance;
     double fCutFraction;
 
@@ -79,6 +82,8 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
 
   // fcl parameters
   fTrackingAlgo = p.get< std::string > ("TrackingAlgorithm");
+  fCaloLabel = p.get< std::string > ("CalorimetryModule");
+  fPidaType = p.get< std::string > ("PIDACalcType");
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
 
@@ -115,21 +120,30 @@ void UBPID::ParticleId::produce(art::Event & e)
   // tracks...
   art::Handle < std::vector<recob::Track> > trackHandle;
   e.getByLabel(fTrackingAlgo, trackHandle);
-
   std::vector< art::Ptr<recob::Track> > trackCollection;
   art::fill_ptr_vector(trackCollection, trackHandle);
+
+  // calorimetry object...
+  art::FindManyP<anab::Calorimetry> caloFromTracks(trackHandle, e, fCaloLabel);
 
   std::vector< anab::ParticleID > pidVector;
 
   for (auto& track : trackCollection){
 
-    TVector3 trackStart = track->Vertex();
-    TVector3 trackEnd = track->End();
+    std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = caloFromTracks.at(track->ID());
+   
+    std::cout << caloFromTrack.size() << std::endl;
+
+    // for time being, only use Y plane calorimetry
+    art::Ptr< anab:: Calorimetry > calo = caloFromTrack.at(2);
+    std::vector<double> dEdx = calo->dEdx();
+    std::vector<double> resRange = calo->ResidualRange();
 
     int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
 
     std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
 
+    // Vairables for ParticleID Class
     int pdg = 0;
     int ndf = 0;
     double minchi2 = 0.0;
@@ -143,11 +157,16 @@ void UBPID::ParticleId::produce(art::Event & e)
     double pidaVal = -1.0;
 
     // if track is fully contained and is not reinteracting then fill PIDA
+    TVector3 trackStart = track->Vertex();
+    TVector3 trackEnd = track->End();
+
     if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
 
       std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
 
-      pidaVal = pida.getPida();
+      pidaVal = pida.getPida(dEdx, resRange, fPidaType);
+
+      std::cout << "[ParticleID] >> PIDA value: " << pidaVal << std::endl;
 
     }
 
