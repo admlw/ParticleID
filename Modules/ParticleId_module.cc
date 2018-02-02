@@ -23,10 +23,6 @@
 #include "lardataobj/RecoBase/Track.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
-// UBXSec includes
-#include "uboone/UBXSec/DataTypes/SelectionResult.h"
-#include "uboone/UBXSec/DataTypes/TPCObject.h"
-
 // local includes
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
 #include "uboone/ParticleID/Algorithms/fiducialVolume.h"
@@ -58,9 +54,9 @@ class UBPID::ParticleId : public art::EDProducer {
     // Selected optional functions.
     void beginJob() override;
     void endJob() override;
-    
+
     double xl, xh, yl, yh, zl, zh;
-  
+
   private:
 
     // fcl
@@ -73,9 +69,6 @@ class UBPID::ParticleId : public art::EDProducer {
     particleid::PIDA pida;
     std::vector<double> fv;
 
-    // ubxsec related
-    ubana::SelectionResult selRes;
-
     //other
     bool isData;
 };
@@ -84,8 +77,6 @@ class UBPID::ParticleId : public art::EDProducer {
 UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
 {
 
-
-  
   // fcl parameters
   fTrackingAlgo = p.get< std::string > ("TrackingAlgorithm");
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
@@ -93,10 +84,11 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
 
   fid.setFiducialVolume(xl, xh, yl, yh, zl, zh, fv, p);
   fid.printFiducialVolume(xl, xh, yl, yh, zl, zh);
-  
+
   // this module produces a anab::ParticleID object and
   // an association to the track which produced it
   produces< std::vector<anab::ParticleID> >();
+//  produces< art::Assns< recob::Track, anab::ParticleID> >();
 
 }
 
@@ -110,8 +102,7 @@ void UBPID::ParticleId::produce(art::Event & e)
 
   bool isData = e.isRealData();
 
-  selRes.SetSelectionStatus(false);
-  selRes.SetFailureReason("NoUBXSec");
+  if (!isData) std::cout << ">> Running Simulated Data" << std::endl;
 
   // produce collection of particleID objects
   std::unique_ptr< std::vector<anab::ParticleID> > particleIDCollection( new std::vector<anab::ParticleID> );
@@ -119,64 +110,37 @@ void UBPID::ParticleId::produce(art::Event & e)
   //
   // get handles to needed information
   //
-  
-  // selection result...
-  art::Handle< std::vector< ubana::SelectionResult> > selectionHandle;
-  e.getByLabel("UBXSec", selectionHandle);
 
-  if (!isData) std::cout << ">> Running Simulated Data" << std::endl;
+  // tracks...
+  art::Handle < std::vector<recob::Track> > trackHandle;
+  e.getByLabel(fTrackingAlgo, trackHandle);
 
-  if (!selectionHandle.isValid()){
+  for (auto const& track : (*trackHandle)){
 
-    std::cout << " >> Selection product not found. " << std::endl;
-    mf::LogError(__PRETTY_FUNCTION__) << "SelectionResult product not found" 
-      << std::endl;
+    TVector3 trackStart = track.Vertex();
+    TVector3 trackEnd = track.End();
 
-    throw std::exception();
-  }
+    int nDaughters = GetNDaughterTracks((*trackHandle), track.ID(), fCutDistance, fCutFraction);
 
-  art::FindManyP< ubana::TPCObject > selectedTpcObjects(selectionHandle, e, "UBXSec");
+    std::cout << nDaughters << std::endl;
 
-  // and tracks...
-  //art::Handle < std::vector<recob::Track> > trackHandle;
-  //e.getByLabel(fTrackingAlgo, trackHandle);
+    if (nDaughters == 1 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
 
-  // def vars for loop
-  art::Ptr< ubana::TPCObject > selectedTpcObject;
-  
-  if (selectedTpcObjects.at(0).size() == 1){
+      int pdg = 0;
+      int ndf = 0;
+      double minchi2 = 0.0;
+      double deltachi2 = 0.0;
+      double chi2proton = 0.0;
+      double chi2kaon = 0.0;
+      double chi2pion = 0.0;
+      double chi2muon = 0.0;
+      double missingE = 0.0;
+      double missingEAvg = 0.0;
+      double pidaVal = pida.getPida();
 
-    selectedTpcObject = selectedTpcObjects.at(0).at(0);
+      geo::PlaneID planeid(0,0,0);
 
-    const std::vector< recob::Track >& selectedTracks = selectedTpcObject->GetTracks();
-
-    for (size_t i = 0; i < selectedTracks.size(); i++){
-
-      const recob::Track& track = selectedTracks.at(i);
-      TVector3 trackStart = track.Vertex();
-      TVector3 trackEnd = track.End();
-
-      int nDaughters = GetNDaughterTracks(selectedTracks, track.ID(), fCutDistance, fCutFraction);
-
-      std::cout << nDaughters << std::endl;
-
-      if (nDaughters == 1 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
-
-        int pdg = 0;
-        int ndf = 0;
-        double minchi2 = 0.0;
-        double deltachi2 = 0.0;
-        double chi2proton = 0.0;
-        double chi2kaon = 0.0;
-        double chi2pion = 0.0;
-        double chi2muon = 0.0;
-        double missingE = 0.0;
-        double missingEAvg = 0.0;
-        double pidaVal = pida.getPida();
-        
-        geo::PlaneID planeid(0,0,0);
-
-        particleIDCollection->push_back(anab::ParticleID(
+      particleIDCollection->push_back(anab::ParticleID(
             pdg,
             ndf,
             minchi2,
@@ -190,16 +154,14 @@ void UBPID::ParticleId::produce(art::Event & e)
             pidaVal,
             planeid));
 
-      }
 
     }
-  
+
   }
 
-        std::cout << "found track in FV!" << std::endl;
   e.put(std::move(particleIDCollection));
-
 }
+
 
 void UBPID::ParticleId::endJob()
 {
