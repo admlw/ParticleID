@@ -31,8 +31,10 @@ physics:
 
       module_type:                   "ParticleId"
       TrackingAlgorithm:             "pandoraNu"
+      CalorimetryModule:             "pandoraNucalo"
       DaughterFinderCutDistance:     5.0
       DaughterFinderCutFraction:     0.5
+      PIDACalcType:                  "kde"
 
       # fiducial volume dimensions
       X_LOW:  10
