@@ -22,7 +22,7 @@ namespace particleid{
 
     else if (method == "kde")
       pida = kde.getKernelDensityMpv(pidaValues);
-  
+
     return pida;
 
   }

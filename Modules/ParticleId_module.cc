@@ -131,8 +131,6 @@ void UBPID::ParticleId::produce(art::Event & e)
   for (auto& track : trackCollection){
 
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = caloFromTracks.at(track->ID());
-   
-    std::cout << caloFromTrack.size() << std::endl;
 
     // for time being, only use Y plane calorimetry
     art::Ptr< anab:: Calorimetry > calo = caloFromTrack.at(2);
