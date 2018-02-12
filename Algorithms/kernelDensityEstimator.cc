@@ -110,6 +110,11 @@ namespace kde{
         kernel = (TF1*)getKernel(kernelNormalisation, kernelMean, adaptiveBandwith, kernelType);
         
         double kernelIntegral = kernel->Integral(-100, 100);
+
+        if (kernelIntegral == 0){
+          return -1;       
+        }
+
         kernelNormalisation = 1./kernelIntegral;
 
         std::cout << "[KDE]  >> kernelIntegral:      "<< kernelIntegral << std::endl;

@@ -93,6 +93,8 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
     int cc1munpProtonID;
     TTree* ttree;
 
+    int nProtons = 0;
+
     TH1D* hMuonPreCutMean;
     TH1D* hMuonPreCutMedian;
     TH1D* hMuonPreCutKde;
@@ -117,6 +119,9 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
 
     TH2D* hProtonStartYZ;
     TH2D* hMuonStartYZ;
+
+    std::vector<TH1D*> protonPIDAVals;
+
 };
 
 
@@ -142,7 +147,7 @@ void ParticleIdAnalyzer::beginJob()
   std::cout << "Opening file..." << std::endl;
   TFile *file = new TFile("/uboone/app/users/alister1/particleID/ubcode_v06_26_01_10/srcs/uboonecode/uboone/ParticleID/cc1unp_output.root", "READ");
   std::cout << "...Done." << std::endl;
-  
+
   if (file->IsZombie())
     std::cout << "File is zombie!" << std::endl;
 
@@ -151,8 +156,8 @@ void ParticleIdAnalyzer::beginJob()
   ttree->SetBranchAddress("fRun", &cc1munpRun);
   ttree->SetBranchAddress("fSubRun", &cc1munpSubRun);
   ttree->SetBranchAddress("fEvent", &cc1munpEvent);
-  ttree->SetBranchAddress("trackcandidateid", &cc1munpMuonID);
-  ttree->SetBranchAddress("trackprotoncandidateid", &cc1munpProtonID);
+  ttree->SetBranchAddress("trkmuoncandid", &cc1munpMuonID);
+  ttree->SetBranchAddress("trkprotoncandid", &cc1munpProtonID);
 
   hMuonPreCutMean = tfs->make<TH1D>("hMuonPreCutMean", ";;", 100, 0, 30);
   hMuonPreCutMedian = tfs->make<TH1D>("hMuonPreCutMedian", ";;", 100, 0, 30);
@@ -179,6 +184,13 @@ void ParticleIdAnalyzer::beginJob()
   hProtonStartYZ = tfs->make<TH2D>("hProtonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
   hMuonStartYZ = tfs->make<TH2D>("hMuonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
 
+  for (int i = 0; i < 50; i ++){
+
+    TString th1name = Form("protonPIDAVals_%i", i);
+    protonPIDAVals.push_back(tfs->make<TH1D>(th1name, ";PIDA vals;", 1000, 0, 50));
+
+  }
+
   std::cout << "Histograms created." << std::endl;
 }
 
@@ -193,7 +205,7 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
   int fEvent = e.event();
 
   std::cout << "----- " << fRun << "." << fSubRun << "." << fEvent << std::endl;
-  
+
   std::vector<int> muonIds;
   std::vector<int> protonIds;
 
@@ -230,7 +242,9 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
 
     art::Ptr< recob::Track > track     = trackPtrs.at(j);
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = caloFromTracks.at(track->ID());
-    art::Ptr< anab::Calorimetry > calo = caloFromTrack.at(2);
+    art::Ptr< anab::Calorimetry > calo = caloFromTrack.at(0);
+    std::cout << "USING PLANE: " << calo->PlaneID() << std::endl;
+
     std::vector< double > dEdx         = calo->dEdx();
     std::vector< double > resRange     = calo->ResidualRange();
 
@@ -302,6 +316,17 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
           hPostCutMedian->Fill(pidaValMean);
           hPostCutKde->Fill(pidaValMean);
 
+          if (nProtons < 50){
+            TString th1name = Form("run%i_event%i_trkid%i", fRun, fEvent, trackID);
+            protonPIDAVals.at(nProtons)->SetName(th1name);
+            for (size_t j = 0; j < dEdx.size(); j++){
+
+              std::cout << "dEdx "  << j << ": " << dEdx.at(j) << " ResRg: " << resRange.at(j) <<  " particleId: " << dEdx.at(j)*std::pow(resRange.at(j), 0.42) << std::endl;
+              protonPIDAVals.at(nProtons)->Fill(dEdx.at(j)*std::pow(resRange.at(j),0.42));
+            }
+
+            nProtons++;
+          }
         }
 
       }
@@ -354,26 +379,26 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
 
 void ParticleIdAnalyzer::endJob()
 {
-/*
-  hMuonPreCutMean->Write();
-  hMuonPreCutMedian->Write();
-  hMuonPreCutKde->Write();
-  hProtonPreCutMean->Write();
-  hProtonPreCutMedian->Write();
-  hProtonPreCutKde->Write();
-  hPreCutMean->Write();
-  hPreCutMedian->Write();
-  hPreCutKde->Write();
-  hMuonPostCutMean->Write();
-  hMuonPostCutMedian->Write();
-  hMuonPostCutKde->Write();
-  hProtonPostCutMean->Write();
-  hProtonPostCutMedian->Write();
-  hProtonPostCutKde->Write();
-  hPostCutMean->Write();
-  hPostCutMedian->Write();
-  hPostCutKde->Write();
-*/
+  /*
+     hMuonPreCutMean->Write();
+     hMuonPreCutMedian->Write();
+     hMuonPreCutKde->Write();
+     hProtonPreCutMean->Write();
+     hProtonPreCutMedian->Write();
+     hProtonPreCutKde->Write();
+     hPreCutMean->Write();
+     hPreCutMedian->Write();
+     hPreCutKde->Write();
+     hMuonPostCutMean->Write();
+     hMuonPostCutMedian->Write();
+     hMuonPostCutKde->Write();
+     hProtonPostCutMean->Write();
+     hProtonPostCutMedian->Write();
+     hProtonPostCutKde->Write();
+     hPostCutMean->Write();
+     hPostCutMedian->Write();
+     hPostCutKde->Write();
+     */
 }
 
 DEFINE_ART_MODULE(ParticleIdAnalyzer)
