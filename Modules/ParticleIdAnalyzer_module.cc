@@ -27,8 +27,8 @@
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
 // UBXSec includes
-#include "uboone/UBXSec/DataTypes/SelectionResult.h"
-#include "uboone/UBXSec/DataTypes/TPCObject.h"
+//#include "uboone/UBXSec/DataTypes/SelectionResult.h"
+//#include "uboone/UBXSec/DataTypes/TPCObject.h"
 
 // local includes
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
@@ -83,7 +83,7 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
     particleid::PIDA pida;
 
     // ubxsec related
-    ubana::SelectionResult selRes;
+    //ubana::SelectionResult selRes;
 
     // cc1munp related
     int cc1munpRun;
@@ -119,6 +119,16 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
 
     TH2D* hProtonStartYZ;
     TH2D* hMuonStartYZ;
+  
+    TH1D* hProtonTotaldQdx_uncalib;
+    TH1D* hMuonTotaldQdx_uncalib;
+    TH1D* hProtonTotaldQdx_oldcalib;
+    TH1D* hMuonTotaldQdx_oldcalib;
+  
+    TH2D* hProtondQdx_resrange_uncalib;
+    TH2D* hMuondQdx_resrange_uncalib;
+    TH2D* hProtondQdx_resrange_oldcalib;
+    TH2D* hMuondQdx_resrange_oldcalib;
 
     std::vector<TH1D*> protonPIDAVals;
 
@@ -183,6 +193,16 @@ void ParticleIdAnalyzer::beginJob()
 
   hProtonStartYZ = tfs->make<TH2D>("hProtonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
   hMuonStartYZ = tfs->make<TH2D>("hMuonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
+  
+  hProtonTotaldQdx_uncalib = tfs->make<TH1D>("hProtonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",100,0,1000);
+  hMuonTotaldQdx_uncalib = tfs->make<TH1D>("hMuonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",100,0,1000);
+  hProtonTotaldQdx_oldcalib = tfs->make<TH1D>("hProtonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",100,0,1000);
+  hMuonTotaldQdx_oldcalib = tfs->make<TH1D>("hMuonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",100,0,1000);
+
+  hProtondQdx_resrange_uncalib = tfs->make<TH2D>("hProtondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,100,0,1000);
+  hMuondQdx_resrange_uncalib = tfs->make<TH2D>("hMuondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,100,0,1000);
+  hProtondQdx_resrange_oldcalib = tfs->make<TH2D>("hProtondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,100,0,1000);
+  hMuondQdx_resrange_oldcalib = tfs->make<TH2D>("hMuondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,100,0,1000);
 
   for (int i = 0; i < 50; i ++){
 
@@ -197,7 +217,7 @@ void ParticleIdAnalyzer::beginJob()
 void ParticleIdAnalyzer::analyze(art::Event const & e)
 {
 
-  //bool isData = e.isRealData();
+  bool isData = e.isRealData();
   bool isSelected = false;
 
   int fRun = e.run();
@@ -246,7 +266,17 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
     std::cout << "USING PLANE: " << calo->PlaneID() << std::endl;
 
     std::vector< double > dEdx         = calo->dEdx();
+    std::vector< double > dQdx         = calo->dQdx();
     std::vector< double > resRange     = calo->ResidualRange();
+
+    double totaldQdx = 0.;
+    for (unsigned int i_dqdx=0; i_dqdx < dQdx.size(); i_dqdx++){
+      totaldQdx += dQdx[i_dqdx];
+    }
+
+    double oldcalibfactor;
+    if (isData){ oldcalibfactor = 243; } // Data: multiply by 243
+    else { oldcalibfactor = 198; } // MC: multiply by 198
 
     int trackID          = track->ID();
     int nDaughters       = GetNDaughterTracks((*trackHandle), trackID, fCutDistance, fCutFraction);
@@ -273,6 +303,9 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
         hPreCutKde->Fill(pidaValMean);
 
         hMuonStartYZ->Fill(trackStart.Z(), trackStart.Y());
+
+	hMuonTotaldQdx_uncalib->Fill(totaldQdx);
+	hMuonTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
 
         if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
 
@@ -305,6 +338,9 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
         hPreCutKde->Fill(pidaValMean);
 
         hProtonStartYZ->Fill(trackStart.Z(), trackStart.Y());
+
+	hProtonTotaldQdx_uncalib->Fill(totaldQdx);
+	hProtonTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
 
         if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
 
