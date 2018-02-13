@@ -194,15 +194,15 @@ void ParticleIdAnalyzer::beginJob()
   hProtonStartYZ = tfs->make<TH2D>("hProtonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
   hMuonStartYZ = tfs->make<TH2D>("hMuonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
   
-  hProtonTotaldQdx_uncalib = tfs->make<TH1D>("hProtonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",100,0,1000);
-  hMuonTotaldQdx_uncalib = tfs->make<TH1D>("hMuonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",100,0,1000);
-  hProtonTotaldQdx_oldcalib = tfs->make<TH1D>("hProtonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",100,0,1000);
-  hMuonTotaldQdx_oldcalib = tfs->make<TH1D>("hMuonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",100,0,1000);
+  hProtonTotaldQdx_uncalib = tfs->make<TH1D>("hProtonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
+  hMuonTotaldQdx_uncalib = tfs->make<TH1D>("hMuonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
+  hProtonTotaldQdx_oldcalib = tfs->make<TH1D>("hProtonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
+  hMuonTotaldQdx_oldcalib = tfs->make<TH1D>("hMuonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
 
-  hProtondQdx_resrange_uncalib = tfs->make<TH2D>("hProtondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,100,0,1000);
-  hMuondQdx_resrange_uncalib = tfs->make<TH2D>("hMuondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,100,0,1000);
-  hProtondQdx_resrange_oldcalib = tfs->make<TH2D>("hProtondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,100,0,1000);
-  hMuondQdx_resrange_oldcalib = tfs->make<TH2D>("hMuondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,100,0,1000);
+  hProtondQdx_resrange_uncalib = tfs->make<TH2D>("hProtondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
+  hMuondQdx_resrange_uncalib = tfs->make<TH2D>("hMuondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
+  hProtondQdx_resrange_oldcalib = tfs->make<TH2D>("hProtondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
+  hMuondQdx_resrange_oldcalib = tfs->make<TH2D>("hMuondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
 
   for (int i = 0; i < 50; i ++){
 
