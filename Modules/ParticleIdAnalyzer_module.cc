@@ -121,7 +121,7 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
 
     TH2D* hProtonStartYZ;
     TH2D* hMuonStartYZ;
-  
+
     TH1D* hProtonTotaldQdx_uncalib;
     TH1D* hMuonTotaldQdx_uncalib;
     TH1D* hProtonTotaldQdx_oldcalib;
@@ -154,6 +154,8 @@ ParticleIdAnalyzer::ParticleIdAnalyzer(fhicl::ParameterSet const & p)
   fCutDistance = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction = p.get< double > ("DaughterFinderCutFraction");
   fUseLibosSelection = p.get< bool >("UseLibosSelection",true);
+
+  std::cout << "fUseLibosSelection = " << fUseLibosSelection << std::endl;
 
   fv = fid.setFiducialVolume(fv, p);
   fid.printFiducialVolume(fv);
@@ -211,13 +213,13 @@ void ParticleIdAnalyzer::beginJob()
   hTotaldQdx_uncalib = tfs->make<TH1D>("hTotaldQdx_uncalib","Uncalibrated (All tracks);Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
   hTotaldQdx_oldcalib = tfs->make<TH1D>("hTotaldQdx_oldcalib","Old calibration (All tracks);Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
 
-  hProtondQdx_resrange_uncalib = tfs->make<TH2D>("hProtondQdx_resrange_uncalib","Uncalibrated (Proton candidates);Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
-  hMuondQdx_resrange_uncalib = tfs->make<TH2D>("hMuondQdx_resrange_uncalib","Uncalibrated (Muon candidates);Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
-  hProtondQdx_resrange_oldcalib = tfs->make<TH2D>("hProtondQdx_resrange_oldcalib","Old calibration (Proton candidates);Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
-  hMuondQdx_resrange_oldcalib = tfs->make<TH2D>("hMuondQdx_resrange_oldcalib","Old calibration (Muon candidates);Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
+  hProtondQdx_resrange_uncalib = tfs->make<TH2D>("hProtondQdx_resrange_uncalib","Uncalibrated (Proton candidates);Residual range (cm);dQ/dx (ADC/cm)",1000,0,50,750,0,1500);
+  hMuondQdx_resrange_uncalib = tfs->make<TH2D>("hMuondQdx_resrange_uncalib","Uncalibrated (Muon candidates);Residual range (cm);dQ/dx (ADC/cm)",1000,0,50,750,0,1500);
+  hProtondQdx_resrange_oldcalib = tfs->make<TH2D>("hProtondQdx_resrange_oldcalib","Old calibration (Proton candidates);Residual range (cm);dQ/dx (e^{-}/cm)",1000,0,50,1000,0,300e3);
+  hMuondQdx_resrange_oldcalib = tfs->make<TH2D>("hMuondQdx_resrange_oldcalib","Old calibration (Muon candidates);Residual range (cm);dQ/dx (e^{-}/cm)",1000,0,50,1000,0,300e3);
   
-  hdQdx_resrange_uncalib = tfs->make<TH2D>("hdQdx_resrange_uncalib","Uncalibrated (All tracks);Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
-  hdQdx_resrange_oldcalib = tfs->make<TH2D>("hdQdx_resrange_oldcalib","Old calibration (All tracks);Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
+  hdQdx_resrange_uncalib = tfs->make<TH2D>("hdQdx_resrange_uncalib","Uncalibrated (All tracks);Residual range (cm);dQ/dx (ADC/cm)",1000,0,50,750,0,1500);
+  hdQdx_resrange_oldcalib = tfs->make<TH2D>("hdQdx_resrange_oldcalib","Old calibration (All tracks);Residual range (cm);dQ/dx (e^{-}/cm)",1000,0,50,1000,0,300e3);
 
   for (int i = 0; i < 50; i ++){
 
@@ -319,6 +321,11 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
 	
     hTotaldQdx_uncalib->Fill(totaldQdx);
     hTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
+
+    for (size_t j = 0; j < resRange.size(); j++){
+      hdQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
+      hdQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
+    }
     
     if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
       hPostCutMean->Fill(pidaValMean);
@@ -342,6 +349,11 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
 	
 	hMuonTotaldQdx_uncalib->Fill(totaldQdx);
 	hMuonTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
+
+        for (size_t j = 0; j < resRange.size(); j++){
+          hMuondQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
+          hMuondQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
+        }
 	
 	if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
 	    
@@ -371,6 +383,11 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
 	
 	hProtonTotaldQdx_uncalib->Fill(totaldQdx);
 	hProtonTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
+
+        for (size_t j = 0; j < resRange.size(); j++){
+          hProtondQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
+          hProtondQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
+        }
 	
 	if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
 	  
@@ -387,6 +404,7 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
 	      protonPIDAVals.at(nProtons)->Fill(dEdx.at(j)*std::pow(resRange.at(j),0.42));
 	    } // end loop over dEdx values
 	    
+
             nProtons++;
           } // end if (nProtons < 50)
         } // end if (contained, no daughters)
