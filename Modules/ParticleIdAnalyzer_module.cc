@@ -78,6 +78,8 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
     double fCutDistance;
     double fCutFraction;
 
+    bool fUseLibosSelection;
+
     // fidvol related
     fidvol::fiducialVolume fid;
     particleid::PIDA pida;
@@ -125,10 +127,16 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
     TH1D* hProtonTotaldQdx_oldcalib;
     TH1D* hMuonTotaldQdx_oldcalib;
   
+    TH1D* hTotaldQdx_uncalib;
+    TH1D* hTotaldQdx_oldcalib;
+  
     TH2D* hProtondQdx_resrange_uncalib;
     TH2D* hMuondQdx_resrange_uncalib;
     TH2D* hProtondQdx_resrange_oldcalib;
     TH2D* hMuondQdx_resrange_oldcalib;
+  
+    TH2D* hdQdx_resrange_uncalib;
+    TH2D* hdQdx_resrange_oldcalib;
 
     std::vector<TH1D*> protonPIDAVals;
 
@@ -145,6 +153,7 @@ ParticleIdAnalyzer::ParticleIdAnalyzer(fhicl::ParameterSet const & p)
   fCaloLabel = p.get< std::string > ("CalorimetryModule");
   fCutDistance = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction = p.get< double > ("DaughterFinderCutFraction");
+  fUseLibosSelection = p.get< bool >("UseLibosSelection",true);
 
   fv = fid.setFiducialVolume(fv, p);
   fid.printFiducialVolume(fv);
@@ -194,15 +203,21 @@ void ParticleIdAnalyzer::beginJob()
   hProtonStartYZ = tfs->make<TH2D>("hProtonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
   hMuonStartYZ = tfs->make<TH2D>("hMuonStartYZ", ";;", 50, 0, 1036, 50, -116.5, 116.5);
   
-  hProtonTotaldQdx_uncalib = tfs->make<TH1D>("hProtonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
-  hMuonTotaldQdx_uncalib = tfs->make<TH1D>("hMuonTotaldQdx_uncalib","Uncalibrated;Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
-  hProtonTotaldQdx_oldcalib = tfs->make<TH1D>("hProtonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
-  hMuonTotaldQdx_oldcalib = tfs->make<TH1D>("hMuonTotaldQdx_oldcalib","Old calibration;Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
+  hProtonTotaldQdx_uncalib = tfs->make<TH1D>("hProtonTotaldQdx_uncalib","Uncalibrated (Proton candidates);Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
+  hMuonTotaldQdx_uncalib = tfs->make<TH1D>("hMuonTotaldQdx_uncalib","Uncalibrated (Muon candidates);Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
+  hProtonTotaldQdx_oldcalib = tfs->make<TH1D>("hProtonTotaldQdx_oldcalib","Old calibration (Proton candidates);Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
+  hMuonTotaldQdx_oldcalib = tfs->make<TH1D>("hMuonTotaldQdx_oldcalib","Old calibration (Muon candidates);Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
+  
+  hTotaldQdx_uncalib = tfs->make<TH1D>("hTotaldQdx_uncalib","Uncalibrated (All tracks);Total dQ/dx (ADC/cm);No. tracks",150,0,1500);
+  hTotaldQdx_oldcalib = tfs->make<TH1D>("hTotaldQdx_oldcalib","Old calibration (All tracks);Total dQ/dx (e^{-}/cm);No. tracks",1000,0,300e3);
 
-  hProtondQdx_resrange_uncalib = tfs->make<TH2D>("hProtondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
-  hMuondQdx_resrange_uncalib = tfs->make<TH2D>("hMuondQdx_resrange_uncalib","Uncalibrated;Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
-  hProtondQdx_resrange_oldcalib = tfs->make<TH2D>("hProtondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
-  hMuondQdx_resrange_oldcalib = tfs->make<TH2D>("hMuondQdx_resrange_oldcalib","Old calibration;Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
+  hProtondQdx_resrange_uncalib = tfs->make<TH2D>("hProtondQdx_resrange_uncalib","Uncalibrated (Proton candidates);Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
+  hMuondQdx_resrange_uncalib = tfs->make<TH2D>("hMuondQdx_resrange_uncalib","Uncalibrated (Muon candidates);Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
+  hProtondQdx_resrange_oldcalib = tfs->make<TH2D>("hProtondQdx_resrange_oldcalib","Old calibration (Proton candidates);Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
+  hMuondQdx_resrange_oldcalib = tfs->make<TH2D>("hMuondQdx_resrange_oldcalib","Old calibration (Muon candidates);Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
+  
+  hdQdx_resrange_uncalib = tfs->make<TH2D>("hdQdx_resrange_uncalib","Uncalibrated (All tracks);Residual range (cm);dQ/dx (ADC/cm)",80,0,40,150,0,1500);
+  hdQdx_resrange_oldcalib = tfs->make<TH2D>("hdQdx_resrange_oldcalib","Old calibration (All tracks);Residual range (cm);dQ/dx (e^{-}/cm)",80,0,40,1000,0,300e3);
 
   for (int i = 0; i < 50; i ++){
 
@@ -229,23 +244,30 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
   std::vector<int> muonIds;
   std::vector<int> protonIds;
 
-  for (int i = 0; i < ttree->GetEntries(); i++){
-
-    ttree->GetEntry(i);
-
-
-    if (cc1munpRun == fRun && cc1munpSubRun == fSubRun && cc1munpEvent == fEvent){
-
-      std::cout << "Found an event!" << std::endl;
-      isSelected = true;
-      muonIds.push_back(cc1munpMuonID);
-      protonIds.push_back(cc1munpProtonID);
-      continue;
+  // If using Libo's selection, look for a selected event in this file and get the muon and proton
+  // track IDs
+  if (fUseLibosSelection){
+    
+    for (int i = 0; i < ttree->GetEntries(); i++){
+      
+      ttree->GetEntry(i);
+      
+      
+      if (cc1munpRun == fRun && cc1munpSubRun == fSubRun && cc1munpEvent == fEvent){
+	
+	std::cout << "Found an event!" << std::endl;
+	isSelected = true;
+	muonIds.push_back(cc1munpMuonID);
+	protonIds.push_back(cc1munpProtonID);
+	continue;
+      }
+      
     }
 
-  }
-
   if (isSelected == false) return;
+  
+  }
+  
   //
   // get handles to needed information
   //
@@ -288,88 +310,92 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
     double pidaValMedian = pida.getPida(dEdx, resRange, "median");
     double pidaValKde    = pida.getPida(dEdx, resRange, "kde");
 
+    // --- Fill plots for all particles ---
+    // This code will execute whether you are using Libo's selection or not
+
+    hPreCutMean->Fill(pidaValMean);
+    hPreCutMedian->Fill(pidaValMean);
+    hPreCutKde->Fill(pidaValMean);
+	
+    hTotaldQdx_uncalib->Fill(totaldQdx);
+    hTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
+    
+    if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
+      hPostCutMean->Fill(pidaValMean);
+      hPostCutMedian->Fill(pidaValMean);
+      hPostCutKde->Fill(pidaValMean);
+    }
+
+    // --- Fill plots for muon candidates ---
+    // If not using Libo's selection, muonIds.size()==0 and this section is skipped
     for (size_t i = 0; i < muonIds.size(); i++){
-
+      
       if (trackID == muonIds.at(i)){
-
-        std::cout << ">> Found Candidate Muon!" << std::endl;
-
-        hMuonPreCutMean->Fill(pidaValMean);
-        hMuonPreCutMedian->Fill(pidaValMedian);
-        hMuonPreCutKde->Fill(pidaValKde);
-
-        hPreCutMean->Fill(pidaValMean);
-        hPreCutMedian->Fill(pidaValMean);
-        hPreCutKde->Fill(pidaValMean);
-
-        hMuonStartYZ->Fill(trackStart.Z(), trackStart.Y());
-
+	
+	std::cout << ">> Found Candidate Muon!" << std::endl;
+	
+	hMuonPreCutMean->Fill(pidaValMean);
+	hMuonPreCutMedian->Fill(pidaValMedian);
+	hMuonPreCutKde->Fill(pidaValKde);
+	
+	hMuonStartYZ->Fill(trackStart.Z(), trackStart.Y());
+	
 	hMuonTotaldQdx_uncalib->Fill(totaldQdx);
 	hMuonTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
+	
+	if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
+	    
+	  hMuonPostCutMean->Fill(pidaValMean);
+	  hMuonPostCutMedian->Fill(pidaValMedian);
+	  hMuonPostCutKde->Fill(pidaValKde);
+	  
+	} // end if (contained, no daughters)
+	
+      } // end if (trackID == muonIds.at(i))
+      
+    } // end loop over muonIds
 
-        if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
-
-          hMuonPostCutMean->Fill(pidaValMean);
-          hMuonPostCutMedian->Fill(pidaValMedian);
-          hMuonPostCutKde->Fill(pidaValKde);
-
-          hPostCutMean->Fill(pidaValMean);
-          hPostCutMedian->Fill(pidaValMean);
-          hPostCutKde->Fill(pidaValMean);
-
-        }
-
-      }
-
-    }
-
+    // --- Fill plots for proton candidates ---
+    // If not using Libo's selection, protonIds.size()==0 and this section is skipped
     for (size_t i = 0; i < protonIds.size(); i++){
-
+      
       if (trackID == protonIds.at(i)){
-
-        std::cout << ">> Found Candidate Proton!" << std::endl;
-
-        hProtonPreCutMean->Fill(pidaValMean);
-        hProtonPreCutMedian->Fill(pidaValMedian);
-        hProtonPreCutKde->Fill(pidaValKde);
-
-        hPreCutMean->Fill(pidaValMean);
-        hPreCutMedian->Fill(pidaValMean);
-        hPreCutKde->Fill(pidaValMean);
-
-        hProtonStartYZ->Fill(trackStart.Z(), trackStart.Y());
-
+	
+	std::cout << ">> Found Candidate Proton!" << std::endl;
+	
+	hProtonPreCutMean->Fill(pidaValMean);
+	hProtonPreCutMedian->Fill(pidaValMedian);
+	hProtonPreCutKde->Fill(pidaValKde);
+	
+	hProtonStartYZ->Fill(trackStart.Z(), trackStart.Y());
+	
 	hProtonTotaldQdx_uncalib->Fill(totaldQdx);
 	hProtonTotaldQdx_oldcalib->Fill(totaldQdx*oldcalibfactor);
-
-        if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
-
-          hProtonPostCutMean->Fill(pidaValMean);
-          hProtonPostCutMedian->Fill(pidaValMedian);
-          hProtonPostCutKde->Fill(pidaValKde);
-
-          hPostCutMean->Fill(pidaValMean);
-          hPostCutMedian->Fill(pidaValMean);
-          hPostCutKde->Fill(pidaValMean);
-
-          if (nProtons < 50){
-            TString th1name = Form("run%i_event%i_trkid%i", fRun, fEvent, trackID);
-            protonPIDAVals.at(nProtons)->SetName(th1name);
-            for (size_t j = 0; j < dEdx.size(); j++){
-
-              std::cout << "dEdx "  << j << ": " << dEdx.at(j) << " ResRg: " << resRange.at(j) <<  " particleId: " << dEdx.at(j)*std::pow(resRange.at(j), 0.42) << std::endl;
-              protonPIDAVals.at(nProtons)->Fill(dEdx.at(j)*std::pow(resRange.at(j),0.42));
-            }
-
+	
+	if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
+	  
+	  hProtonPostCutMean->Fill(pidaValMean);
+	  hProtonPostCutMedian->Fill(pidaValMedian);
+	  hProtonPostCutKde->Fill(pidaValKde);
+	  
+	  if (nProtons < 50){
+	    TString th1name = Form("run%i_event%i_trkid%i", fRun, fEvent, trackID);
+	    protonPIDAVals.at(nProtons)->SetName(th1name);
+	    for (size_t j = 0; j < dEdx.size(); j++){
+	      
+	      std::cout << "dEdx "  << j << ": " << dEdx.at(j) << " ResRg: " << resRange.at(j) <<  " particleId: " << dEdx.at(j)*std::pow(resRange.at(j), 0.42) << std::endl;
+	      protonPIDAVals.at(nProtons)->Fill(dEdx.at(j)*std::pow(resRange.at(j),0.42));
+	    } // end loop over dEdx values
+	    
             nProtons++;
-          }
-        }
-
-      }
-
-    }
-
-
+          } // end if (nProtons < 50)
+        } // end if (contained, no daughters)
+	
+      } // end if (trackID == protonIds.at(i))
+      
+    } // end loop over protonIds
+    
+    
     /*
        art::Handle< std::vector< ubana::SelectionResult> > selectionHandle;
        e.getByLabel("UBXSec", selectionHandle);
@@ -410,7 +436,8 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
 
     }
     */
-  }
+    
+  } // end loop over tracks
 }
 
 void ParticleIdAnalyzer::endJob()
