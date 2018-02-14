@@ -50,8 +50,8 @@ physics:
 
   stream1: [ out1 ]
   analysis: [ pidanalyzer ]
-  trigger_paths: [ analysis ]
-  end_paths: [ stream1 ]
+  #trigger_paths: [ analysis ]
+  end_paths: [ analysis, stream1 ]
 }
 
 outputs:
