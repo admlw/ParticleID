@@ -36,6 +36,8 @@ physics:
       DaughterFinderCutFraction:     0.5
       #PIDACalcType:                  "kde"
 
+      LibosSelectionFile:            "/uboone/app/users/alister1/particleID/ubcode_v06_26_01_10/srcs/uboonecode/uboone/ParticleID/cc1unp_output.root"
+
       # fiducial volume dimensions
       X_LOW:  10
       X_HIGH: 10
