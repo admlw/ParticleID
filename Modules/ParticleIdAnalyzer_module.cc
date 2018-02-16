@@ -79,6 +79,7 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
     double fCutFraction;
 
     bool fUseLibosSelection;
+    std::string fLibosSelectionFile;
 
     // fidvol related
     fidvol::fiducialVolume fid;
@@ -154,6 +155,7 @@ ParticleIdAnalyzer::ParticleIdAnalyzer(fhicl::ParameterSet const & p)
   fCutDistance = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction = p.get< double > ("DaughterFinderCutFraction");
   fUseLibosSelection = p.get< bool >("UseLibosSelection",true);
+  fLibosSelectionFile = p.get< std::string >("LibosSelectionFile","");
 
   std::cout << "fUseLibosSelection = " << fUseLibosSelection << std::endl;
 
@@ -164,22 +166,23 @@ ParticleIdAnalyzer::ParticleIdAnalyzer(fhicl::ParameterSet const & p)
 
 void ParticleIdAnalyzer::beginJob()
 {
-
-  std::cout << "Opening file..." << std::endl;
-  TFile *file = new TFile("/uboone/app/users/alister1/particleID/ubcode_v06_26_01_10/srcs/uboonecode/uboone/ParticleID/cc1unp_output.root", "READ");
-  std::cout << "...Done." << std::endl;
-
-  if (file->IsZombie())
-    std::cout << "File is zombie!" << std::endl;
-
-  ttree = (TTree*)file->Get("cc1unpselana/fMC_TrunMean");
-
-  ttree->SetBranchAddress("fRun", &cc1munpRun);
-  ttree->SetBranchAddress("fSubRun", &cc1munpSubRun);
-  ttree->SetBranchAddress("fEvent", &cc1munpEvent);
-  ttree->SetBranchAddress("trkmuoncandid", &cc1munpMuonID);
-  ttree->SetBranchAddress("trkprotoncandid", &cc1munpProtonID);
-
+  if (fUseLibosSelection){
+    std::cout << "Opening file..." << std::endl;
+    TFile *file = new TFile(fLibosSelectionFile.c_str(), "READ");
+    std::cout << "...Done." << std::endl;
+    
+    if (file->IsZombie())
+      std::cout << "File is zombie!" << std::endl;
+ 
+    ttree = (TTree*)file->Get("cc1unpselana/fMC_TrunMean");
+    
+    ttree->SetBranchAddress("fRun", &cc1munpRun);
+    ttree->SetBranchAddress("fSubRun", &cc1munpSubRun);
+    ttree->SetBranchAddress("fEvent", &cc1munpEvent);
+    ttree->SetBranchAddress("trkmuoncandid", &cc1munpMuonID);
+    ttree->SetBranchAddress("trkprotoncandid", &cc1munpProtonID);
+  }
+    
   hMuonPreCutMean = tfs->make<TH1D>("hMuonPreCutMean", ";;", 100, 0, 30);
   hMuonPreCutMedian = tfs->make<TH1D>("hMuonPreCutMedian", ";;", 100, 0, 30);
   hMuonPreCutKde = tfs->make<TH1D>("hMuonPreCutKde", ";;", 100, 0, 30);
