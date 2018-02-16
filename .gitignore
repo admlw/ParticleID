@@ -33,3 +33,6 @@
 
 # Backup files
 *~
+
+# Directory for anything else we don't want to commit
+ignore/*
