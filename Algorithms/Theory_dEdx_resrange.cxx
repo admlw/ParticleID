@@ -8,6 +8,8 @@
 #ifndef THEORY_DEDX_RESRANGE_CXX
 #define THEORY_DEDX_RESRANGE_CXX
 
+#include "Theory_dEdx_resrange.h"
+
 namespace particleid{
 
   Theory_dEdx_resrange::Theory_dEdx_resrange(){
