@@ -264,28 +264,29 @@ void ParticleIdAnalyzer::beginJob()
 
 
   // dEdx 1D
-  hProtonAlldEdx_oldcalib = tfs->make<TH1D>("hProtonAlldEdx_oldcalib","Old calibration (Proton candidates);Total dE/dx (units?) calculated from dQ/dx;No. hits",50,0,500);
-  hMuonAlldEdx_oldcalib = tfs->make<TH1D>("hMuonAlldEdx_oldcalib","Old calibration (Muon candidates);Total dE/dx (units?) calculated from dQ/dx;No. hits",50,0,500);
-  hProtonAlldEdx_newcalib = tfs->make<TH1D>("hProtonAlldEdx_newcalib","New MCC 8.7 calibration (Proton candidates);Total dE/dx (units?) from cali data product;No. hits",50,0,500);
-  hMuonAlldEdx_newcalib = tfs->make<TH1D>("hMuonAlldEdx_newcalib","New MCC 8.7 calibration (Muon candidates);Total dE/dx (units?) from cali data product;No. hits",50,0,500);
+  hProtonAlldEdx_oldcalib = tfs->make<TH1D>("hProtonAlldEdx_oldcalib","Old calibration (Proton candidates);Total dE/dx (units?) calculated from dQ/dx;No. hits",100,0,50);
+  hMuonAlldEdx_oldcalib = tfs->make<TH1D>("hMuonAlldEdx_oldcalib","Old calibration (Muon candidates);Total dE/dx (units?) calculated from dQ/dx;No. hits",100,0,50);
+  hProtonAlldEdx_newcalib = tfs->make<TH1D>("hProtonAlldEdx_newcalib","New MCC 8.7 calibration (Proton candidates);Total dE/dx (units?) from cali data product;No. hits",100,0,50);
+  hMuonAlldEdx_newcalib = tfs->make<TH1D>("hMuonAlldEdx_newcalib","New MCC 8.7 calibration (Muon candidates);Total dE/dx (units?) from cali data product;No. hits",100,0,50);
   
-  hAlldEdx_oldcalib = tfs->make<TH1D>("hAlldEdx_oldcalib","Old calibration (All tracks);Total dE/dx (units?) calculated from dQ/dx;No. hits",50,0,500);
-  hAlldEdx_newcalib = tfs->make<TH1D>("hAlldEdx_newcalib","New MCC 8.7 calibration (All tracks);Total dE/dx (units?) from cali data product;No. hits",50,0,500);
+  hAlldEdx_oldcalib = tfs->make<TH1D>("hAlldEdx_oldcalib","Old calibration (All tracks);Total dE/dx (units?) calculated from dQ/dx;No. hits",100,0,50);
+  hAlldEdx_newcalib = tfs->make<TH1D>("hAlldEdx_newcalib","New MCC 8.7 calibration (All tracks);Total dE/dx (units?) from cali data product;No. hits",10,0,50);
 
 
   // dEdx vs residual range
-  hProtondEdx_resrange_oldcalib = tfs->make<TH2D>("hProtondEdx_resrange_oldcalib","Old calibration (Proton candidates);Residual range (cm);dE/dx (units?) calculated from dQ/dx",500,0,50,100,0,1000);
-  hMuondEdx_resrange_oldcalib = tfs->make<TH2D>("hMuondEdx_resrange_oldcalib","Old calibration (Muon candidates);Residual range (cm);dE/dx (units?) calculated from dQ/dx",500,0,50,100,0,1000);
-  hProtondEdx_resrange_newcalib = tfs->make<TH2D>("hProtondEdx_resrange_newcalib","New MCC 8.7 calibration (Proton candidates);Residual range (cm);dE/dx (units?) from cali data product",500,0,50,100,0,1000);
-  hMuondEdx_resrange_newcalib = tfs->make<TH2D>("hMuondEdx_resrange_newcalib","New MCC 8.7 calibration (Muon candidates);Residual range (cm);dE/dx (units?) from cali data product",500,0,50,100,0,1000);
+  hProtondEdx_resrange_oldcalib = tfs->make<TH2D>("hProtondEdx_resrange_oldcalib","Old calibration (Proton candidates);Residual range (cm);dE/dx (units?) calculated from dQ/dx",500,0,50,100,0,50);
+  hMuondEdx_resrange_oldcalib = tfs->make<TH2D>("hMuondEdx_resrange_oldcalib","Old calibration (Muon candidates);Residual range (cm);dE/dx (units?) calculated from dQ/dx",500,0,50,100,0,50);
+  hProtondEdx_resrange_newcalib = tfs->make<TH2D>("hProtondEdx_resrange_newcalib","New MCC 8.7 calibration (Proton candidates);Residual range (cm);dE/dx (units?) from cali data product",500,0,50,100,0,50);
+  hMuondEdx_resrange_newcalib = tfs->make<TH2D>("hMuondEdx_resrange_newcalib","New MCC 8.7 calibration (Muon candidates);Residual range (cm);dE/dx (units?) from cali data product",500,0,50,100,0,50);
   
-  hdEdx_resrange_oldcalib = tfs->make<TH2D>("hdEdx_resrange_oldcalib","Old calibration (All tracks);Residual range (cm);dE/dx (units?) calculated from dQ/dx",500,0,50,100,0,1000);
-  hdEdx_resrange_newcalib = tfs->make<TH2D>("hdEdx_resrange_newcalib","New MCC 8.7 calibration (All tracks);Residual range (cm);dE/dx (units?) from cali data product",500,0,50,100,0,1000);
+  hdEdx_resrange_oldcalib = tfs->make<TH2D>("hdEdx_resrange_oldcalib","Old calibration (All tracks);Residual range (cm);dE/dx (units?) calculated from dQ/dx",500,0,50,100,0,50);
+  hdEdx_resrange_newcalib = tfs->make<TH2D>("hdEdx_resrange_newcalib","New MCC 8.7 calibration (All tracks);Residual range (cm);dE/dx (units?) from cali data product",500,0,50,100,0,50);
 
 
   // Theoretical predictions
   particleid::Theory_dEdx_resrange theorypreds;
   //int npoints = theorypreds.GetNPoints();
+  // Why is this not saving?
   g_ThdEdxRR_Proton = tfs->make<TGraph>();
   g_ThdEdxRR_Proton = (TGraph*)theorypreds.g_ThdEdxRR_Proton->Clone("Theory_proton");
   g_ThdEdxRR_Kaon = tfs->make<TGraph>();
@@ -417,13 +418,6 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
     if (resRange.size() != resRange_cali.size()){
       std::cout << "[ERROR] resRange from calo object size = " << resRange.size() << ", but resRange from cali object size = " << resRange_cali.size() << std::endl;
     }
-    else {
-      for (unsigned int i_rr=0; i_rr < resRange.size(); i_rr++){
-	if (resRange.at(i_rr) != resRange_cali.at(i_rr)){
-	    std::cout << "[ERROR] resRange.at(" << i_rr << ") = " << resRange.at(i_rr) << ", resRange_cali.at(" << i_rr << ") = " << resRange_cali.at(i_rr) << std::endl;
-	  }
-      }
-    }
     
     int trackID          = track->ID();
     int nDaughters       = GetNDaughterTracks((*trackHandle), trackID, fCutDistance, fCutFraction);
@@ -445,14 +439,14 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
     for (size_t j = 0; j < resRange.size(); j++){
       hdQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
       hdQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
-      hdQdx_resrange_newcalib->Fill(resRange.at(j), dQdx_cali.at(j));
+      hdQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
 	
       hAlldQdx_uncalib->Fill(dQdx.at(j));
       hAlldQdx_oldcalib->Fill(dQdx.at(j)*oldcalibfactor);
       hAlldQdx_newcalib->Fill(dQdx_cali.at(j));
 
       hdEdx_resrange_oldcalib->Fill(resRange.at(j), VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
-      hdEdx_resrange_newcalib->Fill(resRange.at(j), dEdx_cali.at(j));
+      hdEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 
       hAlldEdx_oldcalib->Fill(VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
       hAlldEdx_newcalib->Fill(dEdx_cali.at(j));
@@ -481,14 +475,14 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
         for (size_t j = 0; j < resRange.size(); j++){
           hMuondQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
           hMuondQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
-	  hMuondQdx_resrange_newcalib->Fill(resRange.at(j), dQdx_cali.at(j));
+	  hMuondQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
 	
 	  hMuonAlldQdx_uncalib->Fill(dQdx.at(j));
 	  hMuonAlldQdx_oldcalib->Fill(dQdx.at(j)*oldcalibfactor);
 	  hMuonAlldQdx_newcalib->Fill(dQdx_cali.at(j));
 
 	  hMuondEdx_resrange_oldcalib->Fill(resRange.at(j), VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
-	  hMuondEdx_resrange_newcalib->Fill(resRange.at(j), dEdx_cali.at(j));
+	  hMuondEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 	  
 	  hMuonAlldEdx_oldcalib->Fill(VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
 	  hMuonAlldEdx_newcalib->Fill(dEdx_cali.at(j));
@@ -523,14 +517,14 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
         for (size_t j = 0; j < resRange.size(); j++){
           hProtondQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
           hProtondQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
-	  hProtondQdx_resrange_newcalib->Fill(resRange.at(j), dQdx_cali.at(j));
+	  hProtondQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
 	
 	  hProtonAlldQdx_uncalib->Fill(dQdx.at(j));
 	  hProtonAlldQdx_oldcalib->Fill(dQdx.at(j)*oldcalibfactor);
 	  hProtonAlldQdx_newcalib->Fill(dQdx_cali.at(j));
 
 	  hProtondEdx_resrange_oldcalib->Fill(resRange.at(j), VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
-	  hProtondEdx_resrange_newcalib->Fill(resRange.at(j), dEdx_cali.at(j));
+	  hProtondEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 
 	  hProtonAlldEdx_oldcalib->Fill(VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
 	  hProtonAlldEdx_newcalib->Fill(dEdx_cali.at(j));
