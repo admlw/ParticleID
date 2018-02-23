@@ -24,6 +24,7 @@ namespace particleid{
 
   public:
     Theory_dEdx_resrange();
+    int GetNPoints(){return npoints;}
     
     TGraph *g_ThdEdxRR_Proton;
     TGraph *g_ThdEdxRR_Kaon;
