@@ -75,8 +75,8 @@ namespace kde{
     // final KDE
     std::string kdeFormula = "0.";
 
-    std::cout << "[KDE]  Using KDE method to evaluate PIDA. " << std::endl;
-    std::cout << "[KDE]  Using Kernel Type: " << kernelType << std::endl;
+    //std::cout << "[KDE]  Using KDE method to evaluate PIDA. " << std::endl;
+    //std::cout << "[KDE]  Using Kernel Type: " << kernelType << std::endl;
 
     for (size_t i = 0; i < pidaVals.size(); i++){
 
@@ -87,14 +87,14 @@ namespace kde{
       kernels.push_back(kernel);
 
       if (!doAdaptiveKde){
-        std::cout << "[KDE]  Using static baseline." << std::endl;
+        //std::cout << "[KDE]  Using static baseline." << std::endl;
         kdeFormula.append("+"+kernel->GetFormula()->GetExpFormula("P"));
       }
     }
 
     if (doAdaptiveKde){
 
-      std::cout << "[KDE]  Using adaptive baseline." << std::endl;
+      //std::cout << "[KDE]  Using adaptive baseline." << std::endl;
       
       double adaptiveBandwith = -1;
 
@@ -117,10 +117,10 @@ namespace kde{
 
         kernelNormalisation = 1./kernelIntegral;
 
-        std::cout << "[KDE]  >> kernelIntegral:      "<< kernelIntegral << std::endl;
-        std::cout << "[KDE]  >> kernelNormalisation: "<< kernelNormalisation << std::endl;
-        std::cout << "[KDE]  >> kernelMean:          "<< kernelMean << std::endl;
-        std::cout << "[KDE]  >> kernelBandwith:      "<< adaptiveBandwith << std::endl;
+        //std::cout << "[KDE]  >> kernelIntegral:      "<< kernelIntegral << std::endl;
+        //std::cout << "[KDE]  >> kernelNormalisation: "<< kernelNormalisation << std::endl;
+        //std::cout << "[KDE]  >> kernelMean:          "<< kernelMean << std::endl;
+        //std::cout << "[KDE]  >> kernelBandwith:      "<< adaptiveBandwith << std::endl;
 
         // re-do to get correct normalisation
         kernel = (TF1*)getKernel(kernelNormalisation, kernelMean, adaptiveBandwith, kernelType);
