@@ -87,6 +87,8 @@ class ParticleIdAnalyzer : public art::EDAnalyzer {
     fidvol::fiducialVolume fid;
     particleid::PIDA pida;
 
+    bool fUseNewCalib;
+
     // ubxsec related
     //ubana::SelectionResult selRes;
 
@@ -185,6 +187,7 @@ ParticleIdAnalyzer::ParticleIdAnalyzer(fhicl::ParameterSet const & p)
   fCutFraction = p.get< double > ("DaughterFinderCutFraction");
   fUseLibosSelection = p.get< bool >("UseLibosSelection",true);
   fLibosSelectionFile = p.get< std::string >("LibosSelectionFile","");
+  fUseNewCalib = p.get< bool >("UseNewCalib",true);
 
   std::cout << "fUseLibosSelection = " << fUseLibosSelection << std::endl;
 
@@ -349,29 +352,31 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
   // get handles to needed information
   //
 
-  // selection result...
   art::Handle< std::vector< recob::Track > > trackHandle;
   e.getByLabel(fTrackingAlgo, trackHandle);
   std::vector< art::Ptr< recob::Track > > trackPtrs;
   art::fill_ptr_vector(trackPtrs, trackHandle);
 
   art::FindManyP< anab::Calorimetry > caloFromTracks(trackHandle, e, "pandoraNucalo");
-  art::FindManyP< anab::Calorimetry > caliFromTracks(trackHandle, e, "pandoraNucali");
-  std::cout << "caloFromTracks.size() = " << caliFromTracks.size() << std::endl;
+  std::cout << "trackPtrs.size() = " << trackPtrs.size() << std::endl;
+  std::cout << "caloFromTracks.size() = " << caloFromTracks.size() << std::endl;
   for (unsigned int i=0; i< caloFromTracks.size(); i++){
     std::cout << "caloFromTracks.at(" << i << ").size() = " << caloFromTracks.at(i).size() << std::endl;
   }
-  std::cout << "caliFromTracks.size() = " << caliFromTracks.size() << std::endl;
-  for (unsigned int i=0; i< caliFromTracks.size(); i++){
-    std::cout << "caliFromTracks.at(" << i << ").size() = " << caliFromTracks.at(i).size() << std::endl;
-  }
-  std::cout << "trackPtrs.size() = " << trackPtrs.size() << std::endl;
-
+  art::FindManyP< anab::Calorimetry > *caliFromTracks=nullptr;
   art::Handle< std::vector< anab::Calorimetry > > calihandle;
-  e.getByLabel("pandoraNucali", calihandle);
   std::vector< art::Ptr< anab::Calorimetry > > caliPtrs;
-  art::fill_ptr_vector(caliPtrs, calihandle);
-  std::cout << "caliPtrs.size() = " << caliPtrs.size() << std::endl;
+  if (fUseNewCalib){
+    caliFromTracks = new art::FindManyP< anab::Calorimetry >(trackHandle, e, "pandoraNucali");
+    std::cout << "caliFromTracks->size() = " << caliFromTracks->size() << std::endl;
+    for (unsigned int i=0; i< caliFromTracks->size(); i++){
+      std::cout << "caliFromTracks->at(" << i << ").size() = " << caliFromTracks->at(i).size() << std::endl;
+    }
+    
+    e.getByLabel("pandoraNucali", calihandle);
+    art::fill_ptr_vector(caliPtrs, calihandle);
+    std::cout << "caliPtrs.size() = " << caliPtrs.size() << std::endl;
+  }
 
   for (size_t j = 0; j < trackPtrs.size(); j++){
 
@@ -398,26 +403,32 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
     double VarunaCalibfactor = 0.00507669;
     // Used in Varuna's conversion from dQdx to dEdx, for plane 2 only
 
-    std::vector< art::Ptr<anab::Calorimetry> > caliFromTrack = caliFromTracks.at(track->ID());
-    std::cout << track->ID() << std::endl;
+    std::vector< art::Ptr<anab::Calorimetry> > caliFromTrack;
     art::Ptr< anab::Calorimetry > cali;
-    for (auto c : caliFromTrack){
-      if (!c) continue; // avoid art errors if c doesn't exist
-      if (!c->PlaneID().isValid) continue; // check has valid plane
-      int planenum = c->PlaneID().Plane;
-      if (planenum != 2) continue; // only use calorimetry from collection plane (plane 2)
-      cali = c;
-    }
-    std::cout << "CALI USING PLANE: " << cali->PlaneID() << std::endl;
+    std::vector< double > dEdx_cali;
+    std::vector< double > dQdx_cali;
+    std::vector< double > resRange_cali;
+    if (fUseNewCalib){
+      caliFromTrack = caliFromTracks->at(track->ID());
+      std::cout << track->ID() << std::endl;
+      for (auto c : caliFromTrack){
+	if (!c) continue; // avoid art errors if c doesn't exist
+	if (!c->PlaneID().isValid) continue; // check has valid plane
+	int planenum = c->PlaneID().Plane;
+	if (planenum != 2) continue; // only use calorimetry from collection plane (plane 2)
+	cali = c;
+      }
+      std::cout << "CALI USING PLANE: " << cali->PlaneID() << std::endl;
 
-    std::vector< double > dEdx_cali    = cali->dEdx();
-    std::vector< double > dQdx_cali    = cali->dQdx();
-    std::vector< double > resRange_cali= cali->ResidualRange();
+      dEdx_cali    = cali->dEdx();
+      dQdx_cali    = cali->dQdx();
+      resRange_cali= cali->ResidualRange();
 
-    // Check: residual range should be the same in both data products
-    if (resRange.size() != resRange_cali.size()){
-      std::cout << "[ERROR] resRange from calo object size = " << resRange.size() << ", but resRange from cali object size = " << resRange_cali.size() << std::endl;
-    }
+      // Check: residual range should be the same in both data products
+      if (resRange.size() != resRange_cali.size()){
+	std::cout << "[ERROR] resRange from calo object size = " << resRange.size() << ", but resRange from cali object size = " << resRange_cali.size() << std::endl;
+      }
+    } // if caliFromTracks
     
     int trackID          = track->ID();
     int nDaughters       = GetNDaughterTracks((*trackHandle), trackID, fCutDistance, fCutFraction);
@@ -439,17 +450,20 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
     for (size_t j = 0; j < resRange.size(); j++){
       hdQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
       hdQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
-      hdQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
 	
       hAlldQdx_uncalib->Fill(dQdx.at(j));
       hAlldQdx_oldcalib->Fill(dQdx.at(j)*oldcalibfactor);
-      hAlldQdx_newcalib->Fill(dQdx_cali.at(j));
 
       hdEdx_resrange_oldcalib->Fill(resRange.at(j), VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
-      hdEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 
       hAlldEdx_oldcalib->Fill(VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
+      
+      if (fUseNewCalib){
+      hdQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
+      hAlldQdx_newcalib->Fill(dQdx_cali.at(j));
+      hdEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
       hAlldEdx_newcalib->Fill(dEdx_cali.at(j));
+      }
     }
     
     if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
@@ -475,17 +489,20 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
         for (size_t j = 0; j < resRange.size(); j++){
           hMuondQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
           hMuondQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
-	  hMuondQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
 	
 	  hMuonAlldQdx_uncalib->Fill(dQdx.at(j));
 	  hMuonAlldQdx_oldcalib->Fill(dQdx.at(j)*oldcalibfactor);
-	  hMuonAlldQdx_newcalib->Fill(dQdx_cali.at(j));
 
 	  hMuondEdx_resrange_oldcalib->Fill(resRange.at(j), VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
-	  hMuondEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 	  
 	  hMuonAlldEdx_oldcalib->Fill(VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
+
+	  if (fUseNewCalib){
+	  hMuondQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
+	  hMuonAlldQdx_newcalib->Fill(dQdx_cali.at(j));
+	  hMuondEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 	  hMuonAlldEdx_newcalib->Fill(dEdx_cali.at(j));
+	  }
         }
 	
 	if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
@@ -517,17 +534,20 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
         for (size_t j = 0; j < resRange.size(); j++){
           hProtondQdx_resrange_uncalib->Fill(resRange.at(j), dQdx.at(j));
           hProtondQdx_resrange_oldcalib->Fill(resRange.at(j), dQdx.at(j)*oldcalibfactor);
-	  hProtondQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
 	
 	  hProtonAlldQdx_uncalib->Fill(dQdx.at(j));
 	  hProtonAlldQdx_oldcalib->Fill(dQdx.at(j)*oldcalibfactor);
-	  hProtonAlldQdx_newcalib->Fill(dQdx_cali.at(j));
 
 	  hProtondEdx_resrange_oldcalib->Fill(resRange.at(j), VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
-	  hProtondEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 
 	  hProtonAlldEdx_oldcalib->Fill(VarunaGetdEdx(dQdx.at(j)/VarunaCalibfactor));
+
+	  if (fUseNewCalib){
+	  hProtondQdx_resrange_newcalib->Fill(resRange_cali.at(j), dQdx_cali.at(j));
+	  hProtonAlldQdx_newcalib->Fill(dQdx_cali.at(j));
+	  hProtondEdx_resrange_newcalib->Fill(resRange_cali.at(j), dEdx_cali.at(j));
 	  hProtonAlldEdx_newcalib->Fill(dEdx_cali.at(j));
+	  }
         }
 	
 	if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
@@ -554,73 +574,11 @@ void ParticleIdAnalyzer::analyze(art::Event const & e)
       
     } // end loop over protonIds
     
-    
-    /*
-       art::Handle< std::vector< ubana::SelectionResult> > selectionHandle;
-       e.getByLabel("UBXSec", selectionHandle);
-
-       if (!isData) std::cout << ">> Running Simulated Data" << std::endl;
-
-       if (!selectionHandle.isValid()){
-
-       std::cout << " >> Selection product not found. " << std::endl;
-       mf::LogError(__PRETTY_FUNCTION__) << "SelectionResult product not found" 
-       << std::endl;
-       o
-       throw std::exception();
-       }
-
-       art::FindManyP< ubana::TPCObject > selectedTpcObjects(selectionHandle, e, "UBXSec");
-       art::FindManyP< anab::ParticleID > particleIdFromTracks(trackHandle, e, "pid");
-
-    // def vars for loop
-    art::Ptr< ubana::TPCObject > selectedTpcObject;
-
-    if (selectedTpcObjects.at(0).size() == 1){
-
-    selectedTpcObject = selectedTpcObjects.at(0).at(0);
-
-    const std::vector< recob::Track >& selectedTracks = selectedTpcObject->GetTracks();
-
-    for (size_t i = 0; i < selectedTracks.size(); i++){
-
-    const recob::Track track = selectedTracks.at(i);
-    art::Ptr< recob::Track > trackP = lar::util::make_ptr(track);
-
-    std::vector< art::Ptr<anab::ParticleID> > pid = particleIdFromTracks.at(track.key());
-
-    std::cout << pid.at(0)->PIDA() << std::endl;
-
-    }
-
-    }
-    */
-    
   } // end loop over tracks
 }
 
 void ParticleIdAnalyzer::endJob()
 {
-  /*
-     hMuonPreCutMean->Write();
-     hMuonPreCutMedian->Write();
-     hMuonPreCutKde->Write();
-     hProtonPreCutMean->Write();
-     hProtonPreCutMedian->Write();
-     hProtonPreCutKde->Write();
-     hPreCutMean->Write();
-     hPreCutMedian->Write();
-     hPreCutKde->Write();
-     hMuonPostCutMean->Write();
-     hMuonPostCutMedian->Write();
-     hMuonPostCutKde->Write();
-     hProtonPostCutMean->Write();
-     hProtonPostCutMedian->Write();
-     hProtonPostCutKde->Write();
-     hPostCutMean->Write();
-     hPostCutMedian->Write();
-     hPostCutKde->Write();
-     */
 }
 
 DEFINE_ART_MODULE(ParticleIdAnalyzer)
