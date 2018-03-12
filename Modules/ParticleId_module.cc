@@ -153,22 +153,38 @@ void UBPID::ParticleId::produce(art::Event & e)
     double missingE = 0.0;
     double missingEAvg = 0.0;
     double pidaVal = -1.0;
+    bool   isContained = false;
 
     // if track is fully contained and is not reinteracting then fill PIDA
     TVector3 trackStart = track->Vertex();
     TVector3 trackEnd = track->End();
 
-    if (nDaughters == 0 && fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
-
-      std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
-
-      pidaVal = pida.getPida(dEdx, resRange, fPidaType);
-
-      std::cout << "[ParticleID] >> PIDA value: " << pidaVal << std::endl;
-
+    if (fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
+      isContained = true;
     }
 
-    geo::PlaneID planeid(0,0,0);
+    // For particles that are contained, evaluate PID 
+    if (isContained){
+
+      // Check if particle has reconstructed "daughters" - if it does, there may be no Bragg peak and PID might
+      // not be accurate
+      if (nDaughters == 0){
+
+	std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
+	
+	pidaVal = pida.getPida(dEdx, resRange, fPidaType);
+	
+	std::cout << "[ParticleID] >> PIDA value: " << pidaVal << std::endl;
+	
+      }
+
+      geo::PlaneID planeid(0,0,0);
+    } // end if(isContained)
+    else{
+      // If particle is *not* contained, assume it is a muon
+      // Set pdg=13. No other PID variables will be set because those are only filled for contained particles
+      pdg = 13;
+    }
 
     particleIDCollection->push_back(anab::ParticleID(
           pdg,
