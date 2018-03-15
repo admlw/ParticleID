@@ -87,7 +87,7 @@ class UBPID::ParticleId : public art::EDProducer {
     particleid::Bragg_negLogL_Estimator braggcalc;
 
     // For truncated mean
-    TruncMean trm;
+    //TruncMean trm;
   
     //other
     bool isData;
@@ -184,8 +184,8 @@ void UBPID::ParticleId::produce(art::Event & e)
     anab::sParticleIDAlgScores Bragg_bwd_pi;
     anab::sParticleIDAlgScores Bragg_bwd_K;
     anab::sParticleIDAlgScores PIDAval;
-    anab::sParticleIDAlgScores dEdxtruncmean;
-    anab::sParticleIDAlgScores dQdxtruncmean;
+    //anab::sParticleIDAlgScores dEdxtruncmean;
+    //anab::sParticleIDAlgScores dQdxtruncmean;
     anab::sParticleIDAlgScores trklen;
     // bool   isContained = false;
 
@@ -295,7 +295,7 @@ void UBPID::ParticleId::produce(art::Event & e)
 	
 	// ------ Algorithm 3:
 	// ------ Truncated mean dE/dx vs track length ------ //
-	dQdxtruncmean.fAlgName = "TruncatedMean";
+	/*dQdxtruncmean.fAlgName = "TruncatedMean";
 	dQdxtruncmean.fVariableType = anab::kdQdxtruncmean;
         dEdxtruncmean.fAlgName = "TruncatedMean";
         dEdxtruncmean.fVariableType = anab::kdEdxtruncmean;
@@ -312,13 +312,13 @@ void UBPID::ParticleId::produce(art::Event & e)
         const size_t lmin = 1;
         const float convergencelimit = 0.1;
         const float nsigma = 1.0;
-        dQdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dQdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
+									   dQdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dQdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
         dEdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
         trklen.fValue = track->Length();
 
         AlgScoresVec.push_back(dQdxtruncmean);
         AlgScoresVec.push_back(dEdxtruncmean);
-        AlgScoresVec.push_back(trklen);
+        AlgScoresVec.push_back(trklen);*/
 	
 	/*  }
 
