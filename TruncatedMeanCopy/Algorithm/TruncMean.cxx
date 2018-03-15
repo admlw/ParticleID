@@ -40,8 +40,8 @@ float TruncMean::CalcIterativeTruncMean(std::vector<double> v, const size_t& nmi
   return CalcIterativeTruncMean(v, nmin, nmax, lmin, currentiteration+1, convergencelimit, nsigma, med);
 }
 
-void TruncMean::CalcTruncMeanProfile(const std::vector<float>& rr_v, const std::vector<float>& dq_v,
-				     std::vector<float>& dq_trunc_v, const float& nsigma)
+void TruncMean::CalcTruncMeanProfile(const std::vector<double>& rr_v, const std::vector<double>& dq_v,
+				     std::vector<double>& dq_trunc_v, const float& nsigma)
 {
 
   // how many points to sample 
@@ -64,7 +64,7 @@ void TruncMean::CalcTruncMeanProfile(const std::vector<float>& rr_v, const std::
     if (nmax > Nmax) nmax = Nmax;
 
     // vector for local dq values
-    std::vector<float> dq_local_v;
+    std::vector<double> dq_local_v;
 
     for (int i=nmin; i < nmax; i++) {
       
@@ -101,7 +101,7 @@ void TruncMean::CalcTruncMeanProfile(const std::vector<float>& rr_v, const std::
   return;
 }
 
-float TruncMean::Mean(const std::vector<float>& v)
+float TruncMean::Mean(const std::vector<double>& v)
 {
 
   float mean = 0.;
@@ -111,12 +111,12 @@ float TruncMean::Mean(const std::vector<float>& v)
   return mean;
 }
 
-float TruncMean::Median(const std::vector<float>& v)
+float TruncMean::Median(const std::vector<double>& v)
 {
 
   if (v.size() == 1) return v[0];
   
-  std::vector<float> vcpy = v;
+  std::vector<double> vcpy = v;
 
   std::sort(vcpy.begin(), vcpy.end());
 
@@ -125,7 +125,7 @@ float TruncMean::Median(const std::vector<float>& v)
   return median;
 }
 
-float TruncMean::RMS(const std::vector<float>& v)
+float TruncMean::RMS(const std::vector<double>& v)
 {
 
   float avg = 0.;
