@@ -15,6 +15,7 @@
 #include "art/Framework/Principal/SubRun.h"
 #include "art/Framework/Services/Optional/TFileService.h"
 #include "canvas/Utilities/InputTag.h"
+#include "canvas/Persistency/Common/FindManyP.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
@@ -291,12 +292,12 @@ void ParticleID_ValidationPlots::analyze(art::Event const & e)
 {
   // Get handles to needed information
   art::Handle<std::vector<recob::Track>> trackHandle;
-  e.getByLabel(ftrackingAlgo, trackHandle);
+  e.getByLabel(fTrackingAlgo, trackHandle);
   std::vector<art::Ptr<recob::Track>> trackCollection;
   art::fill_ptr_vector(trackCollection, trackHandle);
 
   // --------- Loop over tracks in event ---------- //
-  for (auto track : trackCollection){
+  for (auto& track : trackCollection){
 
     // Check if track is well reconstructed, and get true PDG that way
     bool isWR = false;
@@ -307,7 +308,7 @@ void ParticleID_ValidationPlots::analyze(art::Event const & e)
     for (auto const& thisMCP : (*mcpHandle)){
       if (thisMCP.StatusCode() != 1) continue;
 
-      if (isWellReconstructed(track, thisMCP)){
+      if (isWellReconstructed((*track), thisMCP)){
 	isWR = true;
 	WR_pdg = thisMCP.PdgCode();
 	break;
@@ -323,21 +324,22 @@ void ParticleID_ValidationPlots::analyze(art::Event const & e)
     // ------------------- Now calculate PID variables and fill hists ------------------- //
     art::FindManyP<anab::ParticleID> trackPIDAssn(trackHandle, e, fPIDtag);
 
-    double Bragg_fwd_mu;
-    double Bragg_fwd_p;
-    double Bragg_fwd_pi;
-    double Bragg_fwd_K;
-    double Bragg_bwd_mu;
-    double Bragg_bwd_p;
-    double Bragg_bwd_pi;
-    double Bragg_bwd_K;
-    double PIDAval;
-    double dEdxtruncmean;
-    double dQdxtruncmean;
-    double trklen;
+    double Bragg_fwd_mu = -999;
+    double Bragg_fwd_p = -999;
+    double Bragg_fwd_pi = -999;
+    double Bragg_fwd_K = -999;
+    double Bragg_bwd_mu = -999;
+    double Bragg_bwd_p = -999;
+    double Bragg_bwd_pi = -999;
+    double Bragg_bwd_K = -999;
+    double PIDAval = -999;
+    double dEdxtruncmean = -999;
+    double dQdxtruncmean = -999;
+    double trklen = -999;
     
-    anab::ParticleID trackPID = trackPIDAssn.at(track.ID());
-    std::vector<anab::sParticleIDAlgScores> AlgScoresVec = trackPID.ParticleIDAlgScores;
+    std::vector<art::Ptr<anab::ParticleID>> trackPID = trackPIDAssn.at(track->ID());
+    std::cout << "trackPID.size() = " << trackPID.size() << std::endl;
+    std::vector<anab::sParticleIDAlgScores> AlgScoresVec = trackPID.at(0)->ParticleIDAlgScores();
 
     // Loop through AlgScoresVec and find the variables we want
     for (size_t i_algscore=0; i_algscore<AlgScoresVec.size(); i_algscore++){
