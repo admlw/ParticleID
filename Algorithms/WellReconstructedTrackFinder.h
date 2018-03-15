@@ -1,3 +1,5 @@
+#include "lardataobj/RecoBase/Track.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
 
 inline bool isWellReconstructed(recob::Track track, simb::MCParticle mcp){
 

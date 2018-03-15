@@ -86,6 +86,9 @@ class UBPID::ParticleId : public art::EDProducer {
     // for likelihood-based PID
     particleid::Bragg_negLogL_Estimator braggcalc;
 
+    // For truncated mean
+    TruncMean trm;
+  
     //other
     bool isData;
 };
@@ -309,8 +312,8 @@ void UBPID::ParticleId::produce(art::Event & e)
         const size_t lmin = 1;
         const float convergencelimit = 0.1;
         const float nsigma = 1.0;
-        dQdxtruncmean.fValue = (double)TruncMean::CalcIterativeTruncMean(dQdx, &nmin, &nmax, &currentiteration, lmin, &convergencelimit, &nsigma);
-        dEdxtruncmean.fValue = (double)TruncMean::CalcIterativeTruncMean(dEdx, &nmin, &nmax, &currentiteration, lmin, &convergencelimit, &nsigma);
+        dQdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dQdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
+        dEdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
         trklen.fValue = track->Length();
 
         AlgScoresVec.push_back(dQdxtruncmean);

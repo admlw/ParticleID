@@ -13,11 +13,19 @@
 #include "art/Framework/Principal/Handle.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Principal/SubRun.h"
+#include "art/Framework/Services/Optional/TFileService.h"
 #include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 #include "uboone/ParticleID/Algorithms/WellReconstructedTrackFinder.h"
+
+#include "lardataobj/RecoBase/Track.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
+#include "lardataobj/AnalysisBase/ParticleID.h"
+
+#include "TH1F.h"
+#include "TH2F.h"
 
 class ParticleID_ValidationPlots;
 
@@ -42,7 +50,7 @@ private:
   art::ServiceHandle<art::TFileService> tfs;
 
   std::string fTrackingAlgo;
-  std::string fCaloLabel;
+  std::string fPIDtag;
 
   TH1F *WR_truemu_pull_mu;
   TH1F *WR_truep_pull_mu;
@@ -163,132 +171,132 @@ ParticleID_ValidationPlots::ParticleID_ValidationPlots(fhicl::ParameterSet const
   fPIDtag = p.get<std::string>("ParticleIDProducerModule");
   
   // ---- Well reconstructed
-  TH1F *WR_truemu_pull_mu = tfs->make<TH1F>("WR_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truep_pull_mu = tfs->make<TH1F>("WR_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truepi_pull_mu = tfs->make<TH1F>("WR_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_trueK_pull_mu = tfs->make<TH1F>("WR_trueK_pull_mu","Well reconstructed tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truemu_pull_p = tfs->make<TH1F>("WR_truemu_pull_p","Well reconstructed tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truep_pull_p = tfs->make<TH1F>("WR_truep_pull_p","Well reconstructed tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truepi_pull_p = tfs->make<TH1F>("WR_truepi_pull_p","Well reconstructed tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_trueK_pull_p = tfs->make<TH1F>("WR_trueK_pull_p","Well reconstructed tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truemu_pull_pi = tfs->make<TH1F>("WR_truemu_pull_pi","Well reconstructed tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truep_pull_pi = tfs->make<TH1F>("WR_truep_pull_pi","Well reconstructed tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truepi_pull_pi = tfs->make<TH1F>("WR_truepi_pull_pi","Well reconstructed tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_trueK_pull_pi = tfs->make<TH1F>("WR_trueK_pull_pi","Well reconstructed tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truemu_pull_K = tfs->make<TH1F>("WR_truemu_pull_K","Well reconstructed tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truep_pull_K = tfs->make<TH1F>("WR_truep_pull_K","Well reconstructed tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_truepi_pull_K = tfs->make<TH1F>("WR_truepi_pull_K","Well reconstructed tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *WR_trueK_pull_K = tfs->make<TH1F>("WR_trueK_pull_K","Well reconstructed tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truemu_pull_mu = tfs->make<TH1F>("WR_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truep_pull_mu = tfs->make<TH1F>("WR_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truepi_pull_mu = tfs->make<TH1F>("WR_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_trueK_pull_mu = tfs->make<TH1F>("WR_trueK_pull_mu","Well reconstructed tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truemu_pull_p = tfs->make<TH1F>("WR_truemu_pull_p","Well reconstructed tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truep_pull_p = tfs->make<TH1F>("WR_truep_pull_p","Well reconstructed tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truepi_pull_p = tfs->make<TH1F>("WR_truepi_pull_p","Well reconstructed tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_trueK_pull_p = tfs->make<TH1F>("WR_trueK_pull_p","Well reconstructed tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truemu_pull_pi = tfs->make<TH1F>("WR_truemu_pull_pi","Well reconstructed tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truep_pull_pi = tfs->make<TH1F>("WR_truep_pull_pi","Well reconstructed tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truepi_pull_pi = tfs->make<TH1F>("WR_truepi_pull_pi","Well reconstructed tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_trueK_pull_pi = tfs->make<TH1F>("WR_trueK_pull_pi","Well reconstructed tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truemu_pull_K = tfs->make<TH1F>("WR_truemu_pull_K","Well reconstructed tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truep_pull_K = tfs->make<TH1F>("WR_truep_pull_K","Well reconstructed tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_truepi_pull_K = tfs->make<TH1F>("WR_truepi_pull_K","Well reconstructed tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  WR_trueK_pull_K = tfs->make<TH1F>("WR_trueK_pull_K","Well reconstructed tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
 
-  TH1F *WR_truemu_pull_MIP = tfs->make<TH1F>("WR_truemu_pull_MIP","Well reconstructed tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *WR_truep_pull_MIP = tfs->make<TH1F>("WR_truep_pull_MIP","Well reconstructed tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *WR_truepi_pull_MIP = tfs->make<TH1F>("WR_truepi_pull_MIP","Well reconstructed tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *WR_trueK_pull_MIP = tfs->make<TH1F>("WR_trueK_pull_MIP","Well reconstructed tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  WR_truemu_pull_MIP = tfs->make<TH1F>("WR_truemu_pull_MIP","Well reconstructed tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  WR_truep_pull_MIP = tfs->make<TH1F>("WR_truep_pull_MIP","Well reconstructed tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  WR_truepi_pull_MIP = tfs->make<TH1F>("WR_truepi_pull_MIP","Well reconstructed tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  WR_trueK_pull_MIP = tfs->make<TH1F>("WR_trueK_pull_MIP","Well reconstructed tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
 
-  TH1F *WR_truemu_PIDA = tfs->make<TH1F>("WR_truemu_PIDA","Well reconstructed tracks, true muons;PIDA;",300,0,30);
-  TH1F *WR_truep_PIDA = tfs->make<TH1F>("WR_truep_PIDA","Well reconstructed tracks, true protons;PIDA;",300,0,30);
-  TH1F *WR_truepi_PIDA = tfs->make<TH1F>("WR_truepi_PIDA","Well reconstructed tracks, true pions;PIDA;",300,0,30);
-  TH1F *WR_trueK_PIDA = tfs->make<TH1F>("WR_trueK_PIDA","Well reconstructed tracks, true kaons;PIDA;",300,0,30);
+  WR_truemu_PIDA = tfs->make<TH1F>("WR_truemu_PIDA","Well reconstructed tracks, true muons;PIDA;",300,0,30);
+  WR_truep_PIDA = tfs->make<TH1F>("WR_truep_PIDA","Well reconstructed tracks, true protons;PIDA;",300,0,30);
+  WR_truepi_PIDA = tfs->make<TH1F>("WR_truepi_PIDA","Well reconstructed tracks, true pions;PIDA;",300,0,30);
+  WR_trueK_PIDA = tfs->make<TH1F>("WR_trueK_PIDA","Well reconstructed tracks, true kaons;PIDA;",300,0,30);
 
-  TH2F *WR_truemu_dEdxtr_len = tfs->make<TH2F>("WR_truemu_dEdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *WR_truep_dEdxtr_len = tfs->make<TH2F>("WR_truep_dEdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *WR_truepi_dEdxtr_len = tfs->make<TH2F>("WR_truepi_dEdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *WR_trueK_dEdxtr_len = tfs->make<TH2F>("WR_trueK_dEdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *WR_truemu_dQdxtr_len = tfs->make<TH2F>("WR_truemu_dQdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *WR_truep_dQdxtr_len = tfs->make<TH2F>("WR_truep_dQdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *WR_truepi_dQdxtr_len = tfs->make<TH2F>("WR_truepi_dQdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *WR_trueK_dQdxtr_len = tfs->make<TH2F>("WR_trueK_dQdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-
-
-
-  // ---- All tracks: truth matching using associations
-  TH1F *All_Assn_truemu_pull_mu = tfs->make<TH1F>("All_Assn_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truep_pull_mu = tfs->make<TH1F>("All_Assn_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truepi_pull_mu = tfs->make<TH1F>("All_Assn_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_trueK_pull_mu = tfs->make<TH1F>("All_Assn_trueK_pull_mu","Well reconstructed tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truemu_pull_p = tfs->make<TH1F>("All_Assn_truemu_pull_p","Well reconstructed tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truep_pull_p = tfs->make<TH1F>("All_Assn_truep_pull_p","Well reconstructed tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truepi_pull_p = tfs->make<TH1F>("All_Assn_truepi_pull_p","Well reconstructed tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_trueK_pull_p = tfs->make<TH1F>("All_Assn_trueK_pull_p","Well reconstructed tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truemu_pull_pi = tfs->make<TH1F>("All_Assn_truemu_pull_pi","Well reconstructed tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truep_pull_pi = tfs->make<TH1F>("All_Assn_truep_pull_pi","Well reconstructed tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truepi_pull_pi = tfs->make<TH1F>("All_Assn_truepi_pull_pi","Well reconstructed tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_trueK_pull_pi = tfs->make<TH1F>("All_Assn_trueK_pull_pi","Well reconstructed tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truemu_pull_K = tfs->make<TH1F>("All_Assn_truemu_pull_K","Well reconstructed tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truep_pull_K = tfs->make<TH1F>("All_Assn_truep_pull_K","Well reconstructed tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_truepi_pull_K = tfs->make<TH1F>("All_Assn_truepi_pull_K","Well reconstructed tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_Assn_trueK_pull_K = tfs->make<TH1F>("All_Assn_trueK_pull_K","Well reconstructed tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-
-  TH1F *All_Assn_truemu_pull_MIP = tfs->make<TH1F>("All_Assn_truemu_pull_MIP","Well reconstructed tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *All_Assn_truep_pull_MIP = tfs->make<TH1F>("All_Assn_truep_pull_MIP","Well reconstructed tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *All_Assn_truepi_pull_MIP = tfs->make<TH1F>("All_Assn_truepi_pull_MIP","Well reconstructed tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *All_Assn_trueK_pull_MIP = tfs->make<TH1F>("All_Assn_trueK_pull_MIP","Well reconstructed tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-
-  TH1F *All_Assn_truemu_PIDA = tfs->make<TH1F>("All_Assn_truemu_PIDA","Well reconstructed tracks, true muons;PIDA;",300,0,30);
-  TH1F *All_Assn_truep_PIDA = tfs->make<TH1F>("All_Assn_truep_PIDA","Well reconstructed tracks, true protons;PIDA;",300,0,30);
-  TH1F *All_Assn_truepi_PIDA = tfs->make<TH1F>("All_Assn_truepi_PIDA","Well reconstructed tracks, true pions;PIDA;",300,0,30);
-  TH1F *All_Assn_trueK_PIDA = tfs->make<TH1F>("All_Assn_trueK_PIDA","Well reconstructed tracks, true kaons;PIDA;",300,0,30);
-
-  TH2F *All_Assn_truemu_dEdxtr_len = tfs->make<TH2F>("All_Assn_truemu_dEdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_Assn_truep_dEdxtr_len = tfs->make<TH2F>("All_Assn_truep_dEdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_Assn_truepi_dEdxtr_len = tfs->make<TH2F>("All_Assn_truepi_dEdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_Assn_trueK_dEdxtr_len = tfs->make<TH2F>("All_Assn_trueK_dEdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_Assn_truemu_dQdxtr_len = tfs->make<TH2F>("All_Assn_truemu_dQdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *All_Assn_truep_dQdxtr_len = tfs->make<TH2F>("All_Assn_truep_dQdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *All_Assn_truepi_dQdxtr_len = tfs->make<TH2F>("All_Assn_truepi_dQdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *All_Assn_trueK_dQdxtr_len = tfs->make<TH2F>("All_Assn_trueK_dQdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  WR_truemu_dEdxtr_len = tfs->make<TH2F>("WR_truemu_dEdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  WR_truep_dEdxtr_len = tfs->make<TH2F>("WR_truep_dEdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  WR_truepi_dEdxtr_len = tfs->make<TH2F>("WR_truepi_dEdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
+  WR_trueK_dEdxtr_len = tfs->make<TH2F>("WR_trueK_dEdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  WR_truemu_dQdxtr_len = tfs->make<TH2F>("WR_truemu_dQdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  WR_truep_dQdxtr_len = tfs->make<TH2F>("WR_truep_dQdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  WR_truepi_dQdxtr_len = tfs->make<TH2F>("WR_truepi_dQdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  WR_trueK_dQdxtr_len = tfs->make<TH2F>("WR_trueK_dQdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
 
 
 
   // ---- All tracks: truth matching using associations
-  TH1F *All_BT_truemu_pull_mu = tfs->make<TH1F>("All_BT_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truep_pull_mu = tfs->make<TH1F>("All_BT_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truepi_pull_mu = tfs->make<TH1F>("All_BT_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_trueK_pull_mu = tfs->make<TH1F>("All_BT_trueK_pull_mu","Well reconstructed tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truemu_pull_p = tfs->make<TH1F>("All_BT_truemu_pull_p","Well reconstructed tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truep_pull_p = tfs->make<TH1F>("All_BT_truep_pull_p","Well reconstructed tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truepi_pull_p = tfs->make<TH1F>("All_BT_truepi_pull_p","Well reconstructed tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_trueK_pull_p = tfs->make<TH1F>("All_BT_trueK_pull_p","Well reconstructed tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truemu_pull_pi = tfs->make<TH1F>("All_BT_truemu_pull_pi","Well reconstructed tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truep_pull_pi = tfs->make<TH1F>("All_BT_truep_pull_pi","Well reconstructed tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truepi_pull_pi = tfs->make<TH1F>("All_BT_truepi_pull_pi","Well reconstructed tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_trueK_pull_pi = tfs->make<TH1F>("All_BT_trueK_pull_pi","Well reconstructed tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truemu_pull_K = tfs->make<TH1F>("All_BT_truemu_pull_K","Well reconstructed tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truep_pull_K = tfs->make<TH1F>("All_BT_truep_pull_K","Well reconstructed tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_truepi_pull_K = tfs->make<TH1F>("All_BT_truepi_pull_K","Well reconstructed tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TH1F *All_BT_trueK_pull_K = tfs->make<TH1F>("All_BT_trueK_pull_K","Well reconstructed tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truemu_pull_mu = tfs->make<TH1F>("All_Assn_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truep_pull_mu = tfs->make<TH1F>("All_Assn_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truepi_pull_mu = tfs->make<TH1F>("All_Assn_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_trueK_pull_mu = tfs->make<TH1F>("All_Assn_trueK_pull_mu","Well reconstructed tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truemu_pull_p = tfs->make<TH1F>("All_Assn_truemu_pull_p","Well reconstructed tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truep_pull_p = tfs->make<TH1F>("All_Assn_truep_pull_p","Well reconstructed tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truepi_pull_p = tfs->make<TH1F>("All_Assn_truepi_pull_p","Well reconstructed tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_trueK_pull_p = tfs->make<TH1F>("All_Assn_trueK_pull_p","Well reconstructed tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truemu_pull_pi = tfs->make<TH1F>("All_Assn_truemu_pull_pi","Well reconstructed tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truep_pull_pi = tfs->make<TH1F>("All_Assn_truep_pull_pi","Well reconstructed tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truepi_pull_pi = tfs->make<TH1F>("All_Assn_truepi_pull_pi","Well reconstructed tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_trueK_pull_pi = tfs->make<TH1F>("All_Assn_trueK_pull_pi","Well reconstructed tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truemu_pull_K = tfs->make<TH1F>("All_Assn_truemu_pull_K","Well reconstructed tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truep_pull_K = tfs->make<TH1F>("All_Assn_truep_pull_K","Well reconstructed tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_truepi_pull_K = tfs->make<TH1F>("All_Assn_truepi_pull_K","Well reconstructed tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_Assn_trueK_pull_K = tfs->make<TH1F>("All_Assn_trueK_pull_K","Well reconstructed tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
 
-  TH1F *All_BT_truemu_pull_MIP = tfs->make<TH1F>("All_BT_truemu_pull_MIP","Well reconstructed tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *All_BT_truep_pull_MIP = tfs->make<TH1F>("All_BT_truep_pull_MIP","Well reconstructed tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *All_BT_truepi_pull_MIP = tfs->make<TH1F>("All_BT_truepi_pull_MIP","Well reconstructed tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TH1F *All_BT_trueK_pull_MIP = tfs->make<TH1F>("All_BT_trueK_pull_MIP","Well reconstructed tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_Assn_truemu_pull_MIP = tfs->make<TH1F>("All_Assn_truemu_pull_MIP","Well reconstructed tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_Assn_truep_pull_MIP = tfs->make<TH1F>("All_Assn_truep_pull_MIP","Well reconstructed tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_Assn_truepi_pull_MIP = tfs->make<TH1F>("All_Assn_truepi_pull_MIP","Well reconstructed tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_Assn_trueK_pull_MIP = tfs->make<TH1F>("All_Assn_trueK_pull_MIP","Well reconstructed tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
 
-  TH1F *All_BT_truemu_PIDA = tfs->make<TH1F>("All_BT_truemu_PIDA","Well reconstructed tracks, true muons;PIDA;",300,0,30);
-  TH1F *All_BT_truep_PIDA = tfs->make<TH1F>("All_BT_truep_PIDA","Well reconstructed tracks, true protons;PIDA;",300,0,30);
-  TH1F *All_BT_truepi_PIDA = tfs->make<TH1F>("All_BT_truepi_PIDA","Well reconstructed tracks, true pions;PIDA;",300,0,30);
-  TH1F *All_BT_trueK_PIDA = tfs->make<TH1F>("All_BT_trueK_PIDA","Well reconstructed tracks, true kaons;PIDA;",300,0,30);
+  All_Assn_truemu_PIDA = tfs->make<TH1F>("All_Assn_truemu_PIDA","Well reconstructed tracks, true muons;PIDA;",300,0,30);
+  All_Assn_truep_PIDA = tfs->make<TH1F>("All_Assn_truep_PIDA","Well reconstructed tracks, true protons;PIDA;",300,0,30);
+  All_Assn_truepi_PIDA = tfs->make<TH1F>("All_Assn_truepi_PIDA","Well reconstructed tracks, true pions;PIDA;",300,0,30);
+  All_Assn_trueK_PIDA = tfs->make<TH1F>("All_Assn_trueK_PIDA","Well reconstructed tracks, true kaons;PIDA;",300,0,30);
 
-  TH2F *All_BT_truemu_dEdxtr_len = tfs->make<TH2F>("All_BT_truemu_dEdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_BT_truep_dEdxtr_len = tfs->make<TH2F>("All_BT_truep_dEdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_BT_truepi_dEdxtr_len = tfs->make<TH2F>("All_BT_truepi_dEdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_BT_trueK_dEdxtr_len = tfs->make<TH2F>("All_BT_trueK_dEdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TH2F *All_BT_truemu_dQdxtr_len = tfs->make<TH2F>("All_BT_truemu_dQdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *All_BT_truep_dQdxtr_len = tfs->make<TH2F>("All_BT_truep_dQdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *All_BT_truepi_dQdxtr_len = tfs->make<TH2F>("All_BT_truepi_dQdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TH2F *All_BT_trueK_dQdxtr_len = tfs->make<TH2F>("All_BT_trueK_dQdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_Assn_truemu_dEdxtr_len = tfs->make<TH2F>("All_Assn_truemu_dEdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_Assn_truep_dEdxtr_len = tfs->make<TH2F>("All_Assn_truep_dEdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_Assn_truepi_dEdxtr_len = tfs->make<TH2F>("All_Assn_truepi_dEdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_Assn_trueK_dEdxtr_len = tfs->make<TH2F>("All_Assn_trueK_dEdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_Assn_truemu_dQdxtr_len = tfs->make<TH2F>("All_Assn_truemu_dQdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_Assn_truep_dQdxtr_len = tfs->make<TH2F>("All_Assn_truep_dQdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_Assn_truepi_dQdxtr_len = tfs->make<TH2F>("All_Assn_truepi_dQdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_Assn_trueK_dQdxtr_len = tfs->make<TH2F>("All_Assn_trueK_dQdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+
+
+
+  // ---- All tracks: truth matching using associations
+  All_BT_truemu_pull_mu = tfs->make<TH1F>("All_BT_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truep_pull_mu = tfs->make<TH1F>("All_BT_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truepi_pull_mu = tfs->make<TH1F>("All_BT_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_trueK_pull_mu = tfs->make<TH1F>("All_BT_trueK_pull_mu","Well reconstructed tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truemu_pull_p = tfs->make<TH1F>("All_BT_truemu_pull_p","Well reconstructed tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truep_pull_p = tfs->make<TH1F>("All_BT_truep_pull_p","Well reconstructed tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truepi_pull_p = tfs->make<TH1F>("All_BT_truepi_pull_p","Well reconstructed tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_trueK_pull_p = tfs->make<TH1F>("All_BT_trueK_pull_p","Well reconstructed tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truemu_pull_pi = tfs->make<TH1F>("All_BT_truemu_pull_pi","Well reconstructed tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truep_pull_pi = tfs->make<TH1F>("All_BT_truep_pull_pi","Well reconstructed tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truepi_pull_pi = tfs->make<TH1F>("All_BT_truepi_pull_pi","Well reconstructed tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_trueK_pull_pi = tfs->make<TH1F>("All_BT_trueK_pull_pi","Well reconstructed tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truemu_pull_K = tfs->make<TH1F>("All_BT_truemu_pull_K","Well reconstructed tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truep_pull_K = tfs->make<TH1F>("All_BT_truep_pull_K","Well reconstructed tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_truepi_pull_K = tfs->make<TH1F>("All_BT_truepi_pull_K","Well reconstructed tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_BT_trueK_pull_K = tfs->make<TH1F>("All_BT_trueK_pull_K","Well reconstructed tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+
+  All_BT_truemu_pull_MIP = tfs->make<TH1F>("All_BT_truemu_pull_MIP","Well reconstructed tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_BT_truep_pull_MIP = tfs->make<TH1F>("All_BT_truep_pull_MIP","Well reconstructed tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_BT_truepi_pull_MIP = tfs->make<TH1F>("All_BT_truepi_pull_MIP","Well reconstructed tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_BT_trueK_pull_MIP = tfs->make<TH1F>("All_BT_trueK_pull_MIP","Well reconstructed tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+
+  All_BT_truemu_PIDA = tfs->make<TH1F>("All_BT_truemu_PIDA","Well reconstructed tracks, true muons;PIDA;",300,0,30);
+  All_BT_truep_PIDA = tfs->make<TH1F>("All_BT_truep_PIDA","Well reconstructed tracks, true protons;PIDA;",300,0,30);
+  All_BT_truepi_PIDA = tfs->make<TH1F>("All_BT_truepi_PIDA","Well reconstructed tracks, true pions;PIDA;",300,0,30);
+  All_BT_trueK_PIDA = tfs->make<TH1F>("All_BT_trueK_PIDA","Well reconstructed tracks, true kaons;PIDA;",300,0,30);
+
+  All_BT_truemu_dEdxtr_len = tfs->make<TH2F>("All_BT_truemu_dEdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_BT_truep_dEdxtr_len = tfs->make<TH2F>("All_BT_truep_dEdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_BT_truepi_dEdxtr_len = tfs->make<TH2F>("All_BT_truepi_dEdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_BT_trueK_dEdxtr_len = tfs->make<TH2F>("All_BT_trueK_dEdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_BT_truemu_dQdxtr_len = tfs->make<TH2F>("All_BT_truemu_dQdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_BT_truep_dQdxtr_len = tfs->make<TH2F>("All_BT_truep_dQdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_BT_truepi_dQdxtr_len = tfs->make<TH2F>("All_BT_truepi_dQdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_BT_trueK_dQdxtr_len = tfs->make<TH2F>("All_BT_trueK_dQdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
   
 }
 
 void ParticleID_ValidationPlots::analyze(art::Event const & e)
 {
   // Get handles to needed information
-  art::ValidHandle<std::vector<recob::Track>> trackHandle = e.getValidHandle<std::vector<recob::Track>>(ftrackingAlgo);
-  std::vector<recob::Track> trackVec(*trackHandle);
+  art::Handle<std::vector<recob::Track>> trackHandle;
+  e.getByLabel(ftrackingAlgo, trackHandle);
+  std::vector<art::Ptr<recob::Track>> trackCollection;
+  art::fill_ptr_vector(trackCollection, trackHandle);
 
   // --------- Loop over tracks in event ---------- //
-  for (size_t i_tr = 0; i_tr < trackVec.size(); i_tr++){
-
-    recob::Track track = trackVec.at(i_tr);
+  for (auto track : trackCollection){
 
     // Check if track is well reconstructed, and get true PDG that way
     bool isWR = false;
@@ -300,7 +308,7 @@ void ParticleID_ValidationPlots::analyze(art::Event const & e)
       if (thisMCP.StatusCode() != 1) continue;
 
       if (isWellReconstructed(track, thisMCP)){
-	is_WR = true;
+	isWR = true;
 	WR_pdg = thisMCP.PdgCode();
 	break;
       }
@@ -381,50 +389,51 @@ void ParticleID_ValidationPlots::analyze(art::Event const & e)
     double Bragg_pull_K  = Bragg_K /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
     double Bragg_pull_MIPproton = (Bragg_mu+Bragg_pi)/(Bragg_mu+Bragg_pi+Bragg_p);
 
-    if (TMath::Abs(WR_pdg) == 13){ // True muons
-      WR_truemu_pull_mu->Fill(Bragg_pull_mu);
-      WR_truemu_pull_p->Fill(Bragg_pull_p);
-      WR_truemu_pull_pi->Fill(Bragg_pull_pi);
-      WR_truemu_pull_K->Fill(Bragg_pull_K);
-      WR_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
-      WR_truemu_PIDA->Fill(PIDAval);
-      WR_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      WR_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-    }
-
-    else if (TMath::Abs(WR_pdg) == 2212){ // True protons
-      WR_truep_pull_mu->Fill(Bragg_pull_mu);
-      WR_truep_pull_p->Fill(Bragg_pull_p);
-      WR_truep_pull_pi->Fill(Bragg_pull_pi);
-      WR_truep_pull_K->Fill(Bragg_pull_K);
-      WR_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
-      WR_truep_PIDA->Fill(PIDAval);
-      WR_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      WR_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-    }
-
-    else if (TMath::Abs(WR_pdg) == 211){ // True pions
-      WR_truepi_pull_mu->Fill(Bragg_pull_mu);
-      WR_truepi_pull_p->Fill(Bragg_pull_p);
-      WR_truepi_pull_pi->Fill(Bragg_pull_pi);
-      WR_truepi_pull_K->Fill(Bragg_pull_K);
-      WR_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
-      WR_truepi_PIDA->Fill(PIDAval);
-      WR_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      WR_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-    }
-
-    else if (TMath::Abs(WR_pdg) == 321){ // True kaons
-      WR_trueK_pull_mu->Fill(Bragg_pull_mu);
-      WR_trueK_pull_p->Fill(Bragg_pull_p);
-      WR_trueK_pull_pi->Fill(Bragg_pull_pi);
-      WR_trueK_pull_K->Fill(Bragg_pull_K);
-      WR_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
-      WR_trueK_PIDA->Fill(PIDAval);
-      WR_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      WR_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-    }
-    
+    if (isWR){
+      if (TMath::Abs(WR_pdg) == 13){ // True muons
+	WR_truemu_pull_mu->Fill(Bragg_pull_mu);
+	WR_truemu_pull_p->Fill(Bragg_pull_p);
+	WR_truemu_pull_pi->Fill(Bragg_pull_pi);
+	WR_truemu_pull_K->Fill(Bragg_pull_K);
+	WR_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
+	WR_truemu_PIDA->Fill(PIDAval);
+	WR_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+	WR_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      }
+      
+      else if (TMath::Abs(WR_pdg) == 2212){ // True protons
+	WR_truep_pull_mu->Fill(Bragg_pull_mu);
+	WR_truep_pull_p->Fill(Bragg_pull_p);
+	WR_truep_pull_pi->Fill(Bragg_pull_pi);
+	WR_truep_pull_K->Fill(Bragg_pull_K);
+	WR_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
+	WR_truep_PIDA->Fill(PIDAval);
+	WR_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+	WR_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      }
+      
+      else if (TMath::Abs(WR_pdg) == 211){ // True pions
+	WR_truepi_pull_mu->Fill(Bragg_pull_mu);
+	WR_truepi_pull_p->Fill(Bragg_pull_p);
+	WR_truepi_pull_pi->Fill(Bragg_pull_pi);
+	WR_truepi_pull_K->Fill(Bragg_pull_K);
+	WR_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
+	WR_truepi_PIDA->Fill(PIDAval);
+	WR_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+	WR_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      }
+      
+      else if (TMath::Abs(WR_pdg) == 321){ // True kaons
+	WR_trueK_pull_mu->Fill(Bragg_pull_mu);
+	WR_trueK_pull_p->Fill(Bragg_pull_p);
+	WR_trueK_pull_pi->Fill(Bragg_pull_pi);
+	WR_trueK_pull_K->Fill(Bragg_pull_K);
+	WR_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
+	WR_trueK_PIDA->Fill(PIDAval);
+	WR_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+	WR_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      }
+    } // if isWR
     
   } // Loop over tracks
 

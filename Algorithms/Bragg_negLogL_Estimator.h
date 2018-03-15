@@ -21,10 +21,12 @@
 
 #include "TMath.h"
 #include "TGraph.h"
+#include "TF1.h"
 
 #include <vector>
+#include <iostream>
 
-#include "Theory_dEdx_resrange.cxx"
+#include "Theory_dEdx_resrange.h"
 
 namespace particleid{
 
