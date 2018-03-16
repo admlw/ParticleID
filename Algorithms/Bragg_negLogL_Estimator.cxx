@@ -70,7 +70,7 @@ namespace particleid{
     double minLLNdf = 9999999;
     int n_hits_used_total = 0;
 
-    for (int rr_shift = -1.0; rr_shift < 1.0; rr_shift = rr_shift+0.05){
+    for (double rr_shift = -1.0; rr_shift < 1.0; rr_shift = rr_shift+0.05){
       
       // Make neg2LogLikelihood
       double neg2LogL = 0.;
