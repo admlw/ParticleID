@@ -63,53 +63,67 @@ namespace particleid{
 
     TF1 *landau = new TF1("landau", "landau", 0, 100);
 
-    // Make neg2LogLikelihood
-    double neg2LogL = 0.;
-
     // Now loop through hits (entries in dEdx and resRange vectors), compare to
     // theoretical prediction, and calculate likelihood
-    int n_hits_used = 0;
-    for (size_t i_hit=0; i_hit < resRange.size(); i_hit++){
+    // rr_shift allows use to shift the residual range so that we 
+    // can account for end point resolution
+    double minLLNdf = 9999999;
+    int n_hits_used_total = 0;
 
-      size_t rr_index;
-      if (forward){ // Fit tracks "forward" (i.e. in the direction they already have)
-        rr_index = i_hit;
+    for (int rr_shift = -1.0; rr_shift < 1.0; rr_shift = rr_shift+0.05){
+      
+      // Make neg2LogLikelihood
+      double neg2LogL = 0.;
+      int n_hits_used = 0;
+
+      for (size_t i_hit=0; i_hit < resRange.size(); i_hit++){
+
+        size_t rr_index;
+        if (forward){ // Fit tracks "forward" (i.e. in the direction they already have)
+          rr_index = i_hit;
+        }
+        else{ // Fit tracks "backward"
+          rr_index = (resRange.size()-1)-i_hit;
+        }
+
+        double resrg_i = resRange.at(rr_index)+rr_shift;
+        double dEdx_i  = dEdx.at(i_hit);
+
+        // Set theoretical Landau distribution for given residual range
+        landau->SetParameters(1,theorypred->Eval(resrg_i,0,"S"),width);
+
+        // Evaluate likelihood
+        double neg2LogL_i = 0.;
+        if (landau->Eval(dEdx_i) == 0){
+          continue;
+          neg2LogL_i = -2*std::log(1e-20);
+        }
+        else{
+          neg2LogL_i = -2*std::log(landau->Eval(dEdx_i));
+          n_hits_used++;
+        }
+
+        neg2LogL += neg2LogL_i;
+        /*
+           std::cout << "Algorithm --- " << std::endl
+           << "   theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl
+           << "   theorypred->Eval(" << resrg_i << ") = " << theorypred->Eval(resrg_i) << std::endl
+           << "   landau->Eval(" << dEdx_i << ") = " << landau->Eval(dEdx_i) << std::endl
+           << "   neg2logL(i) = " << neg2LogL_i << std::endl
+           << "   neg2logL total = " << neg2LogL << std::endl;
+           */
+      } // Loop over i_hit
+
+      if (neg2LogL/n_hits_used < minLLNdf){
+        minLLNdf = neg2LogL/n_hits_used;
+        n_hits_used_total = n_hits_used;
       }
-      else{ // Fit tracks "backward"
-        rr_index = (resRange.size()-1)-i_hit;
-      }
 
-      double resrg_i = resRange.at(rr_index);
-      double dEdx_i  = dEdx.at(i_hit);
-
-      // Set theoretical Landau distribution for given residual range
-      landau->SetParameters(1,theorypred->Eval(resrg_i,0,"S"),width);
-
-      // Evaluate likelihood
-      double neg2LogL_i = 0.;
-      if (landau->Eval(dEdx_i) == 0){
-        continue;
-        neg2LogL_i = -2*std::log(1e-20);
-      }
-      else{
-        neg2LogL_i = -2*std::log(landau->Eval(dEdx_i));
-        n_hits_used++;
-      }
-
-      neg2LogL += neg2LogL_i;
-/*
-      std::cout << "Algorithm --- " << std::endl
-        << "   theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl
-        << "   theorypred->Eval(" << resrg_i << ") = " << theorypred->Eval(resrg_i) << std::endl
-        << "   landau->Eval(" << dEdx_i << ") = " << landau->Eval(dEdx_i) << std::endl
-        << "   neg2logL(i) = " << neg2LogL_i << std::endl
-        << "   neg2logL total = " << neg2LogL << std::endl;
-*/
-    } // Loop over i_hit
-
-    if (n_hits_used == 0)
+    } // residual range shift
+    
+    if (n_hits_used_total == 0)
       return 9999999;
-    else return neg2LogL/n_hits_used;
+    else return minLLNdf;
 
   } // getneglogL
 
