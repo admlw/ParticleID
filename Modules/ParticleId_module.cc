@@ -207,7 +207,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       // and PID might not be accurate
       //if (nDaughters == 0){
 
-	std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
+    //std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
 
 	// ------ Algorithm 1:
 	// ------ PIDA ------ //
@@ -332,13 +332,16 @@ void UBPID::ParticleId::produce(art::Event & e)
 
 	// -------------------------------------------------------------------------- //
 	// Finally, fill product with the variables that we calculated above and make assns
-									   
-    particleIDCollection->push_back(anab::ParticleID(AlgScoresVec));
+
+        std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
+	anab::ParticleID PID_object(AlgScoresVec);
+        std::cout << "hi" << std::endl;
+        particleIDCollection->push_back(PID_object);
 
 
-    std::cout << "[ParticleID]  >> Making assn... " << std::endl;
+        std::cout << "[ParticleID]  >> Making assn... " << std::endl;
 
-    util::CreateAssn(*this, e, *particleIDCollection, track, *trackParticleIdAssn);
+        util::CreateAssn(*this, e, *particleIDCollection, track, *trackParticleIdAssn);
 
   }
 
