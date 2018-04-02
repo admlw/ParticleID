@@ -1,0 +1,44 @@
+#include "services_microboone.fcl"
+#include "messageservice.fcl"
+#include "time_memory_tracker_microboone.fcl"
+
+process_name: particleid
+
+services:
+{
+
+  TFileService:  {fileName: "particleIdValid.root"}
+  TimeTracker:   @local::microboone_time_tracker
+  MemoryTracker: @local::microboone_memory_tracker
+                 @table::microboone_simulation_services
+
+} # services
+
+source:
+{
+
+  module_type: RootInput
+  inputCommands: [ "keep *_*_*_*", "drop sumdata::RunData_*_*_*", "drop *_*_*_UBXSec" ]
+  fileNames : [ "/pnfs/uboone/scratch/users/kduffy/PID/PIDproducer_MCtwotr_v0/5628990_9/mcc8.7_mc_marcosel_twotracks_file425_20180330T163937_pids.root" ]
+}
+
+physics:
+{
+    analyzers:
+    {
+       pidvalid:
+        {
+            module_type:              "ParticleIDValidationPlots"
+            TrackingAlgorithm:        "pandoraNu"
+	    HitProducer:              "pandoraCosmicHitRemoval::McRecoStage2"
+            ParticleIDProducerModule: "pid"
+	    HitTrackAssnName:         "pandoraNu::McRecoStage2"
+  	    HitTruthMatchingAssnName: "crHitRemovalTruthMatch::McRecoStage2"
+        }
+    }
+    
+    validation: [ pidvalid ]
+    end_paths: [ validation ]
+}
+
+services.DetectorClocksService.InheritClockConfig: false
