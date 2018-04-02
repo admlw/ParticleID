@@ -9,9 +9,11 @@ art_make( BASENAME_ONLY
   LIBRARY_NAME uboonecode_uboone_ParticleID
   LIB_LIBRARIES
   uboonecode_uboone_ParticleID_Algorithms
+  uboonecode_uboone_MyClasses
 
   MODULE_LIBRARIES 
   uboonecode_uboone_ParticleID_Algorithms
+  uboonecode_uboone_MyClasses
   larcore_Geometry
   larcore_Geometry_Geometry_service
   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
