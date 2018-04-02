@@ -22,11 +22,13 @@
 
 #include "uboone/ParticleID/Algorithms/WellReconstructedTrackFinder.h"
 
-#include "uboone/MyClasses/BackTrackerTruthMatch.h"
+//#include "uboone/MyClasses/BackTrackerTruthMatch.h"
 
 #include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Hit.h"
 #include "nusimdata/SimulationBase/MCParticle.h"
 #include "lardataobj/AnalysisBase/ParticleID.h"
+#include "lardataobj/AnalysisBase/BackTrackerMatchingData.h"
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -165,7 +167,7 @@ private:
   TH2F *All_Assn_truepi_dQdxtr_len;
   TH2F *All_Assn_trueK_dQdxtr_len;
 
-  TH1F *All_AfroBT_truemu_neglogl_mu;
+  /*TH1F *All_AfroBT_truemu_neglogl_mu;
   TH1F *All_AfroBT_truep_neglogl_mu;
   TH1F *All_AfroBT_truepi_neglogl_mu;
   TH1F *All_AfroBT_trueK_neglogl_mu;
@@ -216,7 +218,7 @@ private:
   TH2F *All_AfroBT_truemu_dQdxtr_len;
   TH2F *All_AfroBT_truep_dQdxtr_len;
   TH2F *All_AfroBT_truepi_dQdxtr_len;
-  TH2F *All_AfroBT_trueK_dQdxtr_len;
+  TH2F *All_AfroBT_trueK_dQdxtr_len;*/
 };
 
 
@@ -344,7 +346,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
 
 
   // ---- All tracks: truth matching using associations
-  All_AfroBT_truemu_neglogl_mu = tfs->make<TH1F>("All_AfroBT_truemu_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true muons;neg2LL_mu;",200,0,200);
+  /*All_AfroBT_truemu_neglogl_mu = tfs->make<TH1F>("All_AfroBT_truemu_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true muons;neg2LL_mu;",200,0,200);
   All_AfroBT_truep_neglogl_mu = tfs->make<TH1F>("All_AfroBT_truep_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true protons;neg2LL_mu;",200,0,200);
   All_AfroBT_truepi_neglogl_mu = tfs->make<TH1F>("All_AfroBT_truepi_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true pions;neg2LL_mu;",200,0,200);
   All_AfroBT_trueK_neglogl_mu = tfs->make<TH1F>("All_AfroBT_trueK_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true kaons;neg2LL_mu;",200,0,200);
@@ -396,7 +398,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   All_AfroBT_truep_dQdxtr_len = tfs->make<TH2F>("All_AfroBT_truep_dQdxtr_len","Well reconstructed tracks (Afro's truth matching), true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
   All_AfroBT_truepi_dQdxtr_len = tfs->make<TH2F>("All_AfroBT_truepi_dQdxtr_len","Well reconstructed tracks (Afro's truth matching), true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
   All_AfroBT_trueK_dQdxtr_len = tfs->make<TH2F>("All_AfroBT_trueK_dQdxtr_len","Well reconstructed tracks (Afro's truth matching), true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  
+  */
 }
 
 void ParticleIDValidationPlots::analyze(art::Event const & e)
@@ -420,7 +422,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     bool isWR = false;
     int WR_pdg = 0;
     int Assn_pdg = 0;
-    int AfroBT_pdg = 0;
+    //int AfroBT_pdg = 0;
 
     // Check if track is well reconstructed, and get true PDG that way
 
@@ -480,11 +482,11 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
     // Get true PDG from backtracker
     
-    BackTrackerTruthMatch backtrackertruthmatch;
+    /*BackTrackerTruthMatch backtrackertruthmatch;
     backtrackertruthmatch.MatchToMCParticle(hitHandle,e,hits_from_track);
     art::Ptr<simb::MCParticle> MCP_BT = backtrackertruthmatch.ReturnMCParticle();
 
-    AfroBT_pdg = MCP_BT->PdgCode();
+    AfroBT_pdg = MCP_BT->PdgCode();*/
 
 
     // ------------------- Now calculate PID variables and fill hists ------------------- //
@@ -627,7 +629,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	WR_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
       // Backtracker truth matching (with Afro's converter)
-      if (TMath::Abs(AfroBT_pdg) == 13){ // True muons
+      /*if (TMath::Abs(AfroBT_pdg) == 13){ // True muons
 	All_AfroBT_truemu_neglogl_mu->Fill(Bragg_mu);
 	All_AfroBT_truemu_neglogl_p->Fill(Bragg_p);
 	All_AfroBT_truemu_neglogl_pi->Fill(Bragg_pi);
@@ -685,7 +687,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_AfroBT_trueK_PIDA->Fill(PIDAval);
 	All_AfroBT_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	All_AfroBT_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-      }
+	}*/
       // Associations truth matching
       if (TMath::Abs(Assn_pdg) == 13){ // True muons
 	All_Assn_truemu_neglogl_mu->Fill(Bragg_mu);
