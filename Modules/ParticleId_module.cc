@@ -48,55 +48,55 @@ namespace UBPID{
 }
 
 class UBPID::ParticleId : public art::EDProducer {
-  public:
-    explicit ParticleId(fhicl::ParameterSet const & p);
-
-    ParticleId();
-    ParticleId(ParticleId const &) = delete;
-    ParticleId(ParticleId &&) = delete;
-    ParticleId & operator = (ParticleId const &) = delete;
-    ParticleId & operator = (ParticleId &&) = delete;
-
-    // Required functions.
-    void produce(art::Event & e) override;
-
-    // Selected optional functions.
-    void beginJob() override;
-    void endJob() override;
-
-    std::vector<double> fv;
+public:
+  explicit ParticleId(fhicl::ParameterSet const & p);
   
-  private:
-
-    // fcl
-    std::string fTrackingAlgo; 
-    std::string fCaloLabel;
-    std::string fPidaType;
-    double fCutDistance;
-    double fCutFraction;
-    double fBraggWidthMu;
-    double fBraggWidthP;
-    double fBraggWidthPi;
-    double fBraggWidthK;
-
-    // fidvol related
-    fidvol::fiducialVolume fid;
-    particleid::PIDA pida;
-
-    // for likelihood-based PID
-    particleid::Bragg_negLogL_Estimator braggcalc;
-
-    // For truncated mean
-    //TruncMean trm;
+  ParticleId();
+  ParticleId(ParticleId const &) = delete;
+  ParticleId(ParticleId &&) = delete;
+  ParticleId & operator = (ParticleId const &) = delete;
+  ParticleId & operator = (ParticleId &&) = delete;
   
-    //other
-    bool isData;
+  // Required functions.
+  void produce(art::Event & e) override;
+  
+  // Selected optional functions.
+  void beginJob() override;
+  void endJob() override;
+  
+  std::vector<double> fv;
+  
+private:
+  
+  // fcl
+  std::string fTrackingAlgo; 
+  std::string fCaloLabel;
+  std::string fPidaType;
+  double fCutDistance;
+  double fCutFraction;
+  double fBraggWidthMu;
+  double fBraggWidthP;
+  double fBraggWidthPi;
+  double fBraggWidthK;
+  
+  // fidvol related
+  fidvol::fiducialVolume fid;
+  particleid::PIDA pida;
+  
+  // for likelihood-based PID
+  particleid::Bragg_negLogL_Estimator braggcalc;
+  
+  // For truncated mean
+  //TruncMean trm;
+  
+  //other
+  bool isData;
 };
 
 
 UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
 {
-
+  
   // fcl parameters
   fTrackingAlgo = p.get< std::string > ("TrackingAlgorithm");
   fCaloLabel = p.get< std::string > ("CalorimetryModule");
@@ -107,20 +107,20 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   fBraggWidthP  = p.get< double > ("dEdxWidthP",0.2);
   fBraggWidthPi = p.get< double > ("dEdxWidthPi",0.1);
   fBraggWidthK  = p.get< double > ("dEdxWidthK",0.1);
-
+  
   fv = fid.setFiducialVolume(fv, p);
   fid.printFiducialVolume(fv);
-
+  
   braggcalc.setWidthMu(fBraggWidthMu);
   braggcalc.setWidthP(fBraggWidthP);
   braggcalc.setWidthPi(fBraggWidthPi);
   braggcalc.setWidthK(fBraggWidthK);
-
+  
   // this module produces a anab::ParticleID object and
   // an association to the track which produced it
   produces< std::vector<anab::ParticleID> >();
   produces< art::Assns< recob::Track, anab::ParticleID> >();
-
+  
 }
 
 void UBPID::ParticleId::beginJob()
@@ -130,15 +130,15 @@ void UBPID::ParticleId::beginJob()
 
 void UBPID::ParticleId::produce(art::Event & e)
 {
-
+  
   bool isData = e.isRealData();
-
+  
   if (!isData) std::cout << "[ParticleID]  Running Simulated Data" << std::endl;
-
+  
   // produce collection of particleID objects
   std::unique_ptr< std::vector<anab::ParticleID> > particleIDCollection( new std::vector<anab::ParticleID> );
   std::unique_ptr< art::Assns <recob::Track, anab::ParticleID> > trackParticleIdAssn( new art::Assns<recob::Track, anab::ParticleID> );
-
+  
   //
   // get handles to needed information
   //
@@ -148,14 +148,20 @@ void UBPID::ParticleId::produce(art::Event & e)
   e.getByLabel(fTrackingAlgo, trackHandle);
   std::vector< art::Ptr<recob::Track> > trackCollection;
   art::fill_ptr_vector(trackCollection, trackHandle);
-
+  
   // calorimetry object...
   art::FindManyP<anab::Calorimetry> caloFromTracks(trackHandle, e, fCaloLabel);
-
+  
   for (auto& track : trackCollection){
-
+						      
+    // Skip tracks/events wtih no valid calorimetry object associated to it
+    if (!caloFromTracks.isValid()){
+      std::cout << "Did not find valid calorimetry object for this event. Skipping track..." << std::endl;
+      continue;
+    }
+												
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = caloFromTracks.at(track->ID());
-
+		   
     // for time being, only use Y plane calorimetry
     art::Ptr< anab:: Calorimetry > calo;
     for (auto c : caloFromTrack){
@@ -164,6 +170,10 @@ void UBPID::ParticleId::produce(art::Event & e)
       calo = c;
     }
     // Check that caloFromTrack is a valid object? If not, do what? Skip track? Return nothing?
+    if (!calo){
+      std::cout << "Did not find a valid calorimetry object. Skipping track." << std::endl;
+      continue;
+    }
     
     std::vector<double> dEdx = calo->dEdx();
     std::vector<double> dQdx = calo->dQdx();
@@ -217,7 +227,7 @@ void UBPID::ParticleId::produce(art::Event & e)
 
 	AlgScoresVec.push_back(PIDAval);
 	
-	std::cout << "[ParticleID] >> PIDA value: " << PIDAval.fValue << std::endl;
+        //std::cout << "[ParticleID] >> PIDA value: " << PIDAval.fValue << std::endl;
 
 	// ------ Algorithm 2:
 	// ------ Likelihood compared to Bragg peak theoretical prediction ------ //
@@ -318,8 +328,8 @@ void UBPID::ParticleId::produce(art::Event & e)
 
         AlgScoresVec.push_back(dQdxtruncmean);
         AlgScoresVec.push_back(dEdxtruncmean);
-        AlgScoresVec.push_back(trklen);*/
-	
+        AlgScoresVec.push_back(trklen);
+	*/
 	/*  }
 
     } // end if(isContained)
@@ -335,19 +345,17 @@ void UBPID::ParticleId::produce(art::Event & e)
 
         std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
 	anab::ParticleID PID_object(AlgScoresVec);
-        std::cout << "hi" << std::endl;
         particleIDCollection->push_back(PID_object);
 
 
         std::cout << "[ParticleID]  >> Making assn... " << std::endl;
-
         util::CreateAssn(*this, e, *particleIDCollection, track, *trackParticleIdAssn);
 
   }
-
+      
   e.put(std::move(particleIDCollection));
   e.put(std::move(trackParticleIdAssn));
-
+  
 }
 
 
