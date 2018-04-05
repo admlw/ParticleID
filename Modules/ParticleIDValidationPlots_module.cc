@@ -232,7 +232,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   fHitTrackAssns = p.get<std::string>("HitTrackAssnName","pandoraNu::McRecoStage2");
   fTruthMatchingAssns = p.get<std::string>("HitTruthMatchingAssnName","crHitRemovalTruthMatch::McRecoStage2");
   fPIDtag = p.get<std::string>("ParticleIDProducerModule");
-  
+
   // ---- Well reconstructed
   WR_truemu_neglogl_mu = tfs->make<TH1F>("WR_truemu_neglogl_mu","Well reconstructed tracks, true muons;neg2LL_mu;",200,0,200);
   WR_truep_neglogl_mu = tfs->make<TH1F>("WR_truep_neglogl_mu","Well reconstructed tracks, true protons;neg2LL_mu;",200,0,200);
@@ -250,7 +250,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   WR_truep_neglogl_K = tfs->make<TH1F>("WR_truep_neglogl_K","Well reconstructed tracks, true protons;neg2LL_K;",200,0,200);
   WR_truepi_neglogl_K = tfs->make<TH1F>("WR_truepi_neglogl_K","Well reconstructed tracks, true pions;neg2LL_K;",200,0,200);
   WR_trueK_neglogl_K = tfs->make<TH1F>("WR_trueK_neglogl_K","Well reconstructed tracks, true kaons;neg2LL_K;",200,0,200);
-  
+
   WR_truemu_pull_mu = tfs->make<TH1F>("WR_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
   WR_truep_pull_mu = tfs->make<TH1F>("WR_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
   WR_truepi_pull_mu = tfs->make<TH1F>("WR_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
@@ -306,7 +306,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   All_Assn_truep_neglogl_K = tfs->make<TH1F>("All_Assn_truep_neglogl_K","Well reconstructed tracks (associations truth matching), true protons;neg2LL_K;",200,0,200);
   All_Assn_truepi_neglogl_K = tfs->make<TH1F>("All_Assn_truepi_neglogl_K","Well reconstructed tracks (associations truth matching), true pions;neg2LL_K;",200,0,200);
   All_Assn_trueK_neglogl_K = tfs->make<TH1F>("All_Assn_trueK_neglogl_K","Well reconstructed tracks (associations truth matching), true kaons;neg2LL_K;",200,0,200);
-  
+
   All_Assn_truemu_pull_mu = tfs->make<TH1F>("All_Assn_truemu_pull_mu","Well reconstructed tracks (associations truth matching), true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
   All_Assn_truep_pull_mu = tfs->make<TH1F>("All_Assn_truep_pull_mu","Well reconstructed tracks (associations truth matching), true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
   All_Assn_truepi_pull_mu = tfs->make<TH1F>("All_Assn_truepi_pull_mu","Well reconstructed tracks (associations truth matching), true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
@@ -362,7 +362,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   All_AfroBT_truep_neglogl_K = tfs->make<TH1F>("All_AfroBT_truep_neglogl_K","Well reconstructed tracks (Afro's truth matching), true protons;neg2LL_K;",200,0,200);
   All_AfroBT_truepi_neglogl_K = tfs->make<TH1F>("All_AfroBT_truepi_neglogl_K","Well reconstructed tracks (Afro's truth matching), true pions;neg2LL_K;",200,0,200);
   All_AfroBT_trueK_neglogl_K = tfs->make<TH1F>("All_AfroBT_trueK_neglogl_K","Well reconstructed tracks (Afro's truth matching), true kaons;neg2LL_K;",200,0,200);
-  
+
   All_AfroBT_truemu_pull_mu = tfs->make<TH1F>("All_AfroBT_truemu_pull_mu","Well reconstructed tracks (Afro's truth matching), true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
   All_AfroBT_truep_pull_mu = tfs->make<TH1F>("All_AfroBT_truep_pull_mu","Well reconstructed tracks (Afro's truth matching), true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
   All_AfroBT_truepi_pull_mu = tfs->make<TH1F>("All_AfroBT_truepi_pull_mu","Well reconstructed tracks (Afro's truth matching), true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
@@ -411,7 +411,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
   art::Handle<std::vector<recob::Hit>> hitHandle;
   e.getByLabel(fHitAlgo, hitHandle);
-  
+
   art::FindManyP<recob::Hit> hits_from_tracks(trackHandle, e, fHitTrackAssns);
   art::FindMany<simb::MCParticle,anab::BackTrackerHitMatchingData> particles_per_hit(hitHandle,e,fTruthMatchingAssns);
 
@@ -419,6 +419,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
   // --------- Loop over tracks in event ---------- //
   for (auto& track : trackCollection){
+    std::cout << "Looking at track with length" << track->Length() << std::endl;
+
     bool isWR = false;
     int WR_pdg = 0;
     int Assn_pdg = 0;
@@ -438,23 +440,23 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
 
     // Get true PDG from associations
-    
+
     std::unordered_map<int,double> trkide;
     double maxe=-1, tote=0;
     simb::MCParticle const* maxp_me = NULL; //pointer for the particle match we will calculate
-    
+
     std::vector<simb::MCParticle const*> particle_vec;
     std::vector<anab::BackTrackerHitMatchingData const*> match_vec;
 
     std::vector<art::Ptr<recob::Hit>> hits_from_track = hits_from_tracks.at(track->ID());
-    
+
     //loop only over our hits
     for(size_t i_h=0; i_h<hits_from_track.size(); ++i_h){
-      
+
       particle_vec.clear(); match_vec.clear();
       particles_per_hit.get(hits_from_track[i_h].key(),particle_vec,match_vec);
       //the .key() gives us the index in the original collection
-      
+
       //loop over particles
       for(size_t i_p=0; i_p<particle_vec.size(); ++i_p){
 	trkide[ particle_vec[i_p]->TrackId() ] += match_vec[i_p]->energy; //store energy per track id
@@ -464,11 +466,11 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	  maxp_me = particle_vec[i_p];
 	}
       }//end loop over particles per hit
-      
+
     }
-    
+
     Assn_pdg = maxp_me->PdgCode();
-    
+
       /*std::cout << std::endl;
       std::cout << "Final Match (Assns: pandoraCosmicHitRemoval) is pdg = " << maxp_me->PdgCode() << " with energy " << maxe << " over " << tote << " (" << maxe/tote << ")"
 		<< " trkid=" << maxp_me->TrackId()
@@ -481,7 +483,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 		<< "," << maxp_me->EndZ() << ")" << std::endl;*/
 
     // Get true PDG from backtracker
-    
+
     /*BackTrackerTruthMatch backtrackertruthmatch;
     backtrackertruthmatch.MatchToMCParticle(hitHandle,e,hits_from_track);
     art::Ptr<simb::MCParticle> MCP_BT = backtrackertruthmatch.ReturnMCParticle();
@@ -495,7 +497,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       std::cout << "trackPIDAssn.isValid() == false. Skipping track." << std::endl;
       continue;
     }
-    
+
     double Bragg_fwd_mu = -999;
     double Bragg_fwd_p = -999;
     double Bragg_fwd_pi = -999;
@@ -508,7 +510,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     double dEdxtruncmean = -999;
     double dQdxtruncmean = -999;
     double trklen = -999;
-    
+
     std::vector<art::Ptr<anab::ParticleID>> trackPID = trackPIDAssn.at(track->ID());
     if (trackPID.size() == 0){
       std::cout << "No track-PID association found for trackID " << track->ID() << ". Skipping track." << std::endl;
@@ -521,7 +523,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     for (size_t i_algscore=0; i_algscore<AlgScoresVec.size(); i_algscore++){
 
       anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
-      
+
       if (AlgScore.fAlgName == "BraggPeakLLH"){
 	if (anab::kVariableType(AlgScore.fVariableType) == anab::kLogL_fwd){
 	  if (AlgScore.fAssumedPdg == 13)   Bragg_fwd_mu = AlgScore.fValue;
@@ -546,11 +548,20 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	if (anab::kVariableType(AlgScore.fVariableType) == anab::kdEdxtruncmean) dEdxtruncmean = AlgScore.fValue;
 	if (anab::kVariableType(AlgScore.fVariableType) == anab::kTrackLength)   trklen = AlgScore.fValue;
       }// if AlgName = TruncatedMean
-      
+
     } // Loop over AlgScoresVec
 
+    // Some couts for debugging
+    std::cout << "From analyzer module:" << std::endl
+              << "neg2LogL mu fwd = " << Bragg_fwd_mu << std::endl
+              << "neg2LogL p fwd = " << Bragg_fwd_p << std::endl
+              << "neg2LogL pi fwd = " << Bragg_fwd_pi << std::endl
+              << "neg2LogL K fwd = " << Bragg_fwd_K << std::endl
+              << "neg2LogL mu bwd = " << Bragg_bwd_mu << std::endl
+              << "neg2LogL p bwd = " << Bragg_bwd_p << std::endl
+              << "neg2LogL pi bwd = " << Bragg_bwd_pi << std::endl
+              << "neg2LogL K bwd = " << Bragg_bwd_K << std::endl;
 
-    
 
     // ---------------- Now let's fill some histograms! ------------------- //
 
@@ -559,7 +570,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     double Bragg_p  = (Bragg_fwd_p  < Bragg_bwd_p  ? Bragg_fwd_p  : Bragg_bwd_p);
     double Bragg_pi = (Bragg_fwd_pi < Bragg_bwd_pi ? Bragg_fwd_pi : Bragg_bwd_pi);
     double Bragg_K  = (Bragg_fwd_K  < Bragg_bwd_K  ? Bragg_fwd_K  : Bragg_bwd_K);
-    
+
     // Calculate likelihood ratio on a scale of 0 to 1
     double Bragg_pull_mu = Bragg_mu/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
     double Bragg_pull_p  = Bragg_p /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
@@ -583,7 +594,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	WR_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	WR_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(WR_pdg) == 2212){ // True protons
 	WR_truep_neglogl_mu->Fill(Bragg_mu);
 	WR_truep_neglogl_p->Fill(Bragg_p);
@@ -598,7 +609,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	WR_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	WR_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(WR_pdg) == 211){ // True pions
 	WR_truepi_neglogl_mu->Fill(Bragg_mu);
 	WR_truepi_neglogl_p->Fill(Bragg_p);
@@ -613,7 +624,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	WR_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	WR_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(WR_pdg) == 321){ // True kaons
 	WR_trueK_neglogl_mu->Fill(Bragg_mu);
 	WR_trueK_neglogl_p->Fill(Bragg_p);
@@ -643,7 +654,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_AfroBT_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	All_AfroBT_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(AfroBT_pdg) == 2212){ // True protons
 	All_AfroBT_truep_neglogl_mu->Fill(Bragg_mu);
 	All_AfroBT_truep_neglogl_p->Fill(Bragg_p);
@@ -658,7 +669,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_AfroBT_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	All_AfroBT_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(AfroBT_pdg) == 211){ // True pions
 	All_AfroBT_truepi_neglogl_mu->Fill(Bragg_mu);
 	All_AfroBT_truepi_neglogl_p->Fill(Bragg_p);
@@ -673,7 +684,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_AfroBT_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	All_AfroBT_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(AfroBT_pdg) == 321){ // True kaons
 	All_AfroBT_trueK_neglogl_mu->Fill(Bragg_mu);
 	All_AfroBT_trueK_neglogl_p->Fill(Bragg_p);
@@ -703,7 +714,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_Assn_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	All_Assn_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(Assn_pdg) == 2212){ // True protons
 	All_Assn_truep_neglogl_mu->Fill(Bragg_mu);
 	All_Assn_truep_neglogl_p->Fill(Bragg_p);
@@ -718,7 +729,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_Assn_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	All_Assn_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(Assn_pdg) == 211){ // True pions
 	All_Assn_truepi_neglogl_mu->Fill(Bragg_mu);
 	All_Assn_truepi_neglogl_p->Fill(Bragg_p);
@@ -733,7 +744,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_Assn_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
 	All_Assn_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
-      
+
       else if (TMath::Abs(Assn_pdg) == 321){ // True kaons
 	All_Assn_trueK_neglogl_mu->Fill(Bragg_mu);
 	All_Assn_trueK_neglogl_p->Fill(Bragg_p);
@@ -749,10 +760,10 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 	All_Assn_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       }
     } // if isWR
-    
+
   } // Loop over tracks
 
-  
+
 }
 
 DEFINE_ART_MODULE(ParticleIDValidationPlots)
