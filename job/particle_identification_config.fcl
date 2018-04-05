@@ -1,0 +1,30 @@
+#include "particle_identification_fiducialvolume.fcl"
+
+#
+# configuration fcl file for particleId fcl parameters
+#
+
+BEGIN_PROLOG
+
+particleidconfig:
+{
+  
+  module_type:                   "ParticleId" 
+  TrackingAlgorithm:             "pandoraNu"
+  CalorimetryModule:             "pandoraNucali"
+  DaughterFinderCutDistance:     5.0
+  DaughterFinderCutFraction:     0.5
+  PIDACalcType:                  "kde"
+
+  # fiducial volume dimensions
+  X_LOW:  10
+  X_HIGH: 10
+  Y_LOW:  10
+  Y_HIGH: 10
+  Z_LOW:  10
+  Z_HIGH: 10
+
+
+}
+
+END_PROLOG
