@@ -35,7 +35,6 @@ particleidconfig:
   EndPointFloatLong:          1.0
   EndPointFloatStepSize:      0.05
 
-
   # fiducial volume dimensions
   X_LOW:  10
   X_HIGH: 10
