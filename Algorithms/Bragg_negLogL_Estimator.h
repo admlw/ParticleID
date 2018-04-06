@@ -19,13 +19,19 @@
 #ifndef BRAGG_NEGLOGL_H
 #define BRAGG_NEGLOGL_H
 
+// cpp
+#include <vector>
+#include <iostream>
+
+// ROOT
 #include "TMath.h"
 #include "TGraph.h"
 #include "TF1.h"
 
-#include <vector>
-#include <iostream>
+// art
+#include "fhiclcpp/ParameterSet.h"
 
+// local
 #include "Theory_dEdx_resrange.h"
 
 namespace particleid{
@@ -33,18 +39,20 @@ namespace particleid{
   class Bragg_negLogL_Estimator{
 
   public:
+    void configure(fhicl::ParameterSet const &p);
+    void printConfiguration();
     double getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward);
-    void setWidthMu(double width){width_mu = width;}
-    void setWidthPi(double width){width_pi = width;}
-    void setWidthK (double width){width_k  = width;}
-    void setWidthP (double width){width_p  = width;}
 
   private:
-    double width_mu = 0.1;
-    double width_pi = 0.1;
-    double width_k  = 0.1;
-    double width_p  = 0.2;
-    
+    double width_mu;
+    double width_pi;
+    double width_k;
+    double width_p;
+ 
+    double endPointFloatShort;
+    double endPointFloatLong;
+    double endPointFloatStepSize;
+
   };
   
 }

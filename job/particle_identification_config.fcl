@@ -1,5 +1,3 @@
-#include "particle_identification_fiducialvolume.fcl"
-
 #
 # configuration fcl file for particleId fcl parameters
 #
@@ -9,12 +7,30 @@ BEGIN_PROLOG
 particleidconfig:
 {
   
-  module_type:                   "ParticleId" 
-  TrackingAlgorithm:             "pandoraNu"
-  CalorimetryModule:             "pandoraNucali"
-  DaughterFinderCutDistance:     5.0
-  DaughterFinderCutFraction:     0.5
-  PIDACalcType:                  "kde"
+  module_type:                "ParticleId" 
+  TrackingAlgorithm:          "pandoraNu"
+  CalorimetryModule:          "pandoraNucali"
+  
+  DaughterFinderCutDistance:  5.0 # cm
+  DaughterFinderCutFraction:  0.5 # fraction of track length
+ 
+  PIDACalcType:               "kde" # mean, median, or kde
+
+  # dEdx widths
+  dEdxWidthP:                 0.2
+  dEdxWidthMu:                0.1
+  dEdxWidthPi:                0.1
+  dEdxWidthK:                 0.1
+
+  # Mis-reco means track end point needs to be allowed to float.
+  # Define the amount we allow the end point of the track to float by: 
+  #   - EndPointFloatShort: how much shorter do we allow the track to be?
+  #   - EndPointFloatLong:  how much longer do we allow the track to be?
+  #   - EndPointFloatStepSize: step size beteween two variables
+  EndPointFloatShort:         -1.0
+  EndPointFloatLong:          1.0
+  EndPointFloatStepSize:      0.05
+
 
   # fiducial volume dimensions
   X_LOW:  10
@@ -23,7 +39,6 @@ particleidconfig:
   Y_HIGH: 10
   Z_LOW:  10
   Z_HIGH: 10
-
 
 }
 

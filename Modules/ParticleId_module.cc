@@ -74,10 +74,6 @@ private:
   std::string fPidaType;
   double fCutDistance;
   double fCutFraction;
-  double fBraggWidthMu;
-  double fBraggWidthP;
-  double fBraggWidthPi;
-  double fBraggWidthK;
   
   // fidvol related
   fidvol::fiducialVolume fid;
@@ -103,19 +99,12 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   fPidaType = p.get< std::string > ("PIDACalcType");
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
-  fBraggWidthMu = p.get< double > ("dEdxWidthMu",0.1);
-  fBraggWidthP  = p.get< double > ("dEdxWidthP",0.2);
-  fBraggWidthPi = p.get< double > ("dEdxWidthPi",0.1);
-  fBraggWidthK  = p.get< double > ("dEdxWidthK",0.1);
   
   fv = fid.setFiducialVolume(fv, p);
   fid.printFiducialVolume(fv);
-  
-  braggcalc.setWidthMu(fBraggWidthMu);
-  braggcalc.setWidthP(fBraggWidthP);
-  braggcalc.setWidthPi(fBraggWidthPi);
-  braggcalc.setWidthK(fBraggWidthK);
-  
+  braggcalc.configure(p);
+  braggcalc.printConfiguration();
+
   // this module produces a anab::ParticleID object and
   // an association to the track which produced it
   produces< std::vector<anab::ParticleID> >();
@@ -130,7 +119,7 @@ void UBPID::ParticleId::beginJob()
 
 void UBPID::ParticleId::produce(art::Event & e)
 {
-  
+
   bool isData = e.isRealData();
   
   if (!isData) std::cout << "[ParticleID]  Running Simulated Data" << std::endl;

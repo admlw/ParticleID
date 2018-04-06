@@ -23,6 +23,32 @@
 
 namespace particleid{
 
+  void Bragg_negLogL_Estimator::configure(fhicl::ParameterSet const &p){
+
+    width_p  = p.get<double>("dEdxWidthP"  , 0.2);
+    width_mu = p.get<double>("dEdxWidthMu" , 0.1);
+    width_pi = p.get<double>("dEdxWidthPi" , 0.1);
+    width_k  = p.get<double>("dEdxWidthK"  , 0.1);
+    
+    endPointFloatShort    = p.get<double>("EndPointFloatShort", -1.0);
+    endPointFloatLong     = p.get<double>("EndPointFloatLong" , 1.0);
+    endPointFloatStepSize = p.get<double>("EndPointFloatStepSize", 0.05);
+
+  }
+
+  void Bragg_negLogL_Estimator::printConfiguration(){
+
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] PRINTING CONFIGURATION: " << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx width: " << width_p  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx width  : " << width_mu << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx width  : " << width_pi << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx width  : " << width_k  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float long  : " << endPointFloatLong  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float short : " << endPointFloatShort  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point step size   : " << endPointFloatStepSize  << std::endl; 
+
+  }
+
   double Bragg_negLogL_Estimator::getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward)
   {
 
@@ -70,8 +96,8 @@ namespace particleid{
     double minLLNdf = 9999999;
     int n_hits_used_total = 0;
 
-    for (double rr_shift = -1.0; rr_shift < 1.0; rr_shift = rr_shift+0.05){
-      
+    for (double rr_shift = endPointFloatShort; rr_shift < endPointFloatLong; rr_shift = rr_shift+endPointFloatStepSize){
+
       // Make neg2LogLikelihood
       double neg2LogL = 0.;
       int n_hits_used = 0;
@@ -120,7 +146,7 @@ namespace particleid{
       }
 
     } // residual range shift
-    
+
     if (n_hits_used_total == 0)
       return 9999999;
     else return minLLNdf;
