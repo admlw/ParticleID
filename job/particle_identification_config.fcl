@@ -17,10 +17,14 @@ particleidconfig:
   PIDACalcType:               "kde" # mean, median, or kde
 
   # dEdx widths
-  dEdxWidthP:                 0.2
-  dEdxWidthMu:                0.1
-  dEdxWidthPi:                0.1
-  dEdxWidthK:                 0.1
+  dEdxLandauWidthP:                 0.09
+  dEdxLandauWidthMu:                0.07
+  dEdxLandauWidthPi:                0.07
+  dEdxLandauWidthK:                 0.07
+  dEdxGausWidthP:                 0.4
+  dEdxGausWidthMu:                0.1
+  dEdxGausWidthPi:                0.1
+  dEdxGausWidthK:                 0.1
 
   # Mis-reco means track end point needs to be allowed to float.
   # Define the amount we allow the end point of the track to float by: 

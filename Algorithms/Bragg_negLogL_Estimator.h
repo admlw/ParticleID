@@ -33,6 +33,7 @@
 
 // local
 #include "Theory_dEdx_resrange.h"
+#include "landauGaussian.h"
 
 namespace particleid{
 
@@ -44,11 +45,15 @@ namespace particleid{
     double getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward);
 
   private:
-    double width_mu;
-    double width_pi;
-    double width_k;
-    double width_p;
- 
+    double gausWidth_mu;
+    double gausWidth_pi;
+    double gausWidth_k;
+    double gausWidth_p;
+    double landauWidth_mu;
+    double landauWidth_pi;
+    double landauWidth_k;
+    double landauWidth_p;
+
     double endPointFloatShort;
     double endPointFloatLong;
     double endPointFloatStepSize;

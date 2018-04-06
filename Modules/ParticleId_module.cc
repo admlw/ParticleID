@@ -36,6 +36,7 @@
 #include "uboone/ParticleID/Algorithms/fiducialVolume.h"
 #include "uboone/ParticleID/Algorithms/PIDA.h"
 #include "uboone/ParticleID/Algorithms/Bragg_negLogL_Estimator.h"
+#include "uboone/ParticleID/Algorithms/landauGaussian.h"
 
 // root includes
 #include "TVector3.h"

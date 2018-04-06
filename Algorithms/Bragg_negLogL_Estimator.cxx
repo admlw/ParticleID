@@ -25,11 +25,14 @@ namespace particleid{
 
   void Bragg_negLogL_Estimator::configure(fhicl::ParameterSet const &p){
 
-    width_p  = p.get<double>("dEdxWidthP"  , 0.2);
-    width_mu = p.get<double>("dEdxWidthMu" , 0.1);
-    width_pi = p.get<double>("dEdxWidthPi" , 0.1);
-    width_k  = p.get<double>("dEdxWidthK"  , 0.1);
-    
+    gausWidth_p  = p.get<double>("dEdxGausWidthP"  , 0.4);
+    gausWidth_mu = p.get<double>("dEdxGausWidthMu" , 0.1);
+    gausWidth_pi = p.get<double>("dEdxGausWidthPi" , 0.1);
+    gausWidth_k  = p.get<double>("dEdxGausWidthK"  , 0.1);
+    landauWidth_p  = p.get<double>("dEdxLandauWidthP"  , 0.09);
+    landauWidth_mu = p.get<double>("dEdxLandauWidthMu" , 0.07);
+    landauWidth_pi = p.get<double>("dEdxLandauWidthPi" , 0.07);
+    landauWidth_k  = p.get<double>("dEdxLandauWidthK"  , 0.07);
     endPointFloatShort    = p.get<double>("EndPointFloatShort", -1.0);
     endPointFloatLong     = p.get<double>("EndPointFloatLong" , 1.0);
     endPointFloatStepSize = p.get<double>("EndPointFloatStepSize", 0.05);
@@ -39,10 +42,14 @@ namespace particleid{
   void Bragg_negLogL_Estimator::printConfiguration(){
 
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] PRINTING CONFIGURATION: " << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx width: " << width_p  << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx width  : " << width_mu << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx width  : " << width_pi << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx width  : " << width_k  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx gaus width : " << gausWidth_p  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx gaus width   : " << gausWidth_mu << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx gaus width   : " << gausWidth_pi << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx gaus width   : " << gausWidth_k  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx landau width : " << landauWidth_p  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx landau width   : " << landauWidth_mu << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx landau width   : " << landauWidth_pi << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx landau width   : " << landauWidth_k  << std::endl; 
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float long  : " << endPointFloatLong  << std::endl; 
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float short : " << endPointFloatShort  << std::endl; 
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point step size   : " << endPointFloatStepSize  << std::endl; 
@@ -58,28 +65,33 @@ namespace particleid{
     // Return an error if user tries to request a different particle type
     Theory_dEdx_resrange theory;
     TGraph *theorypred;
-    double width;
+    double gausWidth;
+    double landauWidth;
     int absph = TMath::Abs(particlehypothesis);
     switch(absph){
       case 13: // muon
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to muon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Muon;
-        width = width_mu;
+        gausWidth = gausWidth_mu;
+        landauWidth = landauWidth_mu;
         break;
       case 2212: // proton
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to proton hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Proton;
-        width = width_p;
+        gausWidth = gausWidth_p;
+        landauWidth = landauWidth_p;
         break;
       case 211: // pion
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to pion hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Pion;
-        width = width_pi;
+        gausWidth = gausWidth_pi;
+        landauWidth = landauWidth_pi;
         break;
       case 321: // kaon
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to kaon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Kaon;
-        width = width_k;
+        gausWidth = gausWidth_k;
+        landauWidth = landauWidth_k;
         break;
       default:
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] ERROR: cannot calculate theoretical prediction for given particle hypothesis: " << particlehypothesis << ". Theoretical predictions are only available for charged muons (+/-13), pions (+/-211), kaons (+/-321), and protons (2212)" << std::endl;
@@ -87,7 +99,7 @@ namespace particleid{
         throw;
     } // switch
 
-    TF1 *landau = new TF1("landau", "landau", 0, 100);
+    TF1 *langaus = new TF1("langaus", landauGaussian, 0, 100, 4);
 
     // Now loop through hits (entries in dEdx and resRange vectors), compare to
     // theoretical prediction, and calculate likelihood
@@ -116,16 +128,16 @@ namespace particleid{
         double dEdx_i  = dEdx.at(i_hit);
 
         // Set theoretical Landau distribution for given residual range
-        landau->SetParameters(1,theorypred->Eval(resrg_i,0,"S"),width);
+        langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S"),1, gausWidth);
 
         // Evaluate likelihood
         double neg2LogL_i = 0.;
-        if (landau->Eval(dEdx_i) == 0){
+        if (langaus->Eval(dEdx_i) == 0){
           continue;
           neg2LogL_i = -2*std::log(1e-20);
         }
         else{
-          neg2LogL_i = -2*std::log(landau->Eval(dEdx_i));
+          neg2LogL_i = -2*std::log(langaus->Eval(dEdx_i));
           n_hits_used++;
         }
 
@@ -134,7 +146,7 @@ namespace particleid{
            std::cout << "Algorithm --- " << std::endl
            << "   theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl
            << "   theorypred->Eval(" << resrg_i << ") = " << theorypred->Eval(resrg_i) << std::endl
-           << "   landau->Eval(" << dEdx_i << ") = " << landau->Eval(dEdx_i) << std::endl
+           << "   langaus->Eval(" << dEdx_i << ") = " << langaus->Eval(dEdx_i) << std::endl
            << "   neg2logL(i) = " << neg2LogL_i << std::endl
            << "   neg2logL total = " << neg2LogL << std::endl;
            */
