@@ -1,5 +1,30 @@
 # Particle ID module
 
-This module is intended to be used for analyses on MicroBooNE. It's currently under active development.
+This package is intended to be used for analyses on MicroBooNE. It's currently under active development. The intention is to have many algorithms produce log-likelihood values for each particle type, and by combining these we will be able to infer the particle type.
 
-The Analyzer provided in the Modules directory has one dependency, the UBXSec module, which can be found here: https://github.com/marcodeltutto/UBXSec. This allows running over events selected by the CC-Inclusive analysis to get selected tracks, which are more likely to be protons than just running over all tracks in the TPC. This dependency can be removed by removing the relevant include statements and the relevant lines in the Modules/CMakeLists.txt file.
+## Dependencies
+
+The producer module has a single dependency: lardataobj feature branch `feature/feature/kduffy_pidrefactor_v1_11_00_04`. This contains an extension to the anab::ParticleID class, in the form of a struct: 
+
+```
+struct sParticleIDAlgScores {
+
+  std::string fAlgName;
+  kVariableType fVariableType;
+  int fAssumedPdg;
+  float fValue;
+  geo::PlaneID fPlaneID;
+
+}
+
+```
+
+which holds the output of any generic PID algorithm.
+
+## Algorithm details
+
+The producer module only makes use of a single algorithm right now. Extension of this is currently being investigated.
+
+__Bragg_negLogL_Estimator__
+This algorithm uses reconstructed hits in the Bragg peak of each track, along with the dE/dx width of each particle species to estimate the likelihood of each data point belonging to each particle species, and then combines those values to get a single likelihood value for the track.
+
