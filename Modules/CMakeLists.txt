@@ -22,6 +22,7 @@ art_make( BASENAME_ONLY
   larevt_Filters
   lardataobj_RawData
   lardataobj_RecoBase
+  lardataobj_AnalysisBase
   lardata_RecoObjects larreco_Deprecated  
   larreco_RecoAlg
   larpandora_LArPandoraInterface
