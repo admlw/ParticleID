@@ -23,6 +23,7 @@ art_make( BASENAME_ONLY
   lardataobj_RawData
   lardataobj_RecoBase
   lardataobj_AnalysisBase
+  larana_TruncatedMean_Algorithm
   lardata_RecoObjects larreco_Deprecated  
   larreco_RecoAlg
   larpandora_LArPandoraInterface
