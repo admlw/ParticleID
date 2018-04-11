@@ -41,18 +41,18 @@ namespace particleid{
 
   void Bragg_negLogL_Estimator::printConfiguration(){
 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] PRINTING CONFIGURATION: " << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx gaus width : " << gausWidth_p  << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx gaus width   : " << gausWidth_mu << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx gaus width   : " << gausWidth_pi << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx gaus width   : " << gausWidth_k  << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx landau width : " << landauWidth_p  << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx landau width   : " << landauWidth_mu << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx landau width   : " << landauWidth_pi << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx landau width   : " << landauWidth_k  << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float long  : " << endPointFloatLong  << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float short : " << endPointFloatShort  << std::endl; 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point step size   : " << endPointFloatStepSize  << std::endl; 
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] PRINTING CONFIGURATION: " << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx gaus width : " << gausWidth_p  << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx gaus width   : " << gausWidth_mu << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx gaus width   : " << gausWidth_pi << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx gaus width   : " << gausWidth_k  << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Proton dE/dx landau width : " << landauWidth_p  << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx landau width   : " << landauWidth_mu << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx landau width   : " << landauWidth_pi << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx landau width   : " << landauWidth_k  << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float long  : " << endPointFloatLong  << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float short : " << endPointFloatShort  << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point step size   : " << endPointFloatStepSize  << std::endl;
 
   }
 
@@ -103,7 +103,7 @@ namespace particleid{
 
     // Now loop through hits (entries in dEdx and resRange vectors), compare to
     // theoretical prediction, and calculate likelihood
-    // rr_shift allows use to shift the residual range so that we 
+    // rr_shift allows use to shift the residual range so that we
     // can account for end point resolution
     double minLLNdf = 9999999;
     int n_hits_used_total = 0;
@@ -127,14 +127,19 @@ namespace particleid{
         double resrg_i = resRange.at(rr_index)+rr_shift;
         double dEdx_i  = dEdx.at(i_hit);
 
+        // Theory values are only defined up to 30 cm residual Range so we
+        // can't compare beyond that
+        if (resrg_i > 30.0) continue;
+
         // Set theoretical Landau distribution for given residual range
+        //if (theorypred->Eval(resrg_i,0,"S") < 0) std::cout << "ERROR theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl;
         langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S"),1, gausWidth);
 
         // Evaluate likelihood
         double neg2LogL_i = 0.;
         if (langaus->Eval(dEdx_i) == 0){
+          //std::cout << "WARNING: langaus->Eval(" << dEdx_i << ") = " << langaus->Eval(dEdx_i) << ". gausWidth = " << gausWidth << ", landauWidth = " << landauWidth << ", peak = " << theorypred->Eval(resrg_i,0,"S") << std::endl;
           continue;
-          neg2LogL_i = -2*std::log(1e-20);
         }
         else{
           neg2LogL_i = -2*std::log(langaus->Eval(dEdx_i));
