@@ -3,11 +3,11 @@
 <!-- project details -->
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_12">
-<!ENTITY name "PIDproducer_MCtwotr_v0">
-<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/kduffy/PID/PIDproducer_MCtwotr_v0">
-<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/kduffy/PID/PIDproducer_MCtwotr_v0">
+<!ENTITY name "PIDproducer_MCtwotr_v1">
+<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/kduffy/PID/PIDproducer_MCtwotr_v1">
+<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/kduffy/PID/PIDproducer_MCtwotr_v1">
 <!ENTITY app_dir "/uboone/app/users/kduffy/CC1pi/CC1pi_uboonecode/srcs/uboonecode/uboone/ParticleID">
-<!ENTITY data_dir "/uboone/data/users/kduffy/PIDproducer_MCtwotr_v0">
+<!ENTITY data_dir "/uboone/data/users/kduffy/PIDproducer_MCtwotr_v1">
 ]>
 
 <job>
