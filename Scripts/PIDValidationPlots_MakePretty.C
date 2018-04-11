@@ -1,4 +1,20 @@
-
+// Macro to make summary/overlaid plots from the output of the
+// ParticleIDValidationPlots module. For now it only makes comparisons
+// between true muons and true protons (because that's what we care about most)
+// but true pion and kaon information is also available so those plots could be made.
+//
+// Run using:
+// ~ root -b
+// root[0] .L PIDValidationPlots_MakePretty.C
+// root[1] PIDValidationPlots_MakePretty("particleIDMeta.root")
+//
+// The output is 1) a set of .pdf plots produced in the current directory, and
+// 2) a root file PIDValidationPlots_out.root containing the same plots, also
+// produced in the current directory. The percentage of particles that are
+// correctly identified (by which we mean: for which the lowest neg2LL is the
+// one corresponding to the correct particle type) is also printed to the screen.
+// 
+// Kirsty Duffy, Fermilab, 11th April 2018
 
 void PIDValidationPlots_MakePretty(std::string inputfile){
 
