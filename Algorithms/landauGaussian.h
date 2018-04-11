@@ -23,8 +23,11 @@ inline Double_t landauGaussian(Double_t *x, Double_t *par){
       Double_t mpshift  = -0.22278298;       // Landau maximum location
 
       // Control constants
-      Double_t np = 100.0;      // number of convolution steps
-      Double_t sc =   5.0;      // convolution extends to +-sc Gaussian sigmas
+      //Double_t np = 100.0;      // number of convolution steps
+      //Double_t sc =   5.0;      // convolution extends to +-sc Gaussian sigmas
+      Double_t np = 1000.0;
+      Double_t sc = par[1]/par[3];
+
 
       // Variables
       Double_t xx;
