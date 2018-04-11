@@ -34,5 +34,13 @@
 # Backup files
 *~
 
+# Things in galleryMacro that we don't want to commit
+galleryMacro/*/*.root
+galleryMacro/*/*.txt
+galleryMacro/*/*list
+galleryMacro/*/*.pdf
+galleryMacro/*.pdf
+galleryMacro/galleryLikelihoodPerTrack/outputplots*
+
 # Directory for anything else we don't want to commit
 ignore/*
