@@ -20,7 +20,6 @@
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
-#include "uboone/ParticleID/Algorithms/WellReconstructedTrackFinder.h"
 #include "uboone/ParticleID/Algorithms/fiducialVolume.h"
 
 //#include "uboone/MyClasses/BackTrackerTruthMatch.h"
@@ -66,179 +65,180 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     std::string fTruthMatchingAssns;
     std::string fPIDtag;
 
-    TH1F *WR_truemu_neglogl_mu;
-    TH1F *WR_truep_neglogl_mu;
-    TH1F *WR_truepi_neglogl_mu;
-    TH1F *WR_trueK_neglogl_mu;
-    TH1F *WR_truemu_neglogl_p;
-    TH1F *WR_truep_neglogl_p;
-    TH1F *WR_truepi_neglogl_p;
-    TH1F *WR_trueK_neglogl_p;
-    TH1F *WR_truemu_neglogl_pi;
-    TH1F *WR_truep_neglogl_pi;
-    TH1F *WR_truepi_neglogl_pi;
-    TH1F *WR_trueK_neglogl_pi;
-    TH1F *WR_truemu_neglogl_K;
-    TH1F *WR_truep_neglogl_K;
-    TH1F *WR_truepi_neglogl_K;
-    TH1F *WR_trueK_neglogl_K;
+    TH1F *TrueBragg_truemu_neglogl_mu;
+    TH1F *TrueBragg_truep_neglogl_mu;
+    TH1F *TrueBragg_truepi_neglogl_mu;
+    TH1F *TrueBragg_trueK_neglogl_mu;
+    TH1F *TrueBragg_truemu_neglogl_p;
+    TH1F *TrueBragg_truep_neglogl_p;
+    TH1F *TrueBragg_truepi_neglogl_p;
+    TH1F *TrueBragg_trueK_neglogl_p;
+    TH1F *TrueBragg_truemu_neglogl_pi;
+    TH1F *TrueBragg_truep_neglogl_pi;
+    TH1F *TrueBragg_truepi_neglogl_pi;
+    TH1F *TrueBragg_trueK_neglogl_pi;
+    TH1F *TrueBragg_truemu_neglogl_K;
+    TH1F *TrueBragg_truep_neglogl_K;
+    TH1F *TrueBragg_truepi_neglogl_K;
+    TH1F *TrueBragg_trueK_neglogl_K;
 
-    TH1F *WR_truemu_pull_mu;
-    TH1F *WR_truep_pull_mu;
-    TH1F *WR_truepi_pull_mu;
-    TH1F *WR_trueK_pull_mu;
-    TH1F *WR_truemu_pull_p;
-    TH1F *WR_truep_pull_p;
-    TH1F *WR_truepi_pull_p;
-    TH1F *WR_trueK_pull_p;
-    TH1F *WR_truemu_pull_pi;
-    TH1F *WR_truep_pull_pi;
-    TH1F *WR_truepi_pull_pi;
-    TH1F *WR_trueK_pull_pi;
-    TH1F *WR_truemu_pull_K;
-    TH1F *WR_truep_pull_K;
-    TH1F *WR_truepi_pull_K;
-    TH1F *WR_trueK_pull_K;
+    TH2F *TrueBragg_truemu_neglogl_muvsp;
+    TH2F *TrueBragg_truep_neglogl_muvsp;
+    TH2F *TrueBragg_truepi_neglogl_muvsp;
+    TH2F *TrueBragg_trueK_neglogl_muvsp;
+    TH2F *TrueBragg_truemu_neglogl_muvspi;
+    TH2F *TrueBragg_truep_neglogl_muvspi;
+    TH2F *TrueBragg_truepi_neglogl_muvspi;
+    TH2F *TrueBragg_trueK_neglogl_muvspi;
 
-    TH1F *WR_truemu_pull_MIP;
-    TH1F *WR_truep_pull_MIP;
-    TH1F *WR_truepi_pull_MIP;
-    TH1F *WR_trueK_pull_MIP;
+    TH1F *TrueBragg_truemu_neglogl_muoverp;
+    TH1F *TrueBragg_truep_neglogl_muoverp;
+    TH1F *TrueBragg_truepi_neglogl_muoverp;
+    TH1F *TrueBragg_trueK_neglogl_muoverp;
+    TH1F *TrueBragg_truemu_neglogl_muminusp;
+    TH1F *TrueBragg_truep_neglogl_muminusp;
+    TH1F *TrueBragg_truepi_neglogl_muminusp;
+    TH1F *TrueBragg_trueK_neglogl_muminusp;
 
-    TH1F *WR_truemu_PIDA;
-    TH1F *WR_truep_PIDA;
-    TH1F *WR_truepi_PIDA;
-    TH1F *WR_trueK_PIDA;
+    TH1F *TrueBragg_truemu_smallest_neglogl;
+    TH1F *TrueBragg_truep_smallest_neglogl;
+    TH1F *TrueBragg_truepi_smallest_neglogl;
+    TH1F *TrueBragg_trueK_smallest_neglogl;
 
-    TH1F *WR_chargeEndOverStart_directionCorrect;
-    TH1F *WR_chargeEndOverStart_directionIncorrect;
-    TH2F *WR_chargeEndOverStartVersusNHits_directionCorrect;
-    TH2F *WR_chargeEndOverStartVersusNHits_directionIncorrect;
+    TH1F *TrueBragg_truemu_pull_mu;
+    TH1F *TrueBragg_truep_pull_mu;
+    TH1F *TrueBragg_truepi_pull_mu;
+    TH1F *TrueBragg_trueK_pull_mu;
+    TH1F *TrueBragg_truemu_pull_p;
+    TH1F *TrueBragg_truep_pull_p;
+    TH1F *TrueBragg_truepi_pull_p;
+    TH1F *TrueBragg_trueK_pull_p;
+    TH1F *TrueBragg_truemu_pull_pi;
+    TH1F *TrueBragg_truep_pull_pi;
+    TH1F *TrueBragg_truepi_pull_pi;
+    TH1F *TrueBragg_trueK_pull_pi;
+    TH1F *TrueBragg_truemu_pull_K;
+    TH1F *TrueBragg_truep_pull_K;
+    TH1F *TrueBragg_truepi_pull_K;
+    TH1F *TrueBragg_trueK_pull_K;
 
-    TH2F *WR_truemu_dEdxtr_len;
-    TH2F *WR_truep_dEdxtr_len;
-    TH2F *WR_truepi_dEdxtr_len;
-    TH2F *WR_trueK_dEdxtr_len;
-    TH2F *WR_truemu_dQdxtr_len;
-    TH2F *WR_truep_dQdxtr_len;
-    TH2F *WR_truepi_dQdxtr_len;
-    TH2F *WR_trueK_dQdxtr_len;
+    TH1F *TrueBragg_truemu_pull_MIP;
+    TH1F *TrueBragg_truep_pull_MIP;
+    TH1F *TrueBragg_truepi_pull_MIP;
+    TH1F *TrueBragg_trueK_pull_MIP;
 
-    TH1F *All_Assn_truemu_neglogl_mu;
-    TH1F *All_Assn_truep_neglogl_mu;
-    TH1F *All_Assn_truepi_neglogl_mu;
-    TH1F *All_Assn_trueK_neglogl_mu;
-    TH1F *All_Assn_truemu_neglogl_p;
-    TH1F *All_Assn_truep_neglogl_p;
-    TH1F *All_Assn_truepi_neglogl_p;
-    TH1F *All_Assn_trueK_neglogl_p;
-    TH1F *All_Assn_truemu_neglogl_pi;
-    TH1F *All_Assn_truep_neglogl_pi;
-    TH1F *All_Assn_truepi_neglogl_pi;
-    TH1F *All_Assn_trueK_neglogl_pi;
-    TH1F *All_Assn_truemu_neglogl_K;
-    TH1F *All_Assn_truep_neglogl_K;
-    TH1F *All_Assn_truepi_neglogl_K;
-    TH1F *All_Assn_trueK_neglogl_K;
+    TH1F *TrueBragg_truemu_PIDA;
+    TH1F *TrueBragg_truep_PIDA;
+    TH1F *TrueBragg_truepi_PIDA;
+    TH1F *TrueBragg_trueK_PIDA;
 
-    TH1F *All_Assn_truemu_pull_mu;
-    TH1F *All_Assn_truep_pull_mu;
-    TH1F *All_Assn_truepi_pull_mu;
-    TH1F *All_Assn_trueK_pull_mu;
-    TH1F *All_Assn_truemu_pull_p;
-    TH1F *All_Assn_truep_pull_p;
-    TH1F *All_Assn_truepi_pull_p;
-    TH1F *All_Assn_trueK_pull_p;
-    TH1F *All_Assn_truemu_pull_pi;
-    TH1F *All_Assn_truep_pull_pi;
-    TH1F *All_Assn_truepi_pull_pi;
-    TH1F *All_Assn_trueK_pull_pi;
-    TH1F *All_Assn_truemu_pull_K;
-    TH1F *All_Assn_truep_pull_K;
-    TH1F *All_Assn_truepi_pull_K;
-    TH1F *All_Assn_trueK_pull_K;
+    TH1F *TrueBragg_chargeEndOverStart_directionCorrect;
+    TH1F *TrueBragg_chargeEndOverStart_directionIncorrect;
+    TH2F *TrueBragg_chargeEndOverStartVersusNHits_directionCorrect;
+    TH2F *TrueBragg_chargeEndOverStartVersusNHits_directionIncorrect;
 
-    TH1F *All_Assn_truemu_pull_MIP;
-    TH1F *All_Assn_truep_pull_MIP;
-    TH1F *All_Assn_truepi_pull_MIP;
-    TH1F *All_Assn_trueK_pull_MIP;
+    TH2F *TrueBragg_chargeEndOverStart_sm0_5_dEdxrr;
+    TH2F *TrueBragg_chargeEndOverStart_gr2_dEdxrr;
+    TH2F *TrueBragg_chargeEndOverStart_0_5to2_dEdxrr;
 
-    TH1F *All_Assn_truemu_PIDA;
-    TH1F *All_Assn_truep_PIDA;
-    TH1F *All_Assn_truepi_PIDA;
-    TH1F *All_Assn_trueK_PIDA;
+    TH2F *TrueBragg_truemu_dEdxtr_len;
+    TH2F *TrueBragg_truep_dEdxtr_len;
+    TH2F *TrueBragg_truepi_dEdxtr_len;
+    TH2F *TrueBragg_trueK_dEdxtr_len;
+    TH2F *TrueBragg_truemu_dQdxtr_len;
+    TH2F *TrueBragg_truep_dQdxtr_len;
+    TH2F *TrueBragg_truepi_dQdxtr_len;
+    TH2F *TrueBragg_trueK_dQdxtr_len;
 
-    TH1F *All_Assn_chargeEndOverStart_directionCorrect;
-    TH1F *All_Assn_chargeEndOverStart_directionIncorrect;
-    TH2F *All_Assn_chargeEndOverStartVersusNHits_directionCorrect;
-    TH2F *All_Assn_chargeEndOverStartVersusNHits_directionIncorrect;
+    TH1F *All_truemu_neglogl_mu;
+    TH1F *All_truep_neglogl_mu;
+    TH1F *All_truepi_neglogl_mu;
+    TH1F *All_trueK_neglogl_mu;
+    TH1F *All_truemu_neglogl_p;
+    TH1F *All_truep_neglogl_p;
+    TH1F *All_truepi_neglogl_p;
+    TH1F *All_trueK_neglogl_p;
+    TH1F *All_truemu_neglogl_pi;
+    TH1F *All_truep_neglogl_pi;
+    TH1F *All_truepi_neglogl_pi;
+    TH1F *All_trueK_neglogl_pi;
+    TH1F *All_truemu_neglogl_K;
+    TH1F *All_truep_neglogl_K;
+    TH1F *All_truepi_neglogl_K;
+    TH1F *All_trueK_neglogl_K;
 
-    TH1F *Contained_Assn_chargeEndOverStart_directionCorrect;
-    TH1F *Contained_Assn_chargeEndOverStart_directionIncorrect;
-    TH2F *Contained_Assn_chargeEndOverStartVersusNHits_directionCorrect;
-    TH2F *Contained_Assn_chargeEndOverStartVersusNHits_directionIncorrect;
+    TH2F *All_truemu_neglogl_muvsp;
+    TH2F *All_truep_neglogl_muvsp;
+    TH2F *All_truepi_neglogl_muvsp;
+    TH2F *All_trueK_neglogl_muvsp;
+    TH2F *All_truemu_neglogl_muvspi;
+    TH2F *All_truep_neglogl_muvspi;
+    TH2F *All_truepi_neglogl_muvspi;
+    TH2F *All_trueK_neglogl_muvspi;
 
-    TH2F *All_Assn_truemu_dEdxtr_len;
-    TH2F *All_Assn_truep_dEdxtr_len;
-    TH2F *All_Assn_truepi_dEdxtr_len;
-    TH2F *All_Assn_trueK_dEdxtr_len;
-    TH2F *All_Assn_truemu_dQdxtr_len;
-    TH2F *All_Assn_truep_dQdxtr_len;
-    TH2F *All_Assn_truepi_dQdxtr_len;
-    TH2F *All_Assn_trueK_dQdxtr_len;
+    TH1F *All_truemu_neglogl_muoverp;
+    TH1F *All_truep_neglogl_muoverp;
+    TH1F *All_truepi_neglogl_muoverp;
+    TH1F *All_trueK_neglogl_muoverp;
+    TH1F *All_truemu_neglogl_muminusp;
+    TH1F *All_truep_neglogl_muminusp;
+    TH1F *All_truepi_neglogl_muminusp;
+    TH1F *All_trueK_neglogl_muminusp;
 
-    /*TH1F *All_AfroBT_truemu_neglogl_mu;
-      TH1F *All_AfroBT_truep_neglogl_mu;
-      TH1F *All_AfroBT_truepi_neglogl_mu;
-      TH1F *All_AfroBT_trueK_neglogl_mu;
-      TH1F *All_AfroBT_truemu_neglogl_p;
-      TH1F *All_AfroBT_truep_neglogl_p;
-      TH1F *All_AfroBT_truepi_neglogl_p;
-      TH1F *All_AfroBT_trueK_neglogl_p;
-      TH1F *All_AfroBT_truemu_neglogl_pi;
-      TH1F *All_AfroBT_truep_neglogl_pi;
-      TH1F *All_AfroBT_truepi_neglogl_pi;
-      TH1F *All_AfroBT_trueK_neglogl_pi;
-      TH1F *All_AfroBT_truemu_neglogl_K;
-      TH1F *All_AfroBT_truep_neglogl_K;
-      TH1F *All_AfroBT_truepi_neglogl_K;
-      TH1F *All_AfroBT_trueK_neglogl_K;
+    TH1F *All_truemu_smallest_neglogl;
+    TH1F *All_truep_smallest_neglogl;
+    TH1F *All_truepi_smallest_neglogl;
+    TH1F *All_trueK_smallest_neglogl;
 
-      TH1F *All_AfroBT_truemu_pull_mu;
-      TH1F *All_AfroBT_truep_pull_mu;
-      TH1F *All_AfroBT_truepi_pull_mu;
-      TH1F *All_AfroBT_trueK_pull_mu;
-      TH1F *All_AfroBT_truemu_pull_p;
-      TH1F *All_AfroBT_truep_pull_p;
-      TH1F *All_AfroBT_truepi_pull_p;
-      TH1F *All_AfroBT_trueK_pull_p;
-      TH1F *All_AfroBT_truemu_pull_pi;
-      TH1F *All_AfroBT_truep_pull_pi;
-      TH1F *All_AfroBT_truepi_pull_pi;
-      TH1F *All_AfroBT_trueK_pull_pi;
-      TH1F *All_AfroBT_truemu_pull_K;
-      TH1F *All_AfroBT_truep_pull_K;
-      TH1F *All_AfroBT_truepi_pull_K;
-      TH1F *All_AfroBT_trueK_pull_K;
+    TH1F *All_truemu_pull_mu;
+    TH1F *All_truep_pull_mu;
+    TH1F *All_truepi_pull_mu;
+    TH1F *All_trueK_pull_mu;
+    TH1F *All_truemu_pull_p;
+    TH1F *All_truep_pull_p;
+    TH1F *All_truepi_pull_p;
+    TH1F *All_trueK_pull_p;
+    TH1F *All_truemu_pull_pi;
+    TH1F *All_truep_pull_pi;
+    TH1F *All_truepi_pull_pi;
+    TH1F *All_trueK_pull_pi;
+    TH1F *All_truemu_pull_K;
+    TH1F *All_truep_pull_K;
+    TH1F *All_truepi_pull_K;
+    TH1F *All_trueK_pull_K;
 
-      TH1F *All_AfroBT_truemu_pull_MIP;
-      TH1F *All_AfroBT_truep_pull_MIP;
-      TH1F *All_AfroBT_truepi_pull_MIP;
-      TH1F *All_AfroBT_trueK_pull_MIP;
+    TH1F *All_truemu_pull_MIP;
+    TH1F *All_truep_pull_MIP;
+    TH1F *All_truepi_pull_MIP;
+    TH1F *All_trueK_pull_MIP;
 
-      TH1F *All_AfroBT_truemu_PIDA;
-      TH1F *All_AfroBT_truep_PIDA;
-      TH1F *All_AfroBT_truepi_PIDA;
-      TH1F *All_AfroBT_trueK_PIDA;
+    TH1F *All_truemu_PIDA;
+    TH1F *All_truep_PIDA;
+    TH1F *All_truepi_PIDA;
+    TH1F *All_trueK_PIDA;
 
-      TH2F *All_AfroBT_truemu_dEdxtr_len;
-      TH2F *All_AfroBT_truep_dEdxtr_len;
-      TH2F *All_AfroBT_truepi_dEdxtr_len;
-      TH2F *All_AfroBT_trueK_dEdxtr_len;
-      TH2F *All_AfroBT_truemu_dQdxtr_len;
-      TH2F *All_AfroBT_truep_dQdxtr_len;
-      TH2F *All_AfroBT_truepi_dQdxtr_len;
-      TH2F *All_AfroBT_trueK_dQdxtr_len;*/
+    TH1F *All_chargeEndOverStart_directionCorrect;
+    TH1F *All_chargeEndOverStart_directionIncorrect;
+    TH2F *All_chargeEndOverStartVersusNHits_directionCorrect;
+    TH2F *All_chargeEndOverStartVersusNHits_directionIncorrect;
+
+    TH1F *Contained_chargeEndOverStart_directionCorrect;
+    TH1F *Contained_chargeEndOverStart_directionIncorrect;
+    TH2F *Contained_chargeEndOverStartVersusNHits_directionCorrect;
+    TH2F *Contained_chargeEndOverStartVersusNHits_directionIncorrect;
+
+    TH2F *All_chargeEndOverStart_sm0_5_dEdxrr;
+    TH2F *All_chargeEndOverStart_gr2_dEdxrr;
+    TH2F *All_chargeEndOverStart_0_5to2_dEdxrr;
+
+    TH2F *All_truemu_dEdxtr_len;
+    TH2F *All_truep_dEdxtr_len;
+    TH2F *All_truepi_dEdxtr_len;
+    TH2F *All_trueK_dEdxtr_len;
+    TH2F *All_truemu_dQdxtr_len;
+    TH2F *All_truep_dQdxtr_len;
+    TH2F *All_truepi_dQdxtr_len;
+    TH2F *All_trueK_dQdxtr_len;
 };
 
 
@@ -257,190 +257,202 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   fid.printFiducialVolume(fv);
 
   // ---- Well reconstructed
-  WR_truemu_neglogl_mu = tfs->make<TH1F>("WR_truemu_neglogl_mu","Well reconstructed tracks, true muons;neg2LL_mu;",200,0,200);
-  WR_truep_neglogl_mu  = tfs->make<TH1F>("WR_truep_neglogl_mu","Well reconstructed tracks, true protons;neg2LL_mu;",200,0,200);
-  WR_truepi_neglogl_mu = tfs->make<TH1F>("WR_truepi_neglogl_mu","Well reconstructed tracks, true pions;neg2LL_mu;",200,0,200);
-  WR_trueK_neglogl_mu  = tfs->make<TH1F>("WR_trueK_neglogl_mu","Well reconstructed tracks, true kaons;neg2LL_mu;",200,0,200);
-  WR_truemu_neglogl_p  = tfs->make<TH1F>("WR_truemu_neglogl_p","Well reconstructed tracks, true muons;neg2LL_p;",200,0,200);
-  WR_truep_neglogl_p   = tfs->make<TH1F>("WR_truep_neglogl_p","Well reconstructed tracks, true protons;neg2LL_p;",200,0,200);
-  WR_truepi_neglogl_p  = tfs->make<TH1F>("WR_truepi_neglogl_p","Well reconstructed tracks, true pions;neg2LL_p;",200,0,200);
-  WR_trueK_neglogl_p   = tfs->make<TH1F>("WR_trueK_neglogl_p","Well reconstructed tracks, true kaons;neg2LL_p;",200,0,200);
-  WR_truemu_neglogl_pi = tfs->make<TH1F>("WR_truemu_neglogl_pi","Well reconstructed tracks, true muons;neg2LL_pi;",200,0,200);
-  WR_truep_neglogl_pi  = tfs->make<TH1F>("WR_truep_neglogl_pi","Well reconstructed tracks, true protons;neg2LL_pi;",200,0,200);
-  WR_truepi_neglogl_pi = tfs->make<TH1F>("WR_truepi_neglogl_pi","Well reconstructed tracks, true pions;neg2LL_pi;",200,0,200);
-  WR_trueK_neglogl_pi  = tfs->make<TH1F>("WR_trueK_neglogl_pi","Well reconstructed tracks, true kaons;neg2LL_pi;",200,0,200);
-  WR_truemu_neglogl_K  = tfs->make<TH1F>("WR_truemu_neglogl_K","Well reconstructed tracks, true muons;neg2LL_K;",200,0,200);
-  WR_truep_neglogl_K   = tfs->make<TH1F>("WR_truep_neglogl_K","Well reconstructed tracks, true protons;neg2LL_K;",200,0,200);
-  WR_truepi_neglogl_K  = tfs->make<TH1F>("WR_truepi_neglogl_K","Well reconstructed tracks, true pions;neg2LL_K;",200,0,200);
-  WR_trueK_neglogl_K   = tfs->make<TH1F>("WR_trueK_neglogl_K","Well reconstructed tracks, true kaons;neg2LL_K;",200,0,200);
+  TrueBragg_truemu_neglogl_mu = tfs->make<TH1F>("TrueBragg_truemu_neglogl_mu","Tracks with true p=0 at end, true muons;neg2LL_mu;",200,0,200);
+  TrueBragg_truep_neglogl_mu  = tfs->make<TH1F>("TrueBragg_truep_neglogl_mu","Tracks with true p=0 at end, true protons;neg2LL_mu;",200,0,200);
+  TrueBragg_truepi_neglogl_mu = tfs->make<TH1F>("TrueBragg_truepi_neglogl_mu","Tracks with true p=0 at end, true pions;neg2LL_mu;",200,0,200);
+  TrueBragg_trueK_neglogl_mu  = tfs->make<TH1F>("TrueBragg_trueK_neglogl_mu","Tracks with true p=0 at end, true kaons;neg2LL_mu;",200,0,200);
+  TrueBragg_truemu_neglogl_p  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_p","Tracks with true p=0 at end, true muons;neg2LL_p;",200,0,200);
+  TrueBragg_truep_neglogl_p   = tfs->make<TH1F>("TrueBragg_truep_neglogl_p","Tracks with true p=0 at end, true protons;neg2LL_p;",200,0,200);
+  TrueBragg_truepi_neglogl_p  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_p","Tracks with true p=0 at end, true pions;neg2LL_p;",200,0,200);
+  TrueBragg_trueK_neglogl_p   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_p","Tracks with true p=0 at end, true kaons;neg2LL_p;",200,0,200);
+  TrueBragg_truemu_neglogl_pi = tfs->make<TH1F>("TrueBragg_truemu_neglogl_pi","Tracks with true p=0 at end, true muons;neg2LL_pi;",200,0,200);
+  TrueBragg_truep_neglogl_pi  = tfs->make<TH1F>("TrueBragg_truep_neglogl_pi","Tracks with true p=0 at end, true protons;neg2LL_pi;",200,0,200);
+  TrueBragg_truepi_neglogl_pi = tfs->make<TH1F>("TrueBragg_truepi_neglogl_pi","Tracks with true p=0 at end, true pions;neg2LL_pi;",200,0,200);
+  TrueBragg_trueK_neglogl_pi  = tfs->make<TH1F>("TrueBragg_trueK_neglogl_pi","Tracks with true p=0 at end, true kaons;neg2LL_pi;",200,0,200);
+  TrueBragg_truemu_neglogl_K  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_K","Tracks with true p=0 at end, true muons;neg2LL_K;",200,0,200);
+  TrueBragg_truep_neglogl_K   = tfs->make<TH1F>("TrueBragg_truep_neglogl_K","Tracks with true p=0 at end, true protons;neg2LL_K;",200,0,200);
+  TrueBragg_truepi_neglogl_K  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_K","Tracks with true p=0 at end, true pions;neg2LL_K;",200,0,200);
+  TrueBragg_trueK_neglogl_K   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_K","Tracks with true p=0 at end, true kaons;neg2LL_K;",200,0,200);
 
-  WR_truemu_pull_mu = tfs->make<TH1F>("WR_truemu_pull_mu","Well reconstructed tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truep_pull_mu  = tfs->make<TH1F>("WR_truep_pull_mu","Well reconstructed tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truepi_pull_mu = tfs->make<TH1F>("WR_truepi_pull_mu","Well reconstructed tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_trueK_pull_mu  = tfs->make<TH1F>("WR_trueK_pull_mu","Well reconstructed tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truemu_pull_p  = tfs->make<TH1F>("WR_truemu_pull_p","Well reconstructed tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truep_pull_p   = tfs->make<TH1F>("WR_truep_pull_p","Well reconstructed tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truepi_pull_p  = tfs->make<TH1F>("WR_truepi_pull_p","Well reconstructed tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_trueK_pull_p   = tfs->make<TH1F>("WR_trueK_pull_p","Well reconstructed tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truemu_pull_pi = tfs->make<TH1F>("WR_truemu_pull_pi","Well reconstructed tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truep_pull_pi  = tfs->make<TH1F>("WR_truep_pull_pi","Well reconstructed tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truepi_pull_pi = tfs->make<TH1F>("WR_truepi_pull_pi","Well reconstructed tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_trueK_pull_pi  = tfs->make<TH1F>("WR_trueK_pull_pi","Well reconstructed tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truemu_pull_K  = tfs->make<TH1F>("WR_truemu_pull_K","Well reconstructed tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truep_pull_K   = tfs->make<TH1F>("WR_truep_pull_K","Well reconstructed tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_truepi_pull_K  = tfs->make<TH1F>("WR_truepi_pull_K","Well reconstructed tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  WR_trueK_pull_K   = tfs->make<TH1F>("WR_trueK_pull_K","Well reconstructed tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truemu_neglogl_muvsp  = tfs->make<TH2F>("TrueBragg_truemu_neglogl_muvsp","Tracks with true p=0 at end, true muons;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  TrueBragg_truep_neglogl_muvsp   = tfs->make<TH2F>("TrueBragg_truep_neglogl_muvsp","Tracks with true p=0 at end, true protons;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  TrueBragg_truepi_neglogl_muvsp  = tfs->make<TH2F>("TrueBragg_truepi_neglogl_muvsp","Tracks with true p=0 at end, true pions;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  TrueBragg_trueK_neglogl_muvsp   = tfs->make<TH2F>("TrueBragg_trueK_neglogl_muvsp","Tracks with true p=0 at end, true kaons;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  TrueBragg_truemu_neglogl_muvspi  = tfs->make<TH2F>("TrueBragg_truemu_neglogl_muvspi","Tracks with true p=0 at end, true muons;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
+  TrueBragg_truep_neglogl_muvspi   = tfs->make<TH2F>("TrueBragg_truep_neglogl_muvspi","Tracks with true p=0 at end, true protons;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
+  TrueBragg_truepi_neglogl_muvspi  = tfs->make<TH2F>("TrueBragg_truepi_neglogl_muvspi","Tracks with true p=0 at end, true pions;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
+  TrueBragg_trueK_neglogl_muvspi   = tfs->make<TH2F>("TrueBragg_trueK_neglogl_muvspi","Tracks with true p=0 at end, true kaons;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
 
-  WR_truemu_pull_MIP = tfs->make<TH1F>("WR_truemu_pull_MIP","Well reconstructed tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  WR_truep_pull_MIP  = tfs->make<TH1F>("WR_truep_pull_MIP","Well reconstructed tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  WR_truepi_pull_MIP = tfs->make<TH1F>("WR_truepi_pull_MIP","Well reconstructed tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  WR_trueK_pull_MIP  = tfs->make<TH1F>("WR_trueK_pull_MIP","Well reconstructed tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  TrueBragg_truemu_neglogl_muoverp  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_muoverp","Tracks with true p=0 at end, true muons;neg2LL_mu/neg2LL_p;",200,0,50);
+  TrueBragg_truep_neglogl_muoverp   = tfs->make<TH1F>("TrueBragg_truep_neglogl_muoverp","Tracks with true p=0 at end, true protons;neg2LL_mu/neg2LL_p;",200,0,50);
+  TrueBragg_truepi_neglogl_muoverp  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_muoverp","Tracks with true p=0 at end, true pions;neg2LL_mu/neg2LL_p;",200,0,50);
+  TrueBragg_trueK_neglogl_muoverp   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_muoverp","Tracks with true p=0 at end, true kaons;neg2LL_mu/neg2LL_p;",200,0,50);
+  TrueBragg_truemu_neglogl_muminusp  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_muminusp","Tracks with true p=0 at end, true muons;neg2LL_mu-neg2LL_p;",200,-100,100);
+  TrueBragg_truep_neglogl_muminusp   = tfs->make<TH1F>("TrueBragg_truep_neglogl_muminusp","Tracks with true p=0 at end, true protons;neg2LL_mu-neg2LL_p;",200,-100,100);
+  TrueBragg_truepi_neglogl_muminusp  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_muminusp","Tracks with true p=0 at end, true pions;neg2LL_mu-neg2LL_p;",200,-100,100);
+  TrueBragg_trueK_neglogl_muminusp   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_muminusp","Tracks with true p=0 at end, true kaons;neg2LL_mu-neg2LL_p;",200,-100,100);
 
-  WR_truemu_PIDA = tfs->make<TH1F>("WR_truemu_PIDA","Well reconstructed tracks, true muons;PIDA;",300,0,30);
-  WR_truep_PIDA  = tfs->make<TH1F>("WR_truep_PIDA","Well reconstructed tracks, true protons;PIDA;",300,0,30);
-  WR_truepi_PIDA = tfs->make<TH1F>("WR_truepi_PIDA","Well reconstructed tracks, true pions;PIDA;",300,0,30);
-  WR_trueK_PIDA  = tfs->make<TH1F>("WR_trueK_PIDA","Well reconstructed tracks, true kaons;PIDA;",300,0,30);
+  const char* particles[4] = {"#mu", "p", "#pi", "K"};
+  TrueBragg_truemu_smallest_neglogl  = tfs->make<TH1F>("TrueBragg_truemu_smallest_neglogl","Tracks with true p=0 at end, true muons;Particle type with smallest neg2LL;",4,0,4);
+  TrueBragg_truep_smallest_neglogl   = tfs->make<TH1F>("TrueBragg_truep_smallest_neglogl","Tracks with true p=0 at end, true protons;Particle type with smallest neg2LL;",4,0,4);
+  TrueBragg_truepi_smallest_neglogl  = tfs->make<TH1F>("TrueBragg_truepi_smallest_neglogl","Tracks with true p=0 at end, true pions;Particle type with smallest neg2LL;",4,0,4);
+  TrueBragg_trueK_smallest_neglogl   = tfs->make<TH1F>("TrueBragg_trueK_smallest_neglogl","Tracks with true p=0 at end, true kaons;Particle type with smallest neg2LL;",4,0,4);
+  for (size_t i=1; i<=4; i++){
+    TrueBragg_truemu_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    TrueBragg_truep_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    TrueBragg_truepi_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    TrueBragg_trueK_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+  }
 
-  WR_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("WR_chargeEndOverStart_directionCorrect", "Well reconstructed tracks;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
-  WR_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("WR_chargeEndOverStart_directionIncorrect", "Well reconstructed tracks;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
+  TrueBragg_truemu_pull_mu = tfs->make<TH1F>("TrueBragg_truemu_pull_mu","Tracks with true p=0 at end, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truep_pull_mu  = tfs->make<TH1F>("TrueBragg_truep_pull_mu","Tracks with true p=0 at end, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truepi_pull_mu = tfs->make<TH1F>("TrueBragg_truepi_pull_mu","Tracks with true p=0 at end, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_trueK_pull_mu  = tfs->make<TH1F>("TrueBragg_trueK_pull_mu","Tracks with true p=0 at end, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truemu_pull_p  = tfs->make<TH1F>("TrueBragg_truemu_pull_p","Tracks with true p=0 at end, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truep_pull_p   = tfs->make<TH1F>("TrueBragg_truep_pull_p","Tracks with true p=0 at end, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truepi_pull_p  = tfs->make<TH1F>("TrueBragg_truepi_pull_p","Tracks with true p=0 at end, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_trueK_pull_p   = tfs->make<TH1F>("TrueBragg_trueK_pull_p","Tracks with true p=0 at end, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truemu_pull_pi = tfs->make<TH1F>("TrueBragg_truemu_pull_pi","Tracks with true p=0 at end, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truep_pull_pi  = tfs->make<TH1F>("TrueBragg_truep_pull_pi","Tracks with true p=0 at end, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truepi_pull_pi = tfs->make<TH1F>("TrueBragg_truepi_pull_pi","Tracks with true p=0 at end, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_trueK_pull_pi  = tfs->make<TH1F>("TrueBragg_trueK_pull_pi","Tracks with true p=0 at end, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truemu_pull_K  = tfs->make<TH1F>("TrueBragg_truemu_pull_K","Tracks with true p=0 at end, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truep_pull_K   = tfs->make<TH1F>("TrueBragg_truep_pull_K","Tracks with true p=0 at end, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_truepi_pull_K  = tfs->make<TH1F>("TrueBragg_truepi_pull_K","Tracks with true p=0 at end, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  TrueBragg_trueK_pull_K   = tfs->make<TH1F>("TrueBragg_trueK_pull_K","Tracks with true p=0 at end, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+
+  TrueBragg_truemu_pull_MIP = tfs->make<TH1F>("TrueBragg_truemu_pull_MIP","Tracks with true p=0 at end, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  TrueBragg_truep_pull_MIP  = tfs->make<TH1F>("TrueBragg_truep_pull_MIP","Tracks with true p=0 at end, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  TrueBragg_truepi_pull_MIP = tfs->make<TH1F>("TrueBragg_truepi_pull_MIP","Tracks with true p=0 at end, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  TrueBragg_trueK_pull_MIP  = tfs->make<TH1F>("TrueBragg_trueK_pull_MIP","Tracks with true p=0 at end, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+
+  TrueBragg_truemu_PIDA = tfs->make<TH1F>("TrueBragg_truemu_PIDA","Tracks with true p=0 at end, true muons;PIDA;",300,0,30);
+  TrueBragg_truep_PIDA  = tfs->make<TH1F>("TrueBragg_truep_PIDA","Tracks with true p=0 at end, true protons;PIDA;",300,0,30);
+  TrueBragg_truepi_PIDA = tfs->make<TH1F>("TrueBragg_truepi_PIDA","Tracks with true p=0 at end, true pions;PIDA;",300,0,30);
+  TrueBragg_trueK_PIDA  = tfs->make<TH1F>("TrueBragg_trueK_PIDA","Tracks with true p=0 at end, true kaons;PIDA;",300,0,30);
+
+  TrueBragg_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("TrueBragg_chargeEndOverStart_directionCorrect", "Tracks with true p=0 at end;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
+  TrueBragg_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("TrueBragg_chargeEndOverStart_directionIncorrect", "Tracks with true p=0 at end;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
   ;
-  WR_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("WR_chargeEndOverStartVersusNHits_directionCorrect", "Well reconstructed tracks;Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
-  WR_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("WR_chargeEndOverStartVersusNHits_directionIncorrect", "Well reconstructed tracks;Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
+  TrueBragg_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("TrueBragg_chargeEndOverStartVersusNHits_directionCorrect", "Tracks with true p=0 at end;Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
+  TrueBragg_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("TrueBragg_chargeEndOverStartVersusNHits_directionIncorrect", "Tracks with true p=0 at end;Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
   ;
 
-  WR_truemu_dEdxtr_len = tfs->make<TH2F>("WR_truemu_dEdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  WR_truep_dEdxtr_len  = tfs->make<TH2F>("WR_truep_dEdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  WR_truepi_dEdxtr_len = tfs->make<TH2F>("WR_truepi_dEdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-  WR_trueK_dEdxtr_len  = tfs->make<TH2F>("WR_trueK_dEdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  WR_truemu_dQdxtr_len = tfs->make<TH2F>("WR_truemu_dQdxtr_len","Well reconstructed tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  WR_truep_dQdxtr_len  = tfs->make<TH2F>("WR_truep_dQdxtr_len","Well reconstructed tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  WR_truepi_dQdxtr_len = tfs->make<TH2F>("WR_truepi_dQdxtr_len","Well reconstructed tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  WR_trueK_dQdxtr_len  = tfs->make<TH2F>("WR_trueK_dQdxtr_len","Well reconstructed tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  TrueBragg_chargeEndOverStart_sm0_5_dEdxrr = tfs->make<TH2F>("TrueBragg_chargeEndOverStart_sm0_5_dEdxrr","Tracks with true p=0 at end (end/start average charge < 0.5);Residual range (cm); dEdx",150,0,30,200,0,50);
+  TrueBragg_chargeEndOverStart_gr2_dEdxrr = tfs->make<TH2F>("TrueBragg_chargeEndOverStart_gr2_dEdxrr","Tracks with true p=0 at end (end/start average charge > 2);Residual range (cm); dEdx",150,0,30,200,0,50);
+  TrueBragg_chargeEndOverStart_0_5to2_dEdxrr = tfs->make<TH2F>("TrueBragg_chargeEndOverStart_0_5to2_dEdxrr","Tracks with true p=0 at end (end/start average charge = 0.5 - 2);Residual range (cm); dEdx",150,0,30,200,0,50);
+
+  TrueBragg_truemu_dEdxtr_len = tfs->make<TH2F>("TrueBragg_truemu_dEdxtr_len","All tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  TrueBragg_truep_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_truep_dEdxtr_len","All tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  TrueBragg_truepi_dEdxtr_len = tfs->make<TH2F>("TrueBragg_truepi_dEdxtr_len","All tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
+  TrueBragg_trueK_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_trueK_dEdxtr_len","All tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  TrueBragg_truemu_dQdxtr_len = tfs->make<TH2F>("TrueBragg_truemu_dQdxtr_len","All tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  TrueBragg_truep_dQdxtr_len  = tfs->make<TH2F>("TrueBragg_truep_dQdxtr_len","All tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  TrueBragg_truepi_dQdxtr_len = tfs->make<TH2F>("TrueBragg_truepi_dQdxtr_len","All tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  TrueBragg_trueK_dQdxtr_len  = tfs->make<TH2F>("TrueBragg_trueK_dQdxtr_len","All tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
 
   // ---- All tracks: truth matching using associations
-  All_Assn_truemu_neglogl_mu = tfs->make<TH1F>("All_Assn_truemu_neglogl_mu","Well reconstructed tracks (associations truth matching), true muons;neg2LL_mu;",200,0,200);
-  All_Assn_truep_neglogl_mu  = tfs->make<TH1F>("All_Assn_truep_neglogl_mu","Well reconstructed tracks (associations truth matching), true protons;neg2LL_mu;",200,0,200);
-  All_Assn_truepi_neglogl_mu = tfs->make<TH1F>("All_Assn_truepi_neglogl_mu","Well reconstructed tracks (associations truth matching), true pions;neg2LL_mu;",200,0,200);
-  All_Assn_trueK_neglogl_mu  = tfs->make<TH1F>("All_Assn_trueK_neglogl_mu","Well reconstructed tracks (associations truth matching), true kaons;neg2LL_mu;",200,0,200);
-  All_Assn_truemu_neglogl_p  = tfs->make<TH1F>("All_Assn_truemu_neglogl_p","Well reconstructed tracks (associations truth matching), true muons;neg2LL_p;",200,0,200);
-  All_Assn_truep_neglogl_p   = tfs->make<TH1F>("All_Assn_truep_neglogl_p","Well reconstructed tracks (associations truth matching), true protons;neg2LL_p;",200,0,200);
-  All_Assn_truepi_neglogl_p  = tfs->make<TH1F>("All_Assn_truepi_neglogl_p","Well reconstructed tracks (associations truth matching), true pions;neg2LL_p;",200,0,200);
-  All_Assn_trueK_neglogl_p   = tfs->make<TH1F>("All_Assn_trueK_neglogl_p","Well reconstructed tracks (associations truth matching), true kaons;neg2LL_p;",200,0,200);
-  All_Assn_truemu_neglogl_pi = tfs->make<TH1F>("All_Assn_truemu_neglogl_pi","Well reconstructed tracks (associations truth matching), true muons;neg2LL_pi;",200,0,200);
-  All_Assn_truep_neglogl_pi  = tfs->make<TH1F>("All_Assn_truep_neglogl_pi","Well reconstructed tracks (associations truth matching), true protons;neg2LL_pi;",200,0,200);
-  All_Assn_truepi_neglogl_pi = tfs->make<TH1F>("All_Assn_truepi_neglogl_pi","Well reconstructed tracks (associations truth matching), true pions;neg2LL_pi;",200,0,200);
-  All_Assn_trueK_neglogl_pi  = tfs->make<TH1F>("All_Assn_trueK_neglogl_pi","Well reconstructed tracks (associations truth matching), true kaons;neg2LL_pi;",200,0,200);
-  All_Assn_truemu_neglogl_K  = tfs->make<TH1F>("All_Assn_truemu_neglogl_K","Well reconstructed tracks (associations truth matching), true muons;neg2LL_K;",200,0,200);
-  All_Assn_truep_neglogl_K   = tfs->make<TH1F>("All_Assn_truep_neglogl_K","Well reconstructed tracks (associations truth matching), true protons;neg2LL_K;",200,0,200);
-  All_Assn_truepi_neglogl_K  = tfs->make<TH1F>("All_Assn_truepi_neglogl_K","Well reconstructed tracks (associations truth matching), true pions;neg2LL_K;",200,0,200);
-  All_Assn_trueK_neglogl_K   = tfs->make<TH1F>("All_Assn_trueK_neglogl_K","Well reconstructed tracks (associations truth matching), true kaons;neg2LL_K;",200,0,200);
+  All_truemu_neglogl_mu = tfs->make<TH1F>("All_truemu_neglogl_mu","All tracks, true muons;neg2LL_mu;",200,0,200);
+  All_truep_neglogl_mu  = tfs->make<TH1F>("All_truep_neglogl_mu","All tracks, true protons;neg2LL_mu;",200,0,200);
+  All_truepi_neglogl_mu = tfs->make<TH1F>("All_truepi_neglogl_mu","All tracks, true pions;neg2LL_mu;",200,0,200);
+  All_trueK_neglogl_mu  = tfs->make<TH1F>("All_trueK_neglogl_mu","All tracks, true kaons;neg2LL_mu;",200,0,200);
+  All_truemu_neglogl_p  = tfs->make<TH1F>("All_truemu_neglogl_p","All tracks, true muons;neg2LL_p;",200,0,200);
+  All_truep_neglogl_p   = tfs->make<TH1F>("All_truep_neglogl_p","All tracks, true protons;neg2LL_p;",200,0,200);
+  All_truepi_neglogl_p  = tfs->make<TH1F>("All_truepi_neglogl_p","All tracks, true pions;neg2LL_p;",200,0,200);
+  All_trueK_neglogl_p   = tfs->make<TH1F>("All_trueK_neglogl_p","All tracks, true kaons;neg2LL_p;",200,0,200);
+  All_truemu_neglogl_pi = tfs->make<TH1F>("All_truemu_neglogl_pi","All tracks, true muons;neg2LL_pi;",200,0,200);
+  All_truep_neglogl_pi  = tfs->make<TH1F>("All_truep_neglogl_pi","All tracks, true protons;neg2LL_pi;",200,0,200);
+  All_truepi_neglogl_pi = tfs->make<TH1F>("All_truepi_neglogl_pi","All tracks, true pions;neg2LL_pi;",200,0,200);
+  All_trueK_neglogl_pi  = tfs->make<TH1F>("All_trueK_neglogl_pi","All tracks, true kaons;neg2LL_pi;",200,0,200);
+  All_truemu_neglogl_K  = tfs->make<TH1F>("All_truemu_neglogl_K","All tracks, true muons;neg2LL_K;",200,0,200);
+  All_truep_neglogl_K   = tfs->make<TH1F>("All_truep_neglogl_K","All tracks, true protons;neg2LL_K;",200,0,200);
+  All_truepi_neglogl_K  = tfs->make<TH1F>("All_truepi_neglogl_K","All tracks, true pions;neg2LL_K;",200,0,200);
+  All_trueK_neglogl_K   = tfs->make<TH1F>("All_trueK_neglogl_K","All tracks, true kaons;neg2LL_K;",200,0,200);
 
-  All_Assn_truemu_pull_mu = tfs->make<TH1F>("All_Assn_truemu_pull_mu","Well reconstructed tracks (associations truth matching), true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truep_pull_mu  = tfs->make<TH1F>("All_Assn_truep_pull_mu","Well reconstructed tracks (associations truth matching), true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truepi_pull_mu = tfs->make<TH1F>("All_Assn_truepi_pull_mu","Well reconstructed tracks (associations truth matching), true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_trueK_pull_mu  = tfs->make<TH1F>("All_Assn_trueK_pull_mu","Well reconstructed tracks (associations truth matching), true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truemu_pull_p  = tfs->make<TH1F>("All_Assn_truemu_pull_p","Well reconstructed tracks (associations truth matching), true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truep_pull_p   = tfs->make<TH1F>("All_Assn_truep_pull_p","Well reconstructed tracks (associations truth matching), true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truepi_pull_p  = tfs->make<TH1F>("All_Assn_truepi_pull_p","Well reconstructed tracks (associations truth matching), true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_trueK_pull_p   = tfs->make<TH1F>("All_Assn_trueK_pull_p","Well reconstructed tracks (associations truth matching), true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truemu_pull_pi = tfs->make<TH1F>("All_Assn_truemu_pull_pi","Well reconstructed tracks (associations truth matching), true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truep_pull_pi  = tfs->make<TH1F>("All_Assn_truep_pull_pi","Well reconstructed tracks (associations truth matching), true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truepi_pull_pi = tfs->make<TH1F>("All_Assn_truepi_pull_pi","Well reconstructed tracks (associations truth matching), true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_trueK_pull_pi  = tfs->make<TH1F>("All_Assn_trueK_pull_pi","Well reconstructed tracks (associations truth matching), true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truemu_pull_K  = tfs->make<TH1F>("All_Assn_truemu_pull_K","Well reconstructed tracks (associations truth matching), true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truep_pull_K   = tfs->make<TH1F>("All_Assn_truep_pull_K","Well reconstructed tracks (associations truth matching), true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_truepi_pull_K  = tfs->make<TH1F>("All_Assn_truepi_pull_K","Well reconstructed tracks (associations truth matching), true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_Assn_trueK_pull_K   = tfs->make<TH1F>("All_Assn_trueK_pull_K","Well reconstructed tracks (associations truth matching), true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truemu_neglogl_muvsp  = tfs->make<TH2F>("All_truemu_neglogl_muvsp","All tracks, true muons;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  All_truep_neglogl_muvsp   = tfs->make<TH2F>("All_truep_neglogl_muvsp","All tracks, true protons;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  All_truepi_neglogl_muvsp  = tfs->make<TH2F>("All_truepi_neglogl_muvsp","All tracks, true pions;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  All_trueK_neglogl_muvsp   = tfs->make<TH2F>("All_trueK_neglogl_muvsp","All tracks, true kaons;neg2LL_mu;neg2LL_p",200,0,200,200,0,200);
+  All_truemu_neglogl_muvspi  = tfs->make<TH2F>("All_truemu_neglogl_muvspi","All tracks, true muons;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
+  All_truep_neglogl_muvspi   = tfs->make<TH2F>("All_truep_neglogl_muvspi","All tracks, true protons;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
+  All_truepi_neglogl_muvspi  = tfs->make<TH2F>("All_truepi_neglogl_muvspi","All tracks, true pions;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
+  All_trueK_neglogl_muvspi   = tfs->make<TH2F>("All_trueK_neglogl_muvspi","All tracks, true kaons;neg2LL_mu;neg2LL_pi",200,0,200,200,0,200);
 
-  All_Assn_truemu_pull_MIP = tfs->make<TH1F>("All_Assn_truemu_pull_MIP","Well reconstructed tracks (associations truth matching), true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  All_Assn_truep_pull_MIP  = tfs->make<TH1F>("All_Assn_truep_pull_MIP","Well reconstructed tracks (associations truth matching), true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  All_Assn_truepi_pull_MIP = tfs->make<TH1F>("All_Assn_truepi_pull_MIP","Well reconstructed tracks (associations truth matching), true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  All_Assn_trueK_pull_MIP  = tfs->make<TH1F>("All_Assn_trueK_pull_MIP","Well reconstructed tracks (associations truth matching), true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_truemu_neglogl_muoverp  = tfs->make<TH1F>("All_truemu_neglogl_muoverp","All tracks, true muons;neg2LL_mu/neg2LL_p;",200,0,50);
+  All_truep_neglogl_muoverp   = tfs->make<TH1F>("All_truep_neglogl_muoverp","All tracks, true protons;neg2LL_mu/neg2LL_p;",200,0,50);
+  All_truepi_neglogl_muoverp  = tfs->make<TH1F>("All_truepi_neglogl_muoverp","All tracks, true pions;neg2LL_mu/neg2LL_p;",200,0,50);
+  All_trueK_neglogl_muoverp   = tfs->make<TH1F>("All_trueK_neglogl_muoverp","All tracks, true kaons;neg2LL_mu/neg2LL_p;",200,0,50);
+  All_truemu_neglogl_muminusp  = tfs->make<TH1F>("All_truemu_neglogl_muminusp","All tracks, true muons;neg2LL_mu-neg2LL_p;",200,-100,100);
+  All_truep_neglogl_muminusp   = tfs->make<TH1F>("All_truep_neglogl_muminusp","All tracks, true protons;neg2LL_mu-neg2LL_p;",200,-100,100);
+  All_truepi_neglogl_muminusp  = tfs->make<TH1F>("All_truepi_neglogl_muminusp","All tracks, true pions;neg2LL_mu-neg2LL_p;",200,-100,100);
+  All_trueK_neglogl_muminusp   = tfs->make<TH1F>("All_trueK_neglogl_muminusp","All tracks, true kaons;neg2LL_K;",200,-100,100);
 
-  All_Assn_truemu_PIDA = tfs->make<TH1F>("All_Assn_truemu_PIDA","Well reconstructed tracks (associations truth matching), true muons;PIDA;",300,0,30);
-  All_Assn_truep_PIDA  = tfs->make<TH1F>("All_Assn_truep_PIDA","Well reconstructed tracks (associations truth matching), true protons;PIDA;",300,0,30);
-  All_Assn_truepi_PIDA = tfs->make<TH1F>("All_Assn_truepi_PIDA","Well reconstructed tracks (associations truth matching), true pions;PIDA;",300,0,30);
-  All_Assn_trueK_PIDA  = tfs->make<TH1F>("All_Assn_trueK_PIDA","Well reconstructed tracks (associations truth matching), true kaons;PIDA;",300,0,30);
+  All_truemu_smallest_neglogl  = tfs->make<TH1F>("All_truemu_smallest_neglogl","All tracks, true muons;Particle type with smallest neg2LL;",4,0,4);
+  All_truep_smallest_neglogl   = tfs->make<TH1F>("All_truep_smallest_neglogl","All tracks, true protons;Particle type with smallest neg2LL;",4,0,4);
+  All_truepi_smallest_neglogl  = tfs->make<TH1F>("All_truepi_smallest_neglogl","All tracks, true pions;Particle type with smallest neg2LL;",4,0,4);
+  All_trueK_smallest_neglogl   = tfs->make<TH1F>("All_trueK_smallest_neglogl","All tracks, true kaons;Particle type with smallest neg2LL;",4,0,4);
+  for (size_t i=1; i<=4; i++){
+    All_truemu_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    All_truep_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    All_truepi_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    All_trueK_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
+  }
 
-  All_Assn_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("All_Assn_chargeEndOverStart_directionCorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
-  All_Assn_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("All_Assn_chargeEndOverStart_directionIncorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
+  All_truemu_pull_mu = tfs->make<TH1F>("All_truemu_pull_mu","All tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truep_pull_mu  = tfs->make<TH1F>("All_truep_pull_mu","All tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truepi_pull_mu = tfs->make<TH1F>("All_truepi_pull_mu","All tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_trueK_pull_mu  = tfs->make<TH1F>("All_trueK_pull_mu","All tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truemu_pull_p  = tfs->make<TH1F>("All_truemu_pull_p","All tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truep_pull_p   = tfs->make<TH1F>("All_truep_pull_p","All tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truepi_pull_p  = tfs->make<TH1F>("All_truepi_pull_p","All tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_trueK_pull_p   = tfs->make<TH1F>("All_trueK_pull_p","All tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truemu_pull_pi = tfs->make<TH1F>("All_truemu_pull_pi","All tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truep_pull_pi  = tfs->make<TH1F>("All_truep_pull_pi","All tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truepi_pull_pi = tfs->make<TH1F>("All_truepi_pull_pi","All tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_trueK_pull_pi  = tfs->make<TH1F>("All_trueK_pull_pi","All tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truemu_pull_K  = tfs->make<TH1F>("All_truemu_pull_K","All tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truep_pull_K   = tfs->make<TH1F>("All_truep_pull_K","All tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_truepi_pull_K  = tfs->make<TH1F>("All_truepi_pull_K","All tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+  All_trueK_pull_K   = tfs->make<TH1F>("All_trueK_pull_K","All tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
+
+  All_truemu_pull_MIP = tfs->make<TH1F>("All_truemu_pull_MIP","All tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_truep_pull_MIP  = tfs->make<TH1F>("All_truep_pull_MIP","All tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_truepi_pull_MIP = tfs->make<TH1F>("All_truepi_pull_MIP","All tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+  All_trueK_pull_MIP  = tfs->make<TH1F>("All_trueK_pull_MIP","All tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
+
+  All_truemu_PIDA = tfs->make<TH1F>("All_truemu_PIDA","All tracks, true muons;PIDA;",300,0,30);
+  All_truep_PIDA  = tfs->make<TH1F>("All_truep_PIDA","All tracks, true protons;PIDA;",300,0,30);
+  All_truepi_PIDA = tfs->make<TH1F>("All_truepi_PIDA","All tracks, true pions;PIDA;",300,0,30);
+  All_trueK_PIDA  = tfs->make<TH1F>("All_trueK_PIDA","All tracks, true kaons;PIDA;",300,0,30);
+
+  All_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("All_chargeEndOverStart_directionCorrect", "All tracks;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
+  All_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("All_chargeEndOverStart_directionIncorrect", "All tracks;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
   ;
-  All_Assn_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("All_Assn_chargeEndOverStartVersusNHits_directionCorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
-  All_Assn_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("All_Assn_chargeEndOverStartVersusNHits_directionIncorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
+  All_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("All_chargeEndOverStartVersusNHits_directionCorrect", "All tracks;Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
+  All_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("All_chargeEndOverStartVersusNHits_directionIncorrect", "All tracks;Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
   ;
 
-  Contained_Assn_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("Contained_Assn_chargeEndOverStart_directionCorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
-  Contained_Assn_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("Contained_Assn_chargeEndOverStart_directionIncorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
+  Contained_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("Contained_chargeEndOverStart_directionCorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
+  Contained_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("Contained_chargeEndOverStart_directionIncorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
   ;
-  Contained_Assn_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("Contained_Assn_chargeEndOverStartVersusNHits_directionCorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
-  Contained_Assn_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("Contained_Assn_chargeEndOverStartVersusNHits_directionIncorrect", "Well reconstructed tracks (associations truth matching);Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
+  Contained_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("Contained_chargeEndOverStartVersusNHits_directionCorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
+  Contained_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("Contained_chargeEndOverStartVersusNHits_directionIncorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
   ;
 
-  All_Assn_truemu_dEdxtr_len = tfs->make<TH2F>("All_Assn_truemu_dEdxtr_len","Well reconstructed tracks (associations truth matching), true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  All_Assn_truep_dEdxtr_len  = tfs->make<TH2F>("All_Assn_truep_dEdxtr_len","Well reconstructed tracks (associations truth matching), true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  All_Assn_truepi_dEdxtr_len = tfs->make<TH2F>("All_Assn_truepi_dEdxtr_len","Well reconstructed tracks (associations truth matching), true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-  All_Assn_trueK_dEdxtr_len  = tfs->make<TH2F>("All_Assn_trueK_dEdxtr_len","Well reconstructed tracks (associations truth matching), true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  All_Assn_truemu_dQdxtr_len = tfs->make<TH2F>("All_Assn_truemu_dQdxtr_len","Well reconstructed tracks (associations truth matching), true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  All_Assn_truep_dQdxtr_len  = tfs->make<TH2F>("All_Assn_truep_dQdxtr_len","Well reconstructed tracks (associations truth matching), true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  All_Assn_truepi_dQdxtr_len = tfs->make<TH2F>("All_Assn_truepi_dQdxtr_len","Well reconstructed tracks (associations truth matching), true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  All_Assn_trueK_dQdxtr_len  = tfs->make<TH2F>("All_Assn_trueK_dQdxtr_len","Well reconstructed tracks (associations truth matching), true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_chargeEndOverStart_sm0_5_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_sm0_5_dEdxrr","All tracks (end/start average charge < 0.5);Residual range (cm); dEdx",150,0,30,200,0,50);
+  All_chargeEndOverStart_gr2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_gr2_dEdxrr","All tracks (end/start average charge > 2);Residual range (cm); dEdx",150,0,30,200,0,50);
+  All_chargeEndOverStart_0_5to2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_0_5to2_dEdxrr","All tracks (end/start average charge = 0.5 - 2);Residual range (cm); dEdx",150,0,30,200,0,50);
+
+  All_truemu_dEdxtr_len = tfs->make<TH2F>("All_truemu_dEdxtr_len","All tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_truep_dEdxtr_len  = tfs->make<TH2F>("All_truep_dEdxtr_len","All tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_truepi_dEdxtr_len = tfs->make<TH2F>("All_truepi_dEdxtr_len","All tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_trueK_dEdxtr_len  = tfs->make<TH2F>("All_trueK_dEdxtr_len","All tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
+  All_truemu_dQdxtr_len = tfs->make<TH2F>("All_truemu_dQdxtr_len","All tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_truep_dQdxtr_len  = tfs->make<TH2F>("All_truep_dQdxtr_len","All tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_truepi_dQdxtr_len = tfs->make<TH2F>("All_truepi_dQdxtr_len","All tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
+  All_trueK_dQdxtr_len  = tfs->make<TH2F>("All_trueK_dQdxtr_len","All tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
 
 
-
-  // ---- All tracks: truth matching using associations
-  /*All_AfroBT_truemu_neglogl_mu = tfs->make<TH1F>("All_AfroBT_truemu_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true muons;neg2LL_mu;",200,0,200);
-    All_AfroBT_truep_neglogl_mu = tfs->make<TH1F>("All_AfroBT_truep_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true protons;neg2LL_mu;",200,0,200);
-    All_AfroBT_truepi_neglogl_mu = tfs->make<TH1F>("All_AfroBT_truepi_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true pions;neg2LL_mu;",200,0,200);
-    All_AfroBT_trueK_neglogl_mu = tfs->make<TH1F>("All_AfroBT_trueK_neglogl_mu","Well reconstructed tracks (Afro's truth matching), true kaons;neg2LL_mu;",200,0,200);
-    All_AfroBT_truemu_neglogl_p = tfs->make<TH1F>("All_AfroBT_truemu_neglogl_p","Well reconstructed tracks (Afro's truth matching), true muons;neg2LL_p;",200,0,200);
-    All_AfroBT_truep_neglogl_p = tfs->make<TH1F>("All_AfroBT_truep_neglogl_p","Well reconstructed tracks (Afro's truth matching), true protons;neg2LL_p;",200,0,200);
-    All_AfroBT_truepi_neglogl_p = tfs->make<TH1F>("All_AfroBT_truepi_neglogl_p","Well reconstructed tracks (Afro's truth matching), true pions;neg2LL_p;",200,0,200);
-    All_AfroBT_trueK_neglogl_p = tfs->make<TH1F>("All_AfroBT_trueK_neglogl_p","Well reconstructed tracks (Afro's truth matching), true kaons;neg2LL_p;",200,0,200);
-    All_AfroBT_truemu_neglogl_pi = tfs->make<TH1F>("All_AfroBT_truemu_neglogl_pi","Well reconstructed tracks (Afro's truth matching), true muons;neg2LL_pi;",200,0,200);
-    All_AfroBT_truep_neglogl_pi = tfs->make<TH1F>("All_AfroBT_truep_neglogl_pi","Well reconstructed tracks (Afro's truth matching), true protons;neg2LL_pi;",200,0,200);
-    All_AfroBT_truepi_neglogl_pi = tfs->make<TH1F>("All_AfroBT_truepi_neglogl_pi","Well reconstructed tracks (Afro's truth matching), true pions;neg2LL_pi;",200,0,200);
-    All_AfroBT_trueK_neglogl_pi = tfs->make<TH1F>("All_AfroBT_trueK_neglogl_pi","Well reconstructed tracks (Afro's truth matching), true kaons;neg2LL_pi;",200,0,200);
-    All_AfroBT_truemu_neglogl_K = tfs->make<TH1F>("All_AfroBT_truemu_neglogl_K","Well reconstructed tracks (Afro's truth matching), true muons;neg2LL_K;",200,0,200);
-    All_AfroBT_truep_neglogl_K = tfs->make<TH1F>("All_AfroBT_truep_neglogl_K","Well reconstructed tracks (Afro's truth matching), true protons;neg2LL_K;",200,0,200);
-    All_AfroBT_truepi_neglogl_K = tfs->make<TH1F>("All_AfroBT_truepi_neglogl_K","Well reconstructed tracks (Afro's truth matching), true pions;neg2LL_K;",200,0,200);
-    All_AfroBT_trueK_neglogl_K = tfs->make<TH1F>("All_AfroBT_trueK_neglogl_K","Well reconstructed tracks (Afro's truth matching), true kaons;neg2LL_K;",200,0,200);
-
-    All_AfroBT_truemu_pull_mu = tfs->make<TH1F>("All_AfroBT_truemu_pull_mu","Well reconstructed tracks (Afro's truth matching), true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truep_pull_mu = tfs->make<TH1F>("All_AfroBT_truep_pull_mu","Well reconstructed tracks (Afro's truth matching), true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truepi_pull_mu = tfs->make<TH1F>("All_AfroBT_truepi_pull_mu","Well reconstructed tracks (Afro's truth matching), true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_trueK_pull_mu = tfs->make<TH1F>("All_AfroBT_trueK_pull_mu","Well reconstructed tracks (Afro's truth matching), true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truemu_pull_p = tfs->make<TH1F>("All_AfroBT_truemu_pull_p","Well reconstructed tracks (Afro's truth matching), true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truep_pull_p = tfs->make<TH1F>("All_AfroBT_truep_pull_p","Well reconstructed tracks (Afro's truth matching), true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truepi_pull_p = tfs->make<TH1F>("All_AfroBT_truepi_pull_p","Well reconstructed tracks (Afro's truth matching), true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_trueK_pull_p = tfs->make<TH1F>("All_AfroBT_trueK_pull_p","Well reconstructed tracks (Afro's truth matching), true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truemu_pull_pi = tfs->make<TH1F>("All_AfroBT_truemu_pull_pi","Well reconstructed tracks (Afro's truth matching), true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truep_pull_pi = tfs->make<TH1F>("All_AfroBT_truep_pull_pi","Well reconstructed tracks (Afro's truth matching), true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truepi_pull_pi = tfs->make<TH1F>("All_AfroBT_truepi_pull_pi","Well reconstructed tracks (Afro's truth matching), true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_trueK_pull_pi = tfs->make<TH1F>("All_AfroBT_trueK_pull_pi","Well reconstructed tracks (Afro's truth matching), true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truemu_pull_K = tfs->make<TH1F>("All_AfroBT_truemu_pull_K","Well reconstructed tracks (Afro's truth matching), true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truep_pull_K = tfs->make<TH1F>("All_AfroBT_truep_pull_K","Well reconstructed tracks (Afro's truth matching), true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_truepi_pull_K = tfs->make<TH1F>("All_AfroBT_truepi_pull_K","Well reconstructed tracks (Afro's truth matching), true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-    All_AfroBT_trueK_pull_K = tfs->make<TH1F>("All_AfroBT_trueK_pull_K","Well reconstructed tracks (Afro's truth matching), true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-
-    All_AfroBT_truemu_pull_MIP = tfs->make<TH1F>("All_AfroBT_truemu_pull_MIP","Well reconstructed tracks (Afro's truth matching), true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-    All_AfroBT_truep_pull_MIP = tfs->make<TH1F>("All_AfroBT_truep_pull_MIP","Well reconstructed tracks (Afro's truth matching), true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-    All_AfroBT_truepi_pull_MIP = tfs->make<TH1F>("All_AfroBT_truepi_pull_MIP","Well reconstructed tracks (Afro's truth matching), true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-    All_AfroBT_trueK_pull_MIP = tfs->make<TH1F>("All_AfroBT_trueK_pull_MIP","Well reconstructed tracks (Afro's truth matching), true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-
-    All_AfroBT_truemu_PIDA = tfs->make<TH1F>("All_AfroBT_truemu_PIDA","Well reconstructed tracks (Afro's truth matching), true muons;PIDA;",300,0,30);
-    All_AfroBT_truep_PIDA = tfs->make<TH1F>("All_AfroBT_truep_PIDA","Well reconstructed tracks (Afro's truth matching), true protons;PIDA;",300,0,30);
-    All_AfroBT_truepi_PIDA = tfs->make<TH1F>("All_AfroBT_truepi_PIDA","Well reconstructed tracks (Afro's truth matching), true pions;PIDA;",300,0,30);
-    All_AfroBT_trueK_PIDA = tfs->make<TH1F>("All_AfroBT_trueK_PIDA","Well reconstructed tracks (Afro's truth matching), true kaons;PIDA;",300,0,30);
-
-    All_AfroBT_truemu_dEdxtr_len = tfs->make<TH2F>("All_AfroBT_truemu_dEdxtr_len","Well reconstructed tracks (Afro's truth matching), true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_AfroBT_truep_dEdxtr_len = tfs->make<TH2F>("All_AfroBT_truep_dEdxtr_len","Well reconstructed tracks (Afro's truth matching), true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_AfroBT_truepi_dEdxtr_len = tfs->make<TH2F>("All_AfroBT_truepi_dEdxtr_len","Well reconstructed tracks (Afro's truth matching), true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_AfroBT_trueK_dEdxtr_len = tfs->make<TH2F>("All_AfroBT_trueK_dEdxtr_len","Well reconstructed tracks (Afro's truth matching), true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_AfroBT_truemu_dQdxtr_len = tfs->make<TH2F>("All_AfroBT_truemu_dQdxtr_len","Well reconstructed tracks (Afro's truth matching), true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-    All_AfroBT_truep_dQdxtr_len = tfs->make<TH2F>("All_AfroBT_truep_dQdxtr_len","Well reconstructed tracks (Afro's truth matching), true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-    All_AfroBT_truepi_dQdxtr_len = tfs->make<TH2F>("All_AfroBT_truepi_dQdxtr_len","Well reconstructed tracks (Afro's truth matching), true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-    All_AfroBT_trueK_dQdxtr_len = tfs->make<TH2F>("All_AfroBT_trueK_dQdxtr_len","Well reconstructed tracks (Afro's truth matching), true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-    */
 }
 
 void ParticleIDValidationPlots::analyze(art::Event const & e)
@@ -458,37 +470,14 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
   art::FindMany<simb::MCParticle,anab::BackTrackerHitMatchingData> particles_per_hit(hitHandle,e,fTruthMatchingAssns);
   art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, "pandoraNucali");
 
-  const auto& mcpHandle = e.getValidHandle<std::vector<simb::MCParticle>>("largeant");
-
   // --------- Loop over tracks in event ---------- //
   for (auto& track : trackCollection){
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = calo_from_tracks.at(track->ID());
 
     std::cout << "Looking at track with length" << track->Length() << std::endl;
 
-    bool isWR = false;
-    int WR_pdg = 0;
-    int Assn_pdg = 0;
-    //int AfroBT_pdg = 0;
-
-    double trackZDirection_WR =-999999;
-
-    // Check if track is well reconstructed, and get 
-    // true PDG/track z directions that way
-
-    for (auto const& thisMCP : (*mcpHandle)){
-      if (thisMCP.StatusCode() != 1) continue;
-
-      if (isWellReconstructed((*track), thisMCP)){
-        isWR = true;
-        WR_pdg = thisMCP.PdgCode();
-        trackZDirection_WR = thisMCP.EndZ() - thisMCP.Vz();
-        break;
-      }
-    } // for (auto const& thisMCP : (*mcpHandle))
-
-
     // Get true PDG from associations
+    int True_pdg = 0;
 
     std::unordered_map<int,double> trkide;
     double maxe=-1, tote=0;
@@ -518,7 +507,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
     }
 
-    Assn_pdg = maxp_me->PdgCode();
+    True_pdg = maxp_me->PdgCode();
 
     /*std::cout << std::endl;
       std::cout << "Final Match (Assns: pandoraCosmicHitRemoval) is pdg = " << maxp_me->PdgCode() << " with energy " << maxe << " over " << tote << " (" << maxe/tote << ")"
@@ -531,13 +520,12 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       << "," << maxp_me->EndY()
       << "," << maxp_me->EndZ() << ")" << std::endl;*/
 
-    // Get true PDG from backtracker
-
-    /*BackTrackerTruthMatch backtrackertruthmatch;
-      backtrackertruthmatch.MatchToMCParticle(hitHandle,e,hits_from_track);
-      art::Ptr<simb::MCParticle> MCP_BT = backtrackertruthmatch.ReturnMCParticle();
-
-      AfroBT_pdg = MCP_BT->PdgCode();*/
+    // Check if true particle should have a Bragg peak (if the true MCParticle has zero momentum at the end of the track)
+    bool TrueBragg = false;
+    if (maxp_me->EndPx() == 0 && maxp_me->EndPy() == 0 && maxp_me->EndPz() == 0){
+      TrueBragg = true;
+    }
+    //std::cout << "True particle, EndPx = " << maxp_me->EndPx() << ", EndPy = " << maxp_me->EndPy() << ", EndPz = " << maxp_me->EndPz() << ", TrueBragg = " << TrueBragg << std::endl;
 
     // ------------------- Get Track end hits over track start hits charge -------------- //
     // for time being, only use Y plane calorimetry
@@ -546,6 +534,11 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       int planenum = c->PlaneID().Plane;
       if (planenum != 2) continue; // Only use calorimetry from collection plane
       calo = c;
+    }
+      // Check that caloFromTrack is a valid object? If not, skip track
+    if (!calo){
+      std::cout << "Did not find a valid calorimetry object. Skipping track." << std::endl;
+      continue;
     }
     std::vector<double> dEdx = calo->dEdx();
     std::vector<double> dQdx = calo->dQdx();
@@ -576,46 +569,81 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
     double dEdxStartEndRatio = averagedEdxTrackEnd/averagedEdxTrackStart;
 
+    // ------------------- Make plots of dEdx vs residual range for different track start/end dEdx ratios ------------------- //
+
+    if (dEdxStartEndRatio < 0.5){
+      for (int i=0; i < (int)resRange.size(); i++){
+        All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        if (TrueBragg){
+          TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        }
+      }
+    }
+    else if (dEdxStartEndRatio > 2.0){
+      for (int i=0; i < (int)resRange.size(); i++){
+        All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        if (TrueBragg){
+          TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        }
+      }
+
+    }
+    else {
+      for (int i=0; i < (int)resRange.size(); i++){
+        All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        if (TrueBragg){
+          TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        }
+      }
+    }
+    std::cout << dEdxStartEndRatio << std::endl;
+
     // ------------------- Check track direction ---------------------------------------- //
+    std::cout << "recotrackdir" << std::endl;
+    TVector3 RecoTrackDir(track->End().X()-track->Start().X(),
+                          track->End().Y()-track->Start().Y(),
+                          track->End().Z()-track->Start().Z());
+    RecoTrackDir = RecoTrackDir.Unit();
 
-    // ------- Reco tracks
-    double trackZDirection_reco = track->End().Z() - track->Start().Z();
+    TVector3 True_start(maxp_me->Vx(), maxp_me->Vy(), maxp_me->Vz());
+    TVector3 True_end(maxp_me->EndX(), maxp_me->EndY(), maxp_me->EndZ());
+    TVector3 TrueTrackDir = True_end - True_start;
+    TrueTrackDir = TrueTrackDir.Unit();
 
-    // ------- WR tracks calculated above...
-    if (((trackZDirection_reco <= 0 && trackZDirection_WR <= 0) || (trackZDirection_reco > 0 && trackZDirection_WR > 0)) && trackZDirection_WR !=-999999){
-      // reconstructed correct direction
-      WR_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
-      WR_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
-    }
-    else{
-      WR_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
-      WR_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
-    }
+    /*std::cout << "RecoTrackDir = " ;
+    RecoTrackDir.Print();
+    std::cout << std::endl
+              << "TrueTrackDir = " ;
+    TrueTrackDir.Print();
+    std::cout << std::endl
+              << "RecoTrackDir.Dot(TrueTrackDir) = " << RecoTrackDir.Dot(TrueTrackDir) << std::endl;*/
 
-    // ------- Assn matched
-    double trackZDirection_Assn = maxp_me->EndZ() - maxp_me->Vz();
-    TVector3 All_Assn_start(maxp_me->Vx(), maxp_me->Vy(), maxp_me->Vz());
-    TVector3 All_Assn_end(maxp_me->EndX(), maxp_me->EndY(), maxp_me->EndZ());
-    if ((trackZDirection_reco <= 0 && trackZDirection_Assn <= 0) || (trackZDirection_reco > 0 && trackZDirection_Assn > 0)){
-      // reconstructed correct direction
-      All_Assn_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
-      All_Assn_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
+    // If dot product < 0, track direction is wrong
+    if (RecoTrackDir.Dot(TrueTrackDir) < 0){
+      All_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
+      All_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
 
-      if (fid.isInFiducialVolume(All_Assn_start, fv) && fid.isInFiducialVolume(All_Assn_end, fv)){
-        Contained_Assn_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
-        Contained_Assn_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
+      TrueBragg_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
+      TrueBragg_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
+
+      if (fid.isInFiducialVolume(True_start, fv) && fid.isInFiducialVolume(True_end, fv)){
+        Contained_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
+        Contained_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
       }
     }
-    else{
-      All_Assn_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
-      All_Assn_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
+    else{ // else, track direction is correct
+      All_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
+      All_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
 
-      if (fid.isInFiducialVolume(All_Assn_start, fv) && fid.isInFiducialVolume(All_Assn_end, fv)){
-        Contained_Assn_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
-        Contained_Assn_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
+      TrueBragg_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
+      TrueBragg_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
+
+      if (fid.isInFiducialVolume(True_start, fv) && fid.isInFiducialVolume(True_end, fv)){
+        Contained_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
+        Contained_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
       }
-
     }
+
 
 
     // ------------------- Now calculate PID variables and fill hists ------------------- //
@@ -698,195 +726,214 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     double Bragg_pi = (Bragg_fwd_pi < Bragg_bwd_pi ? Bragg_fwd_pi : Bragg_bwd_pi);
     double Bragg_K  = (Bragg_fwd_K  < Bragg_bwd_K  ? Bragg_fwd_K  : Bragg_bwd_K);
 
+    double Bragg_smallest = std::min({Bragg_mu, Bragg_p, Bragg_pi, Bragg_K});
+    if (Bragg_smallest == Bragg_mu) std::cout << "PID estimate: muon" << std::endl;
+    else if (Bragg_smallest == Bragg_p) std::cout << "PID estimate: proton" << std::endl;
+    else if (Bragg_smallest == Bragg_pi) std::cout << "PID estimate: pion" << std::endl;
+    else if (Bragg_smallest == Bragg_K) std::cout << "PID estimate: kaon" << std::endl;
+
     // Calculate likelihood ratio on a scale of 0 to 1
     double Bragg_pull_mu = Bragg_mu/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
     double Bragg_pull_p  = Bragg_p /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
     double Bragg_pull_pi = Bragg_pi/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
     double Bragg_pull_K  = Bragg_K /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_MIPproton = (Bragg_mu+Bragg_pi)/(Bragg_mu+Bragg_pi+Bragg_p);
+    double Bragg_pull_MIPproton = (Bragg_mu+Bragg_pi)/(2.0*(Bragg_mu+Bragg_pi+Bragg_p));
 
-    if (isWR){
+    if (TrueBragg){
       // Well-reconstructed truth matching
-      if (TMath::Abs(WR_pdg) == 13){ // True muons
-        WR_truemu_neglogl_mu->Fill(Bragg_mu);
-        WR_truemu_neglogl_p->Fill(Bragg_p);
-        WR_truemu_neglogl_pi->Fill(Bragg_pi);
-        WR_truemu_neglogl_K->Fill(Bragg_K);
-        WR_truemu_pull_mu->Fill(Bragg_pull_mu);
-        WR_truemu_pull_p->Fill(Bragg_pull_p);
-        WR_truemu_pull_pi->Fill(Bragg_pull_pi);
-        WR_truemu_pull_K->Fill(Bragg_pull_K);
-        WR_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
-        WR_truemu_PIDA->Fill(PIDAval);
-        WR_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        WR_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      if (TMath::Abs(True_pdg) == 13){ // True muons
+        TrueBragg_truemu_neglogl_mu->Fill(Bragg_mu);
+        TrueBragg_truemu_neglogl_p->Fill(Bragg_p);
+        TrueBragg_truemu_neglogl_pi->Fill(Bragg_pi);
+        TrueBragg_truemu_neglogl_K->Fill(Bragg_K);
+        TrueBragg_truemu_pull_mu->Fill(Bragg_pull_mu);
+        TrueBragg_truemu_pull_p->Fill(Bragg_pull_p);
+        TrueBragg_truemu_pull_pi->Fill(Bragg_pull_pi);
+        TrueBragg_truemu_pull_K->Fill(Bragg_pull_K);
+        TrueBragg_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
+        TrueBragg_truemu_PIDA->Fill(PIDAval);
+        TrueBragg_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+        TrueBragg_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+        TrueBragg_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+        TrueBragg_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+        TrueBragg_truemu_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+        TrueBragg_truemu_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
+
+        if (Bragg_smallest == Bragg_mu) TrueBragg_truemu_smallest_neglogl->Fill(0.5);
+        else if (Bragg_smallest == Bragg_p) TrueBragg_truemu_smallest_neglogl->Fill(1.5);
+        else if (Bragg_smallest == Bragg_pi) TrueBragg_truemu_smallest_neglogl->Fill(2.5);
+        else if (Bragg_smallest == Bragg_K) TrueBragg_truemu_smallest_neglogl->Fill(3.5);
       }
 
-      else if (TMath::Abs(WR_pdg) == 2212){ // True protons
-        WR_truep_neglogl_mu->Fill(Bragg_mu);
-        WR_truep_neglogl_p->Fill(Bragg_p);
-        WR_truep_neglogl_pi->Fill(Bragg_pi);
-        WR_truep_neglogl_K->Fill(Bragg_K);
-        WR_truep_pull_mu->Fill(Bragg_pull_mu);
-        WR_truep_pull_p->Fill(Bragg_pull_p);
-        WR_truep_pull_pi->Fill(Bragg_pull_pi);
-        WR_truep_pull_K->Fill(Bragg_pull_K);
-        WR_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
-        WR_truep_PIDA->Fill(PIDAval);
-        WR_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        WR_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      else if (TMath::Abs(True_pdg) == 2212){ // True protons
+        TrueBragg_truep_neglogl_mu->Fill(Bragg_mu);
+        TrueBragg_truep_neglogl_p->Fill(Bragg_p);
+        TrueBragg_truep_neglogl_pi->Fill(Bragg_pi);
+        TrueBragg_truep_neglogl_K->Fill(Bragg_K);
+        TrueBragg_truep_pull_mu->Fill(Bragg_pull_mu);
+        TrueBragg_truep_pull_p->Fill(Bragg_pull_p);
+        TrueBragg_truep_pull_pi->Fill(Bragg_pull_pi);
+        TrueBragg_truep_pull_K->Fill(Bragg_pull_K);
+        TrueBragg_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
+        TrueBragg_truep_PIDA->Fill(PIDAval);
+        TrueBragg_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+        TrueBragg_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+        TrueBragg_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+        TrueBragg_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+        TrueBragg_truep_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+        TrueBragg_truep_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
+
+        if (Bragg_smallest == Bragg_mu) TrueBragg_truep_smallest_neglogl->Fill(0.5);
+        else if (Bragg_smallest == Bragg_p) TrueBragg_truep_smallest_neglogl->Fill(1.5);
+        else if (Bragg_smallest == Bragg_pi) TrueBragg_truep_smallest_neglogl->Fill(2.5);
+        else if (Bragg_smallest == Bragg_K) TrueBragg_truep_smallest_neglogl->Fill(3.5);
       }
 
-      else if (TMath::Abs(WR_pdg) == 211){ // True pions
-        WR_truepi_neglogl_mu->Fill(Bragg_mu);
-        WR_truepi_neglogl_p->Fill(Bragg_p);
-        WR_truepi_neglogl_pi->Fill(Bragg_pi);
-        WR_truepi_neglogl_K->Fill(Bragg_K);
-        WR_truepi_pull_mu->Fill(Bragg_pull_mu);
-        WR_truepi_pull_p->Fill(Bragg_pull_p);
-        WR_truepi_pull_pi->Fill(Bragg_pull_pi);
-        WR_truepi_pull_K->Fill(Bragg_pull_K);
-        WR_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
-        WR_truepi_PIDA->Fill(PIDAval);
-        WR_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        WR_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      else if (TMath::Abs(True_pdg) == 211){ // True pions
+        TrueBragg_truepi_neglogl_mu->Fill(Bragg_mu);
+        TrueBragg_truepi_neglogl_p->Fill(Bragg_p);
+        TrueBragg_truepi_neglogl_pi->Fill(Bragg_pi);
+        TrueBragg_truepi_neglogl_K->Fill(Bragg_K);
+        TrueBragg_truepi_pull_mu->Fill(Bragg_pull_mu);
+        TrueBragg_truepi_pull_p->Fill(Bragg_pull_p);
+        TrueBragg_truepi_pull_pi->Fill(Bragg_pull_pi);
+        TrueBragg_truepi_pull_K->Fill(Bragg_pull_K);
+        TrueBragg_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
+        TrueBragg_truepi_PIDA->Fill(PIDAval);
+        TrueBragg_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+        TrueBragg_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+        TrueBragg_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+        TrueBragg_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+        TrueBragg_truepi_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+        TrueBragg_truepi_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
+
+        if (Bragg_smallest == Bragg_mu) TrueBragg_truepi_smallest_neglogl->Fill(0.5);
+        else if (Bragg_smallest == Bragg_p) TrueBragg_truepi_smallest_neglogl->Fill(1.5);
+        else if (Bragg_smallest == Bragg_pi) TrueBragg_truepi_smallest_neglogl->Fill(2.5);
+        else if (Bragg_smallest == Bragg_K) TrueBragg_truepi_smallest_neglogl->Fill(3.5);
       }
 
-      else if (TMath::Abs(WR_pdg) == 321){ // True kaons
-        WR_trueK_neglogl_mu->Fill(Bragg_mu);
-        WR_trueK_neglogl_p->Fill(Bragg_p);
-        WR_trueK_neglogl_pi->Fill(Bragg_pi);
-        WR_trueK_neglogl_K->Fill(Bragg_K);
-        WR_trueK_pull_mu->Fill(Bragg_pull_mu);
-        WR_trueK_pull_p->Fill(Bragg_pull_p);
-        WR_trueK_pull_pi->Fill(Bragg_pull_pi);
-        WR_trueK_pull_K->Fill(Bragg_pull_K);
-        WR_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
-        WR_trueK_PIDA->Fill(PIDAval);
-        WR_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        WR_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      else if (TMath::Abs(True_pdg) == 321){ // True kaons
+        TrueBragg_trueK_neglogl_mu->Fill(Bragg_mu);
+        TrueBragg_trueK_neglogl_p->Fill(Bragg_p);
+        TrueBragg_trueK_neglogl_pi->Fill(Bragg_pi);
+        TrueBragg_trueK_neglogl_K->Fill(Bragg_K);
+        TrueBragg_trueK_pull_mu->Fill(Bragg_pull_mu);
+        TrueBragg_trueK_pull_p->Fill(Bragg_pull_p);
+        TrueBragg_trueK_pull_pi->Fill(Bragg_pull_pi);
+        TrueBragg_trueK_pull_K->Fill(Bragg_pull_K);
+        TrueBragg_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
+        TrueBragg_trueK_PIDA->Fill(PIDAval);
+        TrueBragg_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+        TrueBragg_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+        TrueBragg_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+        TrueBragg_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+        TrueBragg_trueK_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+        TrueBragg_trueK_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
+
+        if (Bragg_smallest == Bragg_mu) TrueBragg_trueK_smallest_neglogl->Fill(0.5);
+        else if (Bragg_smallest == Bragg_p) TrueBragg_trueK_smallest_neglogl->Fill(1.5);
+        else if (Bragg_smallest == Bragg_pi) TrueBragg_trueK_smallest_neglogl->Fill(2.5);
+        else if (Bragg_smallest == Bragg_K) TrueBragg_trueK_smallest_neglogl->Fill(3.5);
       }
-      // Backtracker truth matching (with Afro's converter)
-      /*if (TMath::Abs(AfroBT_pdg) == 13){ // True muons
-        All_AfroBT_truemu_neglogl_mu->Fill(Bragg_mu);
-        All_AfroBT_truemu_neglogl_p->Fill(Bragg_p);
-        All_AfroBT_truemu_neglogl_pi->Fill(Bragg_pi);
-        All_AfroBT_truemu_neglogl_K->Fill(Bragg_K);
-        All_AfroBT_truemu_pull_mu->Fill(Bragg_pull_mu);
-        All_AfroBT_truemu_pull_p->Fill(Bragg_pull_p);
-        All_AfroBT_truemu_pull_pi->Fill(Bragg_pull_pi);
-        All_AfroBT_truemu_pull_K->Fill(Bragg_pull_K);
-        All_AfroBT_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_AfroBT_truemu_PIDA->Fill(PIDAval);
-        All_AfroBT_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_AfroBT_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-        }
+    } // end if(TrueBragg)
 
-        else if (TMath::Abs(AfroBT_pdg) == 2212){ // True protons
-        All_AfroBT_truep_neglogl_mu->Fill(Bragg_mu);
-        All_AfroBT_truep_neglogl_p->Fill(Bragg_p);
-        All_AfroBT_truep_neglogl_pi->Fill(Bragg_pi);
-        All_AfroBT_truep_neglogl_K->Fill(Bragg_K);
-        All_AfroBT_truep_pull_mu->Fill(Bragg_pull_mu);
-        All_AfroBT_truep_pull_p->Fill(Bragg_pull_p);
-        All_AfroBT_truep_pull_pi->Fill(Bragg_pull_pi);
-        All_AfroBT_truep_pull_K->Fill(Bragg_pull_K);
-        All_AfroBT_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_AfroBT_truep_PIDA->Fill(PIDAval);
-        All_AfroBT_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_AfroBT_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-        }
+    // All particles
+    if (TMath::Abs(True_pdg) == 13){ // True muons
+      All_truemu_neglogl_mu->Fill(Bragg_mu);
+      All_truemu_neglogl_p->Fill(Bragg_p);
+      All_truemu_neglogl_pi->Fill(Bragg_pi);
+      All_truemu_neglogl_K->Fill(Bragg_K);
+      All_truemu_pull_mu->Fill(Bragg_pull_mu);
+      All_truemu_pull_p->Fill(Bragg_pull_p);
+      All_truemu_pull_pi->Fill(Bragg_pull_pi);
+      All_truemu_pull_K->Fill(Bragg_pull_K);
+      All_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
+      All_truemu_PIDA->Fill(PIDAval);
+      All_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+      All_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      All_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+      All_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+      All_truemu_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+      All_truemu_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
 
-        else if (TMath::Abs(AfroBT_pdg) == 211){ // True pions
-        All_AfroBT_truepi_neglogl_mu->Fill(Bragg_mu);
-        All_AfroBT_truepi_neglogl_p->Fill(Bragg_p);
-        All_AfroBT_truepi_neglogl_pi->Fill(Bragg_pi);
-        All_AfroBT_truepi_neglogl_K->Fill(Bragg_K);
-        All_AfroBT_truepi_pull_mu->Fill(Bragg_pull_mu);
-        All_AfroBT_truepi_pull_p->Fill(Bragg_pull_p);
-        All_AfroBT_truepi_pull_pi->Fill(Bragg_pull_pi);
-        All_AfroBT_truepi_pull_K->Fill(Bragg_pull_K);
-        All_AfroBT_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_AfroBT_truepi_PIDA->Fill(PIDAval);
-        All_AfroBT_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_AfroBT_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-        }
+      if (Bragg_smallest == Bragg_mu) All_truemu_smallest_neglogl->Fill(0.5);
+      else if (Bragg_smallest == Bragg_p) All_truemu_smallest_neglogl->Fill(1.5);
+      else if (Bragg_smallest == Bragg_pi) All_truemu_smallest_neglogl->Fill(2.5);
+      else if (Bragg_smallest == Bragg_K) All_truemu_smallest_neglogl->Fill(3.5);
+    }
 
-        else if (TMath::Abs(AfroBT_pdg) == 321){ // True kaons
-        All_AfroBT_trueK_neglogl_mu->Fill(Bragg_mu);
-        All_AfroBT_trueK_neglogl_p->Fill(Bragg_p);
-        All_AfroBT_trueK_neglogl_pi->Fill(Bragg_pi);
-        All_AfroBT_trueK_neglogl_K->Fill(Bragg_K);
-        All_AfroBT_trueK_pull_mu->Fill(Bragg_pull_mu);
-        All_AfroBT_trueK_pull_p->Fill(Bragg_pull_p);
-        All_AfroBT_trueK_pull_pi->Fill(Bragg_pull_pi);
-        All_AfroBT_trueK_pull_K->Fill(Bragg_pull_K);
-        All_AfroBT_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_AfroBT_trueK_PIDA->Fill(PIDAval);
-        All_AfroBT_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_AfroBT_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-        }*/
-      // Associations truth matching
-      if (TMath::Abs(Assn_pdg) == 13){ // True muons
-        All_Assn_truemu_neglogl_mu->Fill(Bragg_mu);
-        All_Assn_truemu_neglogl_p->Fill(Bragg_p);
-        All_Assn_truemu_neglogl_pi->Fill(Bragg_pi);
-        All_Assn_truemu_neglogl_K->Fill(Bragg_K);
-        All_Assn_truemu_pull_mu->Fill(Bragg_pull_mu);
-        All_Assn_truemu_pull_p->Fill(Bragg_pull_p);
-        All_Assn_truemu_pull_pi->Fill(Bragg_pull_pi);
-        All_Assn_truemu_pull_K->Fill(Bragg_pull_K);
-        All_Assn_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_Assn_truemu_PIDA->Fill(PIDAval);
-        All_Assn_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_Assn_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-      }
+    else if (TMath::Abs(True_pdg) == 2212){ // True protons
+      All_truep_neglogl_mu->Fill(Bragg_mu);
+      All_truep_neglogl_p->Fill(Bragg_p);
+      All_truep_neglogl_pi->Fill(Bragg_pi);
+      All_truep_neglogl_K->Fill(Bragg_K);
+      All_truep_pull_mu->Fill(Bragg_pull_mu);
+      All_truep_pull_p->Fill(Bragg_pull_p);
+      All_truep_pull_pi->Fill(Bragg_pull_pi);
+      All_truep_pull_K->Fill(Bragg_pull_K);
+      All_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
+      All_truep_PIDA->Fill(PIDAval);
+      All_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+      All_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      All_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+      All_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+      All_truep_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+      All_truep_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
 
-      else if (TMath::Abs(Assn_pdg) == 2212){ // True protons
-        All_Assn_truep_neglogl_mu->Fill(Bragg_mu);
-        All_Assn_truep_neglogl_p->Fill(Bragg_p);
-        All_Assn_truep_neglogl_pi->Fill(Bragg_pi);
-        All_Assn_truep_neglogl_K->Fill(Bragg_K);
-        All_Assn_truep_pull_mu->Fill(Bragg_pull_mu);
-        All_Assn_truep_pull_p->Fill(Bragg_pull_p);
-        All_Assn_truep_pull_pi->Fill(Bragg_pull_pi);
-        All_Assn_truep_pull_K->Fill(Bragg_pull_K);
-        All_Assn_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_Assn_truep_PIDA->Fill(PIDAval);
-        All_Assn_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_Assn_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-      }
+      if (Bragg_smallest == Bragg_mu) All_truep_smallest_neglogl->Fill(0.5);
+      else if (Bragg_smallest == Bragg_p) All_truep_smallest_neglogl->Fill(1.5);
+      else if (Bragg_smallest == Bragg_pi) All_truep_smallest_neglogl->Fill(2.5);
+      else if (Bragg_smallest == Bragg_K) All_truep_smallest_neglogl->Fill(3.5);
+    }
 
-      else if (TMath::Abs(Assn_pdg) == 211){ // True pions
-        All_Assn_truepi_neglogl_mu->Fill(Bragg_mu);
-        All_Assn_truepi_neglogl_p->Fill(Bragg_p);
-        All_Assn_truepi_neglogl_pi->Fill(Bragg_pi);
-        All_Assn_truepi_neglogl_K->Fill(Bragg_K);
-        All_Assn_truepi_pull_mu->Fill(Bragg_pull_mu);
-        All_Assn_truepi_pull_p->Fill(Bragg_pull_p);
-        All_Assn_truepi_pull_pi->Fill(Bragg_pull_pi);
-        All_Assn_truepi_pull_K->Fill(Bragg_pull_K);
-        All_Assn_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_Assn_truepi_PIDA->Fill(PIDAval);
-        All_Assn_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_Assn_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-      }
+    else if (TMath::Abs(True_pdg) == 211){ // True pions
+      All_truepi_neglogl_mu->Fill(Bragg_mu);
+      All_truepi_neglogl_p->Fill(Bragg_p);
+      All_truepi_neglogl_pi->Fill(Bragg_pi);
+      All_truepi_neglogl_K->Fill(Bragg_K);
+      All_truepi_pull_mu->Fill(Bragg_pull_mu);
+      All_truepi_pull_p->Fill(Bragg_pull_p);
+      All_truepi_pull_pi->Fill(Bragg_pull_pi);
+      All_truepi_pull_K->Fill(Bragg_pull_K);
+      All_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
+      All_truepi_PIDA->Fill(PIDAval);
+      All_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+      All_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      All_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+      All_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+      All_truepi_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+      All_truepi_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
 
-      else if (TMath::Abs(Assn_pdg) == 321){ // True kaons
-        All_Assn_trueK_neglogl_mu->Fill(Bragg_mu);
-        All_Assn_trueK_neglogl_p->Fill(Bragg_p);
-        All_Assn_trueK_neglogl_pi->Fill(Bragg_pi);
-        All_Assn_trueK_neglogl_K->Fill(Bragg_K);
-        All_Assn_trueK_pull_mu->Fill(Bragg_pull_mu);
-        All_Assn_trueK_pull_p->Fill(Bragg_pull_p);
-        All_Assn_trueK_pull_pi->Fill(Bragg_pull_pi);
-        All_Assn_trueK_pull_K->Fill(Bragg_pull_K);
-        All_Assn_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
-        All_Assn_trueK_PIDA->Fill(PIDAval);
-        All_Assn_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_Assn_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
-      }
-    } // if isWR
+      if (Bragg_smallest == Bragg_mu) All_truepi_smallest_neglogl->Fill(0.5);
+      else if (Bragg_smallest == Bragg_p) All_truepi_smallest_neglogl->Fill(1.5);
+      else if (Bragg_smallest == Bragg_pi) All_truepi_smallest_neglogl->Fill(2.5);
+      else if (Bragg_smallest == Bragg_K) All_truepi_smallest_neglogl->Fill(3.5);
+    }
+
+    else if (TMath::Abs(True_pdg) == 321){ // True kaons
+      All_trueK_neglogl_mu->Fill(Bragg_mu);
+      All_trueK_neglogl_p->Fill(Bragg_p);
+      All_trueK_neglogl_pi->Fill(Bragg_pi);
+      All_trueK_neglogl_K->Fill(Bragg_K);
+      All_trueK_pull_mu->Fill(Bragg_pull_mu);
+      All_trueK_pull_p->Fill(Bragg_pull_p);
+      All_trueK_pull_pi->Fill(Bragg_pull_pi);
+      All_trueK_pull_K->Fill(Bragg_pull_K);
+      All_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
+      All_trueK_PIDA->Fill(PIDAval);
+      All_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+      All_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
+      All_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+      All_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+      All_trueK_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+      All_trueK_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
+
+      if (Bragg_smallest == Bragg_mu) All_trueK_smallest_neglogl->Fill(0.5);
+      else if (Bragg_smallest == Bragg_p) All_trueK_smallest_neglogl->Fill(1.5);
+      else if (Bragg_smallest == Bragg_pi) All_trueK_smallest_neglogl->Fill(2.5);
+      else if (Bragg_smallest == Bragg_K) All_trueK_smallest_neglogl->Fill(3.5);
+    }
 
   } // Loop over tracks
 
