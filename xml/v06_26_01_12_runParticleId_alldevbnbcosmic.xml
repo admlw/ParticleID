@@ -4,10 +4,10 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_12">
 <!ENTITY name "PIDproducer_MCtwotr_alldev_v2">
-<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/kduffy/PID/PIDproducer_MCtwotr_alldev_v2">
-<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/kduffy/PID/PIDproducer_MCtwotr_alldev_v2">
-<!ENTITY app_dir "/uboone/app/users/kduffy/CC1pi/CC1pi_uboonecode/srcs/uboonecode/uboone/ParticleID">
-<!ENTITY data_dir "/uboone/data/users/kduffy/PIDproducer_MCtwotr_alldev_v2">
+<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/alister1/PID/PIDproducer_MCtwotr_alldev_v2">
+<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/alister1/PID/PIDproducer_MCtwotr_alldev_v2">
+<!ENTITY app_dir "/uboone/app/users/alister1/particleID/ubcode_v06_26_01_13/srcs/uboonecode/uboone/ParticleID">
+<!ENTITY data_dir "/uboone/data/users/alister1/PIDproducer_MCtwotr_alldev_v2">
 ]>
 
 <job>
@@ -26,7 +26,7 @@
     <larsoft>
         <tag>&release;</tag>
         <qual>e10:prof</qual>
-        <local>/pnfs/uboone/resilient/users/kduffy/tars/pid_test.tar</local>
+        <local>/pnfs/uboone/resilient/users/alister1/tars/pid_test.tar</local>
     </larsoft>
 
     <!-- diffusion filter -->
@@ -37,9 +37,10 @@
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
+        <numjobs>1</numjobs>
         <numjobs>250</numjobs>
         <maxfilesperjob>4</maxfilesperjob>
-        <memory>8000</memory>
+        <memory>4000</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
         <schema>root</schema>
