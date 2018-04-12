@@ -105,28 +105,6 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH1F *TrueBragg_truepi_smallest_neglogl;
     TH1F *TrueBragg_trueK_smallest_neglogl;
 
-    TH1F *TrueBragg_truemu_pull_mu;
-    TH1F *TrueBragg_truep_pull_mu;
-    TH1F *TrueBragg_truepi_pull_mu;
-    TH1F *TrueBragg_trueK_pull_mu;
-    TH1F *TrueBragg_truemu_pull_p;
-    TH1F *TrueBragg_truep_pull_p;
-    TH1F *TrueBragg_truepi_pull_p;
-    TH1F *TrueBragg_trueK_pull_p;
-    TH1F *TrueBragg_truemu_pull_pi;
-    TH1F *TrueBragg_truep_pull_pi;
-    TH1F *TrueBragg_truepi_pull_pi;
-    TH1F *TrueBragg_trueK_pull_pi;
-    TH1F *TrueBragg_truemu_pull_K;
-    TH1F *TrueBragg_truep_pull_K;
-    TH1F *TrueBragg_truepi_pull_K;
-    TH1F *TrueBragg_trueK_pull_K;
-
-    TH1F *TrueBragg_truemu_pull_MIP;
-    TH1F *TrueBragg_truep_pull_MIP;
-    TH1F *TrueBragg_truepi_pull_MIP;
-    TH1F *TrueBragg_trueK_pull_MIP;
-
     TH1F *TrueBragg_truemu_PIDA;
     TH1F *TrueBragg_truep_PIDA;
     TH1F *TrueBragg_truepi_PIDA;
@@ -145,10 +123,6 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH2F *TrueBragg_truep_dEdxtr_len;
     TH2F *TrueBragg_truepi_dEdxtr_len;
     TH2F *TrueBragg_trueK_dEdxtr_len;
-    TH2F *TrueBragg_truemu_dQdxtr_len;
-    TH2F *TrueBragg_truep_dQdxtr_len;
-    TH2F *TrueBragg_truepi_dQdxtr_len;
-    TH2F *TrueBragg_trueK_dQdxtr_len;
 
     TH1F *All_truemu_neglogl_mu;
     TH1F *All_truep_neglogl_mu;
@@ -190,28 +164,6 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH1F *All_truepi_smallest_neglogl;
     TH1F *All_trueK_smallest_neglogl;
 
-    TH1F *All_truemu_pull_mu;
-    TH1F *All_truep_pull_mu;
-    TH1F *All_truepi_pull_mu;
-    TH1F *All_trueK_pull_mu;
-    TH1F *All_truemu_pull_p;
-    TH1F *All_truep_pull_p;
-    TH1F *All_truepi_pull_p;
-    TH1F *All_trueK_pull_p;
-    TH1F *All_truemu_pull_pi;
-    TH1F *All_truep_pull_pi;
-    TH1F *All_truepi_pull_pi;
-    TH1F *All_trueK_pull_pi;
-    TH1F *All_truemu_pull_K;
-    TH1F *All_truep_pull_K;
-    TH1F *All_truepi_pull_K;
-    TH1F *All_trueK_pull_K;
-
-    TH1F *All_truemu_pull_MIP;
-    TH1F *All_truep_pull_MIP;
-    TH1F *All_truepi_pull_MIP;
-    TH1F *All_trueK_pull_MIP;
-
     TH1F *All_truemu_PIDA;
     TH1F *All_truep_PIDA;
     TH1F *All_truepi_PIDA;
@@ -235,10 +187,6 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH2F *All_truep_dEdxtr_len;
     TH2F *All_truepi_dEdxtr_len;
     TH2F *All_trueK_dEdxtr_len;
-    TH2F *All_truemu_dQdxtr_len;
-    TH2F *All_truep_dQdxtr_len;
-    TH2F *All_truepi_dQdxtr_len;
-    TH2F *All_trueK_dQdxtr_len;
 };
 
 
@@ -304,28 +252,6 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
     TrueBragg_trueK_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
   }
 
-  TrueBragg_truemu_pull_mu = tfs->make<TH1F>("TrueBragg_truemu_pull_mu","Tracks with true p=0 at end, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truep_pull_mu  = tfs->make<TH1F>("TrueBragg_truep_pull_mu","Tracks with true p=0 at end, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truepi_pull_mu = tfs->make<TH1F>("TrueBragg_truepi_pull_mu","Tracks with true p=0 at end, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_trueK_pull_mu  = tfs->make<TH1F>("TrueBragg_trueK_pull_mu","Tracks with true p=0 at end, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truemu_pull_p  = tfs->make<TH1F>("TrueBragg_truemu_pull_p","Tracks with true p=0 at end, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truep_pull_p   = tfs->make<TH1F>("TrueBragg_truep_pull_p","Tracks with true p=0 at end, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truepi_pull_p  = tfs->make<TH1F>("TrueBragg_truepi_pull_p","Tracks with true p=0 at end, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_trueK_pull_p   = tfs->make<TH1F>("TrueBragg_trueK_pull_p","Tracks with true p=0 at end, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truemu_pull_pi = tfs->make<TH1F>("TrueBragg_truemu_pull_pi","Tracks with true p=0 at end, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truep_pull_pi  = tfs->make<TH1F>("TrueBragg_truep_pull_pi","Tracks with true p=0 at end, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truepi_pull_pi = tfs->make<TH1F>("TrueBragg_truepi_pull_pi","Tracks with true p=0 at end, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_trueK_pull_pi  = tfs->make<TH1F>("TrueBragg_trueK_pull_pi","Tracks with true p=0 at end, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truemu_pull_K  = tfs->make<TH1F>("TrueBragg_truemu_pull_K","Tracks with true p=0 at end, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truep_pull_K   = tfs->make<TH1F>("TrueBragg_truep_pull_K","Tracks with true p=0 at end, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_truepi_pull_K  = tfs->make<TH1F>("TrueBragg_truepi_pull_K","Tracks with true p=0 at end, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  TrueBragg_trueK_pull_K   = tfs->make<TH1F>("TrueBragg_trueK_pull_K","Tracks with true p=0 at end, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-
-  TrueBragg_truemu_pull_MIP = tfs->make<TH1F>("TrueBragg_truemu_pull_MIP","Tracks with true p=0 at end, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TrueBragg_truep_pull_MIP  = tfs->make<TH1F>("TrueBragg_truep_pull_MIP","Tracks with true p=0 at end, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TrueBragg_truepi_pull_MIP = tfs->make<TH1F>("TrueBragg_truepi_pull_MIP","Tracks with true p=0 at end, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  TrueBragg_trueK_pull_MIP  = tfs->make<TH1F>("TrueBragg_trueK_pull_MIP","Tracks with true p=0 at end, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-
   TrueBragg_truemu_PIDA = tfs->make<TH1F>("TrueBragg_truemu_PIDA","Tracks with true p=0 at end, true muons;PIDA;",300,0,30);
   TrueBragg_truep_PIDA  = tfs->make<TH1F>("TrueBragg_truep_PIDA","Tracks with true p=0 at end, true protons;PIDA;",300,0,30);
   TrueBragg_truepi_PIDA = tfs->make<TH1F>("TrueBragg_truepi_PIDA","Tracks with true p=0 at end, true pions;PIDA;",300,0,30);
@@ -346,10 +272,6 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   TrueBragg_truep_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_truep_dEdxtr_len","All tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
   TrueBragg_truepi_dEdxtr_len = tfs->make<TH2F>("TrueBragg_truepi_dEdxtr_len","All tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
   TrueBragg_trueK_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_trueK_dEdxtr_len","All tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  TrueBragg_truemu_dQdxtr_len = tfs->make<TH2F>("TrueBragg_truemu_dQdxtr_len","All tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TrueBragg_truep_dQdxtr_len  = tfs->make<TH2F>("TrueBragg_truep_dQdxtr_len","All tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TrueBragg_truepi_dQdxtr_len = tfs->make<TH2F>("TrueBragg_truepi_dQdxtr_len","All tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  TrueBragg_trueK_dQdxtr_len  = tfs->make<TH2F>("TrueBragg_trueK_dQdxtr_len","All tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
 
   // ---- All tracks: truth matching using associations
   All_truemu_neglogl_mu = tfs->make<TH1F>("All_truemu_neglogl_mu","All tracks, true muons;neg2LL_mu;",200,0,200);
@@ -398,28 +320,6 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
     All_trueK_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
   }
 
-  All_truemu_pull_mu = tfs->make<TH1F>("All_truemu_pull_mu","All tracks, true muons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truep_pull_mu  = tfs->make<TH1F>("All_truep_pull_mu","All tracks, true protons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truepi_pull_mu = tfs->make<TH1F>("All_truepi_pull_mu","All tracks, true pions;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_trueK_pull_mu  = tfs->make<TH1F>("All_trueK_pull_mu","All tracks, true kaons;(neg2LL_mu)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truemu_pull_p  = tfs->make<TH1F>("All_truemu_pull_p","All tracks, true muons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truep_pull_p   = tfs->make<TH1F>("All_truep_pull_p","All tracks, true protons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truepi_pull_p  = tfs->make<TH1F>("All_truepi_pull_p","All tracks, true pions;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_trueK_pull_p   = tfs->make<TH1F>("All_trueK_pull_p","All tracks, true kaons;(neg2LL_p)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truemu_pull_pi = tfs->make<TH1F>("All_truemu_pull_pi","All tracks, true muons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truep_pull_pi  = tfs->make<TH1F>("All_truep_pull_pi","All tracks, true protons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truepi_pull_pi = tfs->make<TH1F>("All_truepi_pull_pi","All tracks, true pions;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_trueK_pull_pi  = tfs->make<TH1F>("All_trueK_pull_pi","All tracks, true kaons;(neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truemu_pull_K  = tfs->make<TH1F>("All_truemu_pull_K","All tracks, true muons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truep_pull_K   = tfs->make<TH1F>("All_truep_pull_K","All tracks, true protons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_truepi_pull_K  = tfs->make<TH1F>("All_truepi_pull_K","All tracks, true pions;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-  All_trueK_pull_K   = tfs->make<TH1F>("All_trueK_pull_K","All tracks, true kaons;(neg2LL_K)/(neg2LL_mu+neg2LL_p+neg2LL_pi+neg2LL_K);",50,0,1);
-
-  All_truemu_pull_MIP = tfs->make<TH1F>("All_truemu_pull_MIP","All tracks, true muons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  All_truep_pull_MIP  = tfs->make<TH1F>("All_truep_pull_MIP","All tracks, true protons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  All_truepi_pull_MIP = tfs->make<TH1F>("All_truepi_pull_MIP","All tracks, true pions;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-  All_trueK_pull_MIP  = tfs->make<TH1F>("All_trueK_pull_MIP","All tracks, true kaons;(neg2LL_mu+neg2LL_pi)/(neg2LL_mu+neg2LL_p+neg2LL_pi);",50,0,1);
-
   All_truemu_PIDA = tfs->make<TH1F>("All_truemu_PIDA","All tracks, true muons;PIDA;",300,0,30);
   All_truep_PIDA  = tfs->make<TH1F>("All_truep_PIDA","All tracks, true protons;PIDA;",300,0,30);
   All_truepi_PIDA = tfs->make<TH1F>("All_truepi_PIDA","All tracks, true pions;PIDA;",300,0,30);
@@ -447,10 +347,6 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   All_truep_dEdxtr_len  = tfs->make<TH2F>("All_truep_dEdxtr_len","All tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
   All_truepi_dEdxtr_len = tfs->make<TH2F>("All_truepi_dEdxtr_len","All tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
   All_trueK_dEdxtr_len  = tfs->make<TH2F>("All_trueK_dEdxtr_len","All tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-  All_truemu_dQdxtr_len = tfs->make<TH2F>("All_truemu_dQdxtr_len","All tracks, true muons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  All_truep_dQdxtr_len  = tfs->make<TH2F>("All_truep_dQdxtr_len","All tracks, true protons;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  All_truepi_dQdxtr_len = tfs->make<TH2F>("All_truepi_dQdxtr_len","All tracks, true pions;Track length (cm);dQ/dx",100,0,700,100,0,500);
-  All_trueK_dQdxtr_len  = tfs->make<TH2F>("All_trueK_dQdxtr_len","All tracks, true kaons;Track length (cm);dQ/dx",100,0,700,100,0,500);
 
 
 }
@@ -541,7 +437,6 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       continue;
     }
     std::vector<double> dEdx = calo->dEdx();
-    std::vector<double> dQdx = calo->dQdx();
     std::vector<double> resRange = calo->ResidualRange();
 
     // find how many hits to use
@@ -599,7 +494,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     std::cout << dEdxStartEndRatio << std::endl;
 
     // ------------------- Check track direction ---------------------------------------- //
-    std::cout << "recotrackdir" << std::endl;
+
     TVector3 RecoTrackDir(track->End().X()-track->Start().X(),
                           track->End().Y()-track->Start().Y(),
                           track->End().Z()-track->Start().Z());
@@ -661,9 +556,9 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     double Bragg_bwd_p = -999;
     double Bragg_bwd_pi = -999;
     double Bragg_bwd_K = -999;
+    double noBragg_fwd_MIP = -999;
     double PIDAval = -999;
     double dEdxtruncmean = -999;
-    double dQdxtruncmean = -999;
     double trklen = -999;
 
     std::vector<art::Ptr<anab::ParticleID>> trackPID = trackPIDAssn.at(track->ID());
@@ -671,7 +566,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       std::cout << "No track-PID association found for trackID " << track->ID() << ". Skipping track." << std::endl;
       continue;
     }
-    std::cout << "trackPID.size() = " << trackPID.size() << std::endl;
+    //std::cout << "trackPID.size() = " << trackPID.size() << std::endl;
     std::vector<anab::sParticleIDAlgScores> AlgScoresVec = trackPID.at(0)->ParticleIDAlgScores();
 
     // Loop through AlgScoresVec and find the variables we want
@@ -685,6 +580,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
           if (AlgScore.fAssumedPdg == 2212) Bragg_fwd_p =  AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 211)  Bragg_fwd_pi = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 321)  Bragg_fwd_K  = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 0)    noBragg_fwd_MIP = AlgScore.fValue;
         }// if fVariableType == anab::kLogL_fwd
         else if (anab::kVariableType(AlgScore.fVariableType) == anab::kLogL_bwd){
           if (AlgScore.fAssumedPdg == 13)   Bragg_bwd_mu = AlgScore.fValue;
@@ -699,7 +595,6 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       }// if AlgName = PIDA && fVariableType == anab::kPIDA
 
       if (AlgScore.fAlgName == "TruncatedMean"){
-        if (anab::kVariableType(AlgScore.fVariableType) == anab::kdQdxtruncmean) dQdxtruncmean = AlgScore.fValue;
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kdEdxtruncmean) dEdxtruncmean = AlgScore.fValue;
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kTrackLength)   trklen = AlgScore.fValue;
       }// if AlgName = TruncatedMean
@@ -707,15 +602,15 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     } // Loop over AlgScoresVec
 
     // Some couts for debugging
-    std::cout << "From analyzer module:" << std::endl
-      << "neg2LogL mu fwd = " << Bragg_fwd_mu << std::endl
-      << "neg2LogL p fwd = " << Bragg_fwd_p << std::endl
-      << "neg2LogL pi fwd = " << Bragg_fwd_pi << std::endl
-      << "neg2LogL K fwd = " << Bragg_fwd_K << std::endl
-      << "neg2LogL mu bwd = " << Bragg_bwd_mu << std::endl
-      << "neg2LogL p bwd = " << Bragg_bwd_p << std::endl
-      << "neg2LogL pi bwd = " << Bragg_bwd_pi << std::endl
-      << "neg2LogL K bwd = " << Bragg_bwd_K << std::endl;
+    // std::cout << "From analyzer module:" << std::endl
+    //   << "neg2LogL mu fwd = " << Bragg_fwd_mu << std::endl
+    //   << "neg2LogL p fwd = " << Bragg_fwd_p << std::endl
+    //   << "neg2LogL pi fwd = " << Bragg_fwd_pi << std::endl
+    //   << "neg2LogL K fwd = " << Bragg_fwd_K << std::endl
+    //   << "neg2LogL mu bwd = " << Bragg_bwd_mu << std::endl
+    //   << "neg2LogL p bwd = " << Bragg_bwd_p << std::endl
+    //   << "neg2LogL pi bwd = " << Bragg_bwd_pi << std::endl
+    //   << "neg2LogL K bwd = " << Bragg_bwd_K << std::endl;
 
 
     // ---------------- Now let's fill some histograms! ------------------- //
@@ -732,13 +627,6 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     else if (Bragg_smallest == Bragg_pi) std::cout << "PID estimate: pion" << std::endl;
     else if (Bragg_smallest == Bragg_K) std::cout << "PID estimate: kaon" << std::endl;
 
-    // Calculate likelihood ratio on a scale of 0 to 1
-    double Bragg_pull_mu = Bragg_mu/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_p  = Bragg_p /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_pi = Bragg_pi/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_K  = Bragg_K /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_MIPproton = (Bragg_mu+Bragg_pi)/(2.0*(Bragg_mu+Bragg_pi+Bragg_p));
-
     if (TrueBragg){
       // Well-reconstructed truth matching
       if (TMath::Abs(True_pdg) == 13){ // True muons
@@ -746,14 +634,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         TrueBragg_truemu_neglogl_p->Fill(Bragg_p);
         TrueBragg_truemu_neglogl_pi->Fill(Bragg_pi);
         TrueBragg_truemu_neglogl_K->Fill(Bragg_K);
-        TrueBragg_truemu_pull_mu->Fill(Bragg_pull_mu);
-        TrueBragg_truemu_pull_p->Fill(Bragg_pull_p);
-        TrueBragg_truemu_pull_pi->Fill(Bragg_pull_pi);
-        TrueBragg_truemu_pull_K->Fill(Bragg_pull_K);
-        TrueBragg_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
         TrueBragg_truemu_PIDA->Fill(PIDAval);
         TrueBragg_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        TrueBragg_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
         TrueBragg_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         TrueBragg_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
         TrueBragg_truemu_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
@@ -770,14 +652,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         TrueBragg_truep_neglogl_p->Fill(Bragg_p);
         TrueBragg_truep_neglogl_pi->Fill(Bragg_pi);
         TrueBragg_truep_neglogl_K->Fill(Bragg_K);
-        TrueBragg_truep_pull_mu->Fill(Bragg_pull_mu);
-        TrueBragg_truep_pull_p->Fill(Bragg_pull_p);
-        TrueBragg_truep_pull_pi->Fill(Bragg_pull_pi);
-        TrueBragg_truep_pull_K->Fill(Bragg_pull_K);
-        TrueBragg_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
         TrueBragg_truep_PIDA->Fill(PIDAval);
         TrueBragg_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        TrueBragg_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
         TrueBragg_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         TrueBragg_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
         TrueBragg_truep_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
@@ -794,14 +670,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         TrueBragg_truepi_neglogl_p->Fill(Bragg_p);
         TrueBragg_truepi_neglogl_pi->Fill(Bragg_pi);
         TrueBragg_truepi_neglogl_K->Fill(Bragg_K);
-        TrueBragg_truepi_pull_mu->Fill(Bragg_pull_mu);
-        TrueBragg_truepi_pull_p->Fill(Bragg_pull_p);
-        TrueBragg_truepi_pull_pi->Fill(Bragg_pull_pi);
-        TrueBragg_truepi_pull_K->Fill(Bragg_pull_K);
-        TrueBragg_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
         TrueBragg_truepi_PIDA->Fill(PIDAval);
         TrueBragg_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        TrueBragg_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
         TrueBragg_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         TrueBragg_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
         TrueBragg_truepi_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
@@ -818,14 +688,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         TrueBragg_trueK_neglogl_p->Fill(Bragg_p);
         TrueBragg_trueK_neglogl_pi->Fill(Bragg_pi);
         TrueBragg_trueK_neglogl_K->Fill(Bragg_K);
-        TrueBragg_trueK_pull_mu->Fill(Bragg_pull_mu);
-        TrueBragg_trueK_pull_p->Fill(Bragg_pull_p);
-        TrueBragg_trueK_pull_pi->Fill(Bragg_pull_pi);
-        TrueBragg_trueK_pull_K->Fill(Bragg_pull_K);
-        TrueBragg_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
         TrueBragg_trueK_PIDA->Fill(PIDAval);
         TrueBragg_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        TrueBragg_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
         TrueBragg_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         TrueBragg_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
         TrueBragg_trueK_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
@@ -844,14 +708,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       All_truemu_neglogl_p->Fill(Bragg_p);
       All_truemu_neglogl_pi->Fill(Bragg_pi);
       All_truemu_neglogl_K->Fill(Bragg_K);
-      All_truemu_pull_mu->Fill(Bragg_pull_mu);
-      All_truemu_pull_p->Fill(Bragg_pull_p);
-      All_truemu_pull_pi->Fill(Bragg_pull_pi);
-      All_truemu_pull_K->Fill(Bragg_pull_K);
-      All_truemu_pull_MIP->Fill(Bragg_pull_MIPproton);
       All_truemu_PIDA->Fill(PIDAval);
       All_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      All_truemu_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       All_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
       All_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
       All_truemu_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
@@ -868,14 +726,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       All_truep_neglogl_p->Fill(Bragg_p);
       All_truep_neglogl_pi->Fill(Bragg_pi);
       All_truep_neglogl_K->Fill(Bragg_K);
-      All_truep_pull_mu->Fill(Bragg_pull_mu);
-      All_truep_pull_p->Fill(Bragg_pull_p);
-      All_truep_pull_pi->Fill(Bragg_pull_pi);
-      All_truep_pull_K->Fill(Bragg_pull_K);
-      All_truep_pull_MIP->Fill(Bragg_pull_MIPproton);
       All_truep_PIDA->Fill(PIDAval);
       All_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      All_truep_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       All_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
       All_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
       All_truep_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
@@ -892,14 +744,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       All_truepi_neglogl_p->Fill(Bragg_p);
       All_truepi_neglogl_pi->Fill(Bragg_pi);
       All_truepi_neglogl_K->Fill(Bragg_K);
-      All_truepi_pull_mu->Fill(Bragg_pull_mu);
-      All_truepi_pull_p->Fill(Bragg_pull_p);
-      All_truepi_pull_pi->Fill(Bragg_pull_pi);
-      All_truepi_pull_K->Fill(Bragg_pull_K);
-      All_truepi_pull_MIP->Fill(Bragg_pull_MIPproton);
       All_truepi_PIDA->Fill(PIDAval);
       All_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      All_truepi_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       All_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
       All_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
       All_truepi_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
@@ -916,14 +762,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       All_trueK_neglogl_p->Fill(Bragg_p);
       All_trueK_neglogl_pi->Fill(Bragg_pi);
       All_trueK_neglogl_K->Fill(Bragg_K);
-      All_trueK_pull_mu->Fill(Bragg_pull_mu);
-      All_trueK_pull_p->Fill(Bragg_pull_p);
-      All_trueK_pull_pi->Fill(Bragg_pull_pi);
-      All_trueK_pull_K->Fill(Bragg_pull_K);
-      All_trueK_pull_MIP->Fill(Bragg_pull_MIPproton);
       All_trueK_PIDA->Fill(PIDAval);
       All_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      All_trueK_dQdxtr_len->Fill(trklen,dQdxtruncmean);
       All_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
       All_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
       All_trueK_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
