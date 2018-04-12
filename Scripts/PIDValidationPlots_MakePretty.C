@@ -22,18 +22,36 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
                                             "neglogl_p",
                                             "neglogl_pi",
                                             "neglogl_K",
+                                            "neglogl_MIP",
+                                            "neglogl_minmuMIP",
                                             "neglogl_muoverp",
                                             "neglogl_muminusp",
-                                            "pull_mu",
-                                            "pull_p",
-                                            "pull_pi",
-                                            "pull_K",
-                                            "pull_MIP",
+                                            "neglogl_MIPminusp",
+                                            "neglogl_minmuMIPminusp",
+                                            // "pull_mu",
+                                            // "pull_p",
+                                            // "pull_pi",
+                                            // "pull_K",
+                                            // "pull_MIP",
                                             "PIDA" };
 
   std::vector<std::string> compare_2dplots = { "neglogl_muvsp",
                                               "neglogl_muvspi",
-                                              "dEdxtr_len" };
+                                              "dEdxtr_len",
+                                              "neglogl_MIPvsp",
+                                              "neglogl_minmuMIPvsp",
+                                              "neglogl_mu_vslength",
+                                              "neglogl_MIP_vslength",
+                                              "neglogl_minmuMIP_vslength",
+                                              "neglogl_p_vslength",
+                                              "neglogl_mu_vsangle",
+                                              "neglogl_MIP_vsangle",
+                                              "neglogl_minmuMIP_vsangle",
+                                              "neglogl_p_vsangle",
+                                              "neglogl_mu_vsnhits",
+                                              "neglogl_MIP_vsnhits",
+                                              "neglogl_minmuMIP_vsnhits",
+                                              "neglogl_p_vsnhits", };
 
   std::vector<std::string> categories = {"TrueBragg", "All"};
 
@@ -164,29 +182,33 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
 
   fin->cd();
   TH1F *h = (TH1F*)fin->Get("pidvalid/TrueBragg_truemu_smallest_neglogl");
-  std::cout << "--- True muons: " << h->GetBinContent(1)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
+  std::cout << "--- True muons: " << (h->GetBinContent(1)+h->GetBinContent(5))/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
   h = (TH1F*)fin->Get("pidvalid/TrueBragg_truep_smallest_neglogl");
   std::cout << "--- True protons: " << h->GetBinContent(2)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
   h = (TH1F*)fin->Get("pidvalid/TrueBragg_truepi_smallest_neglogl");
   std::cout << "--- True pions: " << h->GetBinContent(3)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
   h = (TH1F*)fin->Get("pidvalid/TrueBragg_trueK_smallest_neglogl");
   std::cout << "--- True kaons: " << h->GetBinContent(4)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
 
 
   // All particles
@@ -194,29 +216,33 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
 
   fin->cd();
   h = (TH1F*)fin->Get("pidvalid/All_truemu_smallest_neglogl");
-  std::cout << "--- True muons: " << h->GetBinContent(1)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
+  std::cout << "--- True muons: " << (h->GetBinContent(1)+h->GetBinContent(5))/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
   h = (TH1F*)fin->Get("pidvalid/All_truep_smallest_neglogl");
   std::cout << "--- True protons: " << h->GetBinContent(2)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
   h = (TH1F*)fin->Get("pidvalid/All_truepi_smallest_neglogl");
   std::cout << "--- True pions: " << h->GetBinContent(3)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
   h = (TH1F*)fin->Get("pidvalid/All_trueK_smallest_neglogl");
   std::cout << "--- True kaons: " << h->GetBinContent(4)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
-            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl << std::endl;
+            << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
+            << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
 
 
 }
