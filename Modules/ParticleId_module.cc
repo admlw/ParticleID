@@ -168,9 +168,9 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<double> dEdx = calo->dEdx();
     std::vector<double> resRange = calo->ResidualRange();
 
-    int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
-
-    std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
+    // int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
+    //
+    // std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
 
     // Vairables for ParticleID Class
     std::vector<anab::sParticleIDAlgScores> AlgScoresVec;
