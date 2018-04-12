@@ -70,7 +70,7 @@ class UBPID::ParticleId : public art::EDProducer {
   private:
 
     // fcl
-    std::string fTrackingAlgo; 
+    std::string fTrackingAlgo;
     std::string fCaloLabel;
     std::string fPidaType;
     double fCutDistance;
@@ -166,7 +166,6 @@ void UBPID::ParticleId::produce(art::Event & e)
     }
 
     std::vector<double> dEdx = calo->dEdx();
-    std::vector<double> dQdx = calo->dQdx();
     std::vector<double> resRange = calo->ResidualRange();
 
     int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
@@ -183,9 +182,9 @@ void UBPID::ParticleId::produce(art::Event & e)
     anab::sParticleIDAlgScores Bragg_bwd_p;
     anab::sParticleIDAlgScores Bragg_bwd_pi;
     anab::sParticleIDAlgScores Bragg_bwd_K;
+    anab::sParticleIDAlgScores noBragg_fwd_MIP;
     anab::sParticleIDAlgScores PIDAval;
     anab::sParticleIDAlgScores dEdxtruncmean;
-    anab::sParticleIDAlgScores dQdxtruncmean;
     anab::sParticleIDAlgScores trklen;
     // bool   isContained = false;
 
@@ -254,6 +253,13 @@ void UBPID::ParticleId::produce(art::Event & e)
     Bragg_bwd_pi.fValue = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_pi.fAssumedPdg, false);
     Bragg_bwd_K.fValue  = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_K.fAssumedPdg,  false);
 
+    // Special case: MIP-like probability
+    // fit to the flat MIP region of dEdx with residual range > 15 cm
+    noBragg_fwd_MIP.fAlgName = "BraggPeakLLH";
+    noBragg_fwd_MIP.fVariableType = anab::kLogL_fwd;
+    noBragg_fwd_MIP.fAssumedPdg = 0;
+    noBragg_fwd_MIP.fValue = braggcalc.getNegLogL(dEdx, resRange, noBragg_fwd_MIP.fAssumedPdg, true);
+
     AlgScoresVec.push_back(Bragg_fwd_mu);
     AlgScoresVec.push_back(Bragg_fwd_p);
     AlgScoresVec.push_back(Bragg_fwd_pi);
@@ -262,41 +268,40 @@ void UBPID::ParticleId::produce(art::Event & e)
     AlgScoresVec.push_back(Bragg_bwd_p);
     AlgScoresVec.push_back(Bragg_bwd_pi);
     AlgScoresVec.push_back(Bragg_bwd_K);
+    AlgScoresVec.push_back(noBragg_fwd_MIP);
 
     // Use best fit (lowest neg2LogL) from forward vs backward for calculations
-    double Bragg_mu = (Bragg_fwd_mu.fValue < Bragg_bwd_mu.fValue ? Bragg_fwd_mu.fValue : Bragg_bwd_mu.fValue);
-    double Bragg_p  = (Bragg_fwd_p.fValue  < Bragg_bwd_p.fValue  ? Bragg_fwd_p.fValue  : Bragg_bwd_p.fValue);
-    double Bragg_pi = (Bragg_fwd_pi.fValue < Bragg_bwd_pi.fValue ? Bragg_fwd_pi.fValue : Bragg_bwd_pi.fValue);
-    double Bragg_K  = (Bragg_fwd_K.fValue  < Bragg_bwd_K.fValue  ? Bragg_fwd_K.fValue  : Bragg_bwd_K.fValue);
+    // double Bragg_mu = (Bragg_fwd_mu.fValue < Bragg_bwd_mu.fValue ? Bragg_fwd_mu.fValue : Bragg_bwd_mu.fValue);
+    // double Bragg_p  = (Bragg_fwd_p.fValue  < Bragg_bwd_p.fValue  ? Bragg_fwd_p.fValue  : Bragg_bwd_p.fValue);
+    // double Bragg_pi = (Bragg_fwd_pi.fValue < Bragg_bwd_pi.fValue ? Bragg_fwd_pi.fValue : Bragg_bwd_pi.fValue);
+    // double Bragg_K  = (Bragg_fwd_K.fValue  < Bragg_bwd_K.fValue  ? Bragg_fwd_K.fValue  : Bragg_bwd_K.fValue);
 
     // Calculate likelihood ratio on a scale of 0 to 1
-    double Bragg_pull_mu = Bragg_mu/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_p  = Bragg_p /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_pi = Bragg_pi/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_K  = Bragg_K /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
-    double Bragg_pull_MIPproton = (Bragg_mu+Bragg_pi)/(Bragg_mu+Bragg_pi+Bragg_p);
+    // double Bragg_pull_mu = Bragg_mu/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
+    // double Bragg_pull_p  = Bragg_p /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
+    // double Bragg_pull_pi = Bragg_pi/(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
+    // double Bragg_pull_K  = Bragg_K /(Bragg_mu+Bragg_p+Bragg_pi+Bragg_K);
+    // double Bragg_pull_MIPproton = (Bragg_mu+Bragg_pi)/(Bragg_mu+Bragg_pi+Bragg_p);
 
     // Return PDG code based on most likely particle
-    std::cout << "neglogl fwd mu = " << Bragg_fwd_mu.fValue << std::endl;
-    std::cout << "neglogl fwd p  = " << Bragg_fwd_p.fValue  << std::endl;
-    std::cout << "neglogl fwd pi = " << Bragg_fwd_pi.fValue << std::endl;
-    std::cout << "neglogl fwd K  = " << Bragg_fwd_K.fValue  << std::endl;
-    std::cout << "neglogl fwd mu = " << Bragg_bwd_mu.fValue << std::endl;
-    std::cout << "neglogl bwd p  = " << Bragg_bwd_p.fValue  << std::endl;
-    std::cout << "neglogl bwd pi = " << Bragg_bwd_pi.fValue << std::endl;
-    std::cout << "neglogl bwd K  = " << Bragg_bwd_K.fValue  << std::endl;
-
-    std::cout << "Bragg_pull_mu = " << Bragg_pull_mu << std::endl;
-    std::cout << "Bragg_pull_p  = " << Bragg_pull_p  << std::endl;
-    std::cout << "Bragg_pull_pi = " << Bragg_pull_pi << std::endl;
-    std::cout << "Bragg_pull_K  = " << Bragg_pull_K  << std::endl << std::endl;
-
-    std::cout << "Bragg_pull_MIP/proton = " << Bragg_pull_MIPproton << std::endl;
+    // std::cout << "neglogl fwd mu = " << Bragg_fwd_mu.fValue << std::endl;
+    // std::cout << "neglogl fwd p  = " << Bragg_fwd_p.fValue  << std::endl;
+    // std::cout << "neglogl fwd pi = " << Bragg_fwd_pi.fValue << std::endl;
+    // std::cout << "neglogl fwd K  = " << Bragg_fwd_K.fValue  << std::endl;
+    // std::cout << "neglogl fwd mu = " << Bragg_bwd_mu.fValue << std::endl;
+    // std::cout << "neglogl bwd p  = " << Bragg_bwd_p.fValue  << std::endl;
+    // std::cout << "neglogl bwd pi = " << Bragg_bwd_pi.fValue << std::endl;
+    // std::cout << "neglogl bwd K  = " << Bragg_bwd_K.fValue  << std::endl;
+    //
+    // std::cout << "Bragg_pull_mu = " << Bragg_pull_mu << std::endl;
+    // std::cout << "Bragg_pull_p  = " << Bragg_pull_p  << std::endl;
+    // std::cout << "Bragg_pull_pi = " << Bragg_pull_pi << std::endl;
+    // std::cout << "Bragg_pull_K  = " << Bragg_pull_K  << std::endl << std::endl;
+    //
+    // std::cout << "Bragg_pull_MIP/proton = " << Bragg_pull_MIPproton << std::endl;
 
     // ------ Algorithm 3:
     // ------ Truncated mean dE/dx vs track length ------ //
-    dQdxtruncmean.fAlgName = "TruncatedMean";
-    dQdxtruncmean.fVariableType = anab::kdQdxtruncmean;
     dEdxtruncmean.fAlgName = "TruncatedMean";
     dEdxtruncmean.fVariableType = anab::kdEdxtruncmean;
     trklen.fAlgName = "TruncatedMean";
@@ -312,11 +317,9 @@ void UBPID::ParticleId::produce(art::Event & e)
     const size_t lmin = 1;
     const float convergencelimit = 0.1;
     const float nsigma = 1.0;
-    dQdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dQdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
     dEdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
     trklen.fValue = track->Length();
 
-    AlgScoresVec.push_back(dQdxtruncmean);
     AlgScoresVec.push_back(dEdxtruncmean);
     AlgScoresVec.push_back(trklen);
       /*  }

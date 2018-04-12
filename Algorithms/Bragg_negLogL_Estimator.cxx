@@ -93,8 +93,13 @@ namespace particleid{
         gausWidth = gausWidth_k;
         landauWidth = landauWidth_k;
         break;
+      case 0: // special case: fit to MIP region of muon prediction with no Bragg peak
+        std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood for non-Bragg MIP-like hypothesis" << std::endl;
+        theorypred = theory.g_ThdEdxRR_Muon;
+        gausWidth = gausWidth_mu;
+        landauWidth = landauWidth_mu;
       default:
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] ERROR: cannot calculate theoretical prediction for given particle hypothesis: " << particlehypothesis << ". Theoretical predictions are only available for charged muons (+/-13), pions (+/-211), kaons (+/-321), and protons (2212)" << std::endl;
+        std::cout << "[ParticleID::Bragg_negLogL_Estimator] ERROR: cannot calculate theoretical prediction for given particle hypothesis: " << particlehypothesis << ". Theoretical predictions are only available for charged muons (+/-13), pions (+/-211), kaons (+/-321), protons (2212), and non-Bragg MIP region (0)" << std::endl;
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Exiting." << std::endl;
         throw;
     } // switch
@@ -107,6 +112,10 @@ namespace particleid{
     // can account for end point resolution
     double minLLNdf = 9999999;
     int n_hits_used_total = 0;
+
+    // For a non-Bragg MIP-like hypothesis, add an extra shift of 15 cm to the residual range, so we're only comparing to the non-Bragg region. Should be 0 for all other hypotheses.
+    double rr_MIPregionshift = 0.0;
+    if (absph == 0){ rr_MIPregionshift = 15.0;}
 
     for (double rr_shift = endPointFloatShort; rr_shift < endPointFloatLong; rr_shift = rr_shift+endPointFloatStepSize){
 
@@ -124,7 +133,7 @@ namespace particleid{
           rr_index = (resRange.size()-1)-i_hit;
         }
 
-        double resrg_i = resRange.at(rr_index)+rr_shift;
+        double resrg_i = resRange.at(rr_index)+rr_shift+rr_MIPregionshift;
         double dEdx_i  = dEdx.at(i_hit);
 
         // Theory values are only defined up to 30 cm residual Range so we
