@@ -98,6 +98,7 @@ namespace particleid{
         theorypred = theory.g_ThdEdxRR_Muon;
         gausWidth = gausWidth_mu;
         landauWidth = landauWidth_mu;
+        break;
       default:
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] ERROR: cannot calculate theoretical prediction for given particle hypothesis: " << particlehypothesis << ". Theoretical predictions are only available for charged muons (+/-13), pions (+/-211), kaons (+/-321), protons (2212), and non-Bragg MIP region (0)" << std::endl;
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Exiting." << std::endl;
