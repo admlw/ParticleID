@@ -384,22 +384,22 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   TrueBragg_truep_neglogl_p_vslength  = tfs->make<TH2F>("TrueBragg_truep_neglogl_p_vslength","Tracks with true p=0 at end, true protons;neg2LL_p;Track length",200,0,200,500,0,500);
   TrueBragg_truepi_neglogl_p_vslength = tfs->make<TH2F>("TrueBragg_truepi_neglogl_p_vslength","Tracks with true p=0 at end, true pions;neg2LL_p;Track length",200,0,200,500,0,500);
   TrueBragg_trueK_neglogl_p_vslength  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_p_vslength","Tracks with true p=0 at end, true kaons;neg2LL_p;Track length",200,0,200,500,0,500);
-    TrueBragg_truemu_neglogl_mu_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_mu_vsangle","Tracks with true p=0 at end, true muons;neg2LL_mu;Track angle",200,0,200,);
-    TrueBragg_truep_neglogl_mu_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_mu_vsangle","Tracks with true p=0 at end, true protons;neg2LL_mu;Track angle",200,0,200,);
-    TrueBragg_truepi_neglogl_mu_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_mu_vsangle","Tracks with true p=0 at end, true pions;neg2LL_mu;Track angle",200,0,200,);
-    TrueBragg_trueK_neglogl_mu_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_mu_vsangle","Tracks with true p=0 at end, true kaons;neg2LL_mu;Track angle",200,0,200,);
-    TrueBragg_truemu_neglogl_MIP_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_MIP_vsangle","Tracks with true p=0 at end, true muons;neg2LL_MIP;Track angle",200,0,200,);
-    TrueBragg_truep_neglogl_MIP_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_MIP_vsangle","Tracks with true p=0 at end, true protons;neg2LL_MIP;Track angle",200,0,200,);
-    TrueBragg_truepi_neglogl_MIP_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_MIP_vsangle","Tracks with true p=0 at end, true pions;neg2LL_MIP;Track angle",200,0,200,);
-    TrueBragg_trueK_neglogl_MIP_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_MIP_vsangle","Tracks with true p=0 at end, true kaons;neg2LL_MIP;Track angle",200,0,200,);
-    TrueBragg_truemu_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true muons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    TrueBragg_truep_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true protons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    TrueBragg_truepi_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true pions;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    TrueBragg_trueK_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true kaons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    TrueBragg_truemu_neglogl_p_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_p_vsangle","Tracks with true p=0 at end, true muons;neg2LL_p;Track angle",200,0,200,);
-    TrueBragg_truep_neglogl_p_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_p_vsangle","Tracks with true p=0 at end, true protons;neg2LL_p;Track angle",200,0,200,);
-    TrueBragg_truepi_neglogl_p_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_p_vsangle","Tracks with true p=0 at end, true pions;neg2LL_p;Track angle",200,0,200,);
-    TrueBragg_trueK_neglogl_p_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_p_vsangle","Tracks with true p=0 at end, true kaons;neg2LL_p;Track angle",200,0,200,);
+  TrueBragg_truemu_neglogl_mu_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_mu_vsangle","Tracks with true p=0 at end, true muons;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truep_neglogl_mu_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_mu_vsangle","Tracks with true p=0 at end, true protons;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truepi_neglogl_mu_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_mu_vsangle","Tracks with true p=0 at end, true pions;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_trueK_neglogl_mu_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_mu_vsangle","Tracks with true p=0 at end, true kaons;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truemu_neglogl_MIP_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_MIP_vsangle","Tracks with true p=0 at end, true muons;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truep_neglogl_MIP_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_MIP_vsangle","Tracks with true p=0 at end, true protons;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truepi_neglogl_MIP_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_MIP_vsangle","Tracks with true p=0 at end, true pions;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_trueK_neglogl_MIP_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_MIP_vsangle","Tracks with true p=0 at end, true kaons;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truemu_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true muons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truep_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true protons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truepi_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true pions;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_trueK_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_minmuMIP_vsangle","Tracks with true p=0 at end, true kaons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truemu_neglogl_p_vsangle = tfs->make<TH2F>("TrueBragg_truemu_neglogl_p_vsangle","Tracks with true p=0 at end, true muons;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truep_neglogl_p_vsangle  = tfs->make<TH2F>("TrueBragg_truep_neglogl_p_vsangle","Tracks with true p=0 at end, true protons;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_truepi_neglogl_p_vsangle = tfs->make<TH2F>("TrueBragg_truepi_neglogl_p_vsangle","Tracks with true p=0 at end, true pions;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
+  TrueBragg_trueK_neglogl_p_vsangle  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_p_vsangle","Tracks with true p=0 at end, true kaons;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
   TrueBragg_truemu_neglogl_mu_vsnhits = tfs->make<TH2F>("TrueBragg_truemu_neglogl_mu_vsnhits","Tracks with true p=0 at end, true muons;neg2LL_mu;No. hits",200,0,200,500,0,500);
   TrueBragg_truep_neglogl_mu_vsnhits  = tfs->make<TH2F>("TrueBragg_truep_neglogl_mu_vsnhits","Tracks with true p=0 at end, true protons;neg2LL_mu;No. hits",200,0,200,500,0,500);
   TrueBragg_truepi_neglogl_mu_vsnhits = tfs->make<TH2F>("TrueBragg_truepi_neglogl_mu_vsnhits","Tracks with true p=0 at end, true pions;neg2LL_mu;No. hits",200,0,200,500,0,500);
@@ -523,22 +523,22 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   All_truep_neglogl_p_vslength  = tfs->make<TH2F>("All_truep_neglogl_p_vslength","All tracks, true protons;neg2LL_p;Track length",200,0,200,500,0,500);
   All_truepi_neglogl_p_vslength = tfs->make<TH2F>("All_truepi_neglogl_p_vslength","All tracks, true pions;neg2LL_p;Track length",200,0,200,500,0,500);
   All_trueK_neglogl_p_vslength  = tfs->make<TH2F>("All_trueK_neglogl_p_vslength","All tracks, true kaons;neg2LL_p;Track length",200,0,200,500,0,500);
-    All_truemu_neglogl_mu_vsangle = tfs->make<TH2F>("All_truemu_neglogl_mu_vsangle","All tracks, true muons;neg2LL_mu;Track angle",200,0,200,);
-    All_truep_neglogl_mu_vsangle  = tfs->make<TH2F>("All_truep_neglogl_mu_vsangle","All tracks, true protons;neg2LL_mu;Track angle",200,0,200,);
-    All_truepi_neglogl_mu_vsangle = tfs->make<TH2F>("All_truepi_neglogl_mu_vsangle","All tracks, true pions;neg2LL_mu;Track angle",200,0,200,);
-    All_trueK_neglogl_mu_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_mu_vsangle","All tracks, true kaons;neg2LL_mu;Track angle",200,0,200,);
-    All_truemu_neglogl_MIP_vsangle = tfs->make<TH2F>("All_truemu_neglogl_MIP_vsangle","All tracks, true muons;neg2LL_MIP;Track angle",200,0,200,);
-    All_truep_neglogl_MIP_vsangle  = tfs->make<TH2F>("All_truep_neglogl_MIP_vsangle","All tracks, true protons;neg2LL_MIP;Track angle",200,0,200,);
-    All_truepi_neglogl_MIP_vsangle = tfs->make<TH2F>("All_truepi_neglogl_MIP_vsangle","All tracks, true pions;neg2LL_MIP;Track angle",200,0,200,);
-    All_trueK_neglogl_MIP_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_MIP_vsangle","All tracks, true kaons;neg2LL_MIP;Track angle",200,0,200,);
-    All_truemu_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("All_truemu_neglogl_minmuMIP_vsangle","All tracks, true muons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    All_truep_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("All_truep_neglogl_minmuMIP_vsangle","All tracks, true protons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    All_truepi_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("All_truepi_neglogl_minmuMIP_vsangle","All tracks, true pions;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    All_trueK_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_minmuMIP_vsangle","All tracks, true kaons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,);
-    All_truemu_neglogl_p_vsangle = tfs->make<TH2F>("All_truemu_neglogl_p_vsangle","All tracks, true muons;neg2LL_p;Track angle",200,0,200,);
-    All_truep_neglogl_p_vsangle  = tfs->make<TH2F>("All_truep_neglogl_p_vsangle","All tracks, true protons;neg2LL_p;Track angle",200,0,200,);
-    All_truepi_neglogl_p_vsangle = tfs->make<TH2F>("All_truepi_neglogl_p_vsangle","All tracks, true pions;neg2LL_p;Track angle",200,0,200,);
-    All_trueK_neglogl_p_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_p_vsangle","All tracks, true kaons;neg2LL_p;Track angle",200,0,200,);
+  All_truemu_neglogl_mu_vsangle = tfs->make<TH2F>("All_truemu_neglogl_mu_vsangle","All tracks, true muons;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truep_neglogl_mu_vsangle  = tfs->make<TH2F>("All_truep_neglogl_mu_vsangle","All tracks, true protons;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truepi_neglogl_mu_vsangle = tfs->make<TH2F>("All_truepi_neglogl_mu_vsangle","All tracks, true pions;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  All_trueK_neglogl_mu_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_mu_vsangle","All tracks, true kaons;neg2LL_mu;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truemu_neglogl_MIP_vsangle = tfs->make<TH2F>("All_truemu_neglogl_MIP_vsangle","All tracks, true muons;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truep_neglogl_MIP_vsangle  = tfs->make<TH2F>("All_truep_neglogl_MIP_vsangle","All tracks, true protons;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truepi_neglogl_MIP_vsangle = tfs->make<TH2F>("All_truepi_neglogl_MIP_vsangle","All tracks, true pions;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  All_trueK_neglogl_MIP_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_MIP_vsangle","All tracks, true kaons;neg2LL_MIP;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truemu_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("All_truemu_neglogl_minmuMIP_vsangle","All tracks, true muons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  All_truep_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("All_truep_neglogl_minmuMIP_vsangle","All tracks, true protons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  All_truepi_neglogl_minmuMIP_vsangle = tfs->make<TH2F>("All_truepi_neglogl_minmuMIP_vsangle","All tracks, true pions;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  All_trueK_neglogl_minmuMIP_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_minmuMIP_vsangle","All tracks, true kaons;min(neg2LL_mu, neg2LL_MIP);Track angle",200,0,200,150,0,TMath::Pi());
+  All_truemu_neglogl_p_vsangle = tfs->make<TH2F>("All_truemu_neglogl_p_vsangle","All tracks, true muons;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truep_neglogl_p_vsangle  = tfs->make<TH2F>("All_truep_neglogl_p_vsangle","All tracks, true protons;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
+  All_truepi_neglogl_p_vsangle = tfs->make<TH2F>("All_truepi_neglogl_p_vsangle","All tracks, true pions;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
+  All_trueK_neglogl_p_vsangle  = tfs->make<TH2F>("All_trueK_neglogl_p_vsangle","All tracks, true kaons;neg2LL_p;Track angle",200,0,200,150,0,TMath::Pi());
   All_truemu_neglogl_mu_vsnhits = tfs->make<TH2F>("All_truemu_neglogl_mu_vsnhits","All tracks, true muons;neg2LL_mu;No. hits",200,0,200,500,0,500);
   All_truep_neglogl_mu_vsnhits  = tfs->make<TH2F>("All_truep_neglogl_mu_vsnhits","All tracks, true protons;neg2LL_mu;No. hits",200,0,200,500,0,500);
   All_truepi_neglogl_mu_vsnhits = tfs->make<TH2F>("All_truepi_neglogl_mu_vsnhits","All tracks, true pions;neg2LL_mu;No. hits",200,0,200,500,0,500);
@@ -648,8 +648,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
   for (auto& track : trackCollection){
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = calo_from_tracks.at(track->ID());
 
-    double angle = track->;
-    double nhits = track->;
+    double angle = track->Theta();
     double trklen = track->Length();
     std::cout << "Looking at track with length" << trklen << std::endl;
 
@@ -719,6 +718,8 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     }
     std::vector<double> dEdx = calo->dEdx();
     std::vector<double> resRange = calo->ResidualRange();
+
+    double nhits = resRange.size();
 
     // find how many hits to use
     int nHits = dEdx.size();
