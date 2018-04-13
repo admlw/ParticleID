@@ -8,7 +8,7 @@
 // root[0] .L PIDValidationPlots_MakePretty.C
 // root[1] PIDValidationPlots_MakePretty("particleIDMeta.root")
 //
-// The output is 1) a set of .pdf plots produced in the current directory, and
+// The output is 1) a set of .png plots produced in the current directory, and
 // 2) a root file PIDValidationPlots_out.root containing the same plots, also
 // produced in the current directory. The percentage of particles that are
 // correctly identified (by which we mean: for which the lowest neg2LL is the
@@ -127,7 +127,7 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
       // Save
       fout->cd();
       c1->Write(savename.c_str());
-      c1->Print(std::string(savename+".pdf").c_str());
+      c1->Print(std::string(savename+".png").c_str());
 
     } // loop over i_cat in categories
   } // loop over i_name in compare_1dplots
@@ -190,11 +190,74 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
       // Save
       fout->cd();
       c1->Write(savename.c_str());
-      c1->Print(std::string(savename+".pdf").c_str());
+      c1->Print(std::string(savename+".png").c_str());
 
     } // loop over i_cat in categories
-  } // loop over i_name in compare_1dplots
+  } // loop over i_name in compare_2dplots
 
+
+
+  // --------------------------------------------------------------------- //
+  // Ratio plots to see how often we get track direction right
+  // --------------------------------------------------------------------- //
+
+  // 2D comparison plots: look through all names in the compare_2dplots vector and overlay true muons with true protons
+  // Remember to do this both for TrueBragg_truemu_blah and All_truemu_blah
+
+  // Get plots
+  fin->cd();
+  TH2F *hTrueBragg_correct = (TH2F*)fin->Get("pidvalid/TrueBragg_correctdirection");
+  TH2F *hTrueBragg_incorrect = (TH2F*)fin->Get("pidvalid/TrueBragg_incorrectdirection");
+  TH2F *hAll_correct = (TH2F*)fin->Get("pidvalid/All_correctdirection");
+  TH2F *hAll_incorrect = (TH2F*)fin->Get("pidvalid/All_incorrectdirection");
+
+  // Make ratio plots
+
+  TH1F *hTrueBragg_correct_ratio = new TH1F("hTrueBragg_correct_ratio","Tracks with true p=0 at end, correct reconstructed direction;PID direction: correct/incorrect;True particle",4,0,4);
+  TH1F *hTrueBragg_incorrect_ratio = new TH1F("hTrueBragg_incorrect_ratio","Tracks with true p=0 at end, wrong reconstructed direction;PID direction: correct/incorrect;True particle",4,0,4);
+  TH1F *hAll_correct_ratio = new TH1F("hAll_correct_ratio","All tracks, correct reconstructed direction;PID direction: correct/incorrect;True particle",4,0,4);
+  TH1F *hAll_incorrect_ratio = new TH1F("hAll_incorrect_ratio","All tracks, wrong reconstructed direction;PID direction: correct/incorrect;True particle",4,0,4);
+
+  const char* particles[4] = {"#mu", "p", "#pi", "K"};
+  for (size_t i=0; i<4; i++){
+    hTrueBragg_correct_ratio->GetXaxis()->SetBinLabel(i+1,particles[i]);
+    hTrueBragg_incorrect_ratio->GetXaxis()->SetBinLabel(i+1,particles[i]);
+    hAll_correct_ratio->GetXaxis()->SetBinLabel(i+1,particles[i]);
+    hAll_incorrect_ratio->GetXaxis()->SetBinLabel(i+1,particles[i]);
+
+    hTrueBragg_correct_ratio->SetBinContent(i+1,hTrueBragg_correct->GetBinContent(i+1,2)/hTrueBragg_correct->GetBinContent(i+1,1));
+    hTrueBragg_incorrect_ratio->SetBinContent(i+1,hTrueBragg_incorrect->GetBinContent(i+1,2)/hTrueBragg_incorrect->GetBinContent(i+1,1));
+    hAll_correct_ratio->SetBinContent(i+1,hAll_correct->GetBinContent(i+1,2)/hAll_correct->GetBinContent(i+1,1));
+    hAll_incorrect_ratio->SetBinContent(i+1,hAll_incorrect->GetBinContent(i+1,2)/hAll_incorrect->GetBinContent(i+1,1));
+  }
+
+  // Draw
+  TCanvas *c1 = new TCanvas();
+  hTrueBragg_correct_ratio->Draw();
+  // Save
+  fout->cd();
+  c1->Write("hTrueBragg_correct_ratio");
+  c1->Print("hTrueBragg_correct_ratio.png");
+
+  // Draw
+  hTrueBragg_incorrect_ratio->Draw();
+  // Save
+  fout->cd();
+  c1->Write("hTrueBragg_incorrect_ratio");
+  c1->Print("hTrueBragg_incorrect_ratio.png");
+
+  hAll_correct_ratio->Draw();
+  // Save
+  fout->cd();
+  c1->Write("hAll_correct_ratio");
+  c1->Print("hAll_correct_ratio.png");
+
+  // Draw
+  hAll_incorrect_ratio->Draw();
+  // Save
+  fout->cd();
+  c1->Write("hAll_incorrect_ratio");
+  c1->Print("hAll_incorrect_ratio.png");
 
 
   // --------------------------------------------------------------------- //
@@ -222,7 +285,7 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
             << "         ID'd as kaon: " << h->GetBinContent(4)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as MIP (no Bragg peak): " << h->GetBinContent(5)/h->Integral()*100.0 << "%" << std::endl  << std::endl;
   h = (TH1F*)fin->Get("pidvalid/TrueBragg_truepi_smallest_neglogl");
-  std::cout << "--- True pions: " << h->GetBinContent(3)/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
+  std::cout << "--- True pions: " << (h->GetBinContent(3)+h->GetBinContent(1)+h->GetBinContent(5))/h->Integral()*100.0 << "% identified correctly" << std::endl << std::endl
             << "         ID'd as muon: " << h->GetBinContent(1)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as proton: " << h->GetBinContent(2)/h->Integral()*100.0 << "%" << std::endl
             << "         ID'd as pion: " << h->GetBinContent(3)/h->Integral()*100.0 << "%" << std::endl
