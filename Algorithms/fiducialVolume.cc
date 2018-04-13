@@ -4,12 +4,12 @@ namespace fidvol{
 
   std::vector<double> fiducialVolume::setFiducialVolume(std::vector<double> fv, fhicl::ParameterSet const & p){
 
-    double xl = p.get< double > ("X_LOW");
-    double xh = p.get< double > ("X_HIGH");
-    double yl = p.get< double > ("Y_LOW");
-    double yh = p.get< double > ("Y_HIGH");
-    double zl = p.get< double > ("Z_LOW");
-    double zh = p.get< double > ("Z_HIGH");
+    double xl = p.get< double > ("X_LOW", 10);
+    double xh = p.get< double > ("X_HIGH", 10);
+    double yl = p.get< double > ("Y_LOW", 10);
+    double yh = p.get< double > ("Y_HIGH", 10);
+    double zl = p.get< double > ("Z_LOW", 10);
+    double zh = p.get< double > ("Z_HIGH", 10);
 
     fv.push_back(xl);
     fv.push_back(xh);
