@@ -191,9 +191,12 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH2F *TrueBragg_truepi_dEdxtr_len;
     TH2F *TrueBragg_trueK_dEdxtr_len;
 
+    TH2F *TrueBragg_correctdirection;
+    TH2F *TrueBragg_incorrectdirection;
+    TH1F *TrueBragg_PIDdir;
+
     TH2F *TrueBragg_correctdirection_PIDdir;
     TH2F *TrueBragg_incorrectdirection_PIDdir;
-    TH1F *TrueBragg_PIDdir;
 
     TH1F *All_truemu_neglogl_mu;
     TH1F *All_truep_neglogl_mu;
@@ -326,9 +329,9 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH2F *All_truepi_dEdxtr_len;
     TH2F *All_trueK_dEdxtr_len;
 
-    TH2F *All_correctdirection_PIDdir;
-    TH2F *All_incorrectdirection_PIDdir;
-    TH1F *All_PIDdir;
+    TH2F *All_correctdirection;
+    TH2F *All_incorrectdirection;
+
 };
 
 
@@ -1250,7 +1253,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       All_truepi_smallest_neglogl->Fill(4.5);
 
       if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
-        if (PID_fwd) All_correctdirection->Fill20.5,1.5);
+        if (PID_fwd) All_correctdirection->Fill(20.5,1.5);
         else All_correctdirection->Fill(2.5,0.5);
       }
       else{ // reco dir is wrong
