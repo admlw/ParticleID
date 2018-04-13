@@ -81,11 +81,15 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
 
       std::string name_mu = "pidvalid/"+categories.at(i_cat)+"_truemu_"+compare_1dplots.at(i_name);
       std::string name_p = "pidvalid/"+categories.at(i_cat)+"_truep_"+compare_1dplots.at(i_name);
+      std::string name_pi = "pidvalid/"+categories.at(i_cat)+"_truepi_"+compare_1dplots.at(i_name);
+      std::string name_K = "pidvalid/"+categories.at(i_cat)+"_trueK_"+compare_1dplots.at(i_name);
 
       // Get plots
       fin->cd();
       TH1F *hmu = (TH1F*)fin->Get(name_mu.c_str());
       TH1F *hp = (TH1F*)fin->Get(name_p.c_str());
+      TH1F *hpi = (TH1F*)fin->Get(name_pi.c_str());
+      TH1F *hK = (TH1F*)fin->Get(name_K.c_str());
 
       // Style
       hmu->GetYaxis()->SetRangeUser(0,std::max(hmu->GetMaximum(),hp->GetMaximum())*1.15);
@@ -95,6 +99,12 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
       hp->SetLineColor(kRed);
       hp->SetFillColor(kRed);
       hp->SetFillStyle(3144);
+      if (hpi) hpi->SetLineColor(kGreen+2);
+      if (hpi) hpi->SetFillColor(kGreen+2);
+      if (hpi) hpi->SetFillStyle(3144);
+      if (hK) hK->SetLineColor(kViolet);
+      if (hK) hK->SetFillColor(kViolet);
+      if (hK) hK->SetFillStyle(3144);
 
       // Legend
       TLegend *l = new TLegend(0.6,0.6,0.87,0.87);
@@ -103,11 +113,15 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
       l->SetTextFont(132);
       l->AddEntry(hmu,"True Muons","lf");
       l->AddEntry(hp,"True Protons","lf");
+      if (hpi) l->AddEntry(hpi,"True Pions","lf");
+      if (hK) l->AddEntry(hK,"True Kaons","lf");
 
       // Draw
       TCanvas *c1 = new TCanvas();
       hmu->Draw();
       hp->Draw("same");
+      if (hpi) hpi->Draw("same");
+      if (hK)  hK->Draw("same");
       l->Draw();
 
       // Save
@@ -134,11 +148,15 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
 
       std::string name_mu = "pidvalid/"+categories.at(i_cat)+"_truemu_"+compare_2dplots.at(i_name);
       std::string name_p = "pidvalid/"+categories.at(i_cat)+"_truep_"+compare_2dplots.at(i_name);
+      std::string name_pi = "pidvalid/"+categories.at(i_cat)+"_truepi_"+compare_2dplots.at(i_name);
+      std::string name_K = "pidvalid/"+categories.at(i_cat)+"_trueK_"+compare_2dplots.at(i_name);
 
       // Get plots
       fin->cd();
       TH2F *hmu = (TH2F*)fin->Get(name_mu.c_str());
       TH2F *hp = (TH2F*)fin->Get(name_p.c_str());
+      TH1F *hpi = (TH1F*)fin->Get(name_pi.c_str());
+      TH1F *hK = (TH1F*)fin->Get(name_K.c_str());
 
       // Style
       //hmu->GetYaxis()->SetRangeUser(0,std::max(hmu->GetMaximum(),hp->GetMaximum())*1.15);
@@ -146,6 +164,10 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
       hmu->SetMarkerStyle(7);
       hp->SetMarkerColor(kRed);
       hp->SetMarkerStyle(7);
+      if (hpi) hpi->SetMarkerColor(kGreen+2);
+      if (hpi) hpi->SetMarkerStyle(7);
+      if (hK) hK->SetMarkerColor(kViolet);
+      if (hK) hK->SetMarkerStyle(7);
 
       // Legend
       TLegend *l = new TLegend(0.6,0.6,0.87,0.87);
@@ -154,11 +176,15 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
       l->SetTextFont(132);
       l->AddEntry(hmu,"True Muons","p");
       l->AddEntry(hp,"True Protons","p");
+      if (hpi) l->AddEntry(hpi,"True Pions","lf");
+      if (hK) l->AddEntry(hK,"True Kaons","lf");
 
       // Draw
       TCanvas *c1 = new TCanvas();
       hmu->Draw();
       hp->Draw("same");
+      if (hpi) hpi->Draw("same");
+      if (hK)  hK->Draw("same");
       l->Draw();
 
       // Save
