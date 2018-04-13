@@ -191,7 +191,9 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH2F *TrueBragg_truepi_dEdxtr_len;
     TH2F *TrueBragg_trueK_dEdxtr_len;
 
-    TH2F *TrueBragg_correctdirection;
+    TH2F *TrueBragg_correctdirection_PIDdir;
+    TH2F *TrueBragg_incorrectdirection_PIDdir;
+    TH1F *TrueBragg_PIDdir;
 
     TH1F *All_truemu_neglogl_mu;
     TH1F *All_truep_neglogl_mu;
@@ -324,7 +326,9 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH2F *All_truepi_dEdxtr_len;
     TH2F *All_trueK_dEdxtr_len;
 
-    TH2F *All_correctdirection;
+    TH2F *All_correctdirection_PIDdir;
+    TH2F *All_incorrectdirection_PIDdir;
+    TH1F *All_PIDdir;
 };
 
 
@@ -478,12 +482,16 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   TrueBragg_truepi_dEdxtr_len = tfs->make<TH2F>("TrueBragg_truepi_dEdxtr_len","Tracks with true p=0 at end, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
   TrueBragg_trueK_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_trueK_dEdxtr_len","Tracks with true p=0 at end, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
 
-  TrueBragg_correctdirection = tfs->make<TH2F>("TrueBragg_correctdirection","Tracks with true p=0 at end;true particle;PID direction correct?",4,0,4,2,0,2);
+  TrueBragg_correctdirection = tfs->make<TH2F>("TrueBragg_correctdirection","Tracks with true p=0 at end, reconstructed correct direction;true particle;PID direction correct?",4,0,4,2,0,2);
+  TrueBragg_incorrectdirection = tfs->make<TH2F>("TrueBragg_incorrectdirection","Tracks with true p=0 at end, reconstructed incorrect direction;true particle;PID direction correct?",4,0,4,2,0,2);
   for (size_t i=1; i<=4; i++){
     TrueBragg_correctdirection->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    TrueBragg_incorrectdirection->GetXaxis()->SetBinLabel(i,particles[i-1]);
   }
   TrueBragg_correctdirection->GetYaxis()->SetBinLabel(1,"False");
   TrueBragg_correctdirection->GetYaxis()->SetBinLabel(2,"True");
+  TrueBragg_incorrectdirection->GetYaxis()->SetBinLabel(1,"False");
+  TrueBragg_incorrectdirection->GetYaxis()->SetBinLabel(2,"True");
 
   // ---- All tracks: truth matching using associations
   All_truemu_neglogl_mu = tfs->make<TH1F>("All_truemu_neglogl_mu","All tracks, true muons;neg2LL_mu;",200,0,200);
@@ -628,12 +636,16 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   All_trueK_dEdxtr_len  = tfs->make<TH2F>("All_trueK_dEdxtr_len","All tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
 
 
-  All_correctdirection = tfs->make<TH2F>("All_correctdirection","All tracks;true particle;PID direction correct?",4,0,4,2,0,2);
+  All_correctdirection = tfs->make<TH2F>("All_correctdirection","All tracks, reconstructed correct direction;true particle;PID direction correct?",4,0,4,2,0,2);
+  All_incorrectdirection = tfs->make<TH2F>("All_incorrectdirection","All tracks, reconstructed incorrect direction;true particle;PID direction correct?",4,0,4,2,0,2);
   for (size_t i=1; i<=4; i++){
     All_correctdirection->GetXaxis()->SetBinLabel(i,particles[i-1]);
+    All_incorrectdirection->GetXaxis()->SetBinLabel(i,particles[i-1]);
   }
   All_correctdirection->GetYaxis()->SetBinLabel(1,"False");
   All_correctdirection->GetYaxis()->SetBinLabel(2,"True");
+  All_incorrectdirection->GetYaxis()->SetBinLabel(1,"False");
+  All_incorrectdirection->GetYaxis()->SetBinLabel(2,"True");
 
 }
 
@@ -965,11 +977,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         else if (Bragg_smallest == noBragg_fwd_MIP)
         TrueBragg_truemu_smallest_neglogl->Fill(4.5);
 
-        if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-          TrueBragg_correctdirection->Fill(0.5,1.5);
+        if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+          if (PID_fwd) TrueBragg_correctdirection->Fill(0.5,1.5);
+          else TrueBragg_correctdirection->Fill(0.5,0.5);
         }
-        else{ // right track direction
-          TrueBragg_correctdirection->Fill(0.5,0.5);
+        else{ // reco dir is wrong
+          if (!PID_fwd) TrueBragg_incorrectdirection->Fill(0.5,1.5);
+          else TrueBragg_incorrectdirection->Fill(0.5,0.5);
         }
       }
 
@@ -1010,11 +1024,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         else if (Bragg_smallest == noBragg_fwd_MIP)
         TrueBragg_truep_smallest_neglogl->Fill(4.5);
 
-        if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-          TrueBragg_correctdirection->Fill(1.5,1.5);
+        if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+          if (PID_fwd) TrueBragg_correctdirection->Fill(1.5,1.5);
+          else TrueBragg_correctdirection->Fill(1.5,0.5);
         }
-        else{ // right track direction
-          TrueBragg_correctdirection->Fill(1.5,0.5);
+        else{ // reco dir is wrong
+          if (!PID_fwd) TrueBragg_incorrectdirection->Fill(1.5,1.5);
+          else TrueBragg_incorrectdirection->Fill(1.5,0.5);
         }
       }
 
@@ -1051,11 +1067,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         else if (Bragg_smallest == noBragg_fwd_MIP)
         TrueBragg_truepi_smallest_neglogl->Fill(4.5);
 
-        if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-          TrueBragg_correctdirection->Fill(2.5,1.5);
+        if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+          if (PID_fwd) TrueBragg_correctdirection->Fill(2.5,1.5);
+          else TrueBragg_correctdirection->Fill(2.5,0.5);
         }
-        else{ // right track direction
-          TrueBragg_correctdirection->Fill(2.5,0.5);
+        else{ // reco dir is wrong
+          if (!PID_fwd) TrueBragg_incorrectdirection->Fill(2.5,1.5);
+          else TrueBragg_incorrectdirection->Fill(2.5,0.5);
         }
       }
 
@@ -1092,11 +1110,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         else if (Bragg_smallest == noBragg_fwd_MIP)
         TrueBragg_trueK_smallest_neglogl->Fill(4.5);
 
-        if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-          TrueBragg_correctdirection->Fill(3.5,1.5);
+        if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+          if (PID_fwd) TrueBragg_correctdirection->Fill(3.5,1.5);
+          else TrueBragg_correctdirection->Fill(3.5,0.5);
         }
-        else{ // right track direction
-          TrueBragg_correctdirection->Fill(3.5,0.5);
+        else{ // reco dir is wrong
+          if (!PID_fwd) TrueBragg_incorrectdirection->Fill(3.5,1.5);
+          else TrueBragg_incorrectdirection->Fill(3.5,0.5);
         }
       }
     } // end if(TrueBragg)
@@ -1139,11 +1159,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       else if (Bragg_smallest == noBragg_fwd_MIP)
       All_truemu_smallest_neglogl->Fill(4.5);
 
-      if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-        All_correctdirection->Fill(0.5,1.5);
+      if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+        if (PID_fwd) All_correctdirection->Fill(0.5,1.5);
+        else All_correctdirection->Fill(0.5,0.5);
       }
-      else{ // right track direction
-        All_correctdirection->Fill(0.5,0.5);
+      else{ // reco dir is wrong
+        if (!PID_fwd) All_incorrectdirection->Fill(0.5,1.5);
+        else All_incorrectdirection->Fill(0.5,0.5);
       }
     }
 
@@ -1184,11 +1206,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       else if (Bragg_smallest == noBragg_fwd_MIP)
       All_truep_smallest_neglogl->Fill(4.5);
 
-      if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-        All_correctdirection->Fill(1.5,1.5);
+      if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+        if (PID_fwd) All_correctdirection->Fill(1.5,1.5);
+        else All_correctdirection->Fill(1.5,0.5);
       }
-      else{ // right track direction
-        All_correctdirection->Fill(1.5,0.5);
+      else{ // reco dir is wrong
+        if (!PID_fwd) All_incorrectdirection->Fill(1.5,1.5);
+        else All_incorrectdirection->Fill(1.5,0.5);
       }
     }
 
@@ -1225,11 +1249,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       else if (Bragg_smallest == noBragg_fwd_MIP)
       All_truepi_smallest_neglogl->Fill(4.5);
 
-      if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-        All_correctdirection->Fill(2.5,1.5);
+      if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+        if (PID_fwd) All_correctdirection->Fill20.5,1.5);
+        else All_correctdirection->Fill(2.5,0.5);
       }
-      else{ // right track direction
-        All_correctdirection->Fill(2.5,0.5);
+      else{ // reco dir is wrong
+        if (!PID_fwd) All_incorrectdirection->Fill(2.5,1.5);
+        else All_incorrectdirection->Fill(2.5,0.5);
       }
     }
 
@@ -1266,11 +1292,13 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       else if (Bragg_smallest == noBragg_fwd_MIP)
       All_trueK_smallest_neglogl->Fill(4.5);
 
-      if ((PID_fwd && RecoTrackDir.Dot(TrueTrackDir) > 0) || (!PID_fwd && RecoTrackDir.Dot(TrueTrackDir) < 0)){ // correct track direction
-        All_correctdirection->Fill(3.5,1.5);
+      if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
+        if (PID_fwd) All_correctdirection->Fill(3.5,1.5);
+        else All_correctdirection->Fill(3.5,0.5);
       }
-      else{ // right track direction
-        All_correctdirection->Fill(3.5,0.5);
+      else{ // reco dir is wrong
+        if (!PID_fwd) All_incorrectdirection->Fill(3.5,1.5);
+        else All_incorrectdirection->Fill(3.5,0.5);
       }
     }
 
