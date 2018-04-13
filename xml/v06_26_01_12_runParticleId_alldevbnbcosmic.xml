@@ -31,13 +31,13 @@
 
     <!-- diffusion filter -->
     <stage name="particleId">
-        <inputdef>prodgenie_bnb_nu_cosmic_uboone_mcc8.7_reco2_dev</inputdef>
+        <inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.7_reco2_dev</inputdef>
         <fcl>&app_dir;/job/run_particle_identification_withvalid.fcl</fcl>
         <bookdir>&data_dir;</bookdir>
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <numjobs>1</numjobs>
+        <!-- <numjobs>1</numjobs>-->
         <numjobs>250</numjobs>
         <maxfilesperjob>4</maxfilesperjob>
         <memory>4000</memory>
