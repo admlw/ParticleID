@@ -60,10 +60,49 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     std::vector<double> fv;
 
     std::string fTrackingAlgo;
+    std::string fCaloLabel;
     std::string fHitAlgo;
     std::string fHitTrackAssns;
     std::string fTruthMatchingAssns;
     std::string fPIDtag;
+
+        TH1F *AllParticles_neglogl_mu;
+        TH1F *AllParticles_neglogl_p;
+        TH1F *AllParticles_neglogl_pi;
+        TH1F *AllParticles_neglogl_K;
+        TH1F *AllParticles_neglogl_MIP;
+        TH1F *AllParticles_neglogl_minmuMIP;
+
+        TH2F *AllParticles_neglogl_mu_vslength;
+        TH2F *AllParticles_neglogl_MIP_vslength;
+        TH2F *AllParticles_neglogl_minmuMIP_vslength;
+        TH2F *AllParticles_neglogl_p_vslength;
+        TH2F *AllParticles_neglogl_mu_vsangle;
+        TH2F *AllParticles_neglogl_MIP_vsangle;
+        TH2F *AllParticles_neglogl_minmuMIP_vsangle;
+        TH2F *AllParticles_neglogl_p_vsangle;
+        TH2F *AllParticles_neglogl_mu_vsnhits;
+        TH2F *AllParticles_neglogl_MIP_vsnhits;
+        TH2F *AllParticles_neglogl_minmuMIP_vsnhits;
+        TH2F *AllParticles_neglogl_p_vsnhits;
+
+        TH2F *AllParticles_neglogl_muvsp;
+        TH2F *AllParticles_neglogl_muvspi;
+
+        TH2F *AllParticles_neglogl_MIPvsp;
+        TH2F *AllParticles_neglogl_minmuMIPvsp;
+
+        TH1F *AllParticles_neglogl_muoverp;
+        TH1F *AllParticles_neglogl_muminusp;
+
+        TH1F *AllParticles_neglogl_MIPminusp;
+        TH1F *AllParticles_neglogl_minmuMIPminusp;
+
+        TH1F *AllParticles_smallest_neglogl;
+
+        TH1F *AllParticles_PIDA;
+
+        TH2F *AllParticles_dEdxtr_len;
 
     TH1F *TrueBragg_truemu_neglogl_mu;
     TH1F *TrueBragg_truep_neglogl_mu;
@@ -419,6 +458,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   fHitTrackAssns = p.get<std::string>("HitTrackAssnName","pandoraNu::McRecoStage2");
   fTruthMatchingAssns = p.get<std::string>("HitTruthMatchingAssnName","crHitRemovalTruthMatch::McRecoStage2");
   fPIDtag = p.get<std::string>("ParticleIDProducerModule");
+  fCaloLabel = p.get< std::string > ("CalorimetryModule","pandoraNucali");
 
   fv = fid.setFiducialVolume(fv, p);
   fid.printFiducialVolume(fv);
@@ -815,7 +855,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
   art::FindManyP<recob::Hit> hits_from_tracks(trackHandle, e, fHitTrackAssns);
   art::FindMany<simb::MCParticle,anab::BackTrackerHitMatchingData> particles_per_hit(hitHandle,e,fTruthMatchingAssns);
-  art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, "pandoraNucali");
+  art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, fCaloLabel);
 
   // --------- Loop over tracks in event ---------- //
   for (auto& track : trackCollection){
