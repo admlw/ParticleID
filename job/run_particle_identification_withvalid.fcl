@@ -38,7 +38,8 @@ physics:
           module_type:              "ParticleIDValidationPlots"
           TrackingAlgorithm:          "pandoraNu"
           ParticleIDProducerModule: "pid"
-           
+          IsData: false
+
           # fiducial volume dimensions
           X_LOW:  10
           X_HIGH: 10
