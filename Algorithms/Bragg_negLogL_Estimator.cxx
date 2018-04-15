@@ -131,17 +131,13 @@ namespace particleid{
         size_t rr_index;
         if (forward){ // Fit tracks "forward" (i.e. in the direction they already have)
           rr_index = i_hit;
-          std::cout << rr_index << "/" << resRange.size() << std::endl;
           if ((int)rr_index >= (int)resRange.size() - nHitsToDrop){
-            std::cout << rr_index << "forward ignored" << std::endl;
             continue;
           }
         }
         else{ // Fit tracks "backward"
-          std::cout << rr_index << "/" << resRange.size() << std::endl;
           rr_index = (resRange.size()-1)-i_hit;
           if ((int)i_hit < nHitsToDrop){
-            std::cout << rr_index << "backward ignored" << std::endl;
             continue;
           }
         }
