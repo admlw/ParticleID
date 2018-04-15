@@ -7,11 +7,11 @@ void LandauGaussianPlot(){
   TF1 *langaus = new TF1("langaus", landauGaussian, 0, 100, 4);
   langaus->SetNpx(10000);
 
-  TH2D *h_muon = new TH2D("h_muon", ";Residual Range (cm); dE/dx (MeV/cm)", 107, 0, 30, 1000, 0, 20);
+  TH2D *h_muon = new TH2D("h_muon", ";Residual Range (cm); dE/dx (MeV/cm)", 1000, 0, 30, 1000, 0, 20);
 
-  for (int i = 0; i < 107; i++){
+  for (int i = 0; i < 1000; i++){
 
-    langaus->SetParameters(0.07, g_ThdEdxRR_Muon->Eval((i)*30./107., 0, "S"), 1, 0.1);
+    langaus->SetParameters(0.07, g_ThdEdxRR_Muon->Eval((i)*30./1000., 0, "S"), 1, 0.1);
 
     for (int j = 0; j < 1000; j++){
 
@@ -26,11 +26,11 @@ void LandauGaussianPlot(){
   h_muon->SetContour(100);
   h_muon->Draw("col2");
 
-  TH2D *h_proton = new TH2D("h_proton", ";Residual Range (cm); dE/dx (MeV/cm)", 107, 0, 30, 1000, 0, 20);
+  TH2D *h_proton = new TH2D("h_proton", ";Residual Range (cm); dE/dx (MeV/cm)", 1000, 0, 30, 1000, 0, 20);
 
-  for (int i = 0; i < 107; i++){
+  for (int i = 0; i < 1000; i++){
 
-    langaus->SetParameters(0.09, g_ThdEdxRR_Proton->Eval((i)*30./107., 0, "S"), 1, 0.4);
+    langaus->SetParameters(0.09, g_ThdEdxRR_Proton->Eval((i)*30./1000., 0, "S"), 1, 0.4);
 
     for (int j = 0; j < 1000; j++){
 
@@ -40,11 +40,25 @@ void LandauGaussianPlot(){
 
   }
 
+
   TCanvas *c2 = new TCanvas("c2", "c2", 500, 500);
   c2->cd();
   h_proton->SetContour(100);
   h_proton->Draw("col2");
 
+  TH2D *h_combined = new TH2D("h_combined", ";Residual Range (cm); dE/dx (MeV/cm)", 1000, 0, 30, 1000, 0, 20);
+
+  for (int i = 0; i < 1000*1000; i++){
+
+    h_combined->SetBinContent(i, std::max(h_proton->GetBinContent(i), h_muon->GetBinContent(i)));
+
+  }
+
+  TFile* f = new TFile("likelihoodMaps.root", "RECREATE");
+  f->cd();
+  h_muon->Write();
+  h_proton->Write();
+  h_combined->Write();
 }
 
 void Theory_dEdx_resrange(){
