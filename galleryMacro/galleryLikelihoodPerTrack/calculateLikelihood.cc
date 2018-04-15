@@ -198,15 +198,18 @@ int main(int argv, char** argc){
         double totalProtonLogLikelihoodFwd = algorithm.getNegLogL(dedx, resrg, 2212, true);
         double totalMuonLogLikelihoodFwd   = algorithm.getNegLogL(dedx, resrg, 13, true);
         double totalPionLogLikelihoodFwd   = algorithm.getNegLogL(dedx, resrg, 211, true);
+        double totalMuonLogLikelihoodNoBragg = algorithm.getNegLogL(dedx, resrg, 0, true);
 
         double Bragg_mu = std::min(totalMuonLogLikelihoodFwd, totalMuonLogLikelihoodBwd);
         double Bragg_p  = std::min(totalProtonLogLikelihoodFwd, totalProtonLogLikelihoodBwd);
         double Bragg_pi = std::min(totalPionLogLikelihoodFwd, totalPionLogLikelihoodBwd);
+        double Bragg_MipNoBragg = totalMuonLogLikelihoodNoBragg;
 
         std::cout << "[CALCLIKELIHOOD] true PDG: " << pdgCode << std::endl;
         std::cout << "[CALCLIKELIHOOD] proton likelihood: " << Bragg_p << std::endl;
         std::cout << "[CALCLIKELIHOOD] muon likelihood: " << Bragg_mu << std::endl;
-        std::cout << "[CALCLIKELIHOOD] muon likelihood: " << Bragg_pi << std::endl;
+        std::cout << "[CALCLIKELIHOOD] pion likelihood: " << Bragg_pi << std::endl;
+        std::cout << "[CALCLIKELIHOOD] muon nobragg likelihood" << Bragg_MipNoBragg << std::endl;
 
         bool correctPDG = false;
         if (pdgCode == 2212){
@@ -219,7 +222,8 @@ int main(int argv, char** argc){
         }
         else if (pdgCode == 13 || pdgCode == -13 || pdgCode == 211 || pdgCode == -211)
         {
-          if (std::min(totalMuonLogLikelihoodFwd, totalMuonLogLikelihoodBwd) >= std::min(totalProtonLogLikelihoodFwd, totalProtonLogLikelihoodBwd)){
+          if ((std::min(totalMuonLogLikelihoodFwd, totalMuonLogLikelihoodBwd) >= std::min(totalProtonLogLikelihoodFwd, totalProtonLogLikelihoodBwd))
+              || (totalMuonLogLikelihoodNoBragg >= std::min(totalProtonLogLikelihoodFwd, totalProtonLogLikelihoodBwd))){
             correctPDG = false;
           }
           else{
