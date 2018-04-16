@@ -20,8 +20,9 @@ source:
 {
 
   module_type: RootInput
-  inputCommands: [ "keep *_*_*_*", "drop sumdata::RunData_*_*_*", "drop *_*_*_UBXSec" ]
+  inputCommands: [ "keep *_*_*_*", "drop sumdata::RunData_*_*_*"] # , "drop *_*_*_UBXSec" ]
   fileNames : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/uboone/persistent/users/kduffy/mintwotrackfilter_mcc87MC_v3/mcc8.7_mc_marcosel_twotracks_file1.root" ]
+
 }
 
 physics:
@@ -36,9 +37,10 @@ physics:
        pidvalid:
         {
           module_type:              "ParticleIDValidationPlots"
-          TrackingAlgorithm:          "pandoraNu"
+          TrackingAlgorithm:        "pandoraNu"
+          CaloTrackAssnName:        "pandoraNu"
           ParticleIDProducerModule: "pid"
-          IsData: false
+          IsData:                   false
 
           # fiducial volume dimensions
           X_LOW:  10
