@@ -2,13 +2,14 @@
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
 #include "particle_identification_config.fcl"
+#include "particle_identification_fiducialvolume_config.fcl"
 
 process_name: particleid
 
 services:
 {
 
-TFileService:  {fileName: "particleIdMeta.root"}
+    TFileService:  {fileName: "particleIdMeta.root"}
   TimeTracker:   @local::microboone_time_tracker
   MemoryTracker: @local::microboone_memory_tracker
                  @table::microboone_simulation_services
@@ -25,15 +26,15 @@ source:
 
 physics:
 {
-  producers:
-  {
-    pid: @local::particleidconfig
-  }
+    producers:
+    {
+        pid: @local::particleidconfig
+    }
 
-  stream1: [ out1 ]
-  analysis: [ pid ]
-  trigger_paths: [ analysis ]
-  end_paths: [ stream1 ]
+    stream1: [ out1 ]
+    pidmod: [ pid ]
+    trigger_paths: [ pidmod ]
+    end_paths: [ stream1 ]
 }
 
 outputs:
@@ -42,6 +43,7 @@ outputs:
   {
     module_type: RootOutput
     fileName: "%ifb_%tc_pids.root"
+    dataTier: "pid"
   }
 }
 
