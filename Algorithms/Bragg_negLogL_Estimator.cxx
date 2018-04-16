@@ -33,6 +33,7 @@ namespace particleid{
     landauWidth_mu = p.get<double>("dEdxLandauWidthMu" , 0.07);
     landauWidth_pi = p.get<double>("dEdxLandauWidthPi" , 0.07);
     landauWidth_k  = p.get<double>("dEdxLandauWidthK"  , 0.07);
+    nHitsToDrop    = p.get<int>("NHitsToDrop", 1);
     endPointFloatShort    = p.get<double>("EndPointFloatShort", -1.0);
     endPointFloatLong     = p.get<double>("EndPointFloatLong" , 1.0);
     endPointFloatStepSize = p.get<double>("EndPointFloatStepSize", 0.05);
@@ -50,6 +51,7 @@ namespace particleid{
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] Muon dE/dx landau width   : " << landauWidth_mu << std::endl;
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] Pion dE/dx landau width   : " << landauWidth_pi << std::endl;
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] Kaon dE/dx landau width   : " << landauWidth_k  << std::endl;
+    std::cout << "[ParticleID::Bragg_negLogL_Estimator] Number of Hits to Drop: " << nHitsToDrop << std::endl;
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float long  : " << endPointFloatLong  << std::endl;
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point float short : " << endPointFloatShort  << std::endl;
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] End-point step size   : " << endPointFloatStepSize  << std::endl;
@@ -129,9 +131,15 @@ namespace particleid{
         size_t rr_index;
         if (forward){ // Fit tracks "forward" (i.e. in the direction they already have)
           rr_index = i_hit;
+          if ((int)rr_index >= (int)resRange.size() - nHitsToDrop){
+            continue;
+          }
         }
         else{ // Fit tracks "backward"
           rr_index = (resRange.size()-1)-i_hit;
+          if ((int)i_hit < nHitsToDrop){
+            continue;
+          }
         }
 
         double resrg_i = resRange.at(rr_index)+rr_shift+rr_MIPregionshift;

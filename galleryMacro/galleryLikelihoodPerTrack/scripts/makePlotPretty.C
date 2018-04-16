@@ -1,5 +1,7 @@
 void makePlotPretty(){
 
+  TFile* f = new TFile("likelihoodMaps.root", "READ");
+
   if (!_file0->IsOpen()) {
     printf("<E> Cannot open input file") ;
     exit(1) ;
@@ -42,9 +44,12 @@ void makePlotPretty(){
     TCanvas *c1 = new TCanvas("c1", "c1", 500, 500);
     c1->cd();
 
-    h->Draw();
-    grp->Draw("same");
-    grmu->Draw("same");
+    TH2D* h1 = (TH2D*)f->Get("h_combined");
+    h1->Draw("colz");
+    h->SetMarkerColor(kWhite);
+    h->Draw("same");
+    //grp->Draw("same");
+    //grmu->Draw("same");
 
     TString st = Form("%s.png", obj->GetName());
 

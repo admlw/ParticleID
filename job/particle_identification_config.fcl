@@ -26,6 +26,8 @@ particleidconfig:
   dEdxGausWidthPi:                0.1
   dEdxGausWidthK:                 0.1
 
+  NHitsToDrop: 1
+
   # Mis-reco means track end point needs to be allowed to float.
   # Define the amount we allow the end point of the track to float by: 
   #   - EndPointFloatShort: how much shorter do we allow the track to be?

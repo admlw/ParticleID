@@ -53,7 +53,7 @@ namespace particleid{
     double landauWidth_pi;
     double landauWidth_k;
     double landauWidth_p;
-
+    int nHitsToDrop;
     double endPointFloatShort;
     double endPointFloatLong;
     double endPointFloatStepSize;
