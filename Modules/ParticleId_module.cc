@@ -101,6 +101,8 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
 
+  std::cout << "[ParticleId_module] Using calorimetry label: " << fCaloLabel << std::endl;
+
   fv = fid.setFiducialVolume(fv, p);
   fid.printFiducialVolume(fv);
   braggcalc.configure(p);
