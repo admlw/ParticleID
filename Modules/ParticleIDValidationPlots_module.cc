@@ -61,7 +61,6 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
 
     bool fIsData;
     std::string fTrackingAlgo;
-    std::string fCaloLabel;
     std::string fHitAlgo;
     std::string fHitTrackAssns;
     std::string fCaloTrackAssns;
@@ -461,7 +460,6 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   fCaloTrackAssns = p.get<std::string>("CaloTrackAssnName", "pandoraNucali::McRecoStage2");
   fTruthMatchingAssns = p.get<std::string>("HitTruthMatchingAssnName","crHitRemovalTruthMatch::McRecoStage2");
   fPIDtag = p.get<std::string>("ParticleIDProducerModule");
-  fCaloLabel = p.get< std::string > ("CalorimetryModule","pandoraNucali");
 
   fv = fid.setFiducialVolume(fv, p);
   fid.printFiducialVolume(fv);
@@ -890,6 +888,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 {
 
   std::cout << "[PARTICLEIDVALID] Using IsData: " << fIsData << "Settings!" << std::endl;
+  std::cout << "[PARTICLEIDVALID] Using track/calorimetry associations " << fCaloTrackAssns << std::endl;
 
   // Get handles to needed information
   art::Handle<std::vector<recob::Track>> trackHandle;
