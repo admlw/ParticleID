@@ -63,6 +63,7 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     std::string fTrackingAlgo;
     std::string fHitAlgo;
     std::string fHitTrackAssns;
+    std::string fCaloTrackAssns;
     std::string fTruthMatchingAssns;
     std::string fPIDtag;
 
@@ -382,6 +383,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   fTrackingAlgo = p.get<std::string>("TrackingAlgorithm","pandoraNu::McRecoStage2");
   fHitAlgo = p.get<std::string>("HitProducer","pandoraCosmicHitRemoval::McRecoStage2");
   fHitTrackAssns = p.get<std::string>("HitTrackAssnName","pandoraNu::McRecoStage2");
+  fCaloTrackAssns = p.get<std::string>("CaloTrackAssnName", "pandoraNucali::McRecoStage2");
   fTruthMatchingAssns = p.get<std::string>("HitTruthMatchingAssnName","crHitRemovalTruthMatch::McRecoStage2");
   fPIDtag = p.get<std::string>("ParticleIDProducerModule");
 
@@ -742,7 +744,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
   e.getByLabel(fHitAlgo, hitHandle);
 
   art::FindManyP<recob::Hit> hits_from_tracks(trackHandle, e, fHitTrackAssns);
-  art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, "pandoraNucali");
+  art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, fCaloTrackAssns);
 
   // --------- Loop over tracks in event ---------- //
   for (auto& track : trackCollection){
