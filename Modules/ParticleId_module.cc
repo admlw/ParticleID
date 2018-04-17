@@ -24,19 +24,14 @@
 #include "lardataobj/AnalysisBase/Calorimetry.h"
 #include "lardataobj/RecoBase/Track.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
-
-// Truncated mean calculator
 #include "larana/TruncatedMean/Algorithm/TruncMean.h"
-// UPDATE WITH NEW CHECKOUT!
-//#include "uboone/ParticleID/TruncatedMeanCopy/Algorithm/TruncMean.h"
-
 
 // local includes
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
-#include "uboone/ParticleID/Algorithms/fiducialVolume.h"
+#include "uboone/ParticleID/Algorithms/FiducialVolume.h"
 #include "uboone/ParticleID/Algorithms/PIDA.h"
 #include "uboone/ParticleID/Algorithms/Bragg_negLogL_Estimator.h"
-#include "uboone/ParticleID/Algorithms/landauGaussian.h"
+#include "uboone/ParticleID/Algorithms/LandauGaussian.h"
 
 // root includes
 #include "TVector3.h"

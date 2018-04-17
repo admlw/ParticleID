@@ -22,7 +22,7 @@ LDFLAGS=$$(root-config --libs) \
 			    -L $(LARCOREOBJ_LIB) -l larcoreobj_SummaryData \
 			    -L $(LARDATAOBJ_LIB) -l lardataobj_Simulation -l lardataobj_RecoBase -l lardataobj_MCBase -l lardataobj_RawData -l lardataobj_OpticalDetectorData -l lardataobj_AnalysisBase
 
-calculateLikelihood: calculateLikelihood.cc Bragg_negLogL_Estimator.cxx fiducialVolume.cc Theory_dEdx_resrange.cxx
+calculateLikelihood: calculateLikelihood.cxx Bragg_negLogL_Estimator.cxx fiducialVolume.cxx Theory_dEdx_resrange.cxx
 		@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^
 
 all: calculateLikelihood

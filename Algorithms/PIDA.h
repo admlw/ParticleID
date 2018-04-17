@@ -1,7 +1,7 @@
 #ifndef PIDA_H
 #define PIDA_H
 
-#include "uboone/ParticleID/Algorithms/kernelDensityEstimator.h"
+#include "uboone/ParticleID/Algorithms/KernelDensityEstimator.h"
 #include "TMath.h"
 #include <vector>
 
