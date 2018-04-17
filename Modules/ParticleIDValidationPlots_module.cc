@@ -1021,33 +1021,31 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
      * false by construction if fIsData = true
      */
 
-     if (!fIsData){
-      if (dEdxStartEndRatio < 0.5){
-        for (int i=0; i < (int)resRange.size(); i++){
-          All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-          if (TrueBragg){
-            TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-          }
+    if (dEdxStartEndRatio < 0.5){
+      for (int i=0; i < (int)resRange.size(); i++){
+        All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        if (TrueBragg){
+          TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
         }
       }
-      else if (dEdxStartEndRatio > 2.0){
-        for (int i=0; i < (int)resRange.size(); i++){
-          All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-          if (TrueBragg){
-            TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-          }
-        }
-      }
-      else {
-        for (int i=0; i < (int)resRange.size(); i++){
-          All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-          if (TrueBragg){
-            TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-          }
-        }
-      }
-      //std::cout << dEdxStartEndRatio << std::endl;
     }
+    else if (dEdxStartEndRatio > 2.0){
+      for (int i=0; i < (int)resRange.size(); i++){
+        All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        if (TrueBragg){
+          TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        }
+      }
+    }
+    else {
+      for (int i=0; i < (int)resRange.size(); i++){
+        All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        if (TrueBragg){
+          TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+        }
+      }
+    }
+    //std::cout << dEdxStartEndRatio << std::endl;
 
     // ------------------- Check track direction ---------------------------------------- //
     TVector3 RecoTrackDir, TrueTrackDir;
