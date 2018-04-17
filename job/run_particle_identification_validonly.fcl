@@ -30,12 +30,13 @@ physics:
     {
        pidvalid:
         {
-         module_type:              "ParticleIDValidationPlots"
-         TrackingAlgorithm:        "pandoraNu"
-	       HitProducer:              "pandoraCosmicHitRemoval::McRecoStage2"
-         ParticleIDProducerModule: "pid"
-	       HitTrackAssnName:         "pandoraNu::McRecoStage2"
-  	     HitTruthMatchingAssnName: "crHitRemovalTruthMatch::McRecoStage2"
+        module_type:              "ParticleIDValidationPlots"
+        TrackingAlgorithm:        "pandoraNu::UBXSec"
+        CaloTrackAssnName:        "NewTrackscali::particleid"
+        ParticleIDProducerModule: "pid"
+        HitProducer:              "pandoraCosmicHitRemoval::UBXSec"
+        HitTruthMatchingAssnName: "pandoraCosmicHitRemoval::UBXSec"
+        Makedataplotsonly:        false
 
          # fiducial volume dimensions
          X_LOW:  10
