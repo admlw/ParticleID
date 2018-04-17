@@ -2,6 +2,7 @@
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
+#include "config_particle_identification_producerlabels.fcl"
 
 process_name: particleid
 
@@ -47,3 +48,5 @@ outputs:
 }
 
 services.DetectorClocksService.InheritClockConfig: false
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_data
+physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data

@@ -1,4 +1,4 @@
-#include "fiducialVolume.h"
+#include "FiducialVolume.h"
 
 namespace fidvol{
 

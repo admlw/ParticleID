@@ -24,19 +24,14 @@
 #include "lardataobj/AnalysisBase/Calorimetry.h"
 #include "lardataobj/RecoBase/Track.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
-
-// Truncated mean calculator
 #include "larana/TruncatedMean/Algorithm/TruncMean.h"
-// UPDATE WITH NEW CHECKOUT!
-//#include "uboone/ParticleID/TruncatedMeanCopy/Algorithm/TruncMean.h"
-
 
 // local includes
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
-#include "uboone/ParticleID/Algorithms/fiducialVolume.h"
+#include "uboone/ParticleID/Algorithms/FiducialVolume.h"
 #include "uboone/ParticleID/Algorithms/PIDA.h"
 #include "uboone/ParticleID/Algorithms/Bragg_negLogL_Estimator.h"
-#include "uboone/ParticleID/Algorithms/landauGaussian.h"
+#include "uboone/ParticleID/Algorithms/LandauGaussian.h"
 
 // root includes
 #include "TVector3.h"
@@ -70,7 +65,7 @@ class UBPID::ParticleId : public art::EDProducer {
   private:
 
     // fcl
-    std::string fTrackingAlgo;
+    std::string fTrackLabel;
     std::string fCaloLabel;
     std::string fPidaType;
     double fCutDistance;
@@ -94,18 +89,20 @@ class UBPID::ParticleId : public art::EDProducer {
 UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
 {
 
+  fhicl::ParameterSet const p_fv     = p.get<fhicl::ParameterSet>("FiducialVolume");
+  fhicl::ParameterSet const p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
+  fhicl::ParameterSet const p_bragg  = p.get<fhicl::ParameterSet>("BraggAlgo");
+
   // fcl parameters
-  fTrackingAlgo = p.get< std::string > ("TrackingAlgorithm");
-  fCaloLabel = p.get< std::string > ("CalorimetryModule");
+  fTrackLabel = p_labels.get< std::string > ("TrackLabel");
+  fCaloLabel = p_labels.get< std::string > ("CalorimetryLabel");
   fPidaType = p.get< std::string > ("PIDACalcType");
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
 
-  std::cout << "[ParticleId_module] Using calorimetry label: " << fCaloLabel << std::endl;
-
-  fv = fid.setFiducialVolume(fv, p);
+  fv = fid.setFiducialVolume(fv, p_fv);
   fid.printFiducialVolume(fv);
-  braggcalc.configure(p);
+  braggcalc.configure(p_bragg);
   braggcalc.printConfiguration();
 
   // this module produces a anab::ParticleID object and
@@ -137,7 +134,7 @@ void UBPID::ParticleId::produce(art::Event & e)
 
   // tracks...
   art::Handle < std::vector<recob::Track> > trackHandle;
-  e.getByLabel(fTrackingAlgo, trackHandle);
+  e.getByLabel(fTrackLabel, trackHandle);
   std::vector< art::Ptr<recob::Track> > trackCollection;
   art::fill_ptr_vector(trackCollection, trackHandle);
 

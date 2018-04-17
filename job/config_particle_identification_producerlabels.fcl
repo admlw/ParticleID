@@ -1,0 +1,69 @@
+#
+# configuration fcl file for particleId fcl parameters
+#
+
+BEGIN_PROLOG
+
+producerlabels_mcc8:
+{
+  
+  # producer label names
+  TrackLabel       : "pandoraNu::McRecoStage2"
+  CalorimetryLabel : "pandoraNucali::McRecoCali"
+
+  # validator labels
+  ParticleIdLabel  : "pid"
+  HitLabel         : "pandoraCosmicHitRemoval::McRecoStage2"
+  HitTrackAssn     : "pandoraNu::McRecoStage2"
+  HitTruthAssn     : "crHitRemovalTruthMatch::McRecoStage2"
+  CaloTrackAssn    : "pandoraNucali::McRecoCali"
+
+}
+
+producerlabels_mcc8_data:
+{
+  
+  # producer label names
+  TrackLabel       : "pandoraNu::DataRecoStage2"
+  CalorimetryLabel : "pandoraNucali::DataRecoStage2"
+
+  # validator labels
+  ParticleIdLabel  : "pid"
+  HitLabel         : "pandoraCosmicHitRemoval::DataRecoStage2"
+  HitTrackAssn     : "pandoraNu::DataRecoStage2"
+  CaloTrackAssn    : "pandoraNucali::DataRecoCali"
+
+}
+
+producerlabels_mcc8_UBXSec:
+{
+
+# producer label names
+  TrackLabel       : "pandoraNu::UBXSec"
+  CalorimetryLabel : "pidcalibration::particleid"
+
+  # validator labels
+  ParticleIdLabel  : "pid::particleid"
+  HitLabel         : "pandoraCosmicHitRemoval::UBXSec"
+  HitTrackAssn     : "pandoraNu::UBXSec"
+  HitTruthAssn     : "pandoraCosmicHitRemoval::UBXSec"
+  CaloTrackAssn    : "pidcalibration::particleid"
+
+}
+
+producerlabels_mcc8_UBXSec_data:
+{
+
+# producer label names
+  TrackLabel       : "pandoraNu::UBXSec"
+  CalorimetryLabel : "pidcalibration::particleid"
+
+  # validator labels
+  ParticleIdLabel  : "pid::particleid"
+  HitLabel         : "pandoraCosmicHitRemoval::UBXSec"
+  HitTrackAssn     : "pandoraNu::UBXSec"
+  CaloTrackAssn    : "pidcalibration::particleid"
+
+}
+
+END_PROLOG

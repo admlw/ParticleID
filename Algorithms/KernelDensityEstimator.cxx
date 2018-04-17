@@ -1,4 +1,4 @@
-#include "kernelDensityEstimator.h"
+#include "KernelDensityEstimator.h"
 
 namespace kde{
 

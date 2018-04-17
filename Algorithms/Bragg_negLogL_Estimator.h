@@ -33,7 +33,7 @@
 
 // local
 #include "Theory_dEdx_resrange.h"
-#include "landauGaussian.h"
+#include "LandauGaussian.h"
 
 namespace particleid{
 

@@ -2,12 +2,12 @@
 
 <!-- project details -->
 <!DOCTYPE project [
-<!ENTITY release "v06_26_01_12">
-<!ENTITY name "PIDproducer_MCtwotr_alldev_v2">
-<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/alister1/PID/PIDproducer_MCtwotr_alldev_v2">
-<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/alister1/PID/PIDproducer_MCtwotr_alldev_v2">
+<!ENTITY release "v06_26_01_13">
+<!ENTITY name "PIDproducer_UBXSec_OffBeamData">
+<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/alister1/PID/PIDproducer_UBXSec_OffBeamData">
+<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/alister1/PID/PIDproducer_UBXSec_OffBeamData">
 <!ENTITY app_dir "/uboone/app/users/alister1/particleID/ubcode_v06_26_01_13/srcs/uboonecode/uboone/ParticleID">
-<!ENTITY data_dir "/uboone/data/users/alister1/PIDproducer_MCtwotr_alldev_v2">
+<!ENTITY data_dir "/uboone/data/users/alister1/PIDproducer_UBXSec_OffBeamData">
 ]>
 
 <job>
@@ -31,13 +31,12 @@
 
     <!-- diffusion filter -->
     <stage name="particleId">
-        <inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.7_reco2_dev</inputdef>
-        <fcl>&app_dir;/job/run_particle_identification_withvalid.fcl</fcl>
+        <inputdef>mdeltutt_prod_reco_optfilter_extbnb_ccinclusive_v13_mcc8_goodruns_a</inputdef>
+        <fcl>&app_dir;/job/run_particle_identification_withcaliandvalid_data.fcl</fcl>
         <bookdir>&data_dir;</bookdir>
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <!-- <numjobs>1</numjobs>-->
         <numjobs>250</numjobs>
         <maxfilesperjob>4</maxfilesperjob>
         <memory>4000</memory>

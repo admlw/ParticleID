@@ -1,14 +1,16 @@
 #include "services_microboone.fcl"
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
-#include "particle_identification_config.fcl"
-#include "particle_identification_fiducialvolume_config.fcl"
+#include "config_particle_identification.fcl"
+#include "config_particle_identification_validation.fcl"
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"
 
 #
 # fcl file produces pandoraNucali calibrated objects and runs the particleid
 # on them, then performs validation.
+#
+# intended to be used on CC-inclusive filtered events
 #
 
 process_name: particleid
@@ -37,38 +39,18 @@ physics:
     producers:
     {
 
-      NewTrackscali: @local::microboone_calibrationdedx
+      pidcalibration: @local::microboone_calibrationdedx
       pid: @local::particleidconfig
 
     }
 
     analyzers:
     {
-       pidvalid:
-        {
-          module_type:              "ParticleIDValidationPlots"
-          TrackingAlgorithm:        "pandoraNu::UBXSec"
-          CaloTrackAssnName:        "NewTrackscali::particleid"
-          ParticleIDProducerModule: "pid::particleid"
-          HitProducer:              "pandoraCosmicHitRemoval::UBXSec"
-          HitTruthMatchingAssnName: "pandoraCosmicHitRemoval::UBXSec"
-          HitTrackAssnName:         "pandoraNu::UBXSec"
-          Makedataplotsonly:        false
-
-          # fiducial volume dimensions
-          X_LOW:  10
-          X_HIGH: 10
-          Y_LOW:  10
-          Y_HIGH: 10
-          Z_LOW:  10
-          Z_HIGH: 10
-
-
-        }
+       pidvalid: @local::particleidvalidconfig
     }
 
     stream1: [ out1 ]
-    analysis: [ NewTrackscali, pid ]
+    analysis: [ pidcalibration, pid ]
     validation: [ pidvalid ]
     trigger_paths: [ analysis ]
     end_paths: [ validation, stream1 ]
@@ -84,10 +66,10 @@ outputs:
   }
 }
 
-
-physics.producers.NewTrackscali.TrackModuleLabel:                   "pandoraNu::UBXSec"
-physics.producers.NewTrackscali.CalorimetryModuleLabel:             "pandoraNucalo::UBXSec"
-physics.producers.pid.TrackingAlgorithm:          "pandoraNu::UBXSec"
-physics.producers.pid.CalorimetryModule:          "NewTrackscali::particleid"
-
+physics.producers.pidcalibration.CaloAlg: @local::microboone_calorimetryalgmcc84data 
+physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::UBXSec"
+physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNucalo::UBXSec"
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_data
+physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_data
+physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
 services.DetectorClocksService.InheritClockConfig: false

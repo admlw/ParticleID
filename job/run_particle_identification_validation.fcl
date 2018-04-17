@@ -1,8 +1,8 @@
 #include "services_microboone.fcl"
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
-#include "particle_identification_config.fcl"
-#include "particle_identification_fiducialvolume_config.fcl"
+#include "config_particle_identification_validation.fcl"
+
 
 process_name: particleid
 
@@ -28,25 +28,7 @@ physics:
 {
     analyzers:
     {
-       pidvalid:
-        {
-        module_type:              "ParticleIDValidationPlots"
-        TrackingAlgorithm:        "pandoraNu::UBXSec"
-        CaloTrackAssnName:        "pandoraNucali"
-        ParticleIDProducerModule: "pid"
-        HitProducer:              "pandoraCosmicHitRemoval::UBXSec"
-        HitTruthMatchingAssnName: "pandoraCosmicHitRemoval::UBXSec"
-        HitTrackAssnName:         "pandoraNu::UBXSec"
-        Makedataplotsonly:        false
-
-         # fiducial volume dimensions
-         X_LOW:  10
-         X_HIGH: 10
-         Y_LOW:  10
-         Y_HIGH: 10
-         Z_LOW:  10
-         Z_HIGH: 10
-        }
+       pidvalid : @local::particleidvalidconfig
     }
 
     validation: [ pidvalid ]
