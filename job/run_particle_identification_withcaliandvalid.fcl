@@ -39,18 +39,20 @@ physics:
 
       NewTrackscali: @local::microboone_calibrationdedx
       pid: @local::particleidconfig
-    
+
     }
-    
+
     analyzers:
     {
        pidvalid:
         {
           module_type:              "ParticleIDValidationPlots"
           TrackingAlgorithm:        "pandoraNu::UBXSec"
-          CaloTrackAssnName:        "pandoraNucalo::UBXSec"
+          CaloTrackAssnName:        "NewTrackscali::particleid"
           ParticleIDProducerModule: "pid"
-          IsData:                   true
+          HitProducer:              "pandoraCosmicHitRemoval::UBXSec"
+          HitTruthMatchingAssnName: "pandoraCosmicHitRemoval::UBXSec"
+          Makedataplotsonly:        false
 
           # fiducial volume dimensions
           X_LOW:  10
@@ -63,7 +65,7 @@ physics:
 
         }
     }
-    
+
     stream1: [ out1 ]
     analysis: [ NewTrackscali, pid ]
     validation: [ pidvalid ]
@@ -86,5 +88,5 @@ physics.producers.NewTrackscali.TrackModuleLabel:                   "pandoraNu::
 physics.producers.NewTrackscali.CalorimetryModuleLabel:             "pandoraNucalo::UBXSec"
 physics.producers.pid.TrackingAlgorithm:          "pandoraNu::UBXSec"
 physics.producers.pid.CalorimetryModule:          "NewTrackscali::particleid"
- 
+
 services.DetectorClocksService.InheritClockConfig: false
