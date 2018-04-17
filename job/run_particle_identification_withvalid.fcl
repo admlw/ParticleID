@@ -31,16 +31,18 @@ physics:
     {
         pid: @local::particleidconfig
     }
-    
+
     analyzers:
     {
        pidvalid:
         {
           module_type:              "ParticleIDValidationPlots"
-          TrackingAlgorithm:        "pandoraNu"
-          CaloTrackAssnName:        "pandoraNu"
+          TrackingAlgorithm:        "pandoraNu::UBXSec"
+          CaloTrackAssnName:        "NewTrackscali::particleid"
           ParticleIDProducerModule: "pid"
-          IsData:                   false
+          HitProducer:              "pandoraCosmicHitRemoval::UBXSec"
+          HitTruthMatchingAssnName: "pandoraCosmicHitRemoval::UBXSec"
+          Makedataplotsonly:        false
 
           # fiducial volume dimensions
           X_LOW:  10
@@ -53,7 +55,7 @@ physics:
 
         }
     }
-    
+
     stream1: [ out1 ]
     analysis: [ pid ]
     validation: [ pidvalid ]
