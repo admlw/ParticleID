@@ -49,3 +49,4 @@ ignore/*
 # No root files at all.
 *.root
 *.png
+*.pdf
