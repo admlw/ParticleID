@@ -32,10 +32,11 @@ physics:
         {
         module_type:              "ParticleIDValidationPlots"
         TrackingAlgorithm:        "pandoraNu::UBXSec"
-        CaloTrackAssnName:        "NewTrackscali::particleid"
+        CaloTrackAssnName:        "pandoraNucali"
         ParticleIDProducerModule: "pid"
         HitProducer:              "pandoraCosmicHitRemoval::UBXSec"
         HitTruthMatchingAssnName: "pandoraCosmicHitRemoval::UBXSec"
+        HitTrackAssnName:         "pandoraNu::UBXSec"
         Makedataplotsonly:        false
 
          # fiducial volume dimensions
