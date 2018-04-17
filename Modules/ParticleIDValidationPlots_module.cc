@@ -104,6 +104,10 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
 
     TH1F *AllTracks_smallest_neglogl;
 
+    TH2F *All_chargeEndOverStart_sm0_5_dEdxrr;
+    TH2F *All_chargeEndOverStart_gr2_dEdxrr;
+    TH2F *All_chargeEndOverStart_0_5to2_dEdxrr;
+
     /** Histograms for tracks expected to have Bragg peaks */
     TH1F *TrueBragg_truemu_neglogl_mu;
     TH1F *TrueBragg_truep_neglogl_mu;
@@ -434,10 +438,6 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH2F *Contained_chargeEndOverStartVersusNHits_directionCorrect;
     TH2F *Contained_chargeEndOverStartVersusNHits_directionIncorrect;
 
-    TH2F *All_chargeEndOverStart_sm0_5_dEdxrr;
-    TH2F *All_chargeEndOverStart_gr2_dEdxrr;
-    TH2F *All_chargeEndOverStart_0_5to2_dEdxrr;
-
     TH2F *All_truemu_dEdxtr_len;
     TH2F *All_truep_dEdxtr_len;
     TH2F *All_truepi_dEdxtr_len;
@@ -506,6 +506,10 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
   for (size_t i=1; i<=5; i++){
     AllTracks_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
   }
+
+  All_chargeEndOverStart_sm0_5_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_sm0_5_dEdxrr","All tracks (end/start average charge < 0.5);Residual range (cm); dEdx",150,0,30,200,0,50);
+  All_chargeEndOverStart_gr2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_gr2_dEdxrr","All tracks (end/start average charge > 2);Residual range (cm); dEdx",150,0,30,200,0,50);
+  All_chargeEndOverStart_0_5to2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_0_5to2_dEdxrr","All tracks (end/start average charge = 0.5 - 2);Residual range (cm); dEdx",150,0,30,200,0,50);
 
   if (!fIsData){
     // ---- True Bragg peak
@@ -861,10 +865,6 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
     Contained_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("Contained_chargeEndOverStartVersusNHits_directionCorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
     Contained_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("Contained_chargeEndOverStartVersusNHits_directionIncorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
     ;
-
-    All_chargeEndOverStart_sm0_5_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_sm0_5_dEdxrr","All tracks (end/start average charge < 0.5);Residual range (cm); dEdx",150,0,30,200,0,50);
-    All_chargeEndOverStart_gr2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_gr2_dEdxrr","All tracks (end/start average charge > 2);Residual range (cm); dEdx",150,0,30,200,0,50);
-    All_chargeEndOverStart_0_5to2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_0_5to2_dEdxrr","All tracks (end/start average charge = 0.5 - 2);Residual range (cm); dEdx",150,0,30,200,0,50);
 
     All_truemu_dEdxtr_len = tfs->make<TH2F>("All_truemu_dEdxtr_len","All tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
     All_truep_dEdxtr_len  = tfs->make<TH2F>("All_truep_dEdxtr_len","All tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
