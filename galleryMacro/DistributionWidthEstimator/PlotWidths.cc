@@ -146,7 +146,7 @@ int main(int argv, char** argc){
     art::InputTag caliTag;
     if (isData){
       trackTag=art::InputTag("pandoraNu::DataRecoStage2");
-      caliTag=art::InputTag("pandoraNucali::DataRecoStage2"); // Change this when data calibration available
+      caliTag=art::InputTag("pandoraNucali::DataRecoCali"); // Change this when data calibration available
     }
     else{
       trackTag=art::InputTag("pandoraNu::McRecoStage2");
