@@ -326,7 +326,7 @@ int main(int argv, char** argc)
 	  int planenum = c->PlaneID().Plane;
 	  if (planenum != plane) continue; // only use calorimetry from plane 2
 
-	  uncalib_dqdx_v = c->dEdx();
+	  uncalib_dqdx_v = c->dQdx();
 	  uncalib_xyz_v  = c->XYZ();
 	} // close loop over uncalib calos
 
@@ -337,7 +337,7 @@ int main(int argv, char** argc)
 	  int planenum = c->PlaneID().Plane;
 	  if (planenum != plane) continue; // only use calorimetry from plane 2
 
-	  calib_dqdx_v = c->dEdx();
+	  calib_dqdx_v = c->dQdx();
 	  calib_xyz_v  = c->XYZ();
 	} // close loop over calib calos
 
