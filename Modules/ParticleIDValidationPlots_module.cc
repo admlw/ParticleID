@@ -60,12 +60,12 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     std::vector<double> fv;
 
     bool fIsData;
-    std::string fTrackingAlgo;
-    std::string fHitAlgo;
+    std::string fTrackLabel;
+    std::string fHitLabel;
     std::string fHitTrackAssns;
     std::string fCaloTrackAssns;
-    std::string fTruthMatchingAssns;
-    std::string fPIDtag;
+    std::string fHitTruthAssns;
+    std::string fPIDLabel;
 
     /** Histograms for all tracks, i.e. can be used by data */
     TH1F *AllTracks_neglogl_mu;
@@ -455,15 +455,19 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
     EDAnalyzer(p)  // ,
     // More initializers here.
 {
-  fIsData = p.get<bool>("Makedataplotsonly", "false");
-  fTrackingAlgo = p.get<std::string>("TrackingAlgorithm","pandoraNu::McRecoStage2");
-  fHitAlgo = p.get<std::string>("HitProducer","pandoraCosmicHitRemoval::McRecoStage2");
-  fHitTrackAssns = p.get<std::string>("HitTrackAssnName","pandoraNu::McRecoStage2");
-  fCaloTrackAssns = p.get<std::string>("CaloTrackAssnName", "pandoraNucali::McRecoStage2");
-  fTruthMatchingAssns = p.get<std::string>("HitTruthMatchingAssnName","crHitRemovalTruthMatch::McRecoStage2");
-  fPIDtag = p.get<std::string>("ParticleIDProducerModule");
 
-  fv = fid.setFiducialVolume(fv, p);
+  fhicl::ParameterSet const p_fv     = p.get<fhicl::ParameterSet>("FiducialVolume");
+  fhicl::ParameterSet const p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
+
+  fIsData = p.get<bool>("IsDataPlotsOnly", "false");
+  fTrackLabel = p_labels.get<std::string>("TrackLabel","pandoraNu::McRecoStage2");
+  fHitLabel = p_labels.get<std::string>("HitLabel","pandoraCosmicHitRemoval::McRecoStage2");
+  fHitTrackAssns = p_labels.get<std::string>("HitTrackAssn","pandoraNu::McRecoStage2");
+  fCaloTrackAssns = p_labels.get<std::string>("CaloTrackAssn", "pandoraNucali::McRecoStage2");
+  fHitTruthAssns = p_labels.get<std::string>("HitTruthAssn","crHitRemovalTruthMatch::McRecoStage2");
+  fPIDLabel = p_labels.get<std::string>("ParticleIdLabel");
+
+  fv = fid.setFiducialVolume(fv, p_fv);
   fid.printFiducialVolume(fv);
 
   AllTracks_neglogl_mu             = tfs->make<TH1F>("AllTracks_neglogl_mu"             , ";neg2LL_mu;"           , 200                    , 0    , 200);
@@ -894,12 +898,12 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
   // Get handles to needed information
   art::Handle<std::vector<recob::Track>> trackHandle;
-  e.getByLabel(fTrackingAlgo, trackHandle);
+  e.getByLabel(fTrackLabel, trackHandle);
   std::vector<art::Ptr<recob::Track>> trackCollection;
   art::fill_ptr_vector(trackCollection, trackHandle);
 
   art::Handle<std::vector<recob::Hit>> hitHandle;
-  e.getByLabel(fHitAlgo, hitHandle);
+  e.getByLabel(fHitLabel, hitHandle);
 
   art::FindManyP<recob::Hit> hits_from_tracks(trackHandle, e, fHitTrackAssns);
   art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, fCaloTrackAssns);
@@ -925,7 +929,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
       std::vector<art::Ptr<recob::Hit>> hits_from_track = hits_from_tracks.at(track->ID());
 
-      art::FindMany<simb::MCParticle,anab::BackTrackerHitMatchingData> particles_per_hit(hitHandle,e,fTruthMatchingAssns);
+      art::FindMany<simb::MCParticle,anab::BackTrackerHitMatchingData> particles_per_hit(hitHandle,e,fHitTruthAssns);
 
       //loop only over our hits
       for(size_t i_h=0; i_h<hits_from_track.size(); i_h++){
@@ -1101,7 +1105,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     }
 
     // ------------------- Now calculate PID variables and fill hists ------------------- //
-    art::FindManyP<anab::ParticleID> trackPIDAssn(trackHandle, e, fPIDtag);
+    art::FindManyP<anab::ParticleID> trackPIDAssn(trackHandle, e, fPIDLabel);
     if (!trackPIDAssn.isValid()){
       std::cout << "trackPIDAssn.isValid() == false. Skipping track." << std::endl;
       continue;
