@@ -2,6 +2,7 @@
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
+#include "config_particle_identification_validation.fcl"
 
 process_name: particleid
 
@@ -9,9 +10,9 @@ services:
 {
 
     TFileService:  {fileName: "particleIdMeta.root"}
-    TimeTracker:   @local::microboone_time_tracker
-    MemoryTracker: @local::microboone_memory_tracker
-                   @table::microboone_simulation_services
+  TimeTracker:   @local::microboone_time_tracker
+  MemoryTracker: @local::microboone_memory_tracker
+                 @table::microboone_simulation_services
 
 } # services
 
@@ -19,8 +20,9 @@ source:
 {
 
   module_type: RootInput
-  inputCommands: [ "keep *_*_*_*", "drop sumdata::RunData_*_*_*", "drop *_*_*_UBXSec" ]
+  inputCommands: [ "keep *_*_*_*", "drop sumdata::RunData_*_*_*"] # , "drop *_*_*_UBXSec" ]
   fileNames : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/uboone/persistent/users/kduffy/mintwotrackfilter_mcc87MC_v3/mcc8.7_mc_marcosel_twotracks_file1.root" ]
+
 }
 
 physics:
@@ -30,10 +32,16 @@ physics:
         pid: @local::particleidconfig
     }
 
+    analyzers:
+    {
+       pidvalid: @local::particleidvalidconfig
+    }
+
     stream1: [ out1 ]
-    pidmod: [ pid ]
-    trigger_paths: [ pidmod ]
-    end_paths: [ stream1 ]
+    analysis: [ pid ]
+    validation: [ pidvalid ]
+    trigger_paths: [ analysis ]
+    end_paths: [ validation, stream1 ]
 }
 
 outputs:
