@@ -102,6 +102,8 @@ class ParticleIDValidationPlots : public art::EDAnalyzer {
     TH1F *AllTracks_neglogl_minmuMIPminusp;
     TH2F* AllTracks_dEdxtr_len;
 
+    TH1F *AllTracks_smallest_neglogl;
+
     /** Histograms for tracks expected to have Bragg peaks */
     TH1F *TrueBragg_truemu_neglogl_mu;
     TH1F *TrueBragg_truep_neglogl_mu;
@@ -453,7 +455,7 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
     EDAnalyzer(p)  // ,
     // More initializers here.
 {
-  fIsData = p.get<bool>("IsData", "false");
+  fIsData = p.get<bool>("Makedataplotsonly", "false");
   fTrackingAlgo = p.get<std::string>("TrackingAlgorithm","pandoraNu::McRecoStage2");
   fHitAlgo = p.get<std::string>("HitProducer","pandoraCosmicHitRemoval::McRecoStage2");
   fHitTrackAssns = p.get<std::string>("HitTrackAssnName","pandoraNu::McRecoStage2");
@@ -643,7 +645,6 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
     TrueBragg_trueK_neglogl_minmuMIPminusp   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_minmuMIPminusp","Tracks with true p=0 at end, true kaons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",200,-100,100);
     TrueBragg_truee_neglogl_minmuMIPminusp   = tfs->make<TH1F>("TrueBragg_truee_neglogl_minmuMIPminusp","Tracks with true p=0 at end, true electrons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",200,-100,100);
 
-    const char* particles[5] = {"#mu", "p", "#pi", "K", "MIP"};
     TrueBragg_truemu_smallest_neglogl  = tfs->make<TH1F>("TrueBragg_truemu_smallest_neglogl","Tracks with true p=0 at end, true muons;Particle type with smallest neg2LL;",5,0,5);
     TrueBragg_truep_smallest_neglogl   = tfs->make<TH1F>("TrueBragg_truep_smallest_neglogl","Tracks with true p=0 at end, true protons;Particle type with smallest neg2LL;",5,0,5);
     TrueBragg_truepi_smallest_neglogl  = tfs->make<TH1F>("TrueBragg_truepi_smallest_neglogl","Tracks with true p=0 at end, true pions;Particle type with smallest neg2LL;",5,0,5);
@@ -886,8 +887,9 @@ ParticleIDValidationPlots::ParticleIDValidationPlots(fhicl::ParameterSet const &
 
 void ParticleIDValidationPlots::analyze(art::Event const & e)
 {
+  fIsData = e.isRealData();
 
-  std::cout << "[PARTICLEIDVALID] Using IsData: " << fIsData << "Settings!" << std::endl;
+  std::cout << "[PARTICLEIDVALID] Using IsData: " << fIsData << " settings!" << std::endl;
   std::cout << "[PARTICLEIDVALID] Using track/calorimetry associations " << fCaloTrackAssns << std::endl;
 
   // Get handles to needed information
@@ -915,7 +917,6 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
     if (!fIsData){
       // Get true PDG from associations
-
       std::unordered_map<int,double> trkide;
       double maxe=-1, tote=0;
 
@@ -927,8 +928,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
       art::FindMany<simb::MCParticle,anab::BackTrackerHitMatchingData> particles_per_hit(hitHandle,e,fTruthMatchingAssns);
 
       //loop only over our hits
-      for(size_t i_h=0; i_h<hits_from_track.size(); ++i_h){
-
+      for(size_t i_h=0; i_h<hits_from_track.size(); i_h++){
         particle_vec.clear(); match_vec.clear();
         particles_per_hit.get(hits_from_track[i_h].key(),particle_vec,match_vec);
         //the .key() gives us the index in the original collection
@@ -964,7 +964,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         TrueBragg = true;
       }
       //std::cout << "True particle, EndPx = " << maxp_me->EndPx() << ", EndPy = " << maxp_me->EndPy() << ", EndPz = " << maxp_me->EndPz() << ", TrueBragg = " << TrueBragg << std::endl;
-    }
+    } // end if(!fIsData)
 
     // ------------------- Get Track end hits over track start hits charge -------------- //
 
@@ -1021,35 +1021,35 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
      * false by construction if fIsData = true
      */
 
-    if (dEdxStartEndRatio < 0.5){
-      for (int i=0; i < (int)resRange.size(); i++){
-        All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+     if (!fIsData){
+      if (dEdxStartEndRatio < 0.5){
+        for (int i=0; i < (int)resRange.size(); i++){
+          All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+          }
         }
       }
-    }
-    else if (dEdxStartEndRatio > 2.0){
-      for (int i=0; i < (int)resRange.size(); i++){
-        All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+      else if (dEdxStartEndRatio > 2.0){
+        for (int i=0; i < (int)resRange.size(); i++){
+          All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+          }
         }
       }
-
-    }
-    else {
-      for (int i=0; i < (int)resRange.size(); i++){
-        All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+      else {
+        for (int i=0; i < (int)resRange.size(); i++){
+          All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
+          }
         }
       }
+      //std::cout << dEdxStartEndRatio << std::endl;
     }
-    //std::cout << dEdxStartEndRatio << std::endl;
 
     // ------------------- Check track direction ---------------------------------------- //
-
     TVector3 RecoTrackDir, TrueTrackDir;
     if (!fIsData){
       RecoTrackDir = {track->End().X()-track->Start().X(),
@@ -1100,7 +1100,6 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
           Contained_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
         }
       }
-
     }
 
     // ------------------- Now calculate PID variables and fill hists ------------------- //
@@ -1175,7 +1174,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
     //   << "neg2LogL K bwd = " << Bragg_bwd_K << std::endl;
 
 
-    // ---------------- Now let's fill some histograms! ------------------- //
+    // ---------f------- Now let's fill some histograms! ------------------- //
 
     // Use best fit (lowest neg2LogL) from forward vs backward for calculations
     double Bragg_mu = (Bragg_fwd_mu < Bragg_bwd_mu ? Bragg_fwd_mu : Bragg_bwd_mu);
@@ -1193,7 +1192,7 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
 
     bool PID_fwd = false;
     if (Bragg_smallest == Bragg_fwd_mu || Bragg_smallest == Bragg_fwd_p || Bragg_smallest == Bragg_fwd_pi || Bragg_smallest == Bragg_fwd_K || Bragg_smallest == noBragg_fwd_MIP) PID_fwd = true;
-
+    std::cout << "Filling alltracks" << std::endl;
     AllTracks_neglogl_mu->Fill(Bragg_mu);
     AllTracks_neglogl_p->Fill(Bragg_p);
     AllTracks_neglogl_pi->Fill(Bragg_pi);
@@ -1639,44 +1638,44 @@ void ParticleIDValidationPlots::analyze(art::Event const & e)
         }
       }
 
-    else if (TMath::Abs(True_pdg) == 11){ // True electrons
-      All_truee_neglogl_mu->Fill(Bragg_mu);
-      All_truee_neglogl_p->Fill(Bragg_p);
-      All_truee_neglogl_pi->Fill(Bragg_pi);
-      All_truee_neglogl_K->Fill(Bragg_K);
-      All_truee_PIDA->Fill(PIDAval);
-      All_truee_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-      All_truee_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-      All_truee_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-      All_truee_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-      All_truee_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-      All_truee_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
-      All_truee_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
-      All_truee_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-      All_truee_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
-      All_truee_neglogl_MIP->Fill(noBragg_fwd_MIP);
-      All_truee_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-      All_truee_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-      All_truee_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-      All_truee_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-      All_truee_neglogl_p_vslength->Fill(Bragg_p,trklen);
-      All_truee_neglogl_mu_vsangle->Fill(Bragg_mu,angle);
-      All_truee_neglogl_MIP_vsangle->Fill(noBragg_fwd_MIP,angle);
-      All_truee_neglogl_minmuMIP_vsangle->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),angle);
-      All_truee_neglogl_p_vsangle->Fill(Bragg_p,angle);
-      All_truee_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-      All_truee_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-      All_truee_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-      All_truee_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
+      else if (TMath::Abs(True_pdg) == 11){ // True electrons
+	All_truee_neglogl_mu->Fill(Bragg_mu);
+	All_truee_neglogl_p->Fill(Bragg_p);
+	All_truee_neglogl_pi->Fill(Bragg_pi);
+	All_truee_neglogl_K->Fill(Bragg_K);
+	All_truee_PIDA->Fill(PIDAval);
+	All_truee_dEdxtr_len->Fill(trklen,dEdxtruncmean);
+	All_truee_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
+	All_truee_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
+	All_truee_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
+	All_truee_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
+	All_truee_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
+	All_truee_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
+	All_truee_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
+	All_truee_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
+	All_truee_neglogl_MIP->Fill(noBragg_fwd_MIP);
+	All_truee_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
+	All_truee_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
+	All_truee_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
+	All_truee_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
+	All_truee_neglogl_p_vslength->Fill(Bragg_p,trklen);
+	All_truee_neglogl_mu_vsangle->Fill(Bragg_mu,angle);
+	All_truee_neglogl_MIP_vsangle->Fill(noBragg_fwd_MIP,angle);
+	All_truee_neglogl_minmuMIP_vsangle->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),angle);
+	All_truee_neglogl_p_vsangle->Fill(Bragg_p,angle);
+	All_truee_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
+	All_truee_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
+	All_truee_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
+	All_truee_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
 
-      if (Bragg_smallest == Bragg_mu) All_truee_smallest_neglogl->Fill(0.5);
-      else if (Bragg_smallest == Bragg_p) All_truee_smallest_neglogl->Fill(1.5);
-      else if (Bragg_smallest == Bragg_pi) All_truee_smallest_neglogl->Fill(2.5);
-      else if (Bragg_smallest == Bragg_K) All_truee_smallest_neglogl->Fill(3.5);
-      else if (Bragg_smallest == noBragg_fwd_MIP)
-      All_truee_smallest_neglogl->Fill(4.5);
-    }
-
+	if (Bragg_smallest == Bragg_mu) All_truee_smallest_neglogl->Fill(0.5);
+	else if (Bragg_smallest == Bragg_p) All_truee_smallest_neglogl->Fill(1.5);
+	else if (Bragg_smallest == Bragg_pi) All_truee_smallest_neglogl->Fill(2.5);
+	else if (Bragg_smallest == Bragg_K) All_truee_smallest_neglogl->Fill(3.5);
+	else if (Bragg_smallest == noBragg_fwd_MIP)
+	  All_truee_smallest_neglogl->Fill(4.5);
+      }
+    }// end !fIsData
   } // Loop over tracks
 
 
