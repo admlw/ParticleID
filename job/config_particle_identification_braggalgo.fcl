@@ -8,14 +8,14 @@ braggalgo_mcc8:
 {
  
   # dEdx widths
-  dEdxLandauWidthP  : 0.09
-  dEdxLandauWidthMu : 0.07
-  dEdxLandauWidthPi : 0.07
-  dEdxLandauWidthK  : 0.07
+  dEdxLandauWidthP  : 0.07
+  dEdxLandauWidthMu : 0.06
+  dEdxLandauWidthPi : 0.06
+  dEdxLandauWidthK  : 0.06
   dEdxGausWidthP    : 0.4
-  dEdxGausWidthMu   : 0.1
-  dEdxGausWidthPi   : 0.1
-  dEdxGausWidthK    : 0.1
+  dEdxGausWidthMu   : 0.13
+  dEdxGausWidthPi   : 0.13
+  dEdxGausWidthK    : 0.13
 
   NHitsToDrop: 1
 
@@ -35,11 +35,11 @@ braggalgo_mcc8_data:
 {
  
   # dEdx widths
-  dEdxLandauWidthP  : 0.18
+  dEdxLandauWidthP  : 0.16
   dEdxLandauWidthMu : 0.14
   dEdxLandauWidthPi : 0.14
   dEdxLandauWidthK  : 0.14
-  dEdxGausWidthP    : 0.6
+  dEdxGausWidthP    : 0.46
   dEdxGausWidthMu   : 0.15
   dEdxGausWidthPi   : 0.15
   dEdxGausWidthK    : 0.15
