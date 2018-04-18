@@ -32,6 +32,7 @@
 // ROOT
 #include "TH1F.h"
 #include "TH2F.h"
+#include "TTree.h"
 
 // Algorithms
 #include "uboone/ParticleID/Algorithms/FiducialVolume.h"
@@ -54,6 +55,9 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     // Required functions.
     void analyze(art::Event const & e) override;
 
+    // Selected optional functions.
+    void beginJob() override;
+
   private:
 
     art::ServiceHandle<art::TFileService> tfs;
@@ -68,6 +72,41 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::string fCaloTrackAssns;
     std::string fHitTruthAssns;
     std::string fPIDLabel;
+
+    /** Setup root tree  */
+    TTree *pidTree;
+
+    int true_PDG = -999;
+    double true_start_momentum = -999;
+    double true_start_x = -999; 
+    double true_start_y = -999; 
+    double true_start_z = -999; 
+    double true_end_momentum = -999; 
+    double true_end_x = -999; 
+    double true_end_y = -999; 
+    double true_end_z = -999; 
+    double track_start_x;
+    double track_start_y;
+    double track_start_z;
+    double track_end_x;      
+    double track_end_y;
+    double track_end_z;
+    double track_neglogl_fwd_mu;
+    double track_neglogl_fwd_p;
+    double track_neglogl_fwd_pi;
+    double track_neglogl_fwd_k;
+    double track_neglogl_fwd_mip;
+    double track_neglogl_bwd_mu;
+    double track_neglogl_bwd_p;
+    double track_neglogl_bwd_pi;
+    double track_neglogl_bwd_k;
+    // double track_neglogl_bwd_mip; // not used right now
+    double track_PIDA;
+    double track_length;
+    double track_dEdx;
+    double track_theta;
+    double track_phi;
+    double track_nhits;
 
     /** Histograms for all tracks, i.e. can be used by data */
     TH1F* AllTracks_PIDA;
@@ -472,6 +511,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   fv = fid.setFiducialVolume(fv, p_fv);
   fid.printFiducialVolume(fv);
 
+
   AllTracks_PIDA                   = tfs->make<TH1F>("AllTracks_PIDA"                   , ";PIDA;"                , 400                    , 0    , 50);
   AllTracks_neglogl_mu             = tfs->make<TH1F>("AllTracks_neglogl_mu"             , ";neg2LL_mu;"           , 400                    , 0    , 400);
   AllTracks_neglogl_p              = tfs->make<TH1F>("AllTracks_neglogl_p"              , ";neg2LL_p;"            , 400                    , 0    , 400);
@@ -845,7 +885,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
     All_truepi_smallest_neglogl  = tfs->make<TH1F>("All_truepi_smallest_neglogl","All tracks, true pions;Particle type with smallest neg2LL;",5,0,5);
     All_trueK_smallest_neglogl   = tfs->make<TH1F>("All_trueK_smallest_neglogl","All tracks, true kaons;Particle type with smallest neg2LL;",5,0,5);
     All_truee_smallest_neglogl   = tfs->make<TH1F>("All_truee_smallest_neglogl","All tracks, true electrons;Particle type with smallest neg2LL;",5,0,5);
-    
+
     for (size_t i=1; i<=5; i++){
       All_truemu_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
       All_truep_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
@@ -893,6 +933,46 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   }
 }
 
+void ParticleIdValidationPlots::beginJob(){
+
+  pidTree = tfs->make<TTree>("pidTree" , "pidTree");
+
+  pidTree->Branch( "true_PDG"            , &true_PDG            ) ;
+  pidTree->Branch( "true_start_momentum" , &true_start_momentum ) ;
+  pidTree->Branch( "true_start_x"        , &true_start_x        ) ;
+  pidTree->Branch( "true_start_y"        , &true_start_y        ) ;
+  pidTree->Branch( "true_start_z"        , &true_start_z        ) ;
+  pidTree->Branch( "true_end_momentum"   , &true_end_momentum   ) ;
+  pidTree->Branch( "true_end_x"          , &true_end_x          ) ;
+  pidTree->Branch( "true_end_y"          , &true_end_y          ) ;
+  pidTree->Branch( "true_end_z"          , &true_end_z          ) ;
+
+  pidTree->Branch( "track_start_x"           , &track_start_x       ) ;
+  pidTree->Branch( "track_start_y"           , &track_start_y       ) ;
+  pidTree->Branch( "track_start_z"           , &track_start_z       ) ;
+  pidTree->Branch( "track_end_x"             , &track_end_x         ) ;
+  pidTree->Branch( "track_end_y"             , &track_end_y         ) ;
+  pidTree->Branch( "track_end_z"             , &track_end_z         ) ;
+  pidTree->Branch( "track_neglogl_mu"        , &track_neglogl_fwd_mu    ) ;
+  pidTree->Branch( "track_neglogl_p"         , &track_neglogl_fwd_p     ) ;
+  pidTree->Branch( "track_neglogl_pi"        , &track_neglogl_fwd_pi    ) ;
+  pidTree->Branch( "track_neglogl_k"         , &track_neglogl_fwd_k     ) ;
+  pidTree->Branch( "track_neglogl_mip"       , &track_neglogl_fwd_mip   ) ;
+  pidTree->Branch( "track_neglogl_mu"        , &track_neglogl_bwd_mu    ) ;
+  pidTree->Branch( "track_neglogl_p"         , &track_neglogl_bwd_p     ) ;
+  pidTree->Branch( "track_neglogl_pi"        , &track_neglogl_bwd_pi    ) ;
+  pidTree->Branch( "track_neglogl_k"         , &track_neglogl_bwd_k     ) ;
+  //pidTree->Branch( " track_neglogl_mip   " , track_neglogl_bwd_mip   ) ;
+  pidTree->Branch( "track_PIDA"              , &track_PIDA          ) ;
+  pidTree->Branch( "track_length"            , &track_length        ) ;
+  pidTree->Branch( "track_dEdx"              , &track_dEdx          ) ;
+  pidTree->Branch( "track_theta"             , &track_theta         ) ;
+  pidTree->Branch( "track_phi"               , &track_phi           ) ;
+  pidTree->Branch( "track_nhits"             , &track_nhits         ) ;
+
+
+}
+
 void ParticleIdValidationPlots::analyze(art::Event const & e)
 {
   fIsData = e.isRealData();
@@ -922,6 +1002,16 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     bool TrueBragg = false;
     int True_pdg = 0;
     simb::MCParticle const* maxp_me = NULL; //pointer for the particle match we will calculate
+
+    track_length = track->Length();
+    track_theta = track->Theta();
+    track_phi = track->Phi();
+    track_start_x = track->Start().X();
+    track_start_y = track->Start().Y();
+    track_start_z = track->Start().Z();
+    track_end_x = track->End().X();
+    track_end_y = track->End().Y();
+    track_end_z = track->End().Z();
 
     if (!fIsData){
       // Get true PDG from associations
@@ -954,24 +1044,22 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       }
 
       True_pdg = maxp_me->PdgCode();
-
-      /*std::cout << std::endl;
-        std::cout << "Final Match (Assns: pandoraCosmicHitRemoval) is pdg = " << maxp_me->PdgCode() << " with energy " << maxe << " over " << tote << " (" << maxe/tote << ")"
-        << " trkid=" << maxp_me->TrackId()
-        << " ke=" << maxp_me->E()-maxp_me->Mass()
-        << "\n\tstart (x,y,z)=(" << maxp_me->Vx()
-        << "," << maxp_me->Vy()
-        << "," << maxp_me->Vz()
-        << ")\tend (x,y,z)=(" << maxp_me->EndX()
-        << "," << maxp_me->EndY()
-        << "," << maxp_me->EndZ() << ")" << std::endl;*/
+      true_PDG = maxp_me->PdgCode();
+      true_start_momentum = maxp_me->P();
+      true_start_x = maxp_me->Vx();
+      true_start_y = maxp_me->Vy();
+      true_start_z = maxp_me->Vz();
+      true_end_momentum = std::sqrt( std::pow(maxp_me->EndMomentum().X(),2) + std::pow(maxp_me->EndMomentum().Y(),2) + std::pow(maxp_me->EndMomentum().Z(),2));
+      true_end_x = maxp_me->EndX();
+      true_end_y = maxp_me->EndY();
+      true_end_z = maxp_me->EndZ();
 
       // Check if true particle should have a Bragg peak (if the true MCParticle has zero momentum at the end of the track)
       TrueBragg = false;
       if (maxp_me->EndPx() == 0 && maxp_me->EndPy() == 0 && maxp_me->EndPz() == 0){
         TrueBragg = true;
       }
-      //std::cout << "True particle, EndPx = " << maxp_me->EndPx() << ", EndPy = " << maxp_me->EndPy() << ", EndPz = " << maxp_me->EndPz() << ", TrueBragg = " << TrueBragg << std::endl;
+
     } // end if(!fIsData)
 
     // ------------------- Get Track end hits over track start hits charge -------------- //
@@ -1187,6 +1275,19 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     double Bragg_p  = (Bragg_fwd_p  < Bragg_bwd_p  ? Bragg_fwd_p  : Bragg_bwd_p);
     double Bragg_pi = (Bragg_fwd_pi < Bragg_bwd_pi ? Bragg_fwd_pi : Bragg_bwd_pi);
     double Bragg_K  = (Bragg_fwd_K  < Bragg_bwd_K  ? Bragg_fwd_K  : Bragg_bwd_K);
+
+    track_neglogl_fwd_mu = Bragg_fwd_mu;
+    track_neglogl_bwd_mu = Bragg_bwd_mu;
+    track_neglogl_fwd_p = Bragg_fwd_p;
+    track_neglogl_bwd_p = Bragg_bwd_p;
+    track_neglogl_fwd_pi = Bragg_fwd_pi;
+    track_neglogl_bwd_pi = Bragg_bwd_pi;
+    track_neglogl_fwd_k = Bragg_fwd_K;
+    track_neglogl_bwd_k = Bragg_bwd_K;
+    track_neglogl_fwd_mip = noBragg_fwd_MIP;
+    track_dEdx = dEdxtruncmean; 
+    track_PIDA = PIDAval;
+    track_nhits = nhits;
 
     //double Bragg_smallest = std::min({Bragg_mu, Bragg_p, Bragg_pi, Bragg_K, noBragg_fwd_MIP});
     double Bragg_smallest = std::min({Bragg_mu, Bragg_p, noBragg_fwd_MIP});
@@ -1682,6 +1783,10 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           All_truee_smallest_neglogl->Fill(4.5);
       }
     }// end !fIsData
+
+    std::cout << "[PARTICLEIDVALID] Filling tree. " << std::endl;
+    pidTree->Fill();
+
   } // Loop over tracks
 
 
