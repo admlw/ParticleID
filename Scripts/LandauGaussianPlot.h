@@ -1,7 +1,7 @@
 #include "TF1.h"
 #include "TGraph.h"
 #include "TColor.h"
-#include "../Algorithms/landauGaussian.h"
+#include "../Algorithms/LandauGaussian.h"
 
 void Theory_dEdx_resrange();
 Double_t landauGaussian();

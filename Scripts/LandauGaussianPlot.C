@@ -2,18 +2,32 @@
 
 void LandauGaussianPlot(){
 
+  int nxbins = 100;
+  int nybins = 100;
+/** default data:
+  double muonlandauwidth = 0.14;
+  double muongaussianwidth = 0.15;
+  double protonlandauwidth = 0.16;
+  double protongaussianwidth = 0.46;
+*/
+
+  double muonlandauwidth = 0.03;
+  double muongaussianwidth = 0.15;
+  double protonlandauwidth = 0.16;
+  double protongaussianwidth = 0.46;
+
   Theory_dEdx_resrange();
 
   TF1 *langaus = new TF1("langaus", landauGaussian, 0, 100, 4);
   langaus->SetNpx(10000);
 
-  TH2D *h_muon = new TH2D("h_muon", ";Residual Range (cm); dE/dx (MeV/cm)", 1000, 0, 30, 1000, 0, 20);
+  TH2D *h_muon = new TH2D("h_muon", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
 
-  for (int i = 0; i < 1000; i++){
+  for (int i = 0; i < nxbins; i++){
 
-    langaus->SetParameters(0.07, g_ThdEdxRR_Muon->Eval((i)*30./1000., 0, "S"), 1, 0.1);
+    langaus->SetParameters(muonlandauwidth, g_ThdEdxRR_Muon->Eval((i)*30./(double)nxbins, 0, "S"), 1.0, muongaussianwidth);
 
-    for (int j = 0; j < 1000; j++){
+    for (int j = 0; j < nybins; j++){
 
       h_muon->SetBinContent(i,j,langaus->Eval(h_muon->GetYaxis()->GetBinCenter(j)));
 
@@ -26,13 +40,13 @@ void LandauGaussianPlot(){
   h_muon->SetContour(100);
   h_muon->Draw("col2");
 
-  TH2D *h_proton = new TH2D("h_proton", ";Residual Range (cm); dE/dx (MeV/cm)", 1000, 0, 30, 1000, 0, 20);
+  TH2D *h_proton = new TH2D("h_proton", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
 
-  for (int i = 0; i < 1000; i++){
+  for (int i = 0; i < nxbins; i++){
 
-    langaus->SetParameters(0.09, g_ThdEdxRR_Proton->Eval((i)*30./1000., 0, "S"), 1, 0.4);
+    langaus->SetParameters(protonlandauwidth, g_ThdEdxRR_Proton->Eval((i)*30./(double)nxbins, 0, "S"), 1.0, protonlandauwidth);
 
-    for (int j = 0; j < 1000; j++){
+    for (int j = 0; j < nybins; j++){
 
       h_proton->SetBinContent(i,j,langaus->Eval(h_proton->GetYaxis()->GetBinCenter(j)));
 
