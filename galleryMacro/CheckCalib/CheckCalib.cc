@@ -1,5 +1,5 @@
 /*************************************************************
- * 
+ *
  * This is a quick macro for counting how many daughter tracks a
  * reconstructed track has, using the number of tracks with start
  * or end points within a given distance of the end point of the
@@ -14,7 +14,7 @@
  * ./CheckCalib "path/to/reco2/file.root or path/to/list/of/input/files.txt"
  *
  * Kirsty Duffy (kduffy@fnal.gov), Fermilab, Jan 28 2018
- * 
+ *
  *************************************************************/
 
 
@@ -76,6 +76,29 @@ int main(int argv, char** argc)
   std::string input_files(argc[1]);
 
   // Calibration file
+
+  // For MC:
+  TFile *fcalib_x_plane0 = new TFile("/pnfs/uboone/persistent/users/vmeddage/latest_x_calibration_mcc_8_4_plane_0.root","read");
+  TH1F *correction_x_plane0 = (TH1F*)fcalib_x_plane0->Get("dq_dx_x_error_hist");
+  TFile *fcalib_x_plane1 = new TFile("/pnfs/uboone/persistent/users/vmeddage/latest_x_calibration_mcc_8_4_plane_1.root","read");
+  TH1F *correction_x_plane1 = (TH1F*)fcalib_x_plane1->Get("dq_dx_x_error_hist");
+  TFile *fcalib_x_plane2 = new TFile("/pnfs/uboone/persistent/users/vmeddage/latest_x_calibration_mcc_8_4_plane_2.root","read");
+  TH1F *correction_x_plane2 = (TH1F*)fcalib_x_plane2->Get("dq_dx_x_error_hist");
+
+  TFile *fcalib_yz_plane0 = new TFile("/pnfs/uboone/persistent/users/vmeddage/latest_y_z_calibration_mcc_8_4_plane_0.root","read");
+  TH2F *correction_yz_plane0 = (TH2F*)fcalib_yz_plane0->Get("error_dq_dx_z_vs_y_hist");
+  TFile *fcalib_yz_plane1 = new TFile("/pnfs/uboone/persistent/users/vmeddage/latest_y_z_calibration_mcc_8_4_plane_1.root","read");
+  TH2F *correction_yz_plane1 = (TH2F*)fcalib_yz_plane1->Get("error_dq_dx_z_vs_y_hist");
+  TFile *fcalib_yz_plane2 = new TFile("/pnfs/uboone/persistent/users/vmeddage/latest_y_z_calibration_mcc_8_4_plane_2.root","read");
+  TH2F *correction_yz_plane2 = (TH2F*)fcalib_yz_plane2->Get("error_dq_dx_z_vs_y_hist");
+
+  double correction_t_plane0 = 1.0;
+  double correction_t_plane1 = 1.0;
+  double correction_t_plane2 = 1.0;
+
+  unsigned int expected_run = 0;
+
+  // Below are files for data (time-dependent so you need different calibration files depending on when the data was taken)
 
   // File: /pnfs/uboone/persistent/users/greenlee/devel/v06_26_01_11/reco/test_recal_extbnb/4352331_11/PhysicsRun-2016_3_25_11_31_14-0005588-00219_20160326T063056_ext_bnb_20160327T090909_merged_20171123T155120_reco1_20171123T155611_reco2_20171123T162803_merged_20180224T055449_cali.root
   // Run number 5588, on 3/25/2016 11:31:01 to 18:32:39. Calibration constants taken for this run
@@ -144,7 +167,7 @@ int main(int argv, char** argc)
   unsigned int expected_run = 5924;*/
 
   // Test: look at run 5179, from 02/27/2016
-  TFile *fcalib_x_plane0 = new TFile("/pnfs/uboone/persistent/users/vmeddage/final_calibration_root_files/X_correction_factors_2016_2_27_plane_0.root","read");
+  /*TFile *fcalib_x_plane0 = new TFile("/pnfs/uboone/persistent/users/vmeddage/final_calibration_root_files/X_correction_factors_2016_2_27_plane_0.root","read");
   TH1F *correction_x_plane0 = (TH1F*)fcalib_x_plane0->Get("dq_dx_x_error_hist");
   TFile *fcalib_x_plane1 = new TFile("/pnfs/uboone/persistent/users/vmeddage/final_calibration_root_files/X_correction_factors_2016_2_27_plane_1.root","read");
   TH1F *correction_x_plane1 = (TH1F*)fcalib_x_plane1->Get("dq_dx_x_error_hist");
@@ -162,7 +185,7 @@ int main(int argv, char** argc)
   double correction_t_plane1 = 0.994605;
   double correction_t_plane2 = 1.0034;
 
-  unsigned int expected_run = 5179;
+  unsigned int expected_run = 5179;*/
 
   // File: /pnfs/uboone/scratch/users/tjyang/PhysicsRun-2016_2_27_6_25_1-0005179-00169_20160301T101208_bnb_20160301T142750_merged_20171213T113100_reco1_20171213T113559_reco2_20171213T151521_merged_20180305T165948_cali.root
   // Run number 5179, from 02/27/2016
@@ -206,7 +229,7 @@ int main(int argv, char** argc)
   double correction_t_plane2 = 1.00424;
 
   unsigned int expected_run = 5424;*/
-  
+
 
   // File /pnfs/uboone/persistent/users/greenlee/devel/v06_26_01_11/reco/test_recal_bnb3/4362454_99/PhysicsRun-2016_4_6_20_41_21-0005804-00107_20160407T062331_bnb_20160407T065730_merged_20171207T172701_reco1_20171207T172901_reco2_20171207T213112_merged_20180305T172845_cali.root
   // Run 5804, from 04/06/2016
@@ -251,7 +274,7 @@ int main(int argv, char** argc)
   double correction_t_plane2 = 1.00004;
 
   unsigned int expected_run = 5914;*/
-  
+
   gStyle->SetOptStat(0);
 
   int n_total = 0;
@@ -259,21 +282,21 @@ int main(int argv, char** argc)
 
   // Format files list
   std::vector<std::string> filenames = GetFileList(input_files);
-  
+
   // Loop through events
   for (gallery::Event ev(filenames); !ev.atEnd(); ev.next()){
     //gallery::Event ev(filenames);
-    
+
   std::cout << "Event timestamp: " << ev.eventAuxiliary().time().value() << std::endl;
   std::cout << "Run number: " << ev.eventAuxiliary().run() << std::endl;
   std::cout << "     Subrun number: " << ev.eventAuxiliary().subRun() << std::endl
 	    << "     Event number:  " << ev.eventAuxiliary().event() << std::endl;
 
-  if (ev.eventAuxiliary().run() != expected_run){
+  if (expected_run != 0 && ev.eventAuxiliary().run() != expected_run){
     std::cout << "[ERROR] run number " << ev.eventAuxiliary().run() << " not " << expected_run << " as expected. Skipping event because calibration constants will be wrong!" << std::endl;
     continue;
     }
-  
+
     // Get pandoraNu tracks
     auto const trk_handle = ev.getValidHandle<std::vector<recob::Track>>("pandoraNu");
     std::vector<recob::Track> trackVec(*trk_handle);
@@ -285,50 +308,52 @@ int main(int argv, char** argc)
       unsigned int trkid = track.ID();
       std::vector<art::Ptr<anab::Calorimetry>> uncalib_calos = uncalib_calos_from_tracks.at(trkid);
       std::vector<art::Ptr<anab::Calorimetry>> calib_calos = calib_calos_from_tracks.at(trkid);
-      
+
       // Loop through the three planes
       for (int plane=0; plane < 3; plane++){
+
+        std::cout << "------ Looking at calibration for plane " << plane << " -------- " << std::endl;
 
 	std::vector<double> uncalib_dqdx_v;
 	std::vector<TVector3> uncalib_xyz_v;
 	std::vector<double> calib_dqdx_v;
 	std::vector<TVector3> calib_xyz_v;
-	
+
 	// Loop through calorimetry objects and get dqdx and xyz: uncalib
 	for (auto c : uncalib_calos) {
 	  if (!c) continue; // avoid art errors if c doesn't exist
 	  if (!c->PlaneID().isValid) continue; // check has valid plane
 	  int planenum = c->PlaneID().Plane;
 	  if (planenum != plane) continue; // only use calorimetry from plane 2
-	  
+
 	  uncalib_dqdx_v = c->dQdx();
 	  uncalib_xyz_v  = c->XYZ();
 	} // close loop over uncalib calos
-	
+
 	// Loop through calorimetry objects and get dqdx and xyz: calib
 	for (auto c : calib_calos) {
 	  if (!c) continue; // avoid art errors if c doesn't exist
 	  if (!c->PlaneID().isValid) continue; // check has valid plane
 	  int planenum = c->PlaneID().Plane;
 	  if (planenum != plane) continue; // only use calorimetry from plane 2
-	  
+
 	  calib_dqdx_v = c->dQdx();
 	  calib_xyz_v  = c->XYZ();
 	} // close loop over calib calos
-	
-	
+
+
 	for (unsigned int i_v=0; i_v < calib_dqdx_v.size(); i_v++){
 
 	  double truecorr;
 	  double corryz, corrx, corrt;
-	  
+
 	  if (plane==0){
 	    int binyz = correction_yz_plane0->FindBin(calib_xyz_v.at(i_v).Z(),calib_xyz_v.at(i_v).Y());
 	    int binx = correction_x_plane0->FindBin(calib_xyz_v.at(i_v).X());
 	    corryz = correction_yz_plane0->GetBinContent(binyz);
 	    corrx = correction_x_plane0->GetBinContent(binx);
 	    corrt = correction_t_plane0;
-	    
+
 	    /*std::cout << "Correction_yz_plane0 = " << correction_yz_plane0->GetBinContent(binyz) << std::endl
 		      << "Correction_x_plane0 = " << correction_x_plane0->GetBinContent(binx) << std::endl
 		      << "Correction_t_plane0 = " << correction_t_plane0 << std::endl;*/
@@ -339,7 +364,7 @@ int main(int argv, char** argc)
 	    corryz = correction_yz_plane1->GetBinContent(binyz);
 	    corrx = correction_x_plane1->GetBinContent(binx);
 	    corrt = correction_t_plane1;
-	    
+
 	    /*std::cout << "binyz = " << binyz << ", Correction_yz_plane1 = " << correction_yz_plane1->GetBinContent(binyz) << std::endl
 		      << "binx = " << binx << ", Correction_x_plane1 = " << correction_x_plane1->GetBinContent(binx) << std::endl
 		      << "Correction_t_plane1 = " << correction_t_plane1 << std::endl;*/
@@ -350,26 +375,26 @@ int main(int argv, char** argc)
 	    corryz = correction_yz_plane2->GetBinContent(binyz);
 	    corrx = correction_x_plane2->GetBinContent(binx);
 	    corrt = correction_t_plane2;
-	    
+
 	    /*std::cout << "Correction_yz_plane2 = " << correction_yz_plane2->GetBinContent(binyz) << std::endl
 		      << "Correction_x_plane2 = " << correction_x_plane2->GetBinContent(binx) << std::endl
 		      << "Correction_t_plane2 = " << correction_t_plane2 << std::endl;*/
 	  }
-	  
+
 	  if (corryz == 0.) //{std::cout << "corrYZ=0, setting to 1" << std::endl; corryz = 1.;}
 	    corryz = 1.;
 	  if (corrx == 0.) //{std::cout << "corrX=0, setting to 1" << std::endl; corrx = 1.;}
 	    corrx = 1.;
-	  
+
 	  truecorr = corryz*corrx*corrt;
 
 	  n_total++;
 	  if (TMath::Abs(calib_dqdx_v.at(i_v)/uncalib_dqdx_v.at(i_v) - truecorr) < 1e-4){ n_correct++; }
-	  
+
 	  if (TMath::Abs(calib_dqdx_v.at(i_v)/uncalib_dqdx_v.at(i_v) - truecorr) > 1e-4){
-	    
+
 	    std::cout << "--- Entry " << i_v << " in calib vector (plane " << plane << ") ---" << std::endl;
-	    
+
 	    std::cout << "X = " << calib_xyz_v.at(i_v).X() << ", Y = " << calib_xyz_v.at(i_v).Y() << ", Z = " << calib_xyz_v.at(i_v).Z() << std::endl
 		      << "    calib dqdx = " << calib_dqdx_v.at(i_v) << std::endl;
 	    std::cout << "uncalib X = " << uncalib_xyz_v.at(i_v).X() << ", uncalib Y = " << uncalib_xyz_v.at(i_v).Y() << ", uncalib Z = " << uncalib_xyz_v.at(i_v).Z() << std::endl
@@ -386,7 +411,7 @@ int main(int argv, char** argc)
       } // close loop over planes
 
     } // close loop over tracks
-    
+
   } // loop through gallery events
 
     std::cout << std::endl;
