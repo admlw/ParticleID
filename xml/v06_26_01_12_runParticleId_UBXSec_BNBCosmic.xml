@@ -33,14 +33,14 @@
     <stage name="particleId">
         <!--<inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.7_reco2_dev</inputdef>-->
         <inputlist>&app_dir;/xml/input.list</inputlist>
-        <fcl>&app_dir;/job/run_particle_identification_withcaliandvalid.fcl</fcl>
+        <fcl>&app_dir;/job/run_particle_identification_UBXSec_withcalibrations_withvalidation.fcl</fcl>
         <bookdir>&data_dir;</bookdir>
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <numjobs>250</numjobs>
-        <maxfilesperjob>4</maxfilesperjob>
-        <memory>4000</memory>
+        <numjobs>25</numjobs>
+        <maxfilesperjob>5</maxfilesperjob>
+        <memory>2500</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
         <schema>root</schema>
