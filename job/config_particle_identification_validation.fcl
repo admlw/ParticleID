@@ -16,6 +16,7 @@ particleidvalidconfig:
 
   FiducialVolume: @local::pidfidvol
 
+  NHitsForTrackDirection: 5
   IsDataPlotsOnly: false
 
 }
