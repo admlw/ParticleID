@@ -7,6 +7,18 @@
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ *
+ * \class ParticleIdValidationPlots
+ *
+ * \brief ParticleId analyzer module
+ *
+ * \author Kirsty Duffy (kduffy@fnal.gov), Adam Lister (alister1@lancaster.ac.uk)
+ *
+ * \date 2018/04/18
+ *
+ */
+
 // Art
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
@@ -101,7 +113,9 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_neglogl_bwd_pi;
     double track_neglogl_bwd_k;
     // double track_neglogl_bwd_mip; // not used right now
-    double track_PIDA;
+    double track_PIDA_mean;
+    double track_PIDA_median;
+    double track_PIDA_kde;
     double track_length;
     double track_dEdx;
     double track_theta;
@@ -963,7 +977,9 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_neglogl_pi"        , &track_neglogl_bwd_pi    ) ;
   pidTree->Branch( "track_neglogl_k"         , &track_neglogl_bwd_k     ) ;
   //pidTree->Branch( " track_neglogl_mip   " , track_neglogl_bwd_mip   ) ;
-  pidTree->Branch( "track_PIDA"              , &track_PIDA          ) ;
+  pidTree->Branch( "track_PIDA_mean"              , &track_PIDA_mean          ) ;
+  pidTree->Branch( "track_PIDA_median"              , &track_PIDA_median          ) ;
+  pidTree->Branch( "track_PIDA_kde"              , &track_PIDA_kde          ) ;
   pidTree->Branch( "track_length"            , &track_length        ) ;
   pidTree->Branch( "track_dEdx"              , &track_dEdx          ) ;
   pidTree->Branch( "track_theta"             , &track_theta         ) ;
@@ -1212,7 +1228,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     double Bragg_bwd_pi = -999;
     double Bragg_bwd_K = -999;
     double noBragg_fwd_MIP = -999;
-    double PIDAval = -999;
+    double PIDAval_mean = -999;
+    double PIDAval_median = -999;
+    double PIDAval_kde = -999;
     double dEdxtruncmean = -999;
     double trklen = -999;
 
@@ -1245,8 +1263,14 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         } // if fVariableType == anab::kLogL_bwd
       } // if fAlName = BraggPeakLLH
 
-      if (AlgScore.fAlgName == "PIDA" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA){
-        PIDAval = AlgScore.fValue;
+      if (AlgScore.fAlgName == "PIDA_mean" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA){
+        PIDAval_mean = AlgScore.fValue;
+      }// if AlgName = PIDA && fVariableType == anab::kPIDA
+      if (AlgScore.fAlgName == "PIDA_medeian" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA){
+        PIDAval_median = AlgScore.fValue;
+      }// if AlgName = PIDA && fVariableType == anab::kPIDA
+      if (AlgScore.fAlgName == "PIDA_kde" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA){
+        PIDAval_kde = AlgScore.fValue;
       }// if AlgName = PIDA && fVariableType == anab::kPIDA
 
       if (AlgScore.fAlgName == "TruncatedMean"){
@@ -1268,7 +1292,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     //   << "neg2LogL K bwd = " << Bragg_bwd_K << std::endl;
 
 
-    // ---------f------- Now let's fill some histograms! ------------------- //
+    // ---------------- Now let's fill some histograms! ------------------- //
 
     // Use best fit (lowest neg2LogL) from forward vs backward for calculations
     double Bragg_mu = (Bragg_fwd_mu < Bragg_bwd_mu ? Bragg_fwd_mu : Bragg_bwd_mu);
@@ -1286,7 +1310,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_neglogl_bwd_k = Bragg_bwd_K;
     track_neglogl_fwd_mip = noBragg_fwd_MIP;
     track_dEdx = dEdxtruncmean; 
-    track_PIDA = PIDAval;
+    track_PIDA_mean = PIDAval_mean;
+    track_PIDA_median = PIDAval_median;
+    track_PIDA_kde = PIDAval_kde;
     track_nhits = nhits;
 
     //double Bragg_smallest = std::min({Bragg_mu, Bragg_p, Bragg_pi, Bragg_K, noBragg_fwd_MIP});
@@ -1349,7 +1375,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           TrueBragg_truemu_neglogl_p->Fill(Bragg_p);
           TrueBragg_truemu_neglogl_pi->Fill(Bragg_pi);
           TrueBragg_truemu_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truemu_PIDA->Fill(PIDAval);
+          TrueBragg_truemu_PIDA->Fill(PIDAval_mean);
           TrueBragg_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
           TrueBragg_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
           TrueBragg_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1396,7 +1422,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           TrueBragg_truep_neglogl_p->Fill(Bragg_p);
           TrueBragg_truep_neglogl_pi->Fill(Bragg_pi);
           TrueBragg_truep_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truep_PIDA->Fill(PIDAval);
+          TrueBragg_truep_PIDA->Fill(PIDAval_mean);
           TrueBragg_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
           TrueBragg_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
           TrueBragg_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1443,7 +1469,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           TrueBragg_truepi_neglogl_p->Fill(Bragg_p);
           TrueBragg_truepi_neglogl_pi->Fill(Bragg_pi);
           TrueBragg_truepi_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truepi_PIDA->Fill(PIDAval);
+          TrueBragg_truepi_PIDA->Fill(PIDAval_mean);
           TrueBragg_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
           TrueBragg_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
           TrueBragg_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1486,7 +1512,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           TrueBragg_trueK_neglogl_p->Fill(Bragg_p);
           TrueBragg_trueK_neglogl_pi->Fill(Bragg_pi);
           TrueBragg_trueK_neglogl_K->Fill(Bragg_K);
-          TrueBragg_trueK_PIDA->Fill(PIDAval);
+          TrueBragg_trueK_PIDA->Fill(PIDAval_mean);
           TrueBragg_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
           TrueBragg_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
           TrueBragg_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1530,7 +1556,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           TrueBragg_truee_neglogl_p->Fill(Bragg_p);
           TrueBragg_truee_neglogl_pi->Fill(Bragg_pi);
           TrueBragg_truee_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truee_PIDA->Fill(PIDAval);
+          TrueBragg_truee_PIDA->Fill(PIDAval_mean);
           TrueBragg_truee_dEdxtr_len->Fill(trklen,dEdxtruncmean);
           TrueBragg_truee_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
           TrueBragg_truee_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1570,7 +1596,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         All_truemu_neglogl_p->Fill(Bragg_p);
         All_truemu_neglogl_pi->Fill(Bragg_pi);
         All_truemu_neglogl_K->Fill(Bragg_K);
-        All_truemu_PIDA->Fill(PIDAval);
+        All_truemu_PIDA->Fill(PIDAval_mean);
         All_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
         All_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         All_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1617,7 +1643,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         All_truep_neglogl_p->Fill(Bragg_p);
         All_truep_neglogl_pi->Fill(Bragg_pi);
         All_truep_neglogl_K->Fill(Bragg_K);
-        All_truep_PIDA->Fill(PIDAval);
+        All_truep_PIDA->Fill(PIDAval_mean);
         All_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
         All_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         All_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1664,7 +1690,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         All_truepi_neglogl_p->Fill(Bragg_p);
         All_truepi_neglogl_pi->Fill(Bragg_pi);
         All_truepi_neglogl_K->Fill(Bragg_K);
-        All_truepi_PIDA->Fill(PIDAval);
+        All_truepi_PIDA->Fill(PIDAval_mean);
         All_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
         All_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         All_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1707,7 +1733,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         All_trueK_neglogl_p->Fill(Bragg_p);
         All_trueK_neglogl_pi->Fill(Bragg_pi);
         All_trueK_neglogl_K->Fill(Bragg_K);
-        All_trueK_PIDA->Fill(PIDAval);
+        All_trueK_PIDA->Fill(PIDAval_mean);
         All_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
         All_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         All_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
@@ -1750,7 +1776,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         All_truee_neglogl_p->Fill(Bragg_p);
         All_truee_neglogl_pi->Fill(Bragg_pi);
         All_truee_neglogl_K->Fill(Bragg_K);
-        All_truee_PIDA->Fill(PIDAval);
+        All_truee_PIDA->Fill(PIDAval_mean);
         All_truee_dEdxtr_len->Fill(trklen,dEdxtruncmean);
         All_truee_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
         All_truee_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
