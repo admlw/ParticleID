@@ -30,6 +30,7 @@ namespace particleid{
     TGraph *g_ThdEdxRR_Kaon;
     TGraph *g_ThdEdxRR_Pion;
     TGraph *g_ThdEdxRR_Muon;
+    TGraph *g_ThdEdxRR_MuonNoBragg;
 
   protected:
     const int npoints = 107;
