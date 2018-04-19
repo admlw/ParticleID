@@ -77,7 +77,7 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
 
     std::vector<double> fv;
 
-    bool fIsData;
+    bool fIsDataPlots;
     std::string fTrackLabel;
     std::string fHitLabel;
     std::string fHitTrackAssns;
@@ -514,7 +514,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   fhicl::ParameterSet const p_fv     = p.get<fhicl::ParameterSet>("FiducialVolume");
   fhicl::ParameterSet const p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
 
-  fIsData = p.get<bool>("IsDataPlotsOnly", "false");
+  fIsDataPlots = p.get<bool>("IsDataPlotsOnly", "false");
   fTrackLabel = p_labels.get<std::string>("TrackLabel","pandoraNu::McRecoStage2");
   fHitLabel = p_labels.get<std::string>("HitLabel","pandoraCosmicHitRemoval::McRecoStage2");
   fHitTrackAssns = p_labels.get<std::string>("HitTrackAssn","pandoraNu::McRecoStage2");
@@ -572,7 +572,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     true_PDG = 0;
     simb::MCParticle const* matched_mcparticle = NULL; 
 
-    if (!fIsData){
+    if (!fIsDataPlots){
 
       /**
        * Get true PDG from associations.
@@ -634,7 +634,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         TrueBragg = true;
       }
 
-    } // end if(!fIsData)
+    } // end if(!fIsDataPlots)
 
     std::cout << "[ParticleIDValidation] Getting calorimetry information." << std::endl;
 
@@ -691,7 +691,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
      */
 
     TVector3 RecoTrackDir, TrueTrackDir;
-    if (!fIsData){
+    if (!fIsDataPlots){
 
       RecoTrackDir = {track->End().X()-track->Start().X(),
         track->End().Y()-track->Start().Y(),
@@ -742,8 +742,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
      * Make plots of dEdx versus residual range for different track start/end
      * ratios.
      *
-     * Note that here we don't need to check if fIsData because TrueBragg is
-     * false by construction if fIsData = true
+     * Note that here we don't need to check if fIsDataPlots because TrueBragg is
+     * false by construction if fIsDataPlots = true
      */
 
     if (dEdxStartEndRatio < 0.5){
@@ -931,7 +931,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     else if (Bragg_smallest == noBragg_fwd_MIP)
       AllTracks_smallest_neglogl->Fill(4.5);
 
-    if (!fIsData){
+    if (!fIsDataPlots){
       if (TrueBragg){
         // Well-reconstructed truth matching
         if (TMath::Abs(true_PDG) == 13){ // True muons
@@ -1372,7 +1372,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         else if (Bragg_smallest == noBragg_fwd_MIP)
           All_truee_smallest_neglogl->Fill(4.5);
       }
-    }// end !fIsData
+    }// end !fIsDataPlots
 
     std::cout << "[ParticleIDValidation] Filling tree. " << std::endl;
     pidTree->Fill();
@@ -1470,7 +1470,7 @@ void ParticleIdValidationPlots::beginJob(){
   All_chargeEndOverStart_gr2_dEdxrr    = tfs->make<TH2F>("All_chargeEndOverStart_gr2_dEdxrr"    , "All tracks (end/start average charge > 2);Residual range (cm); dEdx"                                                            , 150 , 0 , 30 , 400 , 0 , 50);
   All_chargeEndOverStart_0_5to2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_0_5to2_dEdxrr" , "All tracks (end/start average charge                                                      = 0.5 - 2);Residual range (cm); dEdx" , 150 , 0 , 30 , 400 , 0 , 50);
 
-  if (!fIsData){
+  if (!fIsDataPlots){
     // ---- True Bragg peak
     TrueBragg_truemu_neglogl_mu = tfs->make<TH1F>("TrueBragg_truemu_neglogl_mu","Tracks with true p=0 at end, true muons;neg2LL_mu;",400,0,400);
     TrueBragg_truep_neglogl_mu  = tfs->make<TH1F>("TrueBragg_truep_neglogl_mu","Tracks with true p=0 at end, true protons;neg2LL_mu;",400,0,400);
