@@ -70,6 +70,8 @@ physics.producers.pidcalibration.CaloAlg: @local::microboone_calorimetryalgmcc84
 physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::UBXSec"
 physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNucalo::UBXSec"
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_data
-physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_data
 physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
+physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_data
+physics.analyzers.pidvalid.IsDataPlotsOnly: true
 services.DetectorClocksService.InheritClockConfig: false
+

@@ -61,15 +61,19 @@ namespace particleid{
   double Bragg_negLogL_Estimator::getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward)
   {
 
-    // Get theoretical prediction for given particle hypothesis
-    // (This gives the MPV of a Landau distribution)
-    // This is only available for muon, proton, kaon, and pion
-    // Return an error if user tries to request a different particle type
+    /**
+     * Get theoretical prediction for given particle hypothesis
+     * (This gives the MPV of a Landau distribution)
+     * This is only available for muon, proton, kaon, and pion
+     * Return an error if user tries to request a different particle type
+     */
+    
     Theory_dEdx_resrange theory;
     TGraph *theorypred;
     double gausWidth;
     double landauWidth;
     int absph = TMath::Abs(particlehypothesis);
+   
     switch(absph){
       case 13: // muon
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to muon hypothesis" << std::endl;
@@ -97,7 +101,7 @@ namespace particleid{
         break;
       case 0: // special case: fit to MIP region of muon prediction with no Bragg peak
         std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood for non-Bragg MIP-like hypothesis" << std::endl;
-        theorypred = theory.g_ThdEdxRR_Muon;
+        theorypred = theory.g_ThdEdxRR_MuonNoBragg;
         gausWidth = gausWidth_mu;
         landauWidth = landauWidth_mu;
         break;
@@ -109,16 +113,15 @@ namespace particleid{
 
     TF1 *langaus = new TF1("langaus", landauGaussian, 0, 100, 4);
 
-    // Now loop through hits (entries in dEdx and resRange vectors), compare to
-    // theoretical prediction, and calculate likelihood
-    // rr_shift allows use to shift the residual range so that we
-    // can account for end point resolution
+    /**
+     * Now loop through hits (entries in dEdx and resRange vectors), compare to
+     * theoretical prediction, and calculate likelihood
+     * rr_shift allows us to shift the residual range so that we
+     * can account for end point resolution
+     */
+    
     double minLLNdf = 9999999;
     int n_hits_used_total = 0;
-
-    // For a non-Bragg MIP-like hypothesis, add an extra shift of 15 cm to the residual range, so we're only comparing to the non-Bragg region. Should be 0 for all other hypotheses.
-    double rr_MIPregionshift = 0.0;
-    if (absph == 0){ rr_MIPregionshift = 15.0;}
 
     for (double rr_shift = endPointFloatShort; rr_shift < endPointFloatLong; rr_shift = rr_shift+endPointFloatStepSize){
 
@@ -129,34 +132,36 @@ namespace particleid{
       for (size_t i_hit=0; i_hit < resRange.size(); i_hit++){
 
         size_t rr_index;
-        if (forward){ // Fit tracks "forward" (i.e. in the direction they already have)
+        // Fit tracks "forward" (i.e. in the direction they already have)
+        if (forward){           
           rr_index = i_hit;
           if ((int)rr_index >= (int)resRange.size() - nHitsToDrop){
             continue;
           }
         }
-        else{ // Fit tracks "backward"
+        // Fit tracks "backward"
+        else{          
           rr_index = (resRange.size()-1)-i_hit;
           if ((int)i_hit < nHitsToDrop){
             continue;
           }
         }
 
-        double resrg_i = resRange.at(rr_index)+rr_shift+rr_MIPregionshift;
+        double resrg_i = resRange.at(rr_index)+rr_shift;
         double dEdx_i  = dEdx.at(i_hit);
 
-        // Theory values are only defined up to 30 cm residual Range so we
-        // can't compare beyond that
+        /**
+         * Theory values are only defined up to 30 cm residual Range so we
+         * can't compare beyond that
+         */
         if (resrg_i > 30.0) continue;
 
         // Set theoretical Landau distribution for given residual range
-        //if (theorypred->Eval(resrg_i,0,"S") < 0) std::cout << "ERROR theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl;
         langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S"),1, gausWidth);
 
         // Evaluate likelihood
         double neg2LogL_i = 0.;
         if (langaus->Eval(dEdx_i) == 0){
-          //std::cout << "WARNING: langaus->Eval(" << dEdx_i << ") = " << langaus->Eval(dEdx_i) << ". gausWidth = " << gausWidth << ", landauWidth = " << landauWidth << ", peak = " << theorypred->Eval(resrg_i,0,"S") << std::endl;
           continue;
         }
         else{

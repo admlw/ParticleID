@@ -32,7 +32,7 @@
     <!-- diffusion filter -->
     <stage name="particleId">
         <inputdef>mdeltutt_prod_reco_optfilter_extbnb_ccinclusive_v13_mcc8_goodruns_a</inputdef>
-        <fcl>&app_dir;/job/run_particle_identification_withcaliandvalid_data.fcl</fcl>
+        <fcl>&app_dir;/job/run_particle_identification_UBXSec_withcalibrations_withvalidation_data.fcl</fcl>
         <bookdir>&data_dir;</bookdir>
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>

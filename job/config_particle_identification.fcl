@@ -24,8 +24,6 @@ particleidconfig:
 
   DaughterFinderCutDistance:  5.0 # cm
   DaughterFinderCutFraction:  0.5 # fraction of track length
- 
-  PIDACalcType : "kde" # mean, median, or kde
 
 }
 
