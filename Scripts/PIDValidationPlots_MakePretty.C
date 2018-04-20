@@ -225,10 +225,14 @@ void PIDValidationPlots_MakePretty(std::string inputfile){
     hAll_correct_ratio->GetXaxis()->SetBinLabel(i+1,particles[i]);
     hAll_incorrect_ratio->GetXaxis()->SetBinLabel(i+1,particles[i]);
 
-    hTrueBragg_correct_ratio->SetBinContent(i+1,hTrueBragg_correct->GetBinContent(i+1,2)/hTrueBragg_correct->GetBinContent(i+1,1));
-    hTrueBragg_incorrect_ratio->SetBinContent(i+1,hTrueBragg_incorrect->GetBinContent(i+1,2)/hTrueBragg_incorrect->GetBinContent(i+1,1));
-    hAll_correct_ratio->SetBinContent(i+1,hAll_correct->GetBinContent(i+1,2)/hAll_correct->GetBinContent(i+1,1));
-    hAll_incorrect_ratio->SetBinContent(i+1,hAll_incorrect->GetBinContent(i+1,2)/hAll_incorrect->GetBinContent(i+1,1));
+    if (hTrueBragg_correct && hTrueBragg_incorrect){
+      hTrueBragg_correct_ratio->SetBinContent(i+1,hTrueBragg_correct->GetBinContent(i+1,2)/hTrueBragg_correct->GetBinContent(i+1,1));
+      hTrueBragg_incorrect_ratio->SetBinContent(i+1,hTrueBragg_incorrect->GetBinContent(i+1,2)/hTrueBragg_incorrect->GetBinContent(i+1,1));
+    }
+    if (hAll_correct && hAll_incorrect){
+      hAll_correct_ratio->SetBinContent(i+1,hAll_correct->GetBinContent(i+1,2)/hAll_correct->GetBinContent(i+1,1));
+      hAll_incorrect_ratio->SetBinContent(i+1,hAll_incorrect->GetBinContent(i+1,2)/hAll_incorrect->GetBinContent(i+1,1));
+    }
   }
 
   // Draw
