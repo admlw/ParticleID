@@ -335,7 +335,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       // Finally, fill product with the variables that we calculated above and make assns
 
       std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
-    anab::ParticleID PID_object(AlgScoresVec);
+      anab::ParticleID PID_object(AlgScoresVec);
     particleIDCollection->push_back(PID_object);
 
 
