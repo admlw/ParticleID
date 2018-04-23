@@ -10,5 +10,5 @@ TGraph *g_ThdEdxRR_Proton;
 TGraph *g_ThdEdxRR_Kaon;
 TGraph *g_ThdEdxRR_Pion;
 TGraph *g_ThdEdxRR_Muon;
-
+TGraph *g_ThdEdxRR_MuonNoBragg;
 

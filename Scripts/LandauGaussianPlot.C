@@ -2,24 +2,27 @@
 
 void LandauGaussianPlot(){
 
-  int nxbins = 100;
-  int nybins = 100;
-/** default data:
-  double muonlandauwidth = 0.14;
-  double muongaussianwidth = 0.15;
-  double protonlandauwidth = 0.16;
-  double protongaussianwidth = 0.46;
-*/
-
-  double muonlandauwidth = 0.03;
-  double muongaussianwidth = 0.15;
-  double protonlandauwidth = 0.16;
-  double protongaussianwidth = 0.46;
+  int nxbins = 1000;
+  int nybins = 1000;
+  
+/*  // default data:
+    double muonlandauwidth = 0.14;
+    double muongaussianwidth = 0.15;
+    double protonlandauwidth = 0.16;
+    double protongaussianwidth = 0.46;
+  */  
+  // default MC:
+  double muonlandauwidth = 0.06;
+  double muongaussianwidth = 0.13;
+  double protonlandauwidth = 0.07;
+  double protongaussianwidth = 0.4;
 
   Theory_dEdx_resrange();
 
   TF1 *langaus = new TF1("langaus", landauGaussian, 0, 100, 4);
   langaus->SetNpx(10000);
+
+  /** muon */
 
   TH2D *h_muon = new TH2D("h_muon", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
 
@@ -39,6 +42,29 @@ void LandauGaussianPlot(){
   c1->cd();
   h_muon->SetContour(100);
   h_muon->Draw("col2");
+
+  /** muonnobragg */
+
+  TH2D *h_muonnobragg = new TH2D("h_muonnobragg", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
+
+  for (int i = 0; i < nxbins; i++){
+
+    langaus->SetParameters(muonlandauwidth, g_ThdEdxRR_MuonNoBragg->Eval((i)*30./(double)nxbins, 0, "S"), 1.0, muongaussianwidth);
+
+  for (int j = 0; j < nybins; j++){
+
+      h_muonnobragg->SetBinContent(i,j,langaus->Eval(h_muonnobragg->GetYaxis()->GetBinCenter(j)));
+
+    }
+
+  }
+
+  TCanvas *c3 = new TCanvas("c3", "c3", 500, 500);
+  c3->cd();
+  h_muonnobragg->SetContour(100);
+  h_muonnobragg->Draw("col2");
+
+  /** proton */
 
   TH2D *h_proton = new TH2D("h_proton", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
 
@@ -60,17 +86,20 @@ void LandauGaussianPlot(){
   h_proton->SetContour(100);
   h_proton->Draw("col2");
 
-  TH2D *h_combined = new TH2D("h_combined", ";Residual Range (cm); dE/dx (MeV/cm)", 1000, 0, 30, 1000, 0, 20);
+  /** combined */
 
-  for (int i = 0; i < 1000*1000; i++){
+  TH2D *h_combined = new TH2D("h_combined", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
 
-    h_combined->SetBinContent(i, std::max(h_proton->GetBinContent(i), h_muon->GetBinContent(i)));
+  for (int i = 0; i < nxbins*nybins; i++){
+
+    h_combined->SetBinContent(i, std::max(std::max(h_proton->GetBinContent(i), h_muon->GetBinContent(i)), h_muonnobragg->GetBinContent(i)));
 
   }
 
   TFile* f = new TFile("likelihoodMaps.root", "RECREATE");
   f->cd();
   h_muon->Write();
+  h_muonnobragg->Write();
   h_proton->Write();
   h_combined->Write();
 }
@@ -78,6 +107,117 @@ void LandauGaussianPlot(){
 void Theory_dEdx_resrange(){
   // Constructor: set points in TGraphs and initialise TSpline3s
 
+  // Muon, no Bragg
+  g_ThdEdxRR_MuonNoBragg = new TGraph(107);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(0,   31.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(1,   31.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(2,   31.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(3,   31.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(4,   30.75, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(5,   30.45, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(6,   30.15, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(7,   29.85, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(8,   29.55, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(9,   29.25, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(10,  28.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(11,  28.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(12,  28.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(13,  28.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(14,  27.75, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(15,  27.45, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(16,  27.15, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(17,  26.85, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(18,  26.55, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(19,  26.25, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(20,  25.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(21,  25.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(22,  25.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(23,  25.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(24,  24.75, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(25,  24.45, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(26,  24.15, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(27,  23.85, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(28,  23.55, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(29,  23.25, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(30,  22.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(31,  22.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(32,  22.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(33,  22.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(34,  21.75, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(35,  21.45, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(36,  21.15, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(37,  20.85, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(38,  20.55, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(39,  20.25, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(40,  19.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(41,  19.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(42,  19.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(43,  19.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(44,  18.75, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(45,  18.45, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(46,  18.15, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(47,  17.85, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(48,  17.55, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(49,  17.25, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(50,  16.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(51,  16.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(52,  16.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(53,  16.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(54,  15.75, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(55,  15.45, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(56,  15.15, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(57,  14.85, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(58,  14.55, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(59,  14.25, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(60,  13.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(61,  13.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(62,  13.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(63,  13.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(64,  12.75, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(65,  12.45, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(66,  12.15, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(67,  11.85, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(68,  11.55, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(69,  11.25, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(70,  10.95, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(71,  10.65, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(72,  10.35, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(73,  10.05, 1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(74,  9.75,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(75,  9.45,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(76,  9.15,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(77,  8.85,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(78,  8.55,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(79,  8.25,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(80,  7.95,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(81,  7.65,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(82,  7.35,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(83,  7.05,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(84,  6.75,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(85,  6.45,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(86,  6.15,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(87,  5.85,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(88,  5.55,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(89,  5.25,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(90,  4.95,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(91,  4.65,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(92,  4.35,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(93,  4.05,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(94,  3.75,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(95,  3.45,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(96,  3.15,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(97,  2.85,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(98,  2.55,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(99,  2.25,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(100, 1.95,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(101, 1.65,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(102, 1.35,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(103, 1.05,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(104, 0.75,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(105, 0.45,  1.6);
+  g_ThdEdxRR_MuonNoBragg->SetPoint(106, 0.15,  1.6);
+
+ 
   // Proton
   g_ThdEdxRR_Proton = new TGraph(107);
   g_ThdEdxRR_Proton->SetPoint(0,   31.95, 4.14);
