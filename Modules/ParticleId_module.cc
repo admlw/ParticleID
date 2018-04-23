@@ -316,17 +316,21 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     AlgScoresVec.push_back(dEdxtruncmean);
     AlgScoresVec.push_back(trklen);
-      
-    // }
-    //    } // end if(isContained)
-    //    else{
-    // If particle is *not* contained, assume it is a muon
-    // Set pdg=13. No other PID variables will be set because those are only filled for contained particles
-    // pdg = 13;
-    // }
+      /*  }
 
-    std::cout << "[ParticleID] Making particleIDCollection... " << std::endl;
-    anab::ParticleID PID_object(AlgScoresVec);
+          } // end if(isContained)
+          else{
+      // If particle is *not* contained, assume it is a muon
+      // Set pdg=13. No other PID variables will be set because those are only filled for contained particles
+      pdg = 13;
+      }*/
+
+
+      // -------------------------------------------------------------------------- //
+      // Finally, fill product with the variables that we calculated above and make assns
+
+      std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
+      anab::ParticleID PID_object(AlgScoresVec);
     particleIDCollection->push_back(PID_object);
 
     std::cout << "[ParticleID] Making assn... " << std::endl;
