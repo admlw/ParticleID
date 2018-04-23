@@ -8,7 +8,8 @@ namespace particleid{
     double pida = -1.0;
 
     std::vector<double> pidaValues;
-    for (size_t i = 0; i < resRange.size(); i++){
+    if (resRange.size() == 0 || resRange.size() == 1) return -1;
+    for (size_t i = 1; i < resRange.size()-1; i++){
 
       pidaValues.push_back(dEdx.at(i)*std::pow(resRange.at(i),0.42));
 
