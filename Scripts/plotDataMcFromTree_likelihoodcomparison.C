@@ -14,7 +14,7 @@ void plotDataMcFromTree_likelihoodcomparison(){
   //  double muonScaling = 1.18;
 
   //  double protonScaling = 1.75;
-  //  double muonScaling = 1.48;
+  //  double muonScaling = 1.9;
 
   double protonScaling = 1.563;
   double muonScaling = 1.563; 
@@ -22,7 +22,7 @@ void plotDataMcFromTree_likelihoodcomparison(){
   //double protonScaling = 1.0;
   //double muonScaling = 1.0;
 
-  TFile *f_bnbcos  = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_bnbcos.root", "read");
+  TFile *f_bnbcos  = new TFile("/uboone/data/users/alister1/particleID/180423-ParticleId/pid_bnbcos.root", "read");
   TFile *f_offbeam = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_offbeam.root", "read");
   TFile *f_onbeam  = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_onbeam.root", "read");
 
@@ -334,6 +334,29 @@ void plotDataMcFromTree_likelihoodcomparison(){
   h_onminusoff_neglogl_minmumipminusp->SetMarkerStyle(20);
   h_onminusoff_neglogl_minmumipminusp->SetMarkerSize(0.6);
   h_onminusoff_neglogl_minmumipminusp->DrawNormalized("samepE0");
+
+  int binSeparator = 42;
+
+  double fullintegral_p = h_bnbcos_neglogl_minmumipminusp_p->Integral(-1, 51);
+  double integralleft_p = h_bnbcos_neglogl_minmumipminusp_p->Integral(-1, binSeparator);
+  double integralright_p = h_bnbcos_neglogl_minmumipminusp_p->Integral(binSeparator+1, 51);
+  double fullintegral_mu = h_bnbcos_neglogl_minmumipminusp_mu->Integral(-1, 51);
+  double integralleft_mu = h_bnbcos_neglogl_minmumipminusp_mu->Integral(-1, binSeparator);
+  double integralright_mu = h_bnbcos_neglogl_minmumipminusp_mu->Integral(binSeparator+1, 51);
+  double fullintegral_pi = h_bnbcos_neglogl_minmumipminusp_pi->Integral(-1, 51);
+  double integralleft_pi = h_bnbcos_neglogl_minmumipminusp_pi->Integral(-1, binSeparator);
+  double integralright_pi = h_bnbcos_neglogl_minmumipminusp_pi->Integral(binSeparator+1, 51);
+  double fullintegral_total = h_total_neglogl_minmumipminusp->Integral(-1, 51);
+  double integralleft_total = h_total_neglogl_minmumipminusp->Integral(-1, binSeparator);
+  double integralright_total = h_total_neglogl_minmumipminusp->Integral(binSeparator+1, 51);
+
+  std::cout << h_bnbcos_neglogl_minmumipminusp_p->GetBinLowEdge(42) << std::endl;
+  std::cout << (integralleft_mu+integralright_mu)/fullintegral_mu << std::endl;
+  std::cout << "fraction of mips ID'd by cut" << (integralleft_mu + integralleft_pi) /(fullintegral_mu+fullintegral_pi) << std::endl;
+  std::cout << "contamination in MIP region" << 1 - (integralleft_mu+integralleft_pi)/(integralleft_total) << std::endl;
+  std::cout << "fraction of protons ID'd by cut" << (integralright_p) /(fullintegral_p) << std::endl;
+  std::cout << "contamination in proton region" << 1 - (integralright_p)/(integralright_total) << std::endl;
+ 
 
   TLegend *leg_minmumipminusp = new TLegend(0.15, 0.64, 0.45, 0.89);
   leg_minmumipminusp->AddEntry(h_bnbcos_neglogl_minmumipminusp_p, "True proton");
