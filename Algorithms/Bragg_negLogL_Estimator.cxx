@@ -120,13 +120,13 @@ namespace particleid{
      * can account for end point resolution
      */
     
-    double minLLNdf = 9999999;
+    double likelihoodNdf = 0;
     int n_hits_used_total = 0;
 
     for (double rr_shift = endPointFloatShort; rr_shift < endPointFloatLong; rr_shift = rr_shift+endPointFloatStepSize){
 
-      // Make neg2LogLikelihood
-      double neg2LogL = 0.;
+      // Make likelihoodikelihood
+      double likelihood = 0.;
       int n_hits_used = 0;
 
       for (size_t i_hit=0; i_hit < resRange.size(); i_hit++){
@@ -160,28 +160,28 @@ namespace particleid{
         langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S"),1, gausWidth);
 
         // Evaluate likelihood
-        double neg2LogL_i = 0.;
+        double likelihood_i = 0.;
         if (langaus->Eval(dEdx_i) == 0){
           continue;
         }
         else{
-          neg2LogL_i = -2*std::log(langaus->Eval(dEdx_i));
+          likelihood_i = langaus->Eval(dEdx_i);
           n_hits_used++;
         }
 
-        neg2LogL += neg2LogL_i;
+        likelihood += likelihood_i;
         /*
            std::cout << "Algorithm --- " << std::endl
            << "   theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl
            << "   theorypred->Eval(" << resrg_i << ") = " << theorypred->Eval(resrg_i) << std::endl
            << "   langaus->Eval(" << dEdx_i << ") = " << langaus->Eval(dEdx_i) << std::endl
-           << "   neg2logL(i) = " << neg2LogL_i << std::endl
-           << "   neg2logL total = " << neg2LogL << std::endl;
+           << "   neg2logL(i) = " << likelihood_i << std::endl
+           << "   neg2logL total = " << likelihood << std::endl;
            */
       } // Loop over i_hit
 
-      if (neg2LogL/n_hits_used < minLLNdf){
-        minLLNdf = neg2LogL/n_hits_used;
+      if (likelihood/n_hits_used > likelihoodNdf){
+        likelihoodNdf = likelihood/n_hits_used;
         n_hits_used_total = n_hits_used;
       }
 
@@ -189,7 +189,7 @@ namespace particleid{
 
     if (n_hits_used_total == 0)
       return 9999999;
-    else return minLLNdf;
+    else return -2*std::log(likelihoodNdf);
 
   } // getneglogL
 
