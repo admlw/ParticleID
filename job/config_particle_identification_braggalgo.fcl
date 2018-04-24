@@ -8,14 +8,14 @@ braggalgo_mcc8:
 {
  
   # dEdx widths
-  dEdxLandauWidthP  : 0.07
-  dEdxLandauWidthMu : 0.06
-  dEdxLandauWidthPi : 0.06
-  dEdxLandauWidthK  : 0.06
-  dEdxGausWidthP    : 0.4
-  dEdxGausWidthMu   : 0.13
-  dEdxGausWidthPi   : 0.13
-  dEdxGausWidthK    : 0.13
+  dEdxLandauWidthP  : 0.19
+  dEdxLandauWidthMu : 0.09
+  dEdxLandauWidthPi : 0.09
+  dEdxLandauWidthK  : 0.09
+  dEdxGausWidthP    : 0.09
+  dEdxGausWidthMu   : 0.09
+  dEdxGausWidthPi   : 0.09
+  dEdxGausWidthK    : 0.09
 
   NHitsToDrop: 1
 
