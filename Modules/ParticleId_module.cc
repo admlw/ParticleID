@@ -80,7 +80,7 @@ class UBPID::ParticleId : public art::EDProducer {
 
     // fidvol related
     fidvol::fiducialVolume fid;
-    
+
     // for PIDA
     particleid::PIDA pida;
 
@@ -163,7 +163,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       if (planenum != 2) continue; // Only use calorimetry from collection plane
       calo = c;
     }
-    
+
     // Check that caloFromTrack is a valid object
     if (!calo){
       std::cout << "[ParticleID] Calorimetry on plane " << planenum << " is unavailable. Skipping." << std::endl;
@@ -213,7 +213,7 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     /**
      * Algorithm 1: PIDA
-     * This makes use of Bruce home-brewed PIDA calculation, which can be 
+     * This makes use of Bruce home-brewed PIDA calculation, which can be
      * calculated via three methods:
      * (1) mean (original implementation from B. Baller)
      * (2) median (T. Yang & V. Meddage)
@@ -241,7 +241,7 @@ void UBPID::ParticleId::produce(art::Event & e)
     /**
      * Algorithm 2: BraggPeakLLH
      * Uses B. Ballers theory, along with landau-gaussian distributions with
-     * widths measured from data and simulation to estimate the likelihood for 
+     * widths measured from data and simulation to estimate the likelihood for
      * each hit in a track to have come from each particle species.
      */
     Bragg_fwd_mu.fAlgName = "BraggPeakLLH";
@@ -329,11 +329,11 @@ void UBPID::ParticleId::produce(art::Event & e)
       // -------------------------------------------------------------------------- //
       // Finally, fill product with the variables that we calculated above and make assns
 
-      std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
+      //std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
       anab::ParticleID PID_object(AlgScoresVec);
     particleIDCollection->push_back(PID_object);
 
-    std::cout << "[ParticleID] Making assn... " << std::endl;
+    //std::cout << "[ParticleID] Making assn... " << std::endl;
     util::CreateAssn(*this, e, *particleIDCollection, track, *trackParticleIdAssn);
 
   }
