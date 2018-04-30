@@ -301,4 +301,146 @@ void plotNewDataMcFromTree(){
     h_onbeam->Delete();
 
   }
+  
+  TCanvas *c2 = new TCanvas("c2", "c2", 500, 500);
+  c2->cd();
+
+  TH1D* h_bnbcos_pidamean_p  = new TH1D("h_bnbcos_pidamean_p", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidamean_mu = new TH1D("h_bnbcos_pidamean_mu", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidamean_pi = new TH1D("h_bnbcos_pidamean_pi", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidamean_k  = new TH1D("h_bnbcos_pidamean_k", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidamean_other = new TH1D("h_bnbcos_pidamean_other", ";PIDa;", 40, 0, 30);
+  h_bnbcos_pidamean_p->SetFillColor(TColor::GetColor(215, 48, 39));
+  h_bnbcos_pidamean_mu->SetFillColor(TColor::GetColor(8,64,129));
+  h_bnbcos_pidamean_pi->SetFillColor(TColor::GetColor(166,217,106));
+  h_bnbcos_pidamean_k->SetFillColor(TColor::GetColor(133,1,98));
+  h_bnbcos_pidamean_other->SetFillColor(TColor::GetColor(197,197,197));
+  h_bnbcos_pidamean_p->SetLineWidth(0);
+  h_bnbcos_pidamean_mu->SetLineWidth(0);
+  h_bnbcos_pidamean_pi->SetLineWidth(0);
+  h_bnbcos_pidamean_k->SetLineWidth(0);
+  h_bnbcos_pidamean_other->SetLineWidth(0);
+
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_p", "std::abs(true_PDG) == 2212");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_mu", "std::abs(true_PDG) == 13");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_pi", "std::abs(true_PDG) == 211");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_k", "std::abs(true_PDG) == 321");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_other", "std::abs(true_PDG) != 2212 && std::abs(true_PDG) != 13 && std::abs(true_PDG) !=211 && std::abs(true_PDG) !=321");
+
+  TH1D* h_bnbcos_pidamean_total = new TH1D("h_bnbcos_pidamean_total", ";;", 40, 0, 30);
+  h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_p);
+  h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_mu);
+  h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_pi);
+  h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_k);
+  h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_other);
+
+  h_bnbcos_pidamean_total->SetFillColor(kBlack);
+  h_bnbcos_pidamean_total->SetFillStyle(3345);
+
+  h_bnbcos_pidamean_total->Sumw2();
+
+  h_bnbcos_pidamean_p->Scale(1./h_bnbcos_pidamean_total->Integral());
+  h_bnbcos_pidamean_mu->Scale(1./h_bnbcos_pidamean_total->Integral());
+  h_bnbcos_pidamean_pi->Scale(1./h_bnbcos_pidamean_total->Integral());
+  h_bnbcos_pidamean_k->Scale(1./h_bnbcos_pidamean_total->Integral());
+  h_bnbcos_pidamean_other->Scale(1./h_bnbcos_pidamean_total->Integral());
+  h_bnbcos_pidamean_total->Scale(1./h_bnbcos_pidamean_total->Integral());
+
+  THStack *hs_bnbcos_pidamean = new THStack("hs_bnbcos_pidamean", "");
+  hs_bnbcos_pidamean->Add(h_bnbcos_pidamean_p);
+  hs_bnbcos_pidamean->Add(h_bnbcos_pidamean_mu);
+  hs_bnbcos_pidamean->Add(h_bnbcos_pidamean_pi);
+  hs_bnbcos_pidamean->Add(h_bnbcos_pidamean_k);
+  hs_bnbcos_pidamean->Add(h_bnbcos_pidamean_other);
+
+  TH1D* h_onbeam_pidamean = new TH1D("h_onbeam_pidamean", "", 40, 0, 30);
+  t_onbeam->Draw("track_PIDA_mean >> h_onbeam_pidamean");
+
+  TH1D* h_offbeam_pidamean = new TH1D("h_offbeam_pidamean", "", 40, 0, 30);
+  t_offbeam->Draw("track_PIDA_mean >> h_offbeam_pidamean");
+
+  h_offbeam_pidamean->Scale(0.78);
+
+  TH1D* h_onbeamminusoffbeam = (TH1D*)h_onbeam_pidamean->Clone("h_onbeamminusoffbeam");
+  h_onbeamminusoffbeam->Add(h_offbeam_pidamean, -1);
+
+  h_onbeamminusoffbeam->DrawNormalized("p");
+  hs_bnbcos_pidamean->Draw("same");
+  h_onbeamminusoffbeam->SetMarkerStyle(20);
+  h_onbeamminusoffbeam->SetMarkerSize(0.6);
+  h_onbeamminusoffbeam->DrawNormalized("samepE1");
+  h_bnbcos_pidamean_total->Draw("E2same");
+  c2->SaveAs("pidamean.png");
+
+  TCanvas *c3 = new TCanvas("c2", "c2", 500, 500);
+  c3->cd();
+
+  TH1D* h_bnbcos_pidakde_p  = new TH1D("h_bnbcos_pidakde_p", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidakde_mu = new TH1D("h_bnbcos_pidakde_mu", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidakde_pi = new TH1D("h_bnbcos_pidakde_pi", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidakde_k  = new TH1D("h_bnbcos_pidakde_k", ";PIDa;", 40, 0, 30);
+  TH1D* h_bnbcos_pidakde_other = new TH1D("h_bnbcos_pidakde_other", ";PIDa;", 40, 0, 30);
+  h_bnbcos_pidakde_p->SetFillColor(TColor::GetColor(215, 48, 39));
+  h_bnbcos_pidakde_mu->SetFillColor(TColor::GetColor(8,64,129));
+  h_bnbcos_pidakde_pi->SetFillColor(TColor::GetColor(166,217,106));
+  h_bnbcos_pidakde_k->SetFillColor(TColor::GetColor(133,1,98));
+  h_bnbcos_pidakde_other->SetFillColor(TColor::GetColor(197,197,197));
+  h_bnbcos_pidakde_p->SetLineWidth(0);
+  h_bnbcos_pidakde_mu->SetLineWidth(0);
+  h_bnbcos_pidakde_pi->SetLineWidth(0);
+  h_bnbcos_pidakde_k->SetLineWidth(0);
+  h_bnbcos_pidakde_other->SetLineWidth(0);
+
+
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_p", "std::abs(true_PDG) == 2212");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_mu", "std::abs(true_PDG) == 13");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_pi", "std::abs(true_PDG) == 211");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_k", "std::abs(true_PDG) == 321");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_other", "std::abs(true_PDG) != 2212 && std::abs(true_PDG) != 13 && std::abs(true_PDG) !=211 && std::abs(true_PDG) !=321");
+
+  TH1D* h_bnbcos_pidakde_total = new TH1D("h_bnbcos_pidakde_total", ";;", 40, 0, 30);
+  h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_p);
+  h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_mu);
+  h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_pi);
+  h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_k);
+  h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_other);
+
+  h_bnbcos_pidakde_total->Sumw2();
+
+  h_bnbcos_pidakde_p->Scale(1./h_bnbcos_pidakde_total->Integral());
+  h_bnbcos_pidakde_mu->Scale(1./h_bnbcos_pidakde_total->Integral());
+  h_bnbcos_pidakde_pi->Scale(1./h_bnbcos_pidakde_total->Integral());
+  h_bnbcos_pidakde_k->Scale(1./h_bnbcos_pidakde_total->Integral());
+  h_bnbcos_pidakde_other->Scale(1./h_bnbcos_pidakde_total->Integral());
+  h_bnbcos_pidakde_total->Scale(1./h_bnbcos_pidakde_total->Integral());
+
+  THStack *hs_bnbcos_pidakde = new THStack("hs_bnbcos_pidakde", "");
+  hs_bnbcos_pidakde->Add(h_bnbcos_pidakde_p);
+  hs_bnbcos_pidakde->Add(h_bnbcos_pidakde_mu);
+  hs_bnbcos_pidakde->Add(h_bnbcos_pidakde_pi);
+  hs_bnbcos_pidakde->Add(h_bnbcos_pidakde_k);
+  hs_bnbcos_pidakde->Add(h_bnbcos_pidakde_other);
+
+  TH1D* h_onbeam_pidakde = new TH1D("h_onbeam_pidakde", "", 40, 0, 30);
+  t_onbeam->Draw("track_PIDA_kde >> h_onbeam_pidakde");
+
+  TH1D* h_offbeam_pidakde = new TH1D("h_offbeam_pidakde", "", 40, 0, 30);
+  t_offbeam->Draw("track_PIDA_kde >> h_offbeam_pidakde");
+
+  h_offbeam_pidakde->Scale(0.78);
+
+  TH1D* h_onbeamminusoffbeamkde = (TH1D*)h_onbeam_pidakde->Clone("h_onbeamminusoffbeamkde");
+  h_onbeamminusoffbeamkde->Add(h_offbeam_pidakde, -1);
+
+  h_bnbcos_pidakde_total->SetFillColor(kBlack);
+  h_bnbcos_pidakde_total->SetFillStyle(3345);
+
+  h_onbeamminusoffbeamkde->DrawNormalized("p");
+  hs_bnbcos_pidakde->Draw("same");
+  h_bnbcos_pidakde_total->Draw("E2same");
+  h_onbeamminusoffbeamkde->SetMarkerStyle(20);
+  h_onbeamminusoffbeamkde->SetMarkerSize(0.6);
+  h_onbeamminusoffbeamkde->DrawNormalized("samepE1");
+  c3->SaveAs("pidakde.png");
+
 }
