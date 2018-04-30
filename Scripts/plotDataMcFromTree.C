@@ -1,31 +1,34 @@
 void plotDataMcFromTree(){
 
+
   int nbins = 40;
   int binlow = 0;
-  int binhigh = 250;
+  int binhigh = 20;
 //  double protonScaling = 1.75;
 //  double muonScaling = 1.48;
 
   double protonScaling = 1.563;
   double muonScaling = 1.563; 
   
-//  double protonScaling = 1.0;
-//  double muonScaling = 1.0;
+  //double protonScaling = 1.0;
+  //double muonScaling = 1.0;
 
-  TFile *f_bnbcos  = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_bnbcos.root", "read");
-  TFile *f_offbeam = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_offbeam.root", "read");
-  TFile *f_onbeam  = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_onbeam.root", "read");
+  //TFile *f_bnbcos  = new TFile("/uboone/data/users/alister1/particleID/180423-ParticleId/pid_bnbcos.root", "read");
+  TFile *f_bnbcos  = new TFile("pidtest.root", "read");
+
+  //TFile *f_offbeam = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_offbeam.root", "read");
+  //TFile *f_onbeam  = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_onbeam.root", "read");
 
   TTree *t_bnbcos  = (TTree*)f_bnbcos->Get("pidvalid/pidTree"); 
-  TTree *t_offbeam = (TTree*)f_offbeam->Get("pidvalid/pidTree"); 
-  TTree *t_onbeam  = (TTree*)f_onbeam->Get("pidvalid/pidTree"); 
+  //TTree *t_offbeam = (TTree*)f_offbeam->Get("pidvalid/pidTree"); 
+  //TTree *t_onbeam  = (TTree*)f_onbeam->Get("pidvalid/pidTree"); 
 
   std::vector<TString> plotNames = {
-    "track_neglogl_mu",
-    "track_neglogl_p",
-    "track_neglogl_pi",
-    "track_neglogl_k",
-    "track_neglogl_mip",
+    "track_neglogl_fwd_mu",
+    "track_neglogl_fwd_p",
+    "track_neglogl_fwd_pi",
+    "track_neglogl_fwd_k",
+    "track_neglogl_fwd_mip",
     "track_PIDA_mean",
     "track_PIDA_kde"};
 
@@ -115,7 +118,7 @@ void plotDataMcFromTree(){
     hs->Add(h_bnbcos_other);
 
     hs->SetTitle(";"+plotName+";");
-
+/*
     TH1D* h_offbeam = new TH1D("h_offbeam", ";;", nbins, binlow, binhigh);
     t_offbeam->Draw(plotName+" >> h_offbeam");
     h_offbeam->Scale(0.76);
@@ -126,18 +129,18 @@ void plotDataMcFromTree(){
     h_onminusoff->Add(h_offbeam, -1);
     h_onminusoff->Sumw2();
     h_onminusoff->Scale(1./h_onminusoff->Integral());
-
+*/
     TCanvas *c1 = new TCanvas("c1", "c1", 500, 500);
 
     c1->cd();
-    hs->SetMaximum(std::max(h_onminusoff->GetMaximum(), h_total->GetMaximum())*1.15);
+    //hs->SetMaximum(std::max(h_onminusoff->GetMaximum(), h_total->GetMaximum())*1.15);
     hs->Draw();
     h_total->SetFillStyle(3345);
     h_total->SetFillColor(kGray+2);
     h_total->Draw("sameE2");
-    h_onminusoff->SetMarkerStyle(20);
-    h_onminusoff->SetMarkerSize(0.6);
-    h_onminusoff->Draw("samepE1");
+  //  h_onminusoff->SetMarkerStyle(20);
+  //  h_onminusoff->SetMarkerSize(0.6);
+  //  h_onminusoff->Draw("samepE1");
 
     TLegend *leg = new TLegend(0.55, 0.64, 0.89, 0.89);
     if (plotName == "track_neglogl_p"){
@@ -150,7 +153,7 @@ void plotDataMcFromTree(){
     leg->AddEntry(h_bnbcos_pi, "True Pion");
     leg->AddEntry(h_bnbcos_k, "True kaon");
     leg->AddEntry(h_bnbcos_other, "True Other");
-    leg->AddEntry(h_onminusoff, "Data");
+    //leg->AddEntry(h_onminusoff, "Data");
     leg->SetLineWidth(0);
     leg->SetFillStyle(0);
     leg->Draw("same");
@@ -162,8 +165,8 @@ void plotDataMcFromTree(){
     h_bnbcos_pi->Delete();
     h_bnbcos_k->Delete();
     h_bnbcos_other->Delete();
-    h_offbeam->Delete();
-    h_onbeam->Delete();
+  //  h_offbeam->Delete();
+  //  h_onbeam->Delete();
 
   }
 }
