@@ -84,6 +84,7 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::string fCaloTrackAssns;
     std::string fHitTruthAssns;
     std::string fPIDLabel;
+    std::string fPIDLabelChi2;
     int fNHitsForTrackDirection;
 
     /** Setup root tree  */
@@ -91,17 +92,17 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
 
     int true_PDG = -999;
     double true_start_momentum = -999;
-    double true_start_x = -999; 
-    double true_start_y = -999; 
-    double true_start_z = -999; 
-    double true_end_momentum = -999; 
-    double true_end_x = -999; 
-    double true_end_y = -999; 
-    double true_end_z = -999; 
+    double true_start_x = -999;
+    double true_start_y = -999;
+    double true_start_z = -999;
+    double true_end_momentum = -999;
+    double true_end_x = -999;
+    double true_end_y = -999;
+    double true_end_z = -999;
     double track_start_x;
     double track_start_y;
     double track_start_z;
-    double track_end_x;      
+    double track_end_x;
     double track_end_y;
     double track_end_z;
     double track_neglogl_fwd_mu;
@@ -117,6 +118,10 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_PIDA_mean;
     double track_PIDA_median;
     double track_PIDA_kde;
+    double track_Chi2Proton;
+    double track_Chi2Kaon;
+    double track_Chi2Pion;
+    double track_Chi2Muon;
     double track_length;
     double track_dEdx;
     double track_theta;
@@ -521,6 +526,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   fCaloTrackAssns = p_labels.get<std::string>("CaloTrackAssn", "pandoraNucali::McRecoStage2");
   fHitTruthAssns = p_labels.get<std::string>("HitTruthAssn","crHitRemovalTruthMatch::McRecoStage2");
   fPIDLabel = p_labels.get<std::string>("ParticleIdLabel");
+  fPIDLabelChi2 = p_labels.get<std::string>("ParticleIdChi2Label");
   fNHitsForTrackDirection = p.get<int>("NHitsForTrackDirection");
 
   fv = fid.setFiducialVolume(fv, p_fv);
@@ -570,7 +576,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
     bool TrueBragg = false;
     true_PDG = 0;
-    simb::MCParticle const* matched_mcparticle = NULL; 
+    simb::MCParticle const* matched_mcparticle = NULL;
 
     if (!fIsDataPlots){
 
@@ -581,7 +587,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
        * to each hit.
        *
        * .key() is used to get the index in the original collection
-       */      
+       */
 
       std::unordered_map<int,double> trkide;
       double maxe=-1, tote=0;
@@ -599,8 +605,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
         for(size_t i_p=0; i_p<particle_vec.size(); ++i_p){
           trkide[ particle_vec[i_p]->TrackId() ] += match_vec[i_p]->energy;
-          tote += match_vec[i_p]->energy; 
-          if( trkide[ particle_vec[i_p]->TrackId() ] > maxe ){ 
+          tote += match_vec[i_p]->energy;
+          if( trkide[ particle_vec[i_p]->TrackId() ] > maxe ){
             maxe = trkide[ particle_vec[i_p]->TrackId() ];
             matched_mcparticle = particle_vec[i_p];
           }
@@ -614,9 +620,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       true_start_x = matched_mcparticle->Vx();
       true_start_y = matched_mcparticle->Vy();
       true_start_z = matched_mcparticle->Vz();
-      true_end_momentum = 
-        std::sqrt( std::pow(matched_mcparticle->EndMomentum().X(),2) 
-            + std::pow(matched_mcparticle->EndMomentum().Y(),2) 
+      true_end_momentum =
+        std::sqrt( std::pow(matched_mcparticle->EndMomentum().X(),2)
+            + std::pow(matched_mcparticle->EndMomentum().Y(),2)
             + std::pow(matched_mcparticle->EndMomentum().Z(),2));
       true_end_x = matched_mcparticle->EndX();
       true_end_y = matched_mcparticle->EndY();
@@ -627,8 +633,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
       // Check if true particle should have a Bragg peak
       TrueBragg = false;
-      if (matched_mcparticle->EndPx() == 0 
-          && matched_mcparticle->EndPy() == 0 
+      if (matched_mcparticle->EndPx() == 0
+          && matched_mcparticle->EndPy() == 0
           && matched_mcparticle->EndPz() == 0
           && fid.isInFiducialVolume(true_end, fv)){
         TrueBragg = true;
@@ -643,10 +649,10 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     int planenum = -1;
     for (auto c : caloFromTrack){
       planenum = c->PlaneID().Plane;
-      if (planenum != 2) continue; 
+      if (planenum != 2) continue;
       calo = c;
     }
-    
+
     if (!calo){
       std::cout << "[ParticleIDValidation] Did not find a valid calorimetry object for plane " << planenum << ". Skipping plane." << std::endl;
       continue;
@@ -686,7 +692,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     double dEdxStartEndRatio = averagedEdxTrackEnd/averagedEdxTrackStart;
 
     /**
-     * Now check the reconstructed direction we found and compare it against 
+     * Now check the reconstructed direction we found and compare it against
      * the true direction.
      */
 
@@ -703,7 +709,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
       // If dot product < 0, track direction is wrong
       if (RecoTrackDir.Dot(TrueTrackDir) < 0){
-      
+
         All_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
         All_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
 
@@ -716,11 +722,11 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           Contained_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
           Contained_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
         }
-      
+
       }
       // else, track direction is correct
-      else{        
-      
+      else{
+
         All_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
         All_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
 
@@ -733,9 +739,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           Contained_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
           Contained_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
         }
-      
+
       }
-    
+
     }
 
     /**
@@ -801,7 +807,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       std::cout << "[ParticleIDValidation] No track-PID association found for trackID " << track->ID() << ". Skipping track." << std::endl;
       continue;
     }
-    
+
     std::vector<anab::sParticleIDAlgScores> AlgScoresVec = trackPID.at(0)->ParticleIDAlgScores();
 
     // Loop through AlgScoresVec and find the variables we want
@@ -810,7 +816,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
 
       if (AlgScore.fAlgName == "BraggPeakLLH"){
-      
+
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kLogL_fwd){
           if (AlgScore.fAssumedPdg == 13)   Bragg_fwd_mu = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 2212) Bragg_fwd_p =  AlgScore.fValue;
@@ -824,15 +830,15 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           if (AlgScore.fAssumedPdg == 211)  Bragg_bwd_pi = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 321)  Bragg_bwd_K  = AlgScore.fValue;
         }
-      
+
       } // if fAlName = BraggPeakLLH
 
       if (AlgScore.fAlgName == "PIDA_mean" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
         PIDAval_mean = AlgScore.fValue;
-            
+
       if (AlgScore.fAlgName == "PIDA_medeian" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
         PIDAval_median = AlgScore.fValue;
-      
+
       if (AlgScore.fAlgName == "PIDA_kde" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
         PIDAval_kde = AlgScore.fValue;
 
@@ -874,11 +880,28 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_neglogl_fwd_k = Bragg_fwd_K;
     track_neglogl_bwd_k = Bragg_bwd_K;
     track_neglogl_fwd_mip = noBragg_fwd_MIP;
-    track_dEdx = dEdxtruncmean; 
+    track_dEdx = dEdxtruncmean;
     track_PIDA_mean = PIDAval_mean;
     track_PIDA_median = PIDAval_median;
     track_PIDA_kde = PIDAval_kde;
     track_nhits = nhits;
+
+    art::FindManyP<anab::ParticleID> trackPIDAssnforChi2(trackHandle, e, fPIDLabelChi2);
+    if (!trackPIDAssnforChi2.isValid()){
+      std::cout << "[ParticleIDValidation] trackPIDAssnforChi2.isValid() == false. Not filling Chi2 variables." << std::endl;
+      track_Chi2Proton = 9999;
+      track_Chi2Pion   = 9999;
+      track_Chi2Kaon   = 9999;
+      track_Chi2Muon   = 9999;
+    }
+    else{
+      std::vector<art::Ptr<anab::ParticleID>> trackPIDforChi2 = trackPIDAssnforChi2.at(track->ID());
+      track_Chi2Proton = trackPIDforChi2.at(0)->Chi2Proton();
+      track_Chi2Pion   = trackPIDforChi2.at(0)->Chi2Pion();
+      track_Chi2Kaon   = trackPIDforChi2.at(0)->Chi2Kaon();
+      track_Chi2Muon   = trackPIDforChi2.at(0)->Chi2Muon();
+    }
+
 
     //double Bragg_smallest = std::min({Bragg_mu, Bragg_p, Bragg_pi, Bragg_K, noBragg_fwd_MIP});
     double Bragg_smallest = std::min({Bragg_mu, Bragg_p, noBragg_fwd_MIP});
@@ -1414,6 +1437,10 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_PIDA_mean"         , &track_PIDA_mean          ) ;
   pidTree->Branch( "track_PIDA_median"       , &track_PIDA_median          ) ;
   pidTree->Branch( "track_PIDA_kde"          , &track_PIDA_kde          ) ;
+  pidTree->Branch( "track_Chi2Proton"        , &track_Chi2Proton    ) ;
+  pidTree->Branch( "track_Chi2Pion"          , &track_Chi2Pion      ) ;
+  pidTree->Branch( "track_Chi2Kaon"          , &track_Chi2Kaon      ) ;
+  pidTree->Branch( "track_Chi2Muon"          , &track_Chi2Muon      ) ;
   pidTree->Branch( "track_length"            , &track_length        ) ;
   pidTree->Branch( "track_dEdx"              , &track_dEdx          ) ;
   pidTree->Branch( "track_theta"             , &track_theta         ) ;
@@ -1457,7 +1484,7 @@ void ParticleIdValidationPlots::beginJob(){
   AllTracks_dEdxtr_len                = tfs->make<TH2F>("AllTracks_dEdxtr_len"                , ";Track length (cm);dE/dx"           , 100                   , 0   , 700 , 100 , 0   , 50);
 
   /**
-   * Define array of labels for different particle species. We're going to use this 
+   * Define array of labels for different particle species. We're going to use this
    * to produce a plot showing how often we identify each particles specied
    */
   const char* particles[5] = {"#mu", "p", "#pi", "K", "MIP"};

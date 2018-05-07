@@ -5,17 +5,17 @@ void LandauGaussianPlot(){
   int nxbins = 1000;
   int nybins = 1000;
   
-/*  // default data:
-    double muonlandauwidth = 0.14;
-    double muongaussianwidth = 0.15;
-    double protonlandauwidth = 0.16;
-    double protongaussianwidth = 0.46;
-  */  
+  // default data:
+  double muonlandauwidth = 0.09;
+  double muongaussianwidth = 0.2;
+  double protonlandauwidth = 0.19;
+  double protongaussianwidth = 0.2;
+    
   // default MC:
-  double muonlandauwidth = 0.06;
-  double muongaussianwidth = 0.13;
-  double protonlandauwidth = 0.07;
-  double protongaussianwidth = 0.4;
+  //double muonlandauwidth = 0.09;
+  //double muongaussianwidth = 0.09;
+  //double protonlandauwidth = 0.19;
+  //double protongaussianwidth = 0.09;
 
   Theory_dEdx_resrange();
 

@@ -6,7 +6,7 @@ BEGIN_PROLOG
 
 braggalgo_mcc8:
 {
- 
+
   # dEdx widths
   dEdxLandauWidthP  : 0.19
   dEdxLandauWidthMu : 0.09
@@ -20,11 +20,11 @@ braggalgo_mcc8:
   NHitsToDrop: 1
 
   # Mis-reco means track end point needs to be allowed to float.
-  # Define the amount we allow the end point of the track to float by:  
+  # Define the amount we allow the end point of the track to float by:
   #   - EndPointFloatShort    : how much shorter do we allow the track to be?
   #   - EndPointFloatLong     : how much longer do we allow the track to be?
   #   - EndPointFloatStepSize : step size beteween two variables
-  
+
   EndPointFloatShort    : -1.0
   EndPointFloatLong     : 1.0
   EndPointFloatStepSize : 0.05
@@ -33,25 +33,25 @@ braggalgo_mcc8:
 
 braggalgo_mcc8_data:
 {
- 
+
   # dEdx widths
-  dEdxLandauWidthP  : 0.16
-  dEdxLandauWidthMu : 0.14
-  dEdxLandauWidthPi : 0.14
-  dEdxLandauWidthK  : 0.14
-  dEdxGausWidthP    : 0.46
-  dEdxGausWidthMu   : 0.15
-  dEdxGausWidthPi   : 0.15
-  dEdxGausWidthK    : 0.15
+  dEdxLandauWidthP  : 0.19
+  dEdxLandauWidthMu : 0.09
+  dEdxLandauWidthPi : 0.09
+  dEdxLandauWidthK  : 0.09
+  dEdxGausWidthP    : 0.20
+  dEdxGausWidthMu   : 0.20
+  dEdxGausWidthPi   : 0.20
+  dEdxGausWidthK    : 0.20
 
   NHitsToDrop: 1
 
   # Mis-reco means track end point needs to be allowed to float.
-  # Define the amount we allow the end point of the track to float by:  
+  # Define the amount we allow the end point of the track to float by:
   #   - EndPointFloatShort    : how much shorter do we allow the track to be?
   #   - EndPointFloatLong     : how much longer do we allow the track to be?
   #   - EndPointFloatStepSize : step size beteween two variables
-  
+
   EndPointFloatShort    : -1.0
   EndPointFloatLong     : 1.0
   EndPointFloatStepSize : 0.05

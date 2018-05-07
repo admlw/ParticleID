@@ -67,40 +67,40 @@ namespace particleid{
      * This is only available for muon, proton, kaon, and pion
      * Return an error if user tries to request a different particle type
      */
-    
+
     Theory_dEdx_resrange theory;
     TGraph *theorypred;
     double gausWidth;
     double landauWidth;
     int absph = TMath::Abs(particlehypothesis);
-   
+
     switch(absph){
       case 13: // muon
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to muon hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to muon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Muon;
         gausWidth = gausWidth_mu;
         landauWidth = landauWidth_mu;
         break;
       case 2212: // proton
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to proton hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to proton hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Proton;
         gausWidth = gausWidth_p;
         landauWidth = landauWidth_p;
         break;
       case 211: // pion
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to pion hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to pion hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Pion;
         gausWidth = gausWidth_pi;
         landauWidth = landauWidth_pi;
         break;
       case 321: // kaon
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to kaon hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to kaon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Kaon;
         gausWidth = gausWidth_k;
         landauWidth = landauWidth_k;
         break;
       case 0: // special case: fit to MIP region of muon prediction with no Bragg peak
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood for non-Bragg MIP-like hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood for non-Bragg MIP-like hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_MuonNoBragg;
         gausWidth = gausWidth_mu;
         landauWidth = landauWidth_mu;
@@ -119,7 +119,7 @@ namespace particleid{
      * rr_shift allows us to shift the residual range so that we
      * can account for end point resolution
      */
-    
+
     double likelihoodNdf = 0;
     int n_hits_used_total = 0;
 
@@ -133,14 +133,14 @@ namespace particleid{
 
         size_t rr_index;
         // Fit tracks "forward" (i.e. in the direction they already have)
-        if (forward){           
+        if (forward){
           rr_index = i_hit;
           if ((int)rr_index >= (int)resRange.size() - nHitsToDrop){
             continue;
           }
         }
         // Fit tracks "backward"
-        else{          
+        else{
           rr_index = (resRange.size()-1)-i_hit;
           if ((int)i_hit < nHitsToDrop){
             continue;
