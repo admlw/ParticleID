@@ -896,11 +896,19 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     }
     else{
       std::vector<art::Ptr<anab::ParticleID>> trackPIDforChi2 = trackPIDAssnforChi2.at(track->ID());
-      track_Chi2Proton = trackPIDforChi2.at(0)->Chi2Proton();
-      track_Chi2Pion   = trackPIDforChi2.at(0)->Chi2Pion();
-      track_Chi2Kaon   = trackPIDforChi2.at(0)->Chi2Kaon();
-      track_Chi2Muon   = trackPIDforChi2.at(0)->Chi2Muon();
-    }
+
+      for (size_t i_plane=0; i_plane<trackPIDforChi2.size(); i_plane++){
+        //std::cout << "trackPIDforChi2.at(" << i_plane << ")->PlaneID().Plane = " << trackPIDforChi2.at(i_plane)->PlaneID().Plane << std::endl;
+
+        // Use collection plane only
+        if (trackPIDforChi2.at(i_plane)->PlaneID().Plane != 2) continue;
+
+        track_Chi2Proton = trackPIDforChi2.at(i_plane)->Chi2Proton();
+        track_Chi2Pion   = trackPIDforChi2.at(i_plane)->Chi2Pion();
+        track_Chi2Kaon   = trackPIDforChi2.at(i_plane)->Chi2Kaon();
+        track_Chi2Muon   = trackPIDforChi2.at(i_plane)->Chi2Muon();
+      } // end loop over i_plane
+    } // end else
 
 
     //double Bragg_smallest = std::min({Bragg_mu, Bragg_p, Bragg_pi, Bragg_K, noBragg_fwd_MIP});
