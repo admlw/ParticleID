@@ -1,4 +1,4 @@
-void plotNewDataMcFromTree(){
+void plotNewDataMcFromTree(std::string mcfile, std::string offbeamdatafile, std::string onbeamdatafile){
 
 
   int nbins = 40;
@@ -11,11 +11,13 @@ void plotNewDataMcFromTree(){
   double protonScaling = 1.0;
   double muonScaling = 1.0;
 
+  double offbeamScaling = 0.771; //0.78
+
   //TFile *f_bnbcos  = new TFile("/uboone/data/users/alister1/particleID/180423-ParticleId/pid_bnbcos.root", "read");
   //TFile *f_bnbcos  = new TFile("pidtest.root", "read");
-  TFile *f_bnbcos  = new TFile("/uboone/data/users/kduffy/PIDproducer_UBXSec_BNBCosmic/particleIdMeta_merged.root", "read"); ///uboone/data/users/alister1/particleID/180423-ParticleId/pid_bnbcos_newdists.root
-  TFile *f_offbeam  = new TFile("/uboone/data/users/kduffy/PIDproducer_UBXSec_OffBeamData/ParticleIdMeta_merged.root", "read"); //pid_bnbonbeam.root
-  TFile *f_onbeam  = new TFile("/uboone/data/users/kduffy/PIDproducer_UBXSec_OnBeamData/ParticleIdMeta_merged.root", "read"); //pid_bnboffbeam.root
+  TFile *f_bnbcos  = new TFile(mcfile.c_str(), "read"); ///uboone/data/users/alister1/particleID/180423-ParticleId/pid_bnbcos_newdists.root
+  TFile *f_offbeam  = new TFile(offbeamdatafile.c_str(), "read"); //pid_bnbonbeam.root
+  TFile *f_onbeam  = new TFile(onbeamdatafile.c_str(), "read"); //pid_bnboffbeam.root
 
   //TFile *f_offbeam = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_offbeam.root", "read");
   //TFile *f_onbeam  = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_onbeam.root", "read");
@@ -146,10 +148,15 @@ void plotNewDataMcFromTree(){
 
   for (int j = 0; j < plotNames.size(); j++){
 
-    if (j>=5){
-      nbins = 50;
+    if (j==6 || j==7){ // Chi2 proton and kaon plots
+      nbins = 30;
       binlow = 0;
-      binhigh = 250;
+      binhigh = 300;
+    }
+    if (j==5 || j==8){ // Chi2 muon and pion plots
+      nbins = 25;
+      binlow = 0;
+      binhigh = 125;
     }
 
     TH1D* h_bnbcos_p  = new TH1D("h_bnbcos_p", ";-2NegLL_p;", nbins, binlow, binhigh);
@@ -185,13 +192,13 @@ void plotNewDataMcFromTree(){
         };
 
 
-      if (std::abs(true_PDG) == 2212)
+      if (TMath::Abs(true_PDG) == 2212)
         h_bnbcos_p->Fill(minLogLikelihoods.at(j)*1./protonScaling);
-      else if (std::abs(true_PDG) == 13)
+      else if (TMath::Abs(true_PDG) == 13)
         h_bnbcos_mu->Fill(minLogLikelihoods.at(j)*1./muonScaling);
-      else if (std::abs(true_PDG) == 211)
+      else if (TMath::Abs(true_PDG) == 211)
         h_bnbcos_pi->Fill(minLogLikelihoods.at(j)*1./muonScaling);
-      else if (std::abs(true_PDG) == 321)
+      else if (TMath::Abs(true_PDG) == 321)
         h_bnbcos_k->Fill(minLogLikelihoods.at(j)*1./muonScaling);
       else
         h_bnbcos_other->Fill(minLogLikelihoods.at(j)*1./muonScaling);
@@ -300,7 +307,7 @@ void plotNewDataMcFromTree(){
     hs->SetTitle(";"+plotNames.at(j)+";");
 
 
-       h_offbeam->Scale(0.78);
+       h_offbeam->Scale(offbeamScaling);
        TH1D* h_onminusoff = (TH1D*)h_onbeam->Clone("h_onminusoff");
 
        h_onminusoff->Add(h_offbeam, -1);
@@ -311,9 +318,10 @@ void plotNewDataMcFromTree(){
 
     c1->cd();
     hs->SetMaximum(std::max(h_onminusoff->GetMaximum(), h_total->GetMaximum())*1.15);
-    hs->Draw();
+    hs->Draw("hist");
     h_total->SetFillStyle(3345);
     h_total->SetFillColor(kGray+2);
+    h_total->SetMarkerSize(0.); // bad hack because root keeps drawing markers and I can't make it stop
     h_total->Draw("sameE2");
     h_onminusoff->SetMarkerStyle(20);
     h_onminusoff->SetMarkerSize(0.6);
@@ -366,13 +374,13 @@ void plotNewDataMcFromTree(){
   h_bnbcos_pidamean_k->SetLineWidth(0);
   h_bnbcos_pidamean_other->SetLineWidth(0);
 
-  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_p", "std::abs(true_PDG) == 2212");
-  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_mu", "std::abs(true_PDG) == 13");
-  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_pi", "std::abs(true_PDG) == 211");
-  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_k", "std::abs(true_PDG) == 321");
-  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_other", "std::abs(true_PDG) != 2212 && std::abs(true_PDG) != 13 && std::abs(true_PDG) !=211 && std::abs(true_PDG) !=321");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_p", "TMath::Abs(true_PDG) == 2212");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_mu", "TMath::Abs(true_PDG) == 13");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_pi", "TMath::Abs(true_PDG) == 211");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_k", "TMath::Abs(true_PDG) == 321");
+  t_bnbcos->Draw("track_PIDA_mean >> h_bnbcos_pidamean_other", "TMath::Abs(true_PDG) != 2212 && TMath::Abs(true_PDG) != 13 && TMath::Abs(true_PDG) !=211 && TMath::Abs(true_PDG) !=321");
 
-  TH1D* h_bnbcos_pidamean_total = new TH1D("h_bnbcos_pidamean_total", ";;", 40, 0, 30);
+  TH1D* h_bnbcos_pidamean_total = new TH1D("h_bnbcos_pidamean_total", ";PIDa (mean method);", 40, 0, 30);
   h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_p);
   h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_mu);
   h_bnbcos_pidamean_total->Add(h_bnbcos_pidamean_pi);
@@ -381,6 +389,7 @@ void plotNewDataMcFromTree(){
 
   h_bnbcos_pidamean_total->SetFillColor(kBlack);
   h_bnbcos_pidamean_total->SetFillStyle(3345);
+  h_bnbcos_pidamean_total->SetMarkerSize(0.);
 
   h_bnbcos_pidamean_total->Sumw2();
 
@@ -404,17 +413,17 @@ void plotNewDataMcFromTree(){
   TH1D* h_offbeam_pidamean = new TH1D("h_offbeam_pidamean", "", 40, 0, 30);
   t_offbeam->Draw("track_PIDA_mean >> h_offbeam_pidamean");
 
-  h_offbeam_pidamean->Scale(0.78);
+  h_offbeam_pidamean->Scale(offbeamScaling);
 
   TH1D* h_onbeamminusoffbeam = (TH1D*)h_onbeam_pidamean->Clone("h_onbeamminusoffbeam");
   h_onbeamminusoffbeam->Add(h_offbeam_pidamean, -1);
 
-  h_onbeamminusoffbeam->DrawNormalized("p");
-  hs_bnbcos_pidamean->Draw("same");
+  h_bnbcos_pidamean_total->Draw("E2");
+  //h_onbeamminusoffbeam->DrawNormalized("p same");
+  hs_bnbcos_pidamean->Draw("same hist");
   h_onbeamminusoffbeam->SetMarkerStyle(20);
   h_onbeamminusoffbeam->SetMarkerSize(0.6);
   h_onbeamminusoffbeam->DrawNormalized("samepE1");
-  h_bnbcos_pidamean_total->Draw("E2same");
   c2->SaveAs("pidamean.png");
 
   TCanvas *c3 = new TCanvas("c2", "c2", 500, 500);
@@ -437,13 +446,13 @@ void plotNewDataMcFromTree(){
   h_bnbcos_pidakde_other->SetLineWidth(0);
 
 
-  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_p", "std::abs(true_PDG) == 2212");
-  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_mu", "std::abs(true_PDG) == 13");
-  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_pi", "std::abs(true_PDG) == 211");
-  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_k", "std::abs(true_PDG) == 321");
-  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_other", "std::abs(true_PDG) != 2212 && std::abs(true_PDG) != 13 && std::abs(true_PDG) !=211 && std::abs(true_PDG) !=321");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_p", "TMath::Abs(true_PDG) == 2212");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_mu", "TMath::Abs(true_PDG) == 13");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_pi", "TMath::Abs(true_PDG) == 211");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_k", "TMath::Abs(true_PDG) == 321");
+  t_bnbcos->Draw("track_PIDA_kde >> h_bnbcos_pidakde_other", "TMath::Abs(true_PDG) != 2212 && TMath::Abs(true_PDG) != 13 && TMath::Abs(true_PDG) !=211 && TMath::Abs(true_PDG) !=321");
 
-  TH1D* h_bnbcos_pidakde_total = new TH1D("h_bnbcos_pidakde_total", ";;", 40, 0, 30);
+  TH1D* h_bnbcos_pidakde_total = new TH1D("h_bnbcos_pidakde_total", ";PIDa (KDE method);", 40, 0, 30);
   h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_p);
   h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_mu);
   h_bnbcos_pidakde_total->Add(h_bnbcos_pidakde_pi);
@@ -472,17 +481,18 @@ void plotNewDataMcFromTree(){
   TH1D* h_offbeam_pidakde = new TH1D("h_offbeam_pidakde", "", 40, 0, 30);
   t_offbeam->Draw("track_PIDA_kde >> h_offbeam_pidakde");
 
-  h_offbeam_pidakde->Scale(0.78);
+  h_offbeam_pidakde->Scale(offbeamScaling);
 
   TH1D* h_onbeamminusoffbeamkde = (TH1D*)h_onbeam_pidakde->Clone("h_onbeamminusoffbeamkde");
   h_onbeamminusoffbeamkde->Add(h_offbeam_pidakde, -1);
 
   h_bnbcos_pidakde_total->SetFillColor(kBlack);
   h_bnbcos_pidakde_total->SetFillStyle(3345);
+  h_bnbcos_pidakde_total->SetMarkerSize(0.);
 
-  h_onbeamminusoffbeamkde->DrawNormalized("p");
-  hs_bnbcos_pidakde->Draw("same");
-  h_bnbcos_pidakde_total->Draw("E2same");
+  h_bnbcos_pidakde_total->Draw("E2");
+  //h_onbeamminusoffbeamkde->DrawNormalized("psame");
+  hs_bnbcos_pidakde->Draw("same hist");
   h_onbeamminusoffbeamkde->SetMarkerStyle(20);
   h_onbeamminusoffbeamkde->SetMarkerSize(0.6);
   h_onbeamminusoffbeamkde->DrawNormalized("samepE1");
