@@ -40,6 +40,7 @@
 #include "lardataobj/AnalysisBase/ParticleID.h"
 #include "lardataobj/AnalysisBase/BackTrackerMatchingData.h"
 #include "lardataobj/AnalysisBase/Calorimetry.h"
+#include "larcoreobj/SummaryData/POTSummary.h"
 
 // ROOT
 #include "TH1F.h"
@@ -69,6 +70,7 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
 
     // Selected optional functions.
     void beginJob() override;
+    void endSubRun(art::SubRun const &sr) override;
 
   private:
 
@@ -87,7 +89,12 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::string fPIDLabelChi2;
     int fNHitsForTrackDirection;
 
-    /** Setup root tree  */
+    bool isData;
+
+    /** Setup root trees  */
+    TTree *potTree;
+    double sr_pot = 0;
+
     TTree *pidTree;
 
     int true_PDG = -999;
@@ -536,7 +543,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
 
 void ParticleIdValidationPlots::analyze(art::Event const & e)
 {
-  bool isData = e.isRealData();
+  isData = e.isRealData();
 
   if (!isData) std::cout << "[ParticleIDValidation] Running simulated data." << std::endl;
   else std::cout << "[ParticleIDValidation] Running physics data." << std::endl;
@@ -1415,6 +1422,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
 void ParticleIdValidationPlots::beginJob(){
 
+  potTree = tfs->make<TTree>("potTree","potTree");
+  potTree->Branch("sr_pot", &sr_pot, "sr_pot/D");
+
   pidTree = tfs->make<TTree>("pidTree" , "pidTree");
 
   pidTree->Branch( "true_PDG"                , &true_PDG            ) ;
@@ -1879,6 +1889,25 @@ void ParticleIdValidationPlots::beginJob(){
     All_incorrectdirection->GetYaxis()->SetBinLabel(2,"True");
   }
 
+}
+
+
+// endSubRun function for MC POT counting
+void ParticleIdValidationPlots::endSubRun(art::SubRun const &sr) {
+   // Note: the entire subrun's POT is recorded in the tree for every event.
+   // You must only add it once per subrun to get the correct number.
+
+   std::cout << "Hello I'm ending a subRun and setting POT" << std::endl;
+   art::Handle<sumdata::POTSummary> potsum_h;
+
+   if (!isData) { // MC only (data is dealt with using Zarko's script)
+      if(sr.getByLabel("generator", potsum_h)) {
+         sr_pot = potsum_h->totpot;
+      }
+   }
+
+   potTree->Fill();
 
 }
+
 DEFINE_ART_MODULE(ParticleIdValidationPlots)
