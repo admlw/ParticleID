@@ -1,3 +1,5 @@
+#include "plotFromTreeHeader.h"
+
 void plotNewDataMcFromTree(std::string mcfile, std::string offbeamdatafile, std::string onbeamdatafile){
 
 
@@ -13,22 +15,13 @@ void plotNewDataMcFromTree(std::string mcfile, std::string offbeamdatafile, std:
 
   double offbeamScaling = 0.771; //0.78
 
-  //TFile *f_bnbcos  = new TFile("/uboone/data/users/alister1/particleID/180423-ParticleId/pid_bnbcos.root", "read");
-  //TFile *f_bnbcos  = new TFile("pidtest.root", "read");
-  TFile *f_bnbcos  = new TFile(mcfile.c_str(), "read"); ///uboone/data/users/alister1/particleID/180423-ParticleId/pid_bnbcos_newdists.root
-  TFile *f_offbeam  = new TFile(offbeamdatafile.c_str(), "read"); //pid_bnbonbeam.root
-  TFile *f_onbeam  = new TFile(onbeamdatafile.c_str(), "read"); //pid_bnboffbeam.root
-
-  //TFile *f_offbeam = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_offbeam.root", "read");
-  //TFile *f_onbeam  = new TFile("/uboone/data/users/alister1/particleID/180420-ParticleId/pid_onbeam.root", "read");
+  TFile *f_bnbcos  = new TFile(mcfile.c_str(), "read");
+  TFile *f_offbeam  = new TFile(offbeamdatafile.c_str(), "read");
+  TFile *f_onbeam  = new TFile(onbeamdatafile.c_str(), "read");
 
   TTree *t_bnbcos  = (TTree*)f_bnbcos->Get("pidvalid/pidTree");
   TTree *t_onbeam = (TTree*)f_onbeam->Get("pidvalid/pidTree");
   TTree *t_offbeam = (TTree*)f_offbeam->Get("pidvalid/pidTree");
-
-
-  //TTree *t_offbeam = (TTree*)f_offbeam->Get("pidvalid/pidTree");
-  //TTree *t_onbeam  = (TTree*)f_onbeam->Get("pidvalid/pidTree");
 
   std::vector<TString> plotNames = {
     "track_neglogl_p",
@@ -41,110 +34,16 @@ void plotNewDataMcFromTree(std::string mcfile, std::string offbeamdatafile, std:
     "track_Chi2Kaon",
     "track_Chi2Pion"};
 
-    int true_PDG;
-    double bnbcos_track_neglogl_fwd_p;
-    double bnbcos_track_neglogl_fwd_mu;
-    double bnbcos_track_neglogl_fwd_pi;
-    double bnbcos_track_neglogl_fwd_k;
-    double bnbcos_track_neglogl_fwd_other;
-    double bnbcos_track_neglogl_fwd_mip;
-    double bnbcos_track_neglogl_bwd_p;
-    double bnbcos_track_neglogl_bwd_mu;
-    double bnbcos_track_neglogl_bwd_pi;
-    double bnbcos_track_neglogl_bwd_k;
-    double bnbcos_track_neglogl_bwd_other;
-    double bnbcos_track_PIDA_mean;
-    double bnbcos_track_PIDA_kde;
-    double bnbcos_track_chi2mu;
-    double bnbcos_track_chi2p;
-    double bnbcos_track_chi2pi;
-    double bnbcos_track_chi2k;
-    double offbeam_track_neglogl_fwd_p;
-    double offbeam_track_neglogl_fwd_mu;
-    double offbeam_track_neglogl_fwd_pi;
-    double offbeam_track_neglogl_fwd_k;
-    double offbeam_track_neglogl_fwd_other;
-    double offbeam_track_neglogl_fwd_mip;
-    double offbeam_track_neglogl_bwd_p;
-    double offbeam_track_neglogl_bwd_mu;
-    double offbeam_track_neglogl_bwd_pi;
-    double offbeam_track_neglogl_bwd_k;
-    double offbeam_track_neglogl_bwd_other;
-    double offbeam_track_PIDA_mean;
-    double offbeam_track_PIDA_kde;
-    double offbeam_track_chi2mu;
-    double offbeam_track_chi2p;
-    double offbeam_track_chi2pi;
-    double offbeam_track_chi2k;
-    double onbeam_track_neglogl_fwd_p;
-    double onbeam_track_neglogl_fwd_mu;
-    double onbeam_track_neglogl_fwd_pi;
-    double onbeam_track_neglogl_fwd_k;
-    double onbeam_track_neglogl_fwd_other;
-    double onbeam_track_neglogl_fwd_mip;
-    double onbeam_track_neglogl_bwd_p;
-    double onbeam_track_neglogl_bwd_mu;
-    double onbeam_track_neglogl_bwd_pi;
-    double onbeam_track_neglogl_bwd_k;
-    double onbeam_track_neglogl_bwd_other;
-    double onbeam_track_PIDA_mean;
-    double onbeam_track_PIDA_kde;
-    double onbeam_track_chi2mu;
-    double onbeam_track_chi2p;
-    double onbeam_track_chi2pi;
-    double onbeam_track_chi2k;
+    treevars bnbcos_vars;
+    settreevars(t_bnbcos, &bnbcos_vars);
+    treevars offbeam_vars;
+    settreevars(t_offbeam, &offbeam_vars);
+    treevars onbeam_vars;
+    settreevars(t_onbeam, &onbeam_vars);
 
+    // what are these for?
     double track_PIDA_mean;
     double track_PIDA_kde;
-
-    t_bnbcos->SetBranchAddress("true_PDG"              , &true_PDG);
-    t_bnbcos->SetBranchAddress("track_neglogl_fwd_p"   , &bnbcos_track_neglogl_fwd_p);
-    t_bnbcos->SetBranchAddress("track_neglogl_fwd_mu"  , &bnbcos_track_neglogl_fwd_mu);
-    t_bnbcos->SetBranchAddress("track_neglogl_fwd_pi"  , &bnbcos_track_neglogl_fwd_pi);
-    t_bnbcos->SetBranchAddress("track_neglogl_fwd_k"   , &bnbcos_track_neglogl_fwd_k);
-    t_bnbcos->SetBranchAddress("track_neglogl_fwd_mip" , &bnbcos_track_neglogl_fwd_mip);
-    t_bnbcos->SetBranchAddress("track_neglogl_bwd_p"   , &bnbcos_track_neglogl_bwd_p);
-    t_bnbcos->SetBranchAddress("track_neglogl_bwd_mu"  , &bnbcos_track_neglogl_bwd_mu);
-    t_bnbcos->SetBranchAddress("track_neglogl_bwd_pi"  , &bnbcos_track_neglogl_bwd_pi);
-    t_bnbcos->SetBranchAddress("track_neglogl_bwd_k"   , &bnbcos_track_neglogl_bwd_k);
-    t_bnbcos->SetBranchAddress("track_PIDA_mean"       , &bnbcos_track_PIDA_mean);
-    t_bnbcos->SetBranchAddress("track_PIDA_kde"        , &bnbcos_track_PIDA_kde);
-    t_bnbcos->SetBranchAddress("track_Chi2Muon", &bnbcos_track_chi2mu);
-    t_bnbcos->SetBranchAddress("track_Chi2Proton", &bnbcos_track_chi2p);
-    t_bnbcos->SetBranchAddress("track_Chi2Pion", &bnbcos_track_chi2pi);
-    t_bnbcos->SetBranchAddress("track_Chi2Kaon", &bnbcos_track_chi2k);
-
-    t_onbeam->SetBranchAddress("track_neglogl_fwd_p"   , &onbeam_track_neglogl_fwd_p);
-    t_onbeam->SetBranchAddress("track_neglogl_fwd_mu"  , &onbeam_track_neglogl_fwd_mu);
-    t_onbeam->SetBranchAddress("track_neglogl_fwd_pi"  , &onbeam_track_neglogl_fwd_pi);
-    t_onbeam->SetBranchAddress("track_neglogl_fwd_k"   , &onbeam_track_neglogl_fwd_k);
-    t_onbeam->SetBranchAddress("track_neglogl_fwd_mip" , &onbeam_track_neglogl_fwd_mip);
-    t_onbeam->SetBranchAddress("track_neglogl_bwd_p"   , &onbeam_track_neglogl_bwd_p);
-    t_onbeam->SetBranchAddress("track_neglogl_bwd_mu"  , &onbeam_track_neglogl_bwd_mu);
-    t_onbeam->SetBranchAddress("track_neglogl_bwd_pi"  , &onbeam_track_neglogl_bwd_pi);
-    t_onbeam->SetBranchAddress("track_neglogl_bwd_k"   , &onbeam_track_neglogl_bwd_k);
-    t_onbeam->SetBranchAddress("track_PIDA_mean"       , &onbeam_track_PIDA_mean);
-    t_onbeam->SetBranchAddress("track_PIDA_kde"        , &onbeam_track_PIDA_kde);
-    t_onbeam->SetBranchAddress("track_Chi2Muon", &onbeam_track_chi2mu);
-    t_onbeam->SetBranchAddress("track_Chi2Proton", &onbeam_track_chi2p);
-    t_onbeam->SetBranchAddress("track_Chi2Pion", &onbeam_track_chi2pi);
-    t_onbeam->SetBranchAddress("track_Chi2Kaon", &onbeam_track_chi2k);
-
-    t_offbeam->SetBranchAddress("track_neglogl_fwd_p"   , &offbeam_track_neglogl_fwd_p);
-    t_offbeam->SetBranchAddress("track_neglogl_fwd_mu"  , &offbeam_track_neglogl_fwd_mu);
-    t_offbeam->SetBranchAddress("track_neglogl_fwd_pi"  , &offbeam_track_neglogl_fwd_pi);
-    t_offbeam->SetBranchAddress("track_neglogl_fwd_k"   , &offbeam_track_neglogl_fwd_k);
-    t_offbeam->SetBranchAddress("track_neglogl_fwd_mip" , &offbeam_track_neglogl_fwd_mip);
-    t_offbeam->SetBranchAddress("track_neglogl_bwd_p"   , &offbeam_track_neglogl_bwd_p);
-    t_offbeam->SetBranchAddress("track_neglogl_bwd_mu"  , &offbeam_track_neglogl_bwd_mu);
-    t_offbeam->SetBranchAddress("track_neglogl_bwd_pi"  , &offbeam_track_neglogl_bwd_pi);
-    t_offbeam->SetBranchAddress("track_neglogl_bwd_k"   , &offbeam_track_neglogl_bwd_k);
-    t_offbeam->SetBranchAddress("track_PIDA_mean"       , &offbeam_track_PIDA_mean);
-    t_offbeam->SetBranchAddress("track_PIDA_kde"        , &offbeam_track_PIDA_kde);
-    t_offbeam->SetBranchAddress("track_Chi2Muon", &offbeam_track_chi2mu);
-    t_offbeam->SetBranchAddress("track_Chi2Proton", &offbeam_track_chi2p);
-    t_offbeam->SetBranchAddress("track_Chi2Pion", &offbeam_track_chi2pi);
-    t_offbeam->SetBranchAddress("track_Chi2Kaon", &offbeam_track_chi2k);
 
   for (int j = 0; j < plotNames.size(); j++){
 
@@ -171,34 +70,28 @@ void plotNewDataMcFromTree(std::string mcfile, std::string offbeamdatafile, std:
     for (int i = 0; i < t_bnbcos->GetEntries(); i++){
 
       t_bnbcos->GetEntry(i);
-
-      double track_neglogl_p     = std::min(bnbcos_track_neglogl_fwd_p     , bnbcos_track_neglogl_bwd_p);
-      double track_neglogl_mu    = std::min(bnbcos_track_neglogl_fwd_mu    , bnbcos_track_neglogl_bwd_mu);
-      double track_neglogl_pi    = std::min(bnbcos_track_neglogl_fwd_pi    , bnbcos_track_neglogl_bwd_pi);
-      double track_neglogl_k     = std::min(bnbcos_track_neglogl_fwd_k     , bnbcos_track_neglogl_bwd_k);
-      double track_neglogl_other = std::min(bnbcos_track_neglogl_fwd_other , bnbcos_track_neglogl_bwd_other);
-      double track_neglogl_mip   = bnbcos_track_neglogl_fwd_mip;
+      CalcPIDvars(&bnbcos_vars);
 
         std::vector<double> minLogLikelihoods = {
-         track_neglogl_p,
-         track_neglogl_mu,
-         track_neglogl_pi,
-         track_neglogl_k,
-         track_neglogl_mip,
-         bnbcos_track_chi2mu,
-         bnbcos_track_chi2p,
-         bnbcos_track_chi2k,
-         bnbcos_track_chi2pi
+         bnbcos_vars.track_neglogl_p,
+         bnbcos_vars.track_neglogl_mu,
+         bnbcos_vars.track_neglogl_pi,
+         bnbcos_vars.track_neglogl_k,
+         bnbcos_vars.track_neglogl_mip,
+         bnbcos_vars.track_chi2mu,
+         bnbcos_vars.track_chi2p,
+         bnbcos_vars.track_chi2k,
+         bnbcos_vars.track_chi2pi
         };
 
 
-      if (TMath::Abs(true_PDG) == 2212)
+      if (TMath::Abs(bnbcos_vars.true_PDG) == 2212)
         h_bnbcos_p->Fill(minLogLikelihoods.at(j)*1./protonScaling);
-      else if (TMath::Abs(true_PDG) == 13)
+      else if (TMath::Abs(bnbcos_vars.true_PDG) == 13)
         h_bnbcos_mu->Fill(minLogLikelihoods.at(j)*1./muonScaling);
-      else if (TMath::Abs(true_PDG) == 211)
+      else if (TMath::Abs(bnbcos_vars.true_PDG) == 211)
         h_bnbcos_pi->Fill(minLogLikelihoods.at(j)*1./muonScaling);
-      else if (TMath::Abs(true_PDG) == 321)
+      else if (TMath::Abs(bnbcos_vars.true_PDG) == 321)
         h_bnbcos_k->Fill(minLogLikelihoods.at(j)*1./muonScaling);
       else
         h_bnbcos_other->Fill(minLogLikelihoods.at(j)*1./muonScaling);
@@ -207,24 +100,18 @@ void plotNewDataMcFromTree(std::string mcfile, std::string offbeamdatafile, std:
 
     for (int i = 0; i < t_onbeam->GetEntries(); i++){
       t_onbeam->GetEntry(i);
-
-      double track_neglogl_p     = std::min(onbeam_track_neglogl_fwd_p     , onbeam_track_neglogl_bwd_p);
-      double track_neglogl_mu    = std::min(onbeam_track_neglogl_fwd_mu    , onbeam_track_neglogl_bwd_mu);
-      double track_neglogl_pi    = std::min(onbeam_track_neglogl_fwd_pi    , onbeam_track_neglogl_bwd_pi);
-      double track_neglogl_k     = std::min(onbeam_track_neglogl_fwd_k     , onbeam_track_neglogl_bwd_k);
-      double track_neglogl_other = std::min(onbeam_track_neglogl_fwd_other , onbeam_track_neglogl_bwd_other);
-      double track_neglogl_mip   = onbeam_track_neglogl_fwd_mip;
+      CalcPIDvars(&onbeam_vars);
 
       std::vector<double> minLogLikelihoods = {
-         track_neglogl_p,
-         track_neglogl_mu,
-         track_neglogl_pi,
-         track_neglogl_k,
-         track_neglogl_mip,
-         onbeam_track_chi2mu,
-         onbeam_track_chi2p,
-         onbeam_track_chi2k,
-         onbeam_track_chi2pi
+         onbeam_vars.track_neglogl_p,
+         onbeam_vars.track_neglogl_mu,
+         onbeam_vars.track_neglogl_pi,
+         onbeam_vars.track_neglogl_k,
+         onbeam_vars.track_neglogl_mip,
+         onbeam_vars.track_chi2mu,
+         onbeam_vars.track_chi2p,
+         onbeam_vars.track_chi2k,
+         onbeam_vars.track_chi2pi
         };
 
       h_onbeam->Fill(minLogLikelihoods.at(j));
@@ -233,24 +120,18 @@ void plotNewDataMcFromTree(std::string mcfile, std::string offbeamdatafile, std:
     for (int i = 0; i < t_offbeam->GetEntries(); i++){
 
       t_offbeam->GetEntry(i);
-
-      double track_neglogl_p     = std::min(offbeam_track_neglogl_fwd_p     , offbeam_track_neglogl_bwd_p);
-      double track_neglogl_mu    = std::min(offbeam_track_neglogl_fwd_mu    , offbeam_track_neglogl_bwd_mu);
-      double track_neglogl_pi    = std::min(offbeam_track_neglogl_fwd_pi    , offbeam_track_neglogl_bwd_pi);
-      double track_neglogl_k     = std::min(offbeam_track_neglogl_fwd_k     , offbeam_track_neglogl_bwd_k);
-      double track_neglogl_other = std::min(offbeam_track_neglogl_fwd_other , offbeam_track_neglogl_bwd_other);
-      double track_neglogl_mip   = offbeam_track_neglogl_fwd_mip;
+      CalcPIDvars(&offbeam_vars);
 
       std::vector<double> minLogLikelihoods = {
-         track_neglogl_p,
-         track_neglogl_mu,
-         track_neglogl_pi,
-         track_neglogl_k,
-         track_neglogl_mip,
-         offbeam_track_chi2mu,
-         offbeam_track_chi2p,
-         offbeam_track_chi2k,
-         offbeam_track_chi2pi
+         offbeam_vars.track_neglogl_p,
+         offbeam_vars.track_neglogl_mu,
+         offbeam_vars.track_neglogl_pi,
+         offbeam_vars.track_neglogl_k,
+         offbeam_vars.track_neglogl_mip,
+         offbeam_vars.track_chi2mu,
+         offbeam_vars.track_chi2p,
+         offbeam_vars.track_chi2k,
+         offbeam_vars.track_chi2pi
         };
 
       h_offbeam->Fill(minLogLikelihoods.at(j));
