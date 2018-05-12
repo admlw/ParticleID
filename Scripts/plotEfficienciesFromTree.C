@@ -65,8 +65,8 @@ std::vector<std::string> histtitles = {
                     ";(-2LogL_{MIP})-(-2LogL_{p});",
                     ";(-2LogL_{#mu/MIP})-(-2LogL_{p});",
                     ";#chi^{2}_{#mu}-#chi^{2}_{p};",
-                    ";Deposited energy - energy by range (muon assumption) [MeV];",
-                    ";Deposited energy - energy by range (proton assumption) [MeV];"
+                    ";Dep. E - E by range (muon assumption) [MeV];",
+                    ";Dep. E - E by range (proton assumption) [MeV];"
                   };
 
 // What to call saved plots in the same order as the vector above

@@ -83,8 +83,8 @@ std::vector<std::string> histtitles = {
                     ";L_{p}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP}+L_{#pi})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
-                    ";Deposited energy - energy by range (muon assumption) [MeV];",
-                    ";Deposited energy - energy by range (proton assumption) [MeV];"
+                    ";Dep. E - E by range (muon assumption) [MeV];",
+                    ";Dep. E - E by range (proton assumption) [MeV];"
                   };
 
 // What to call saved plots in the same order as the vector above
