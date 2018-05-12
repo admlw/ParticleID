@@ -37,6 +37,7 @@
 #include "lardataobj/RecoBase/Track.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 #include "larana/TruncatedMean/Algorithm/TruncMean.h"
+#include "larreco/RecoAlg/TrackMomentumCalculator.h"
 
 // local includes
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
@@ -172,6 +173,7 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     std::vector<double> dEdx = calo->dEdx();
     std::vector<double> resRange = calo->ResidualRange();
+    std::vector<double> trkpitchvec = calo->TrkPitchVec();
 
     // int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
     // std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
@@ -192,6 +194,9 @@ void UBPID::ParticleId::produce(art::Event & e)
     anab::sParticleIDAlgScores PIDAval_kde;
     anab::sParticleIDAlgScores dEdxtruncmean;
     anab::sParticleIDAlgScores trklen;
+    anab::sParticleIDAlgScores trk_depE;
+    anab::sParticleIDAlgScores trk_rangeE_mu;
+    anab::sParticleIDAlgScores trk_rangeE_p;
 
     // bool   isContained = false;
 
@@ -316,6 +321,45 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     AlgScoresVec.push_back(dEdxtruncmean);
     AlgScoresVec.push_back(trklen);
+
+    /**
+     * Algorithm 4: Deposited energy vs energy by range
+     * Calculate deposited energy from product of dEdx and trkpitchvec vectors (there is a KineticEnergy object in anab::Calorimetry that already does this, but due to a bug it currently does not use the calibrated dEdx)
+     */
+    trk_depE.fAlgName = "DepEvsRangeE";
+    trk_depE.fVariableType = anab::kEdeposited;
+    trk_rangeE_mu.fAlgName = "DepEvsRangeE";
+    trk_rangeE_mu.fVariableType = anab::kEbyRange;
+    trk_rangeE_mu.fAssumedPdg = 13;
+    trk_rangeE_p.fAlgName = "DepEvsRangeE";
+    trk_rangeE_p.fVariableType = anab::kEbyRange;
+    trk_rangeE_p.fAssumedPdg = 2212;
+
+    double depE = 0;
+    for (size_t i_hit=0; i_hit < dEdx.size(); i_hit++){
+      depE += dEdx.at(i_hit)*trkpitchvec.at(i_hit);
+    }
+    trk_depE.fValue = depE;
+
+    // Get energy estimation by range (code for momentum by range copied from analysistree, then convert momentum to energy)
+    // Calculations only exist in TrackMomentumCalculator for muons and protons
+    // TrackMomentumCalculator returns GeV, multiply by 1000 to get MeV
+    trkf::TrackMomentumCalculator trkm;
+    double track_rangeP_mu = trkm.GetTrackMomentum(track->Length(),13)*1000.;
+    double track_rangeP_p = trkm.GetTrackMomentum(track->Length(),2212)*1000.;
+
+    // Now convert P->E
+    // From TrackMomentumCalculator::GetTrackMomentum: P = TMath::Sqrt((KE*KE)+(2*M*KE))
+    // P = TMath::Sqrt((E*E)-(M*M)) and E = KE+M
+    // => KE = TMath::Sqrt((P*P)+(M*M))-M
+    // TrackMometumCalculator uses Muon_M = 105.7 MeV, Proton_M = 938.272 MeV so use these values here
+    trk_rangeE_mu.fValue = TMath::Sqrt((track_rangeP_mu*track_rangeP_mu)+(105.7*105.7)) - 105.7;
+    trk_rangeE_p.fValue = TMath::Sqrt((track_rangeP_p*track_rangeP_p)+(938.272*938.272)) - 938.272;
+
+    AlgScoresVec.push_back(trk_depE);
+    AlgScoresVec.push_back(trk_rangeE_mu);
+    AlgScoresVec.push_back(trk_rangeE_p);
+
       /*  }
 
           } // end if(isContained)
