@@ -24,7 +24,9 @@ std::vector<double> GetPIDvarstoplot(treevars *vars){
                       vars->track_Lpi_0to1,
                       vars->track_Lp_0to1,
                       vars->track_Lmumip_0to1,
-                      vars->track_Lmumippi_0to1
+                      vars->track_Lmumippi_0to1,
+                      vars->track_depE_minus_rangeE_mu,
+                      vars->track_depE_minus_rangeE_p
                       };
   return varstoplot;
 };
@@ -52,7 +54,9 @@ std::vector<std::vector<double>> bins = {
                     {50,0,3}, // track_Lpi_0to1
                     {50,0,1}, // track_Lp_0to1
                     {50,0,1}, // track_Lmumip_0to1
-                    {50,0,3} // track_Lmumippi_0to1
+                    {50,0,3}, // track_Lmumippi_0to1
+                    {100,-100,100}, // track_depE_minus_rangeE_mu
+                    {100,-100,100} // track_depE_minus_rangeE_p
                     };
 
 // Histogram titles in the same order as the vector above
@@ -78,7 +82,9 @@ std::vector<std::string> histtitles = {
                     ";L_{#pi}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";L_{p}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
-                    ";(L_{#mu}+L_{MIP}+L_{#pi})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});"
+                    ";(L_{#mu}+L_{MIP}+L_{#pi})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
+                    ";Deposited energy - energy by range (muon assumption) [MeV];",
+                    ";Deposited energy - energy by range (proton assumption) [MeV];"
                   };
 
 // What to call saved plots in the same order as the vector above
@@ -104,7 +110,9 @@ std::vector<std::string> histnames = {
                   "Lpi0to1",
                   "Lp0to1",
                   "Lmumip0to1",
-                  "Lmumippi0to1"
+                  "Lmumippi0to1",
+                  "depErangeEmu",
+                  "depErangeEp"
                 };
 
 // ---------------------------------------------------- //

@@ -18,6 +18,9 @@ struct treevars{
   double track_chi2p=-9999;
   double track_chi2pi=-9999;
   double track_chi2k=-9999;
+  double track_depE=-9999;
+  double track_rangeE_mu=-9999;
+  double track_rangeE_p=-9999;
 
   // These are derived quantities - derived from the values above in CalcPIDvars
   double track_neglogl_p=-9999;
@@ -30,6 +33,8 @@ struct treevars{
   double track_neglogl_mipminusp=-9999;
   double track_neglogl_minmumipminusp=-9999;
   double track_chi2_muminusp=-9999;
+  double track_depE_minus_rangeE_mu=-9999;
+  double track_depE_minus_rangeE_p=-9999;
 
   // These variables are for when "neglogl" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
   double track_max_neglogl_p=-9999;
@@ -66,6 +71,9 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_Chi2Proton", &(varstoset->track_chi2p));
   intree->SetBranchAddress("track_Chi2Pion", &(varstoset->track_chi2pi));
   intree->SetBranchAddress("track_Chi2Kaon", &(varstoset->track_chi2k));
+  intree->SetBranchAddress("track_depE", &(varstoset->track_depE));
+  intree->SetBranchAddress("track_rangeE_mu", &(varstoset->track_rangeE_mu));
+  intree->SetBranchAddress("track_rangeE_p", &(varstoset->track_rangeE_p));
 }
 
 void CalcPIDvars(treevars *vars){
@@ -81,6 +89,9 @@ void CalcPIDvars(treevars *vars){
   vars->track_neglogl_mipminusp = vars->track_neglogl_mip - vars->track_neglogl_p;
   vars->track_neglogl_minmumipminusp = vars->track_neglogl_minmumip - vars->track_neglogl_p;
   vars->track_chi2_muminusp = vars->track_chi2mu - vars->track_chi2p;
+
+  vars->track_depE_minus_rangeE_mu = vars->track_depE - vars->track_rangeE_mu;
+  vars->track_depE_minus_rangeE_p = vars->track_depE - vars->track_rangeE_p;
 
   // These variables are for when "neglogl" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
   vars->track_max_neglogl_p = std::max(vars->track_neglogl_fwd_p     , vars->track_neglogl_bwd_p);
