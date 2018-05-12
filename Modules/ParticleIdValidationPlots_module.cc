@@ -134,197 +134,18 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_theta;
     double track_phi;
     double track_nhits;
+    double track_depE;
+    double track_rangeE_mu;
+    double track_rangeE_p;
+    std::vector<double> track_dEdx_perhit;
+    std::vector<double> track_resrange_perhit;
 
     /** Histograms for all tracks, i.e. can be used by data */
-    TH1F* AllTracks_PIDA;
-    TH1F *AllTracks_neglogl_mu;
-    TH1F *AllTracks_neglogl_p;
-    TH1F *AllTracks_neglogl_pi;
-    TH1F *AllTracks_neglogl_K;
-    TH1F *AllTracks_neglogl_MIP;
-    TH1F *AllTracks_neglogl_minmuMIP;
-    TH2F *AllTracks_neglogl_mu_vslength;
-    TH2F *AllTracks_neglogl_p_vslength;
-    TH2F *AllTracks_neglogl_pi_vslength;
-    TH2F *AllTracks_neglogl_K_vslength;
-    TH2F *AllTracks_neglogl_MIP_vslength;
-    TH2F *AllTracks_neglogl_minmuMIP_vslength;
-    TH2F *AllTracks_neglogl_mu_vstrack_theta;
-    TH2F *AllTracks_neglogl_p_vstrack_theta;
-    TH2F *AllTracks_neglogl_pi_vstrack_theta;
-    TH2F *AllTracks_neglogl_K_vstrack_theta;
-    TH2F *AllTracks_neglogl_MIP_vstrack_theta;
-    TH2F *AllTracks_neglogl_minmuMIP_vstrack_theta;
-    TH2F *AllTracks_neglogl_mu_vsnhits;
-    TH2F *AllTracks_neglogl_p_vsnhits;
-    TH2F *AllTracks_neglogl_pi_vsnhits;
-    TH2F *AllTracks_neglogl_K_vsnhits;
-    TH2F *AllTracks_neglogl_MIP_vsnhits;
-    TH2F *AllTracks_neglogl_minmuMIP_vsnhits;
-    TH2F *AllTracks_neglogl_muvsp;
-    TH2F *AllTracks_neglogl_muvspi;
-    TH2F *AllTracks_neglogl_MIPvsp;
-    TH2F *AllTracks_neglogl_minmuMIPvsp;
-    TH1F *AllTracks_neglogl_muoverp;
-    TH1F *AllTracks_neglogl_muminusp;
-    TH1F *AllTracks_neglogl_MIPminusp;
-    TH1F *AllTracks_neglogl_minmuMIPminusp;
-    TH2F* AllTracks_dEdxtr_len;
-    TH1F *AllTracks_smallest_neglogl;
-
     TH2F *All_chargeEndOverStart_sm0_5_dEdxrr;
     TH2F *All_chargeEndOverStart_gr2_dEdxrr;
     TH2F *All_chargeEndOverStart_0_5to2_dEdxrr;
 
     /** Histograms for tracks expected to have Bragg peaks */
-    TH1F *TrueBragg_truemu_neglogl_mu;
-    TH1F *TrueBragg_truep_neglogl_mu;
-    TH1F *TrueBragg_truepi_neglogl_mu;
-    TH1F *TrueBragg_trueK_neglogl_mu;
-    TH1F *TrueBragg_truee_neglogl_mu;
-    TH1F *TrueBragg_truemu_neglogl_p;
-    TH1F *TrueBragg_truep_neglogl_p;
-    TH1F *TrueBragg_truepi_neglogl_p;
-    TH1F *TrueBragg_trueK_neglogl_p;
-    TH1F *TrueBragg_truee_neglogl_p;
-    TH1F *TrueBragg_truemu_neglogl_pi;
-    TH1F *TrueBragg_truep_neglogl_pi;
-    TH1F *TrueBragg_truepi_neglogl_pi;
-    TH1F *TrueBragg_trueK_neglogl_pi;
-    TH1F *TrueBragg_truee_neglogl_pi;
-    TH1F *TrueBragg_truemu_neglogl_K;
-    TH1F *TrueBragg_truep_neglogl_K;
-    TH1F *TrueBragg_truepi_neglogl_K;
-    TH1F *TrueBragg_trueK_neglogl_K;
-    TH1F *TrueBragg_truee_neglogl_K;
-    TH1F *TrueBragg_truemu_neglogl_MIP;
-    TH1F *TrueBragg_truep_neglogl_MIP;
-    TH1F *TrueBragg_truepi_neglogl_MIP;
-    TH1F *TrueBragg_trueK_neglogl_MIP;
-    TH1F *TrueBragg_truee_neglogl_MIP;
-    TH1F *TrueBragg_truemu_neglogl_minmuMIP;
-    TH1F *TrueBragg_truep_neglogl_minmuMIP;
-    TH1F *TrueBragg_truepi_neglogl_minmuMIP;
-    TH1F *TrueBragg_trueK_neglogl_minmuMIP;
-    TH1F *TrueBragg_truee_neglogl_minmuMIP;
-
-    TH2F *TrueBragg_truemu_neglogl_mu_vslength;
-    TH2F *TrueBragg_truep_neglogl_mu_vslength;
-    TH2F *TrueBragg_truepi_neglogl_mu_vslength;
-    TH2F *TrueBragg_trueK_neglogl_mu_vslength;
-    TH2F *TrueBragg_truee_neglogl_mu_vslength;
-    TH2F *TrueBragg_truemu_neglogl_MIP_vslength;
-    TH2F *TrueBragg_truep_neglogl_MIP_vslength;
-    TH2F *TrueBragg_truepi_neglogl_MIP_vslength;
-    TH2F *TrueBragg_trueK_neglogl_MIP_vslength;
-    TH2F *TrueBragg_truee_neglogl_MIP_vslength;
-    TH2F *TrueBragg_truemu_neglogl_minmuMIP_vslength;
-    TH2F *TrueBragg_truep_neglogl_minmuMIP_vslength;
-    TH2F *TrueBragg_truepi_neglogl_minmuMIP_vslength;
-    TH2F *TrueBragg_trueK_neglogl_minmuMIP_vslength;
-    TH2F *TrueBragg_truee_neglogl_minmuMIP_vslength;
-    TH2F *TrueBragg_truemu_neglogl_p_vslength;
-    TH2F *TrueBragg_truep_neglogl_p_vslength;
-    TH2F *TrueBragg_truepi_neglogl_p_vslength;
-    TH2F *TrueBragg_trueK_neglogl_p_vslength;
-    TH2F *TrueBragg_truee_neglogl_p_vslength;
-    TH2F *TrueBragg_truemu_neglogl_mu_vstrack_theta;
-    TH2F *TrueBragg_truep_neglogl_mu_vstrack_theta;
-    TH2F *TrueBragg_truepi_neglogl_mu_vstrack_theta;
-    TH2F *TrueBragg_trueK_neglogl_mu_vstrack_theta;
-    TH2F *TrueBragg_truee_neglogl_mu_vstrack_theta;
-    TH2F *TrueBragg_truemu_neglogl_MIP_vstrack_theta;
-    TH2F *TrueBragg_truep_neglogl_MIP_vstrack_theta;
-    TH2F *TrueBragg_truepi_neglogl_MIP_vstrack_theta;
-    TH2F *TrueBragg_trueK_neglogl_MIP_vstrack_theta;
-    TH2F *TrueBragg_truee_neglogl_MIP_vstrack_theta;
-    TH2F *TrueBragg_truemu_neglogl_minmuMIP_vstrack_theta;
-    TH2F *TrueBragg_truep_neglogl_minmuMIP_vstrack_theta;
-    TH2F *TrueBragg_truepi_neglogl_minmuMIP_vstrack_theta;
-    TH2F *TrueBragg_trueK_neglogl_minmuMIP_vstrack_theta;
-    TH2F *TrueBragg_truee_neglogl_minmuMIP_vstrack_theta;
-    TH2F *TrueBragg_truemu_neglogl_p_vstrack_theta;
-    TH2F *TrueBragg_truep_neglogl_p_vstrack_theta;
-    TH2F *TrueBragg_truepi_neglogl_p_vstrack_theta;
-    TH2F *TrueBragg_trueK_neglogl_p_vstrack_theta;
-    TH2F *TrueBragg_truee_neglogl_p_vstrack_theta;
-    TH2F *TrueBragg_truemu_neglogl_mu_vsnhits;
-    TH2F *TrueBragg_truep_neglogl_mu_vsnhits;
-    TH2F *TrueBragg_truepi_neglogl_mu_vsnhits;
-    TH2F *TrueBragg_trueK_neglogl_mu_vsnhits;
-    TH2F *TrueBragg_truee_neglogl_mu_vsnhits;
-    TH2F *TrueBragg_truemu_neglogl_MIP_vsnhits;
-    TH2F *TrueBragg_truep_neglogl_MIP_vsnhits;
-    TH2F *TrueBragg_truepi_neglogl_MIP_vsnhits;
-    TH2F *TrueBragg_trueK_neglogl_MIP_vsnhits;
-    TH2F *TrueBragg_truee_neglogl_MIP_vsnhits;
-    TH2F *TrueBragg_truemu_neglogl_minmuMIP_vsnhits;
-    TH2F *TrueBragg_truep_neglogl_minmuMIP_vsnhits;
-    TH2F *TrueBragg_truepi_neglogl_minmuMIP_vsnhits;
-    TH2F *TrueBragg_trueK_neglogl_minmuMIP_vsnhits;
-    TH2F *TrueBragg_truee_neglogl_minmuMIP_vsnhits;
-    TH2F *TrueBragg_truemu_neglogl_p_vsnhits;
-    TH2F *TrueBragg_truep_neglogl_p_vsnhits;
-    TH2F *TrueBragg_truepi_neglogl_p_vsnhits;
-    TH2F *TrueBragg_trueK_neglogl_p_vsnhits;
-    TH2F *TrueBragg_truee_neglogl_p_vsnhits;
-
-    TH2F *TrueBragg_truemu_neglogl_muvsp;
-    TH2F *TrueBragg_truep_neglogl_muvsp;
-    TH2F *TrueBragg_truepi_neglogl_muvsp;
-    TH2F *TrueBragg_trueK_neglogl_muvsp;
-    TH2F *TrueBragg_truee_neglogl_muvsp;
-    TH2F *TrueBragg_truemu_neglogl_muvspi;
-    TH2F *TrueBragg_truep_neglogl_muvspi;
-    TH2F *TrueBragg_truepi_neglogl_muvspi;
-    TH2F *TrueBragg_trueK_neglogl_muvspi;
-    TH2F *TrueBragg_truee_neglogl_muvspi;
-
-    TH2F *TrueBragg_truemu_neglogl_MIPvsp;
-    TH2F *TrueBragg_truep_neglogl_MIPvsp;
-    TH2F *TrueBragg_truepi_neglogl_MIPvsp;
-    TH2F *TrueBragg_trueK_neglogl_MIPvsp;
-    TH2F *TrueBragg_truee_neglogl_MIPvsp;
-    TH2F *TrueBragg_truemu_neglogl_minmuMIPvsp;
-    TH2F *TrueBragg_truep_neglogl_minmuMIPvsp;
-    TH2F *TrueBragg_truepi_neglogl_minmuMIPvsp;
-    TH2F *TrueBragg_trueK_neglogl_minmuMIPvsp;
-    TH2F *TrueBragg_truee_neglogl_minmuMIPvsp;
-
-    TH1F *TrueBragg_truemu_neglogl_muoverp;
-    TH1F *TrueBragg_truep_neglogl_muoverp;
-    TH1F *TrueBragg_truepi_neglogl_muoverp;
-    TH1F *TrueBragg_trueK_neglogl_muoverp;
-    TH1F *TrueBragg_truee_neglogl_muoverp;
-    TH1F *TrueBragg_truemu_neglogl_muminusp;
-    TH1F *TrueBragg_truep_neglogl_muminusp;
-    TH1F *TrueBragg_truepi_neglogl_muminusp;
-    TH1F *TrueBragg_trueK_neglogl_muminusp;
-    TH1F *TrueBragg_truee_neglogl_muminusp;
-
-    TH1F *TrueBragg_truemu_neglogl_MIPminusp;
-    TH1F *TrueBragg_truep_neglogl_MIPminusp;
-    TH1F *TrueBragg_truepi_neglogl_MIPminusp;
-    TH1F *TrueBragg_trueK_neglogl_MIPminusp;
-    TH1F *TrueBragg_truee_neglogl_MIPminusp;
-    TH1F *TrueBragg_truemu_neglogl_minmuMIPminusp;
-    TH1F *TrueBragg_truep_neglogl_minmuMIPminusp;
-    TH1F *TrueBragg_truepi_neglogl_minmuMIPminusp;
-    TH1F *TrueBragg_trueK_neglogl_minmuMIPminusp;
-    TH1F *TrueBragg_truee_neglogl_minmuMIPminusp;
-
-    TH1F *TrueBragg_truemu_smallest_neglogl;
-    TH1F *TrueBragg_truep_smallest_neglogl;
-    TH1F *TrueBragg_truepi_smallest_neglogl;
-    TH1F *TrueBragg_trueK_smallest_neglogl;
-    TH1F *TrueBragg_truee_smallest_neglogl;
-
-    TH1F *TrueBragg_truemu_PIDA;
-    TH1F *TrueBragg_truep_PIDA;
-    TH1F *TrueBragg_truepi_PIDA;
-    TH1F *TrueBragg_trueK_PIDA;
-    TH1F *TrueBragg_truee_PIDA;
-
     TH1F *TrueBragg_chargeEndOverStart_directionCorrect;
     TH1F *TrueBragg_chargeEndOverStart_directionIncorrect;
     TH2F *TrueBragg_chargeEndOverStartVersusNHits_directionCorrect;
@@ -334,12 +155,6 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     TH2F *TrueBragg_chargeEndOverStart_gr2_dEdxrr;
     TH2F *TrueBragg_chargeEndOverStart_0_5to2_dEdxrr;
 
-    TH2F *TrueBragg_truemu_dEdxtr_len;
-    TH2F *TrueBragg_truep_dEdxtr_len;
-    TH2F *TrueBragg_truepi_dEdxtr_len;
-    TH2F *TrueBragg_trueK_dEdxtr_len;
-    TH2F *TrueBragg_truee_dEdxtr_len;
-
     TH2F *TrueBragg_correctdirection;
     TH2F *TrueBragg_incorrectdirection;
     TH1F *TrueBragg_PIDdir;
@@ -348,154 +163,6 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     TH2F *TrueBragg_incorrectdirection_PIDdir;
 
     /** All tracks which are matched to an MCParticle */
-    TH1F *All_truemu_neglogl_mu;
-    TH1F *All_truep_neglogl_mu;
-    TH1F *All_truepi_neglogl_mu;
-    TH1F *All_trueK_neglogl_mu;
-    TH1F *All_truee_neglogl_mu;
-    TH1F *All_truemu_neglogl_p;
-    TH1F *All_truep_neglogl_p;
-    TH1F *All_truepi_neglogl_p;
-    TH1F *All_trueK_neglogl_p;
-    TH1F *All_truee_neglogl_p;
-    TH1F *All_truemu_neglogl_pi;
-    TH1F *All_truep_neglogl_pi;
-    TH1F *All_truepi_neglogl_pi;
-    TH1F *All_trueK_neglogl_pi;
-    TH1F *All_truee_neglogl_pi;
-    TH1F *All_truemu_neglogl_K;
-    TH1F *All_truep_neglogl_K;
-    TH1F *All_truepi_neglogl_K;
-    TH1F *All_trueK_neglogl_K;
-    TH1F *All_truee_neglogl_K;
-    TH1F *All_truemu_neglogl_MIP;
-    TH1F *All_truep_neglogl_MIP;
-    TH1F *All_truepi_neglogl_MIP;
-    TH1F *All_trueK_neglogl_MIP;
-    TH1F *All_truee_neglogl_MIP;
-    TH1F *All_truemu_neglogl_minmuMIP;
-    TH1F *All_truep_neglogl_minmuMIP;
-    TH1F *All_truepi_neglogl_minmuMIP;
-    TH1F *All_trueK_neglogl_minmuMIP;
-    TH1F *All_truee_neglogl_minmuMIP;
-
-    TH2F *All_truemu_neglogl_mu_vslength;
-    TH2F *All_truep_neglogl_mu_vslength;
-    TH2F *All_truepi_neglogl_mu_vslength;
-    TH2F *All_trueK_neglogl_mu_vslength;
-    TH2F *All_truee_neglogl_mu_vslength;
-    TH2F *All_truemu_neglogl_MIP_vslength;
-    TH2F *All_truep_neglogl_MIP_vslength;
-    TH2F *All_truepi_neglogl_MIP_vslength;
-    TH2F *All_trueK_neglogl_MIP_vslength;
-    TH2F *All_truee_neglogl_MIP_vslength;
-    TH2F *All_truemu_neglogl_minmuMIP_vslength;
-    TH2F *All_truep_neglogl_minmuMIP_vslength;
-    TH2F *All_truepi_neglogl_minmuMIP_vslength;
-    TH2F *All_trueK_neglogl_minmuMIP_vslength;
-    TH2F *All_truee_neglogl_minmuMIP_vslength;
-    TH2F *All_truemu_neglogl_p_vslength;
-    TH2F *All_truep_neglogl_p_vslength;
-    TH2F *All_truepi_neglogl_p_vslength;
-    TH2F *All_trueK_neglogl_p_vslength;
-    TH2F *All_truee_neglogl_p_vslength;
-    TH2F *All_truemu_neglogl_mu_vstrack_theta;
-    TH2F *All_truep_neglogl_mu_vstrack_theta;
-    TH2F *All_truepi_neglogl_mu_vstrack_theta;
-    TH2F *All_trueK_neglogl_mu_vstrack_theta;
-    TH2F *All_truee_neglogl_mu_vstrack_theta;
-    TH2F *All_truemu_neglogl_MIP_vstrack_theta;
-    TH2F *All_truep_neglogl_MIP_vstrack_theta;
-    TH2F *All_truepi_neglogl_MIP_vstrack_theta;
-    TH2F *All_trueK_neglogl_MIP_vstrack_theta;
-    TH2F *All_truee_neglogl_MIP_vstrack_theta;
-    TH2F *All_truemu_neglogl_minmuMIP_vstrack_theta;
-    TH2F *All_truep_neglogl_minmuMIP_vstrack_theta;
-    TH2F *All_truepi_neglogl_minmuMIP_vstrack_theta;
-    TH2F *All_trueK_neglogl_minmuMIP_vstrack_theta;
-    TH2F *All_truee_neglogl_minmuMIP_vstrack_theta;
-    TH2F *All_truemu_neglogl_p_vstrack_theta;
-    TH2F *All_truep_neglogl_p_vstrack_theta;
-    TH2F *All_truepi_neglogl_p_vstrack_theta;
-    TH2F *All_trueK_neglogl_p_vstrack_theta;
-    TH2F *All_truee_neglogl_p_vstrack_theta;
-    TH2F *All_truemu_neglogl_mu_vsnhits;
-    TH2F *All_truep_neglogl_mu_vsnhits;
-    TH2F *All_truepi_neglogl_mu_vsnhits;
-    TH2F *All_trueK_neglogl_mu_vsnhits;
-    TH2F *All_truee_neglogl_mu_vsnhits;
-    TH2F *All_truemu_neglogl_MIP_vsnhits;
-    TH2F *All_truep_neglogl_MIP_vsnhits;
-    TH2F *All_truepi_neglogl_MIP_vsnhits;
-    TH2F *All_trueK_neglogl_MIP_vsnhits;
-    TH2F *All_truee_neglogl_MIP_vsnhits;
-    TH2F *All_truemu_neglogl_minmuMIP_vsnhits;
-    TH2F *All_truep_neglogl_minmuMIP_vsnhits;
-    TH2F *All_truepi_neglogl_minmuMIP_vsnhits;
-    TH2F *All_trueK_neglogl_minmuMIP_vsnhits;
-    TH2F *All_truee_neglogl_minmuMIP_vsnhits;
-    TH2F *All_truemu_neglogl_p_vsnhits;
-    TH2F *All_truep_neglogl_p_vsnhits;
-    TH2F *All_truepi_neglogl_p_vsnhits;
-    TH2F *All_trueK_neglogl_p_vsnhits;
-    TH2F *All_truee_neglogl_p_vsnhits;
-
-    TH2F *All_truemu_neglogl_muvsp;
-    TH2F *All_truep_neglogl_muvsp;
-    TH2F *All_truepi_neglogl_muvsp;
-    TH2F *All_trueK_neglogl_muvsp;
-    TH2F *All_truee_neglogl_muvsp;
-    TH2F *All_truemu_neglogl_muvspi;
-    TH2F *All_truep_neglogl_muvspi;
-    TH2F *All_truepi_neglogl_muvspi;
-    TH2F *All_trueK_neglogl_muvspi;
-    TH2F *All_truee_neglogl_muvspi;
-
-    TH2F *All_truemu_neglogl_MIPvsp;
-    TH2F *All_truep_neglogl_MIPvsp;
-    TH2F *All_truepi_neglogl_MIPvsp;
-    TH2F *All_trueK_neglogl_MIPvsp;
-    TH2F *All_truee_neglogl_MIPvsp;
-    TH2F *All_truemu_neglogl_minmuMIPvsp;
-    TH2F *All_truep_neglogl_minmuMIPvsp;
-    TH2F *All_truepi_neglogl_minmuMIPvsp;
-    TH2F *All_trueK_neglogl_minmuMIPvsp;
-    TH2F *All_truee_neglogl_minmuMIPvsp;
-
-    TH1F *All_truemu_neglogl_muoverp;
-    TH1F *All_truep_neglogl_muoverp;
-    TH1F *All_truepi_neglogl_muoverp;
-    TH1F *All_trueK_neglogl_muoverp;
-    TH1F *All_truee_neglogl_muoverp;
-    TH1F *All_truemu_neglogl_muminusp;
-    TH1F *All_truep_neglogl_muminusp;
-    TH1F *All_truepi_neglogl_muminusp;
-    TH1F *All_trueK_neglogl_muminusp;
-    TH1F *All_truee_neglogl_muminusp;
-
-    TH1F *All_truemu_neglogl_MIPminusp;
-    TH1F *All_truep_neglogl_MIPminusp;
-    TH1F *All_truepi_neglogl_MIPminusp;
-    TH1F *All_trueK_neglogl_MIPminusp;
-    TH1F *All_truee_neglogl_MIPminusp;
-    TH1F *All_truemu_neglogl_minmuMIPminusp;
-    TH1F *All_truep_neglogl_minmuMIPminusp;
-    TH1F *All_truepi_neglogl_minmuMIPminusp;
-    TH1F *All_trueK_neglogl_minmuMIPminusp;
-    TH1F *All_truee_neglogl_minmuMIPminusp;
-
-    TH1F *All_truemu_smallest_neglogl;
-    TH1F *All_truep_smallest_neglogl;
-    TH1F *All_truepi_smallest_neglogl;
-    TH1F *All_trueK_smallest_neglogl;
-    TH1F *All_truee_smallest_neglogl;
-
-    TH1F *All_truemu_PIDA;
-    TH1F *All_truep_PIDA;
-    TH1F *All_truepi_PIDA;
-    TH1F *All_trueK_PIDA;
-    TH1F *All_truee_PIDA;
-
     TH1F *All_chargeEndOverStart_directionCorrect;
     TH1F *All_chargeEndOverStart_directionIncorrect;
     TH2F *All_chargeEndOverStartVersusNHits_directionCorrect;
@@ -505,12 +172,6 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     TH1F *Contained_chargeEndOverStart_directionIncorrect;
     TH2F *Contained_chargeEndOverStartVersusNHits_directionCorrect;
     TH2F *Contained_chargeEndOverStartVersusNHits_directionIncorrect;
-
-    TH2F *All_truemu_dEdxtr_len;
-    TH2F *All_truep_dEdxtr_len;
-    TH2F *All_truepi_dEdxtr_len;
-    TH2F *All_trueK_dEdxtr_len;
-    TH2F *All_truee_dEdxtr_len;
 
     TH2F *All_correctdirection;
     TH2F *All_incorrectdirection;
@@ -808,6 +469,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     double PIDAval_kde = -999;
     double dEdxtruncmean = -999;
     double trklen = -999;
+    double depE = -999;
+    double rangeE_mu = -999;
+    double rangeE_p = -999;
 
     std::vector<art::Ptr<anab::ParticleID>> trackPID = trackPIDAssn.at(track->ID());
     if (trackPID.size() == 0){
@@ -854,6 +518,15 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kTrackLength) trklen = AlgScore.fValue;
       }
 
+      if (AlgScore.fAlgName == "DepEvsRangeE"){
+        if (anab::kVariableType(AlgScore.fVariableType) == anab::kEdeposited) depE = AlgScore.fValue;
+        if (anab::kVariableType(AlgScore.fVariableType) == anab::kEbyRange){
+          if (AlgScore.fAssumedPdg == 13) rangeE_mu = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 2212) rangeE_p = AlgScore.fValue;
+        }
+      }
+
+
     } // Loop over AlgScoresVec
 
     /*
@@ -868,16 +541,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     std::cout  << "[ParticleIDValidation] neg2LogL pi bwd = " << Bragg_bwd_pi << std::endl
     std::cout  << "[ParticleIDValidation] neg2LogL K bwd = " << Bragg_bwd_K << std::endl;
     */
-    /**
-     * Fill ALL the histograms!
-     */
 
-    // Use best fit (lowest neg2LogL) from forward vs backward for calculations
-    double Bragg_mu = (Bragg_fwd_mu < Bragg_bwd_mu ? Bragg_fwd_mu : Bragg_bwd_mu);
-    double Bragg_p  = (Bragg_fwd_p  < Bragg_bwd_p  ? Bragg_fwd_p  : Bragg_bwd_p);
-    double Bragg_pi = (Bragg_fwd_pi < Bragg_bwd_pi ? Bragg_fwd_pi : Bragg_bwd_pi);
-    double Bragg_K  = (Bragg_fwd_K  < Bragg_bwd_K  ? Bragg_fwd_K  : Bragg_bwd_K);
 
+    // Now time to set some variables!
     track_neglogl_fwd_mu = Bragg_fwd_mu;
     track_neglogl_bwd_mu = Bragg_bwd_mu;
     track_neglogl_fwd_p = Bragg_fwd_p;
@@ -888,10 +554,16 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_neglogl_bwd_k = Bragg_bwd_K;
     track_neglogl_fwd_mip = noBragg_fwd_MIP;
     track_dEdx = dEdxtruncmean;
+    track_length = trklen;
     track_PIDA_mean = PIDAval_mean;
     track_PIDA_median = PIDAval_median;
     track_PIDA_kde = PIDAval_kde;
     track_nhits = nhits;
+    track_depE = depE;
+    track_rangeE_mu = rangeE_mu;
+    track_rangeE_p = rangeE_p;
+    track_dEdx_perhit = dEdx;
+    track_resrange_perhit = resRange;
 
     art::FindManyP<anab::ParticleID> trackPIDAssnforChi2(trackHandle, e, fPIDLabelChi2);
     if (!trackPIDAssnforChi2.isValid()){
@@ -918,97 +590,16 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     } // end else
 
 
-    //double Bragg_smallest = std::min({Bragg_mu, Bragg_p, Bragg_pi, Bragg_K, noBragg_fwd_MIP});
-    double Bragg_smallest = std::min({Bragg_mu, Bragg_p, noBragg_fwd_MIP});
-    if (Bragg_smallest == Bragg_mu)             std::cout << "[ParticleIDValidation] PID estimate: muon" << std::endl;
-    else if (Bragg_smallest == Bragg_p)         std::cout << "[ParticleIDValidation] PID estimate: proton" << std::endl;
-    else if (Bragg_smallest == Bragg_pi)        std::cout << "[ParticleIDValidation] PID estimate: pion" << std::endl;
-    else if (Bragg_smallest == Bragg_K)         std::cout << "[ParticleIDValidation] PID estimate: kaon" << std::endl;
-    else if (Bragg_smallest == noBragg_fwd_MIP) std::cout << "[ParticleIDValidation] PID estimate: muon (no Bragg peak)" << std::endl;
-
     bool PID_fwd = false;
+    double Bragg_smallest = std::min({Bragg_fwd_mu, Bragg_bwd_mu, Bragg_fwd_p, Bragg_bwd_p, Bragg_fwd_pi, Bragg_bwd_pi, Bragg_fwd_K, Bragg_bwd_K, noBragg_fwd_MIP});
     if (Bragg_smallest == Bragg_fwd_mu || Bragg_smallest == Bragg_fwd_p || Bragg_smallest == Bragg_fwd_pi || Bragg_smallest == Bragg_fwd_K || Bragg_smallest == noBragg_fwd_MIP) PID_fwd = true;
-    AllTracks_neglogl_mu->Fill(Bragg_mu);
-    AllTracks_neglogl_p->Fill(Bragg_p);
-    AllTracks_neglogl_pi->Fill(Bragg_pi);
-    AllTracks_neglogl_K->Fill(Bragg_K);
-    AllTracks_neglogl_MIP->Fill(noBragg_fwd_MIP);
-    AllTracks_neglogl_minmuMIP->Fill(std::min(Bragg_mu, noBragg_fwd_MIP));
-    AllTracks_neglogl_mu_vslength->Fill(Bragg_mu, trklen);
-    AllTracks_neglogl_p_vslength->Fill(Bragg_p, trklen);
-    AllTracks_neglogl_pi_vslength->Fill(Bragg_pi, trklen);
-    AllTracks_neglogl_K_vslength->Fill(Bragg_K, trklen);
-    AllTracks_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP, trklen);
-    AllTracks_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu, noBragg_fwd_MIP), trklen);
-    AllTracks_neglogl_mu_vstrack_theta->Fill(Bragg_mu, track_theta);
-    AllTracks_neglogl_p_vstrack_theta->Fill(Bragg_p, track_theta);
-    AllTracks_neglogl_pi_vstrack_theta->Fill(Bragg_pi, track_theta);
-    AllTracks_neglogl_K_vstrack_theta->Fill(Bragg_K, track_theta);
-    AllTracks_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP, track_theta);
-    AllTracks_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu, noBragg_fwd_MIP), track_theta);
-    AllTracks_neglogl_mu_vsnhits->Fill(Bragg_mu, nhits);
-    AllTracks_neglogl_p_vsnhits->Fill(Bragg_p, nhits);
-    AllTracks_neglogl_pi_vsnhits->Fill(Bragg_pi, nhits);
-    AllTracks_neglogl_K_vsnhits->Fill(Bragg_K, nhits);
-    AllTracks_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP, nhits);
-    AllTracks_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu, noBragg_fwd_MIP), nhits);
-    AllTracks_neglogl_muvsp->Fill(Bragg_mu, Bragg_p);
-    AllTracks_neglogl_muvspi->Fill(Bragg_mu, Bragg_pi);
-    AllTracks_neglogl_MIPvsp->Fill(noBragg_fwd_MIP, Bragg_p);
-    AllTracks_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu, noBragg_fwd_MIP), Bragg_p);
-    AllTracks_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-    AllTracks_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-    AllTracks_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-    AllTracks_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu, noBragg_fwd_MIP)-Bragg_p);
-    AllTracks_dEdxtr_len->Fill(trklen, dEdxtruncmean);
 
-    if (Bragg_smallest == Bragg_mu) AllTracks_smallest_neglogl->Fill(0.5);
-    else if (Bragg_smallest == Bragg_p) AllTracks_smallest_neglogl->Fill(1.5);
-    else if (Bragg_smallest == Bragg_pi) AllTracks_smallest_neglogl->Fill(2.5);
-    else if (Bragg_smallest == Bragg_K) AllTracks_smallest_neglogl->Fill(3.5);
-    else if (Bragg_smallest == noBragg_fwd_MIP)
-      AllTracks_smallest_neglogl->Fill(4.5);
 
+    // Histogram time
     if (!fIsDataPlots){
       if (TrueBragg){
         // Well-reconstructed truth matching
         if (TMath::Abs(true_PDG) == 13){ // True muons
-          TrueBragg_truemu_neglogl_mu->Fill(Bragg_mu);
-          TrueBragg_truemu_neglogl_p->Fill(Bragg_p);
-          TrueBragg_truemu_neglogl_pi->Fill(Bragg_pi);
-          TrueBragg_truemu_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truemu_PIDA->Fill(PIDAval_mean);
-          TrueBragg_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-          TrueBragg_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-          TrueBragg_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-          TrueBragg_truemu_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-          TrueBragg_truemu_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-          TrueBragg_truemu_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
-          TrueBragg_truemu_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
-          TrueBragg_truemu_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-          TrueBragg_truemu_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
-          TrueBragg_truemu_neglogl_MIP->Fill(noBragg_fwd_MIP);
-          TrueBragg_truemu_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-          TrueBragg_truemu_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-          TrueBragg_truemu_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-          TrueBragg_truemu_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-          TrueBragg_truemu_neglogl_p_vslength->Fill(Bragg_p,trklen);
-          TrueBragg_truemu_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-          TrueBragg_truemu_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-          TrueBragg_truemu_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-          TrueBragg_truemu_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-          TrueBragg_truemu_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-          TrueBragg_truemu_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-          TrueBragg_truemu_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-          TrueBragg_truemu_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-          if (Bragg_smallest == Bragg_mu) TrueBragg_truemu_smallest_neglogl->Fill(0.5);
-          else if (Bragg_smallest == Bragg_p) TrueBragg_truemu_smallest_neglogl->Fill(1.5);
-          else if (Bragg_smallest == Bragg_pi) TrueBragg_truemu_smallest_neglogl->Fill(2.5);
-          else if (Bragg_smallest == Bragg_K) TrueBragg_truemu_smallest_neglogl->Fill(3.5);
-          else if (Bragg_smallest == noBragg_fwd_MIP)
-            TrueBragg_truemu_smallest_neglogl->Fill(4.5);
-
           if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
             if (PID_fwd) TrueBragg_correctdirection->Fill(0.5,1.5);
             else TrueBragg_correctdirection->Fill(0.5,0.5);
@@ -1020,42 +611,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
 
         else if (TMath::Abs(true_PDG) == 2212){ // True protons
-          TrueBragg_truep_neglogl_mu->Fill(Bragg_mu);
-          TrueBragg_truep_neglogl_p->Fill(Bragg_p);
-          TrueBragg_truep_neglogl_pi->Fill(Bragg_pi);
-          TrueBragg_truep_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truep_PIDA->Fill(PIDAval_mean);
-          TrueBragg_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-          TrueBragg_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-          TrueBragg_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-          TrueBragg_truep_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-          TrueBragg_truep_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-          TrueBragg_truep_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
-          TrueBragg_truep_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
-          TrueBragg_truep_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-          TrueBragg_truep_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
-          TrueBragg_truep_neglogl_MIP->Fill(noBragg_fwd_MIP);
-          TrueBragg_truep_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-          TrueBragg_truep_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-          TrueBragg_truep_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-          TrueBragg_truep_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-          TrueBragg_truep_neglogl_p_vslength->Fill(Bragg_p,trklen);
-          TrueBragg_truep_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-          TrueBragg_truep_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-          TrueBragg_truep_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-          TrueBragg_truep_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-          TrueBragg_truep_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-          TrueBragg_truep_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-          TrueBragg_truep_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-          TrueBragg_truep_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-          if (Bragg_smallest == Bragg_mu) TrueBragg_truep_smallest_neglogl->Fill(0.5);
-          else if (Bragg_smallest == Bragg_p) TrueBragg_truep_smallest_neglogl->Fill(1.5);
-          else if (Bragg_smallest == Bragg_pi) TrueBragg_truep_smallest_neglogl->Fill(2.5);
-          else if (Bragg_smallest == Bragg_K) TrueBragg_truep_smallest_neglogl->Fill(3.5);
-          else if (Bragg_smallest == noBragg_fwd_MIP)
-            TrueBragg_truep_smallest_neglogl->Fill(4.5);
-
           if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
             if (PID_fwd) TrueBragg_correctdirection->Fill(1.5,1.5);
             else TrueBragg_correctdirection->Fill(1.5,0.5);
@@ -1067,38 +622,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
 
         else if (TMath::Abs(true_PDG) == 211){ // True pions
-          TrueBragg_truepi_neglogl_mu->Fill(Bragg_mu);
-          TrueBragg_truepi_neglogl_p->Fill(Bragg_p);
-          TrueBragg_truepi_neglogl_pi->Fill(Bragg_pi);
-          TrueBragg_truepi_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truepi_PIDA->Fill(PIDAval_mean);
-          TrueBragg_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-          TrueBragg_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-          TrueBragg_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-          TrueBragg_truepi_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-          TrueBragg_truepi_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-          TrueBragg_truepi_neglogl_MIP->Fill(noBragg_fwd_MIP);
-          TrueBragg_truepi_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-          TrueBragg_truepi_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-          TrueBragg_truepi_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-          TrueBragg_truepi_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-          TrueBragg_truepi_neglogl_p_vslength->Fill(Bragg_p,trklen);
-          TrueBragg_truepi_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-          TrueBragg_truepi_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-          TrueBragg_truepi_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-          TrueBragg_truepi_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-          TrueBragg_truepi_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-          TrueBragg_truepi_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-          TrueBragg_truepi_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-          TrueBragg_truepi_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-          if (Bragg_smallest == Bragg_mu) TrueBragg_truepi_smallest_neglogl->Fill(0.5);
-          else if (Bragg_smallest == Bragg_p) TrueBragg_truepi_smallest_neglogl->Fill(1.5);
-          else if (Bragg_smallest == Bragg_pi) TrueBragg_truepi_smallest_neglogl->Fill(2.5);
-          else if (Bragg_smallest == Bragg_K) TrueBragg_truepi_smallest_neglogl->Fill(3.5);
-          else if (Bragg_smallest == noBragg_fwd_MIP)
-            TrueBragg_truepi_smallest_neglogl->Fill(4.5);
-
           if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
             if (PID_fwd) TrueBragg_correctdirection->Fill(2.5,1.5);
             else TrueBragg_correctdirection->Fill(2.5,0.5);
@@ -1110,38 +633,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
 
         else if (TMath::Abs(true_PDG) == 321){ // True kaons
-          TrueBragg_trueK_neglogl_mu->Fill(Bragg_mu);
-          TrueBragg_trueK_neglogl_p->Fill(Bragg_p);
-          TrueBragg_trueK_neglogl_pi->Fill(Bragg_pi);
-          TrueBragg_trueK_neglogl_K->Fill(Bragg_K);
-          TrueBragg_trueK_PIDA->Fill(PIDAval_mean);
-          TrueBragg_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-          TrueBragg_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-          TrueBragg_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-          TrueBragg_trueK_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-          TrueBragg_trueK_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-          TrueBragg_trueK_neglogl_MIP->Fill(noBragg_fwd_MIP);
-          TrueBragg_trueK_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-          TrueBragg_trueK_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-          TrueBragg_trueK_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-          TrueBragg_trueK_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-          TrueBragg_trueK_neglogl_p_vslength->Fill(Bragg_p,trklen);
-          TrueBragg_trueK_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-          TrueBragg_trueK_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-          TrueBragg_trueK_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-          TrueBragg_trueK_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-          TrueBragg_trueK_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-          TrueBragg_trueK_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-          TrueBragg_trueK_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-          TrueBragg_trueK_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-          if (Bragg_smallest == Bragg_mu) TrueBragg_trueK_smallest_neglogl->Fill(0.5);
-          else if (Bragg_smallest == Bragg_p) TrueBragg_trueK_smallest_neglogl->Fill(1.5);
-          else if (Bragg_smallest == Bragg_pi) TrueBragg_trueK_smallest_neglogl->Fill(2.5);
-          else if (Bragg_smallest == Bragg_K) TrueBragg_trueK_smallest_neglogl->Fill(3.5);
-          else if (Bragg_smallest == noBragg_fwd_MIP)
-            TrueBragg_trueK_smallest_neglogl->Fill(4.5);
-
           if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
             if (PID_fwd) TrueBragg_correctdirection->Fill(3.5,1.5);
             else TrueBragg_correctdirection->Fill(3.5,0.5);
@@ -1151,85 +642,10 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
             else TrueBragg_incorrectdirection->Fill(3.5,0.5);
           }
         }
-
-
-        else if (TMath::Abs(true_PDG) == 11){ // True electrons
-          TrueBragg_truee_neglogl_mu->Fill(Bragg_mu);
-          TrueBragg_truee_neglogl_p->Fill(Bragg_p);
-          TrueBragg_truee_neglogl_pi->Fill(Bragg_pi);
-          TrueBragg_truee_neglogl_K->Fill(Bragg_K);
-          TrueBragg_truee_PIDA->Fill(PIDAval_mean);
-          TrueBragg_truee_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-          TrueBragg_truee_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-          TrueBragg_truee_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-          TrueBragg_truee_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-          TrueBragg_truee_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-          TrueBragg_truee_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
-          TrueBragg_truee_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
-          TrueBragg_truee_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-          TrueBragg_truee_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
-          TrueBragg_truee_neglogl_MIP->Fill(noBragg_fwd_MIP);
-          TrueBragg_truee_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-          TrueBragg_truee_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-          TrueBragg_truee_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-          TrueBragg_truee_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-          TrueBragg_truee_neglogl_p_vslength->Fill(Bragg_p,trklen);
-          TrueBragg_truee_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-          TrueBragg_truee_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-          TrueBragg_truee_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-          TrueBragg_truee_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-          TrueBragg_truee_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-          TrueBragg_truee_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-          TrueBragg_truee_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-          TrueBragg_truee_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-          if (Bragg_smallest == Bragg_mu) TrueBragg_truee_smallest_neglogl->Fill(0.5);
-          else if (Bragg_smallest == Bragg_p) TrueBragg_truee_smallest_neglogl->Fill(1.5);
-          else if (Bragg_smallest == Bragg_pi) TrueBragg_truee_smallest_neglogl->Fill(2.5);
-          else if (Bragg_smallest == Bragg_K) TrueBragg_truee_smallest_neglogl->Fill(3.5);
-          else if (Bragg_smallest == noBragg_fwd_MIP)
-            TrueBragg_truee_smallest_neglogl->Fill(4.5);
-        }
       } // end if(TrueBragg)
 
       // All particles
       if (TMath::Abs(true_PDG) == 13){ // True muons
-        All_truemu_neglogl_mu->Fill(Bragg_mu);
-        All_truemu_neglogl_p->Fill(Bragg_p);
-        All_truemu_neglogl_pi->Fill(Bragg_pi);
-        All_truemu_neglogl_K->Fill(Bragg_K);
-        All_truemu_PIDA->Fill(PIDAval_mean);
-        All_truemu_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_truemu_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-        All_truemu_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-        All_truemu_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-        All_truemu_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-        All_truemu_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
-        All_truemu_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
-        All_truemu_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-        All_truemu_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
-        All_truemu_neglogl_MIP->Fill(noBragg_fwd_MIP);
-        All_truemu_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-        All_truemu_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-        All_truemu_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-        All_truemu_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-        All_truemu_neglogl_p_vslength->Fill(Bragg_p,trklen);
-        All_truemu_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-        All_truemu_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-        All_truemu_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-        All_truemu_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-        All_truemu_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-        All_truemu_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-        All_truemu_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-        All_truemu_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-        if (Bragg_smallest == Bragg_mu) All_truemu_smallest_neglogl->Fill(0.5);
-        else if (Bragg_smallest == Bragg_p) All_truemu_smallest_neglogl->Fill(1.5);
-        else if (Bragg_smallest == Bragg_pi) All_truemu_smallest_neglogl->Fill(2.5);
-        else if (Bragg_smallest == Bragg_K) All_truemu_smallest_neglogl->Fill(3.5);
-        else if (Bragg_smallest == noBragg_fwd_MIP)
-          All_truemu_smallest_neglogl->Fill(4.5);
-
         if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
           if (PID_fwd) All_correctdirection->Fill(0.5,1.5);
           else All_correctdirection->Fill(0.5,0.5);
@@ -1241,42 +657,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       }
 
       else if (TMath::Abs(true_PDG) == 2212){ // True protons
-        All_truep_neglogl_mu->Fill(Bragg_mu);
-        All_truep_neglogl_p->Fill(Bragg_p);
-        All_truep_neglogl_pi->Fill(Bragg_pi);
-        All_truep_neglogl_K->Fill(Bragg_K);
-        All_truep_PIDA->Fill(PIDAval_mean);
-        All_truep_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_truep_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-        All_truep_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-        All_truep_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-        All_truep_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-        All_truep_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
-        All_truep_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
-        All_truep_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-        All_truep_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
-        All_truep_neglogl_MIP->Fill(noBragg_fwd_MIP);
-        All_truep_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-        All_truep_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-        All_truep_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-        All_truep_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-        All_truep_neglogl_p_vslength->Fill(Bragg_p,trklen);
-        All_truep_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-        All_truep_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-        All_truep_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-        All_truep_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-        All_truep_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-        All_truep_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-        All_truep_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-        All_truep_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-        if (Bragg_smallest == Bragg_mu) All_truep_smallest_neglogl->Fill(0.5);
-        else if (Bragg_smallest == Bragg_p) All_truep_smallest_neglogl->Fill(1.5);
-        else if (Bragg_smallest == Bragg_pi) All_truep_smallest_neglogl->Fill(2.5);
-        else if (Bragg_smallest == Bragg_K) All_truep_smallest_neglogl->Fill(3.5);
-        else if (Bragg_smallest == noBragg_fwd_MIP)
-          All_truep_smallest_neglogl->Fill(4.5);
-
         if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
           if (PID_fwd) All_correctdirection->Fill(1.5,1.5);
           else All_correctdirection->Fill(1.5,0.5);
@@ -1288,38 +668,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       }
 
       else if (TMath::Abs(true_PDG) == 211){ // True pions
-        All_truepi_neglogl_mu->Fill(Bragg_mu);
-        All_truepi_neglogl_p->Fill(Bragg_p);
-        All_truepi_neglogl_pi->Fill(Bragg_pi);
-        All_truepi_neglogl_K->Fill(Bragg_K);
-        All_truepi_PIDA->Fill(PIDAval_mean);
-        All_truepi_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_truepi_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-        All_truepi_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-        All_truepi_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-        All_truepi_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-        All_truepi_neglogl_MIP->Fill(noBragg_fwd_MIP);
-        All_truepi_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-        All_truepi_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-        All_truepi_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-        All_truepi_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-        All_truepi_neglogl_p_vslength->Fill(Bragg_p,trklen);
-        All_truepi_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-        All_truepi_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-        All_truepi_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-        All_truepi_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-        All_truepi_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-        All_truepi_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-        All_truepi_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-        All_truepi_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-        if (Bragg_smallest == Bragg_mu) All_truepi_smallest_neglogl->Fill(0.5);
-        else if (Bragg_smallest == Bragg_p) All_truepi_smallest_neglogl->Fill(1.5);
-        else if (Bragg_smallest == Bragg_pi) All_truepi_smallest_neglogl->Fill(2.5);
-        else if (Bragg_smallest == Bragg_K) All_truepi_smallest_neglogl->Fill(3.5);
-        else if (Bragg_smallest == noBragg_fwd_MIP)
-          All_truepi_smallest_neglogl->Fill(4.5);
-
         if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
           if (PID_fwd) All_correctdirection->Fill(20.5,1.5);
           else All_correctdirection->Fill(2.5,0.5);
@@ -1331,38 +679,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       }
 
       else if (TMath::Abs(true_PDG) == 321){ // True kaons
-        All_trueK_neglogl_mu->Fill(Bragg_mu);
-        All_trueK_neglogl_p->Fill(Bragg_p);
-        All_trueK_neglogl_pi->Fill(Bragg_pi);
-        All_trueK_neglogl_K->Fill(Bragg_K);
-        All_trueK_PIDA->Fill(PIDAval_mean);
-        All_trueK_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_trueK_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-        All_trueK_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-        All_trueK_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-        All_trueK_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-        All_trueK_neglogl_MIP->Fill(noBragg_fwd_MIP);
-        All_trueK_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-        All_trueK_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-        All_trueK_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-        All_trueK_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-        All_trueK_neglogl_p_vslength->Fill(Bragg_p,trklen);
-        All_trueK_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-        All_trueK_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-        All_trueK_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-        All_trueK_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-        All_trueK_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-        All_trueK_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-        All_trueK_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-        All_trueK_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-        if (Bragg_smallest == Bragg_mu) All_trueK_smallest_neglogl->Fill(0.5);
-        else if (Bragg_smallest == Bragg_p) All_trueK_smallest_neglogl->Fill(1.5);
-        else if (Bragg_smallest == Bragg_pi) All_trueK_smallest_neglogl->Fill(2.5);
-        else if (Bragg_smallest == Bragg_K) All_trueK_smallest_neglogl->Fill(3.5);
-        else if (Bragg_smallest == noBragg_fwd_MIP)
-          All_trueK_smallest_neglogl->Fill(4.5);
-
         if (RecoTrackDir.Dot(TrueTrackDir) > 0){ // reco dir is right
           if (PID_fwd) All_correctdirection->Fill(3.5,1.5);
           else All_correctdirection->Fill(3.5,0.5);
@@ -1372,46 +688,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           else All_incorrectdirection->Fill(3.5,0.5);
         }
       }
-
-      else if (TMath::Abs(true_PDG) == 11){ // True electrons
-        All_truee_neglogl_mu->Fill(Bragg_mu);
-        All_truee_neglogl_p->Fill(Bragg_p);
-        All_truee_neglogl_pi->Fill(Bragg_pi);
-        All_truee_neglogl_K->Fill(Bragg_K);
-        All_truee_PIDA->Fill(PIDAval_mean);
-        All_truee_dEdxtr_len->Fill(trklen,dEdxtruncmean);
-        All_truee_neglogl_muvsp->Fill(Bragg_mu,Bragg_p);
-        All_truee_neglogl_muvspi->Fill(Bragg_mu,Bragg_pi);
-        All_truee_neglogl_muoverp->Fill(Bragg_mu/Bragg_p);
-        All_truee_neglogl_muminusp->Fill(Bragg_mu-Bragg_p);
-        All_truee_neglogl_MIPvsp->Fill(noBragg_fwd_MIP,Bragg_p);
-        All_truee_neglogl_minmuMIPvsp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),Bragg_p);
-        All_truee_neglogl_MIPminusp->Fill(noBragg_fwd_MIP-Bragg_p);
-        All_truee_neglogl_minmuMIPminusp->Fill(std::min(Bragg_mu,noBragg_fwd_MIP)-Bragg_p);
-        All_truee_neglogl_MIP->Fill(noBragg_fwd_MIP);
-        All_truee_neglogl_minmuMIP->Fill(std::min(Bragg_mu,noBragg_fwd_MIP));
-        All_truee_neglogl_mu_vslength->Fill(Bragg_mu,trklen);
-        All_truee_neglogl_MIP_vslength->Fill(noBragg_fwd_MIP,trklen);
-        All_truee_neglogl_minmuMIP_vslength->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),trklen);
-        All_truee_neglogl_p_vslength->Fill(Bragg_p,trklen);
-        All_truee_neglogl_mu_vstrack_theta->Fill(Bragg_mu,track_theta);
-        All_truee_neglogl_MIP_vstrack_theta->Fill(noBragg_fwd_MIP,track_theta);
-        All_truee_neglogl_minmuMIP_vstrack_theta->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),track_theta);
-        All_truee_neglogl_p_vstrack_theta->Fill(Bragg_p,track_theta);
-        All_truee_neglogl_mu_vsnhits->Fill(Bragg_mu,nhits);
-        All_truee_neglogl_MIP_vsnhits->Fill(noBragg_fwd_MIP,nhits);
-        All_truee_neglogl_minmuMIP_vsnhits->Fill(std::min(Bragg_mu,noBragg_fwd_MIP),nhits);
-        All_truee_neglogl_p_vsnhits->Fill(Bragg_p,nhits);
-
-        if (Bragg_smallest == Bragg_mu) All_truee_smallest_neglogl->Fill(0.5);
-        else if (Bragg_smallest == Bragg_p) All_truee_smallest_neglogl->Fill(1.5);
-        else if (Bragg_smallest == Bragg_pi) All_truee_smallest_neglogl->Fill(2.5);
-        else if (Bragg_smallest == Bragg_K) All_truee_smallest_neglogl->Fill(3.5);
-        else if (Bragg_smallest == noBragg_fwd_MIP)
-          All_truee_smallest_neglogl->Fill(4.5);
-      }
     }// end !fIsDataPlots
 
+    // Finally, fill the tree
     std::cout << "[ParticleIDValidation] Filling tree. " << std::endl;
     pidTree->Fill();
 
@@ -1465,213 +744,24 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_phi"               , &track_phi           ) ;
   pidTree->Branch( "track_nhits"             , &track_nhits         ) ;
 
-  AllTracks_PIDA                   = tfs->make<TH1F>("AllTracks_PIDA"                   , ";PIDA;"                , 400                    , 0    , 50);
-  AllTracks_neglogl_mu             = tfs->make<TH1F>("AllTracks_neglogl_mu"             , ";neg2LL_mu;"           , 400                    , 0    , 400);
-  AllTracks_neglogl_p              = tfs->make<TH1F>("AllTracks_neglogl_p"              , ";neg2LL_p;"            , 400                    , 0    , 400);
-  AllTracks_neglogl_pi             = tfs->make<TH1F>("AllTracks_neglogl_pi"             , ";neg2LL_pi;"           , 400                    , 0    , 400);
-  AllTracks_neglogl_K              = tfs->make<TH1F>("AllTracks_neglogl_K"              , ";neg2LL_K;"            , 400                    , 0    , 400);
-  AllTracks_neglogl_MIP            = tfs->make<TH1F>("AllTracks_neglogl_MIP"            , ";neg2LL_MIP;"          , 400                    , 0    , 400);
-  AllTracks_neglogl_minmuMIP       = tfs->make<TH1F>("AllTracks_neglogl_minmuMIP"       , ";neg2LL_minmuMIP;"     , 400                    , 0    , 400);
-  AllTracks_neglogl_muoverp        = tfs->make<TH1F>("AllTracks_neglogl_muoverp"        , ";neg2LL_mu/neg2LL_p;"  , 400                    , 0    , 20);
-  AllTracks_neglogl_muminusp       = tfs->make<TH1F>("AllTracks_neglogl_muminusp"       , ";neg2LL_mu-neg2LL_p;"  , 400                    , -200 , 200);
-  AllTracks_neglogl_MIPminusp      = tfs->make<TH1F>("AllTracks_neglogl_MIPminusp"      , ";neg2LL_MIP-neg2LL_p;" , 400                    , -200 , 200);
-  AllTracks_neglogl_minmuMIPminusp = tfs->make<TH1F>("AllTracks_neglogl_minmuMIPminusp" , ";min(neg2LL_mu         , neg2LL_MIP)-neg2LL_p;" , 400  , -200  , 200);
+  pidTree->Branch( "track_depE"              , &track_depE          ) ;
+  pidTree->Branch( "track_rangeE_mu"         , &track_rangeE_mu     ) ;
+  pidTree->Branch( "track_rangeE_p"          , &track_rangeE_p      ) ;
+  pidTree->Branch( "track_dEdx_perhit"       , &track_dEdx_perhit   ) ;
+  pidTree->Branch( "track_resrange_perhit"   , &track_resrange_perhit ) ;
 
-  AllTracks_neglogl_mu_vslength       = tfs->make<TH2F>("AllTracks_neglogl_mu_vslength"       , ";neg2LL_mu;Track length (cm)"       , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_p_vslength        = tfs->make<TH2F>("AllTracks_neglogl_p_vslength"        , ";neg2LL_p;Track length (cm)"        , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_pi_vslength       = tfs->make<TH2F>("AllTracks_neglogl_pi_vslength"       , ";neg2LL_pi;Track length (cm)"       , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_K_vslength        = tfs->make<TH2F>("AllTracks_neglogl_K_vslength"        , ";neg2LL_K;Track length (cm)"        , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_MIP_vslength      = tfs->make<TH2F>("AllTracks_neglogl_MIP_vslength"      , ";neg2LL_MIP;Track length (cm)"      , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_minmuMIP_vslength = tfs->make<TH2F>("AllTracks_neglogl_minmuMIP_vslength" , ";neg2LL_minmuMIP;Track length (cm)" , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_mu_vstrack_theta        = tfs->make<TH2F>("AllTracks_neglogl_mu_vstrack_theta"        , ";neg2LL_mu;Track track_theta"             , 400                   , 0   , 400 , 150 , 0   , TMath::Pi());
-  AllTracks_neglogl_p_vstrack_theta         = tfs->make<TH2F>("AllTracks_neglogl_p_vstrack_theta"         , ";neg2LL_p;Track track_theta"              , 400                   , 0   , 400 , 150 , 0   , TMath::Pi());
-  AllTracks_neglogl_pi_vstrack_theta        = tfs->make<TH2F>("AllTracks_neglogl_pi_vstrack_theta"        , ";neg2LL_pi;Track track_theta"             , 400                   , 0   , 400 , 150 , 0   , TMath::Pi());
-  AllTracks_neglogl_K_vstrack_theta         = tfs->make<TH2F>("AllTracks_neglogl_K_vstrack_theta"         , ";neg2LL_K;Track track_theta"              , 400                   , 0   , 400 , 150 , 0   , TMath::Pi());
-  AllTracks_neglogl_MIP_vstrack_theta       = tfs->make<TH2F>("AllTracks_neglogl_MIP_vstrack_theta"       , ";neg2LL_MIP;Track track_theta"            , 400                   , 0   , 400 , 150 , 0   , TMath::Pi());
-  AllTracks_neglogl_minmuMIP_vstrack_theta  = tfs->make<TH2F>("AllTracks_neglogl_minmuMIP_vstrack_theta"  , ";neg2LL_minmuMIP;Track track_theta"       , 400                   , 0   , 400 , 150 , 0   , TMath::Pi());
-  AllTracks_neglogl_mu_vsnhits        = tfs->make<TH2F>("AllTracks_neglogl_mu_vsnhits"        , ";neg2LL_mu;N. hits"                 , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_p_vsnhits         = tfs->make<TH2F>("AllTracks_neglogl_p_vsnhits"         , ";neg2LL_p;N. hits"                  , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_pi_vsnhits        = tfs->make<TH2F>("AllTracks_neglogl_pi_vsnhits"        , ";neg2LL_pi;N. hits"                 , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_K_vsnhits         = tfs->make<TH2F>("AllTracks_neglogl_K_vsnhits"         , ";neg2LL_K;N. hits"                  , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_MIP_vsnhits       = tfs->make<TH2F>("AllTracks_neglogl_MIP_vsnhits"       , ";neg2LL_MIP;N. hits"                , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_minmuMIP_vsnhits  = tfs->make<TH2F>("AllTracks_neglogl_minmuMIP_vsnhits"  , ";neg2LL_minmuMIP;N. hits"           , 400                   , 0   , 400 , 500 , 0   , 500);
-  AllTracks_neglogl_muvsp             = tfs->make<TH2F>("AllTracks_neglogl_muvsp"             , ";neg2LL_mu;neg2LL_p"                , 400                   , 0   , 400 , 400 , 0   , 400);
-  AllTracks_neglogl_muvspi            = tfs->make<TH2F>("AllTracks_neglogl_muvspi"            , ";neg2LL_mu;neg2LL_pi"               , 400                   , 0   , 400 , 400 , 0   , 400);
-  AllTracks_neglogl_MIPvsp            = tfs->make<TH2F>("AllTracks_neglogl_MIPvsp"            , ";neg2LL_MIP;neg2LL_p"               , 400                   , 0   , 400 , 400 , 0   , 400);
-  AllTracks_neglogl_minmuMIPvsp       = tfs->make<TH2F>("AllTracks_neglogl_minmuMIPvsp"       , ";min(neg2LL_mu                      , neg2LL_MIP);neg2LL_p" , 400 , 0   , 400 , 400 , 0             , 400);
-  AllTracks_dEdxtr_len                = tfs->make<TH2F>("AllTracks_dEdxtr_len"                , ";Track length (cm);dE/dx"           , 100                   , 0   , 700 , 100 , 0   , 50);
 
   /**
    * Define array of labels for different particle species. We're going to use this
    * to produce a plot showing how often we identify each particles specied
    */
   const char* particles[5] = {"#mu", "p", "#pi", "K", "MIP"};
-  AllTracks_smallest_neglogl  = tfs->make<TH1F>("AllTracks_smallest_neglogl","All tracks;Particle type with smallest neg2LL;",5,0,5);
-  for (size_t i=1; i<=5; i++){
-    AllTracks_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-  }
-
   All_chargeEndOverStart_sm0_5_dEdxrr  = tfs->make<TH2F>("All_chargeEndOverStart_sm0_5_dEdxrr"  , "All tracks (end/start average charge < 0.5);Residual range (cm); dEdx"                                                          , 150 , 0 , 30 , 400 , 0 , 50);
   All_chargeEndOverStart_gr2_dEdxrr    = tfs->make<TH2F>("All_chargeEndOverStart_gr2_dEdxrr"    , "All tracks (end/start average charge > 2);Residual range (cm); dEdx"                                                            , 150 , 0 , 30 , 400 , 0 , 50);
   All_chargeEndOverStart_0_5to2_dEdxrr = tfs->make<TH2F>("All_chargeEndOverStart_0_5to2_dEdxrr" , "All tracks (end/start average charge                                                      = 0.5 - 2);Residual range (cm); dEdx" , 150 , 0 , 30 , 400 , 0 , 50);
 
   if (!fIsDataPlots){
     // ---- True Bragg peak
-    TrueBragg_truemu_neglogl_mu = tfs->make<TH1F>("TrueBragg_truemu_neglogl_mu","Tracks with true p=0 at end, true muons;neg2LL_mu;",400,0,400);
-    TrueBragg_truep_neglogl_mu  = tfs->make<TH1F>("TrueBragg_truep_neglogl_mu","Tracks with true p=0 at end, true protons;neg2LL_mu;",400,0,400);
-    TrueBragg_truepi_neglogl_mu = tfs->make<TH1F>("TrueBragg_truepi_neglogl_mu","Tracks with true p=0 at end, true pions;neg2LL_mu;",400,0,400);
-    TrueBragg_trueK_neglogl_mu  = tfs->make<TH1F>("TrueBragg_trueK_neglogl_mu","Tracks with true p=0 at end, true kaons;neg2LL_mu;",400,0,400);
-    TrueBragg_truee_neglogl_mu  = tfs->make<TH1F>("TrueBragg_truee_neglogl_mu","Tracks with true p=0 at end, true electrons;neg2LL_mu;",400,0,400);
-    TrueBragg_truemu_neglogl_p  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_p","Tracks with true p=0 at end, true muons;neg2LL_p;",400,0,400);
-    TrueBragg_truep_neglogl_p   = tfs->make<TH1F>("TrueBragg_truep_neglogl_p","Tracks with true p=0 at end, true protons;neg2LL_p;",400,0,400);
-    TrueBragg_truepi_neglogl_p  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_p","Tracks with true p=0 at end, true pions;neg2LL_p;",400,0,400);
-    TrueBragg_trueK_neglogl_p   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_p","Tracks with true p=0 at end, true kaons;neg2LL_p;",400,0,400);
-    TrueBragg_truee_neglogl_p   = tfs->make<TH1F>("TrueBragg_truee_neglogl_p","Tracks with true p=0 at end, true electrons;neg2LL_p;",400,0,400);
-    TrueBragg_truemu_neglogl_pi = tfs->make<TH1F>("TrueBragg_truemu_neglogl_pi","Tracks with true p=0 at end, true muons;neg2LL_pi;",400,0,400);
-    TrueBragg_truep_neglogl_pi  = tfs->make<TH1F>("TrueBragg_truep_neglogl_pi","Tracks with true p=0 at end, true protons;neg2LL_pi;",400,0,400);
-    TrueBragg_truepi_neglogl_pi = tfs->make<TH1F>("TrueBragg_truepi_neglogl_pi","Tracks with true p=0 at end, true pions;neg2LL_pi;",400,0,400);
-    TrueBragg_trueK_neglogl_pi  = tfs->make<TH1F>("TrueBragg_trueK_neglogl_pi","Tracks with true p=0 at end, true kaons;neg2LL_pi;",400,0,400);
-    TrueBragg_truee_neglogl_pi  = tfs->make<TH1F>("TrueBragg_truee_neglogl_pi","Tracks with true p=0 at end, true electrons;neg2LL_pi;",400,0,400);
-    TrueBragg_truemu_neglogl_K  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_K","Tracks with true p=0 at end, true muons;neg2LL_K;",400,0,400);
-    TrueBragg_truep_neglogl_K   = tfs->make<TH1F>("TrueBragg_truep_neglogl_K","Tracks with true p=0 at end, true protons;neg2LL_K;",400,0,400);
-    TrueBragg_truepi_neglogl_K  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_K","Tracks with true p=0 at end, true pions;neg2LL_K;",400,0,400);
-    TrueBragg_trueK_neglogl_K   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_K","Tracks with true p=0 at end, true kaons;neg2LL_K;",400,0,400);
-    TrueBragg_truee_neglogl_K   = tfs->make<TH1F>("TrueBragg_truee_neglogl_K","Tracks with true p=0 at end, true electrons;neg2LL_K;",400,0,400);
-    TrueBragg_truemu_neglogl_MIP  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_MIP","Tracks with true p=0 at end, true muons;neg2LL_MIP;",400,0,400);
-    TrueBragg_truep_neglogl_MIP   = tfs->make<TH1F>("TrueBragg_truep_neglogl_MIP","Tracks with true p=0 at end, true protons;neg2LL_MIP;",400,0,400);
-    TrueBragg_truepi_neglogl_MIP  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_MIP","Tracks with true p=0 at end, true pions;neg2LL_MIP;",400,0,400);
-    TrueBragg_trueK_neglogl_MIP   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_MIP","Tracks with true p=0 at end, true kaons;neg2LL_MIP;",400,0,400);
-    TrueBragg_truee_neglogl_MIP   = tfs->make<TH1F>("TrueBragg_truee_neglogl_MIP","Tracks with true p=0 at end, true electrons;neg2LL_MIP;",400,0,400);
-    TrueBragg_truemu_neglogl_minmuMIP  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_minmuMIP","Tracks with true p=0 at end, true muons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    TrueBragg_truep_neglogl_minmuMIP   = tfs->make<TH1F>("TrueBragg_truep_neglogl_minmuMIP","Tracks with true p=0 at end, true protons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    TrueBragg_truepi_neglogl_minmuMIP  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_minmuMIP","Tracks with true p=0 at end, true pions;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    TrueBragg_trueK_neglogl_minmuMIP   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_minmuMIP","Tracks with true p=0 at end, true kaons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    TrueBragg_truee_neglogl_minmuMIP   = tfs->make<TH1F>("TrueBragg_truee_neglogl_minmuMIP","Tracks with true p=0 at end, true electrons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-
-    TrueBragg_truemu_neglogl_mu_vslength = tfs->make<TH2F>("TrueBragg_truemu_neglogl_mu_vslength","Tracks with true p=0 at end, true muons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_mu_vslength  = tfs->make<TH2F>("TrueBragg_truep_neglogl_mu_vslength","Tracks with true p=0 at end, true protons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_mu_vslength = tfs->make<TH2F>("TrueBragg_truepi_neglogl_mu_vslength","Tracks with true p=0 at end, true pions;neg2LL_mu;Track length",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_mu_vslength  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_mu_vslength","Tracks with true p=0 at end, true kaons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_mu_vslength  = tfs->make<TH2F>("TrueBragg_truee_neglogl_mu_vslength","Tracks with true p=0 at end, true electrons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    TrueBragg_truemu_neglogl_MIP_vslength = tfs->make<TH2F>("TrueBragg_truemu_neglogl_MIP_vslength","Tracks with true p=0 at end, true muons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_MIP_vslength  = tfs->make<TH2F>("TrueBragg_truep_neglogl_MIP_vslength","Tracks with true p=0 at end, true protons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_MIP_vslength = tfs->make<TH2F>("TrueBragg_truepi_neglogl_MIP_vslength","Tracks with true p=0 at end, true pions;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_MIP_vslength  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_MIP_vslength","Tracks with true p=0 at end, true kaons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_MIP_vslength  = tfs->make<TH2F>("TrueBragg_truee_neglogl_MIP_vslength","Tracks with true p=0 at end, true electrons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    TrueBragg_truemu_neglogl_minmuMIP_vslength = tfs->make<TH2F>("TrueBragg_truemu_neglogl_minmuMIP_vslength","Tracks with true p=0 at end, true muons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_minmuMIP_vslength  = tfs->make<TH2F>("TrueBragg_truep_neglogl_minmuMIP_vslength","Tracks with true p=0 at end, true protons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_minmuMIP_vslength = tfs->make<TH2F>("TrueBragg_truepi_neglogl_minmuMIP_vslength","Tracks with true p=0 at end, true pions;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_minmuMIP_vslength  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_minmuMIP_vslength","Tracks with true p=0 at end, true kaons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_minmuMIP_vslength  = tfs->make<TH2F>("TrueBragg_truee_neglogl_minmuMIP_vslength","Tracks with true p=0 at end, true electrons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    TrueBragg_truemu_neglogl_p_vslength = tfs->make<TH2F>("TrueBragg_truemu_neglogl_p_vslength","Tracks with true p=0 at end, true muons;neg2LL_p;Track length",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_p_vslength  = tfs->make<TH2F>("TrueBragg_truep_neglogl_p_vslength","Tracks with true p=0 at end, true protons;neg2LL_p;Track length",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_p_vslength = tfs->make<TH2F>("TrueBragg_truepi_neglogl_p_vslength","Tracks with true p=0 at end, true pions;neg2LL_p;Track length",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_p_vslength  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_p_vslength","Tracks with true p=0 at end, true kaons;neg2LL_p;Track length",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_p_vslength  = tfs->make<TH2F>("TrueBragg_truee_neglogl_p_vslength","Tracks with true p=0 at end, true electrons;neg2LL_p;Track length",400,0,400,500,0,500);
-    TrueBragg_truemu_neglogl_mu_vstrack_theta = tfs->make<TH2F>("TrueBragg_truemu_neglogl_mu_vstrack_theta","Tracks with true p=0 at end, true muons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truep_neglogl_mu_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truep_neglogl_mu_vstrack_theta","Tracks with true p=0 at end, true protons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truepi_neglogl_mu_vstrack_theta = tfs->make<TH2F>("TrueBragg_truepi_neglogl_mu_vstrack_theta","Tracks with true p=0 at end, true pions;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_trueK_neglogl_mu_vstrack_theta  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_mu_vstrack_theta","Tracks with true p=0 at end, true kaons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truee_neglogl_mu_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truee_neglogl_mu_vstrack_theta","Tracks with true p=0 at end, true electrons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truemu_neglogl_MIP_vstrack_theta = tfs->make<TH2F>("TrueBragg_truemu_neglogl_MIP_vstrack_theta","Tracks with true p=0 at end, true muons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truep_neglogl_MIP_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truep_neglogl_MIP_vstrack_theta","Tracks with true p=0 at end, true protons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truepi_neglogl_MIP_vstrack_theta = tfs->make<TH2F>("TrueBragg_truepi_neglogl_MIP_vstrack_theta","Tracks with true p=0 at end, true pions;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_trueK_neglogl_MIP_vstrack_theta  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_MIP_vstrack_theta","Tracks with true p=0 at end, true kaons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truee_neglogl_MIP_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truee_neglogl_MIP_vstrack_theta","Tracks with true p=0 at end, true electrons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truemu_neglogl_minmuMIP_vstrack_theta = tfs->make<TH2F>("TrueBragg_truemu_neglogl_minmuMIP_vstrack_theta","Tracks with true p=0 at end, true muons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truep_neglogl_minmuMIP_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truep_neglogl_minmuMIP_vstrack_theta","Tracks with true p=0 at end, true protons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truepi_neglogl_minmuMIP_vstrack_theta = tfs->make<TH2F>("TrueBragg_truepi_neglogl_minmuMIP_vstrack_theta","Tracks with true p=0 at end, true pions;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_trueK_neglogl_minmuMIP_vstrack_theta  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_minmuMIP_vstrack_theta","Tracks with true p=0 at end, true kaons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truee_neglogl_minmuMIP_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truee_neglogl_minmuMIP_vstrack_theta","Tracks with true p=0 at end, true electrons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truemu_neglogl_p_vstrack_theta = tfs->make<TH2F>("TrueBragg_truemu_neglogl_p_vstrack_theta","Tracks with true p=0 at end, true muons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truep_neglogl_p_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truep_neglogl_p_vstrack_theta","Tracks with true p=0 at end, true protons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truepi_neglogl_p_vstrack_theta = tfs->make<TH2F>("TrueBragg_truepi_neglogl_p_vstrack_theta","Tracks with true p=0 at end, true pions;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_trueK_neglogl_p_vstrack_theta  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_p_vstrack_theta","Tracks with true p=0 at end, true kaons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truee_neglogl_p_vstrack_theta  = tfs->make<TH2F>("TrueBragg_truee_neglogl_p_vstrack_theta","Tracks with true p=0 at end, true electrons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    TrueBragg_truemu_neglogl_mu_vsnhits = tfs->make<TH2F>("TrueBragg_truemu_neglogl_mu_vsnhits","Tracks with true p=0 at end, true muons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_mu_vsnhits  = tfs->make<TH2F>("TrueBragg_truep_neglogl_mu_vsnhits","Tracks with true p=0 at end, true protons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_mu_vsnhits = tfs->make<TH2F>("TrueBragg_truepi_neglogl_mu_vsnhits","Tracks with true p=0 at end, true pions;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_mu_vsnhits  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_mu_vsnhits","Tracks with true p=0 at end, true kaons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_mu_vsnhits  = tfs->make<TH2F>("TrueBragg_truee_neglogl_mu_vsnhits","Tracks with true p=0 at end, true electrons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    TrueBragg_truemu_neglogl_MIP_vsnhits = tfs->make<TH2F>("TrueBragg_truemu_neglogl_MIP_vsnhits","Tracks with true p=0 at end, true muons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_MIP_vsnhits  = tfs->make<TH2F>("TrueBragg_truep_neglogl_MIP_vsnhits","Tracks with true p=0 at end, true protons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_MIP_vsnhits = tfs->make<TH2F>("TrueBragg_truepi_neglogl_MIP_vsnhits","Tracks with true p=0 at end, true pions;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_MIP_vsnhits  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_MIP_vsnhits","Tracks with true p=0 at end, true kaons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_MIP_vsnhits  = tfs->make<TH2F>("TrueBragg_truee_neglogl_MIP_vsnhits","Tracks with true p=0 at end, true electrons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    TrueBragg_truemu_neglogl_minmuMIP_vsnhits = tfs->make<TH2F>("TrueBragg_truemu_neglogl_minmuMIP_vsnhits","Tracks with true p=0 at end, true muons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_minmuMIP_vsnhits  = tfs->make<TH2F>("TrueBragg_truep_neglogl_minmuMIP_vsnhits","Tracks with true p=0 at end, true protons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_minmuMIP_vsnhits = tfs->make<TH2F>("TrueBragg_truepi_neglogl_minmuMIP_vsnhits","Tracks with true p=0 at end, true pions;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_minmuMIP_vsnhits  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_minmuMIP_vsnhits","Tracks with true p=0 at end, true kaons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_minmuMIP_vsnhits  = tfs->make<TH2F>("TrueBragg_truee_neglogl_minmuMIP_vsnhits","Tracks with true p=0 at end, true electrons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    TrueBragg_truemu_neglogl_p_vsnhits = tfs->make<TH2F>("TrueBragg_truemu_neglogl_p_vsnhits","Tracks with true p=0 at end, true muons;neg2LL_p;No. hits",400,0,400,500,0,500);
-    TrueBragg_truep_neglogl_p_vsnhits  = tfs->make<TH2F>("TrueBragg_truep_neglogl_p_vsnhits","Tracks with true p=0 at end, true protons;neg2LL_p;No. hits",400,0,400,500,0,500);
-    TrueBragg_truepi_neglogl_p_vsnhits = tfs->make<TH2F>("TrueBragg_truepi_neglogl_p_vsnhits","Tracks with true p=0 at end, true pions;neg2LL_p;No. hits",400,0,400,500,0,500);
-    TrueBragg_trueK_neglogl_p_vsnhits  = tfs->make<TH2F>("TrueBragg_trueK_neglogl_p_vsnhits","Tracks with true p=0 at end, true kaons;neg2LL_p;No. hits",400,0,400,500,0,500);
-    TrueBragg_truee_neglogl_p_vsnhits  = tfs->make<TH2F>("TrueBragg_truee_neglogl_p_vsnhits","Tracks with true p=0 at end, true electrons;neg2LL_p;No. hits",400,0,400,500,0,500);
-
-    TrueBragg_truemu_neglogl_muvsp  = tfs->make<TH2F>("TrueBragg_truemu_neglogl_muvsp","Tracks with true p=0 at end, true muons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truep_neglogl_muvsp   = tfs->make<TH2F>("TrueBragg_truep_neglogl_muvsp","Tracks with true p=0 at end, true protons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truepi_neglogl_muvsp  = tfs->make<TH2F>("TrueBragg_truepi_neglogl_muvsp","Tracks with true p=0 at end, true pions;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_trueK_neglogl_muvsp   = tfs->make<TH2F>("TrueBragg_trueK_neglogl_muvsp","Tracks with true p=0 at end, true kaons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truee_neglogl_muvsp   = tfs->make<TH2F>("TrueBragg_truee_neglogl_muvsp","Tracks with true p=0 at end, true electrons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truemu_neglogl_muvspi  = tfs->make<TH2F>("TrueBragg_truemu_neglogl_muvspi","Tracks with true p=0 at end, true muons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    TrueBragg_truep_neglogl_muvspi   = tfs->make<TH2F>("TrueBragg_truep_neglogl_muvspi","Tracks with true p=0 at end, true protons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    TrueBragg_truepi_neglogl_muvspi  = tfs->make<TH2F>("TrueBragg_truepi_neglogl_muvspi","Tracks with true p=0 at end, true pions;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    TrueBragg_trueK_neglogl_muvspi   = tfs->make<TH2F>("TrueBragg_trueK_neglogl_muvspi","Tracks with true p=0 at end, true kaons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    TrueBragg_truee_neglogl_muvspi   = tfs->make<TH2F>("TrueBragg_truee_neglogl_muvspi","Tracks with true p=0 at end, true electrons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-
-    TrueBragg_truemu_neglogl_MIPvsp  = tfs->make<TH2F>("TrueBragg_truemu_neglogl_MIPvsp","Tracks with true p=0 at end, true muons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truep_neglogl_MIPvsp   = tfs->make<TH2F>("TrueBragg_truep_neglogl_MIPvsp","Tracks with true p=0 at end, true protons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truepi_neglogl_MIPvsp   = tfs->make<TH2F>("TrueBragg_truepi_neglogl_MIPvsp","Tracks with true p=0 at end, true pions;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_trueK_neglogl_MIPvsp   = tfs->make<TH2F>("TrueBragg_trueK_neglogl_MIPvsp","Tracks with true p=0 at end, true kaons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truee_neglogl_MIPvsp   = tfs->make<TH2F>("TrueBragg_truee_neglogl_MIPvsp","Tracks with true p=0 at end, true electrons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truemu_neglogl_minmuMIPvsp  = tfs->make<TH2F>("TrueBragg_truemu_neglogl_minmuMIPvsp","Tracks with true p=0 at end, true muons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truep_neglogl_minmuMIPvsp   = tfs->make<TH2F>("TrueBragg_truep_neglogl_minmuMIPvsp","Tracks with true p=0 at end, true protons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truepi_neglogl_minmuMIPvsp   = tfs->make<TH2F>("TrueBragg_truepi_neglogl_minmuMIPvsp","Tracks with true p=0 at end, true pions;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_trueK_neglogl_minmuMIPvsp   = tfs->make<TH2F>("TrueBragg_trueK_neglogl_minmuMIPvsp","Tracks with true p=0 at end, true kaons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    TrueBragg_truee_neglogl_minmuMIPvsp   = tfs->make<TH2F>("TrueBragg_truee_neglogl_minmuMIPvsp","Tracks with true p=0 at end, true electrons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-
-    TrueBragg_truemu_neglogl_muoverp  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_muoverp","Tracks with true p=0 at end, true muons;neg2LL_mu/neg2LL_p;",400,0,20);
-    TrueBragg_truep_neglogl_muoverp   = tfs->make<TH1F>("TrueBragg_truep_neglogl_muoverp","Tracks with true p=0 at end, true protons;neg2LL_mu/neg2LL_p;",400,0,20);
-    TrueBragg_truepi_neglogl_muoverp  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_muoverp","Tracks with true p=0 at end, true pions;neg2LL_mu/neg2LL_p;",400,0,20);
-    TrueBragg_trueK_neglogl_muoverp   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_muoverp","Tracks with true p=0 at end, true kaons;neg2LL_mu/neg2LL_p;",400,0,20);
-    TrueBragg_truee_neglogl_muoverp   = tfs->make<TH1F>("TrueBragg_truee_neglogl_muoverp","Tracks with true p=0 at end, true electrons;neg2LL_mu/neg2LL_p;",400,0,20);
-    TrueBragg_truemu_neglogl_muminusp  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_muminusp","Tracks with true p=0 at end, true muons;neg2LL_mu-neg2LL_p;",400,-200,200);
-    TrueBragg_truep_neglogl_muminusp   = tfs->make<TH1F>("TrueBragg_truep_neglogl_muminusp","Tracks with true p=0 at end, true protons;neg2LL_mu-neg2LL_p;",400,-200,200);
-    TrueBragg_truepi_neglogl_muminusp  = tfs->make<TH1F>("TrueBragg_truepi_neglogl_muminusp","Tracks with true p=0 at end, true pions;neg2LL_mu-neg2LL_p;",400,-200,200);
-    TrueBragg_trueK_neglogl_muminusp   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_muminusp","Tracks with true p=0 at end, true kaons;neg2LL_mu-neg2LL_p;",400,-200,200);
-    TrueBragg_truee_neglogl_muminusp   = tfs->make<TH1F>("TrueBragg_truee_neglogl_muminusp","Tracks with true p=0 at end, true electrons;neg2LL_mu-neg2LL_p;",400,-200,200);
-
-    TrueBragg_truemu_neglogl_MIPminusp  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_MIPminusp","Tracks with true p=0 at end, true muons;neg2LL_MIP-neg2LL_p;",400,-200,200);
-    TrueBragg_truep_neglogl_MIPminusp   = tfs->make<TH1F>("TrueBragg_truep_neglogl_MIPminusp","Tracks with true p=0 at end, true protons;neg2LL_MIP-neg2LL_p;",400,-200,200);
-    TrueBragg_truepi_neglogl_MIPminusp   = tfs->make<TH1F>("TrueBragg_truepi_neglogl_MIPminusp","Tracks with true p=0 at end, true pions;neg2LL_MIP-neg2LL_p;",400,-200,200);
-    TrueBragg_trueK_neglogl_MIPminusp   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_MIPminusp","Tracks with true p=0 at end, true kaons;neg2LL_MIP-neg2LL_p;",400,-200,200);
-    TrueBragg_truee_neglogl_MIPminusp   = tfs->make<TH1F>("TrueBragg_truee_neglogl_MIPminusp","Tracks with true p=0 at end, true electrons;neg2LL_MIP-neg2LL_p;",400,-200,200);
-    TrueBragg_truemu_neglogl_minmuMIPminusp  = tfs->make<TH1F>("TrueBragg_truemu_neglogl_minmuMIPminusp","Tracks with true p=0 at end, true muons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",400,-200,200);
-    TrueBragg_truep_neglogl_minmuMIPminusp   = tfs->make<TH1F>("TrueBragg_truep_neglogl_minmuMIPminusp","Tracks with true p=0 at end, true protons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",400,-200,200);
-    TrueBragg_truepi_neglogl_minmuMIPminusp   = tfs->make<TH1F>("TrueBragg_truepi_neglogl_minmuMIPminusp","Tracks with true p=0 at end, true pions;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",400,-200,200);
-    TrueBragg_trueK_neglogl_minmuMIPminusp   = tfs->make<TH1F>("TrueBragg_trueK_neglogl_minmuMIPminusp","Tracks with true p=0 at end, true kaons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",400,-200,200);
-    TrueBragg_truee_neglogl_minmuMIPminusp   = tfs->make<TH1F>("TrueBragg_truee_neglogl_minmuMIPminusp","Tracks with true p=0 at end, true electrons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",400,-200,200);
-
-    TrueBragg_truemu_smallest_neglogl  = tfs->make<TH1F>("TrueBragg_truemu_smallest_neglogl","Tracks with true p=0 at end, true muons;Particle type with smallest neg2LL;",5,0,5);
-    TrueBragg_truep_smallest_neglogl   = tfs->make<TH1F>("TrueBragg_truep_smallest_neglogl","Tracks with true p=0 at end, true protons;Particle type with smallest neg2LL;",5,0,5);
-    TrueBragg_truepi_smallest_neglogl  = tfs->make<TH1F>("TrueBragg_truepi_smallest_neglogl","Tracks with true p=0 at end, true pions;Particle type with smallest neg2LL;",5,0,5);
-    TrueBragg_trueK_smallest_neglogl   = tfs->make<TH1F>("TrueBragg_trueK_smallest_neglogl","Tracks with true p=0 at end, true kaons;Particle type with smallest neg2LL;",5,0,5);
-    TrueBragg_truee_smallest_neglogl   = tfs->make<TH1F>("TrueBragg_truee_smallest_neglogl","Tracks with true p=0 at end, true electrons;Particle type with smallest neg2LL;",5,0,5);
-    for (size_t i=1; i<=5; i++){
-      TrueBragg_truemu_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      TrueBragg_truep_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      TrueBragg_truepi_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      TrueBragg_trueK_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      TrueBragg_truee_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-    }
-
-    TrueBragg_truemu_PIDA = tfs->make<TH1F>("TrueBragg_truemu_PIDA","Tracks with true p=0 at end, true muons;PIDA;",300,0,30);
-    TrueBragg_truep_PIDA  = tfs->make<TH1F>("TrueBragg_truep_PIDA","Tracks with true p=0 at end, true protons;PIDA;",300,0,30);
-    TrueBragg_truepi_PIDA = tfs->make<TH1F>("TrueBragg_truepi_PIDA","Tracks with true p=0 at end, true pions;PIDA;",300,0,30);
-    TrueBragg_trueK_PIDA  = tfs->make<TH1F>("TrueBragg_trueK_PIDA","Tracks with true p=0 at end, true kaons;PIDA;",300,0,30);
-    TrueBragg_truee_PIDA  = tfs->make<TH1F>("TrueBragg_truee_PIDA","Tracks with true p=0 at end, true electrons;PIDA;",300,0,30);
-
     TrueBragg_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("TrueBragg_chargeEndOverStart_directionCorrect", "Tracks with true p=0 at end;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
     TrueBragg_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("TrueBragg_chargeEndOverStart_directionIncorrect", "Tracks with true p=0 at end;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
     ;
@@ -1683,12 +773,6 @@ void ParticleIdValidationPlots::beginJob(){
     TrueBragg_chargeEndOverStart_gr2_dEdxrr = tfs->make<TH2F>("TrueBragg_chargeEndOverStart_gr2_dEdxrr","Tracks with true p=0 at end (end/start average charge > 2);Residual range (cm); dEdx",150,0,30,400,0,50);
     TrueBragg_chargeEndOverStart_0_5to2_dEdxrr = tfs->make<TH2F>("TrueBragg_chargeEndOverStart_0_5to2_dEdxrr","Tracks with true p=0 at end (end/start average charge = 0.5 - 2);Residual range (cm); dEdx",150,0,30,400,0,50);
 
-    TrueBragg_truemu_dEdxtr_len = tfs->make<TH2F>("TrueBragg_truemu_dEdxtr_len","Tracks with true p=0 at end, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    TrueBragg_truep_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_truep_dEdxtr_len","Tracks with true p=0 at end, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    TrueBragg_truepi_dEdxtr_len = tfs->make<TH2F>("TrueBragg_truepi_dEdxtr_len","Tracks with true p=0 at end, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-    TrueBragg_trueK_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_trueK_dEdxtr_len","Tracks with true p=0 at end, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    TrueBragg_truee_dEdxtr_len  = tfs->make<TH2F>("TrueBragg_truee_dEdxtr_len","Tracks with true p=0 at end, true electrons;Track length (cm);dE/dx",100,0,700,100,0,50);
-
     TrueBragg_correctdirection = tfs->make<TH2F>("TrueBragg_correctdirection","Tracks with true p=0 at end, reconstructed correct direction;true particle;PID direction correct?",4,0,4,2,0,2);
     TrueBragg_incorrectdirection = tfs->make<TH2F>("TrueBragg_incorrectdirection","Tracks with true p=0 at end, reconstructed incorrect direction;true particle;PID direction correct?",4,0,4,2,0,2);
     for (size_t i=1; i<=4; i++){
@@ -1699,163 +783,6 @@ void ParticleIdValidationPlots::beginJob(){
     TrueBragg_correctdirection->GetYaxis()->SetBinLabel(2,"True");
     TrueBragg_incorrectdirection->GetYaxis()->SetBinLabel(1,"False");
     TrueBragg_incorrectdirection->GetYaxis()->SetBinLabel(2,"True");
-
-    // ---- All tracks: truth matching using associations
-    All_truemu_neglogl_mu = tfs->make<TH1F>("All_truemu_neglogl_mu","All tracks, true muons;neg2LL_mu;",400,0,400);
-    All_truep_neglogl_mu  = tfs->make<TH1F>("All_truep_neglogl_mu","All tracks, true protons;neg2LL_mu;",400,0,400);
-    All_truepi_neglogl_mu = tfs->make<TH1F>("All_truepi_neglogl_mu","All tracks, true pions;neg2LL_mu;",400,0,400);
-    All_trueK_neglogl_mu  = tfs->make<TH1F>("All_trueK_neglogl_mu","All tracks, true kaons;neg2LL_mu;",400,0,400);
-    All_truee_neglogl_mu  = tfs->make<TH1F>("All_truee_neglogl_mu","All tracks, true electrons;neg2LL_mu;",400,0,400);
-    All_truemu_neglogl_p  = tfs->make<TH1F>("All_truemu_neglogl_p","All tracks, true muons;neg2LL_p;",400,0,400);
-    All_truep_neglogl_p   = tfs->make<TH1F>("All_truep_neglogl_p","All tracks, true protons;neg2LL_p;",400,0,400);
-    All_truepi_neglogl_p  = tfs->make<TH1F>("All_truepi_neglogl_p","All tracks, true pions;neg2LL_p;",400,0,400);
-    All_trueK_neglogl_p   = tfs->make<TH1F>("All_trueK_neglogl_p","All tracks, true kaons;neg2LL_p;",400,0,400);
-    All_truee_neglogl_p   = tfs->make<TH1F>("All_truee_neglogl_p","All tracks, true electrons;neg2LL_p;",400,0,400);
-    All_truemu_neglogl_pi = tfs->make<TH1F>("All_truemu_neglogl_pi","All tracks, true muons;neg2LL_pi;",400,0,400);
-    All_truep_neglogl_pi  = tfs->make<TH1F>("All_truep_neglogl_pi","All tracks, true protons;neg2LL_pi;",400,0,400);
-    All_truepi_neglogl_pi = tfs->make<TH1F>("All_truepi_neglogl_pi","All tracks, true pions;neg2LL_pi;",400,0,400);
-    All_trueK_neglogl_pi  = tfs->make<TH1F>("All_trueK_neglogl_pi","All tracks, true kaons;neg2LL_pi;",400,0,400);
-    All_truee_neglogl_pi  = tfs->make<TH1F>("All_truee_neglogl_pi","All tracks, true electrons;neg2LL_pi;",400,0,400);
-    All_truemu_neglogl_K  = tfs->make<TH1F>("All_truemu_neglogl_K","All tracks, true muons;neg2LL_K;",400,0,400);
-    All_truep_neglogl_K   = tfs->make<TH1F>("All_truep_neglogl_K","All tracks, true protons;neg2LL_K;",400,0,400);
-    All_truepi_neglogl_K  = tfs->make<TH1F>("All_truepi_neglogl_K","All tracks, true pions;neg2LL_K;",400,0,400);
-    All_trueK_neglogl_K   = tfs->make<TH1F>("All_trueK_neglogl_K","All tracks, true kaons;neg2LL_K;",400,0,400);
-    All_truee_neglogl_K   = tfs->make<TH1F>("All_truee_neglogl_K","All tracks, true electrons;neg2LL_K;",400,0,400);
-    All_truemu_neglogl_MIP  = tfs->make<TH1F>("All_truemu_neglogl_MIP","All tracks, true muons;neg2LL_MIP;",400,0,400);
-    All_truep_neglogl_MIP   = tfs->make<TH1F>("All_truep_neglogl_MIP","All tracks, true protons;neg2LL_MIP;",400,0,400);
-    All_truepi_neglogl_MIP  = tfs->make<TH1F>("All_truepi_neglogl_MIP","All tracks, true pions;neg2LL_MIP;",400,0,400);
-    All_trueK_neglogl_MIP   = tfs->make<TH1F>("All_trueK_neglogl_MIP","All tracks, true kaons;neg2LL_MIP;",400,0,400);
-    All_truee_neglogl_MIP   = tfs->make<TH1F>("All_truee_neglogl_MIP","All tracks, true electrons;neg2LL_MIP;",400,0,400);
-    All_truemu_neglogl_minmuMIP  = tfs->make<TH1F>("All_truemu_neglogl_minmuMIP","All tracks, true muons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    All_truep_neglogl_minmuMIP   = tfs->make<TH1F>("All_truep_neglogl_minmuMIP","All tracks, true protons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    All_truepi_neglogl_minmuMIP  = tfs->make<TH1F>("All_truepi_neglogl_minmuMIP","All tracks, true pions;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    All_trueK_neglogl_minmuMIP   = tfs->make<TH1F>("All_trueK_neglogl_minmuMIP","All tracks, true kaons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-    All_truee_neglogl_minmuMIP   = tfs->make<TH1F>("All_truee_neglogl_minmuMIP","All tracks, true electrons;min(neg2LL_mu, neg2LL_MIP);",400,0,400);
-
-    All_truemu_neglogl_mu_vslength = tfs->make<TH2F>("All_truemu_neglogl_mu_vslength","All tracks, true muons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    All_truep_neglogl_mu_vslength  = tfs->make<TH2F>("All_truep_neglogl_mu_vslength","All tracks, true protons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    All_truepi_neglogl_mu_vslength = tfs->make<TH2F>("All_truepi_neglogl_mu_vslength","All tracks, true pions;neg2LL_mu;Track length",400,0,400,500,0,500);
-    All_trueK_neglogl_mu_vslength  = tfs->make<TH2F>("All_trueK_neglogl_mu_vslength","All tracks, true kaons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    All_truee_neglogl_mu_vslength  = tfs->make<TH2F>("All_truee_neglogl_mu_vslength","All tracks, true electrons;neg2LL_mu;Track length",400,0,400,500,0,500);
-    All_truemu_neglogl_MIP_vslength = tfs->make<TH2F>("All_truemu_neglogl_MIP_vslength","All tracks, true muons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    All_truep_neglogl_MIP_vslength  = tfs->make<TH2F>("All_truep_neglogl_MIP_vslength","All tracks, true protons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    All_truepi_neglogl_MIP_vslength = tfs->make<TH2F>("All_truepi_neglogl_MIP_vslength","All tracks, true pions;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    All_trueK_neglogl_MIP_vslength  = tfs->make<TH2F>("All_trueK_neglogl_MIP_vslength","All tracks, true kaons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    All_truee_neglogl_MIP_vslength  = tfs->make<TH2F>("All_truee_neglogl_MIP_vslength","All tracks, true electrons;neg2LL_MIP;Track length",400,0,400,500,0,500);
-    All_truemu_neglogl_minmuMIP_vslength = tfs->make<TH2F>("All_truemu_neglogl_minmuMIP_vslength","All tracks, true muons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    All_truep_neglogl_minmuMIP_vslength  = tfs->make<TH2F>("All_truep_neglogl_minmuMIP_vslength","All tracks, true protons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    All_truepi_neglogl_minmuMIP_vslength = tfs->make<TH2F>("All_truepi_neglogl_minmuMIP_vslength","All tracks, true pions;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    All_trueK_neglogl_minmuMIP_vslength  = tfs->make<TH2F>("All_trueK_neglogl_minmuMIP_vslength","All tracks, true kaons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    All_truee_neglogl_minmuMIP_vslength  = tfs->make<TH2F>("All_truee_neglogl_minmuMIP_vslength","All tracks, true electrons;min(neg2LL_mu, neg2LL_MIP);Track length",400,0,400,500,0,500);
-    All_truemu_neglogl_p_vslength = tfs->make<TH2F>("All_truemu_neglogl_p_vslength","All tracks, true muons;neg2LL_p;Track length",400,0,400,500,0,500);
-    All_truep_neglogl_p_vslength  = tfs->make<TH2F>("All_truep_neglogl_p_vslength","All tracks, true protons;neg2LL_p;Track length",400,0,400,500,0,500);
-    All_truepi_neglogl_p_vslength = tfs->make<TH2F>("All_truepi_neglogl_p_vslength","All tracks, true pions;neg2LL_p;Track length",400,0,400,500,0,500);
-    All_trueK_neglogl_p_vslength  = tfs->make<TH2F>("All_trueK_neglogl_p_vslength","All tracks, true kaons;neg2LL_p;Track length",400,0,400,500,0,500);
-    All_truee_neglogl_p_vslength  = tfs->make<TH2F>("All_truee_neglogl_p_vslength","All tracks, true electrons;neg2LL_p;Track length",400,0,400,500,0,500);
-    All_truemu_neglogl_mu_vstrack_theta = tfs->make<TH2F>("All_truemu_neglogl_mu_vstrack_theta","All tracks, true muons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truep_neglogl_mu_vstrack_theta  = tfs->make<TH2F>("All_truep_neglogl_mu_vstrack_theta","All tracks, true protons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truepi_neglogl_mu_vstrack_theta = tfs->make<TH2F>("All_truepi_neglogl_mu_vstrack_theta","All tracks, true pions;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_trueK_neglogl_mu_vstrack_theta  = tfs->make<TH2F>("All_trueK_neglogl_mu_vstrack_theta","All tracks, true kaons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truee_neglogl_mu_vstrack_theta  = tfs->make<TH2F>("All_truee_neglogl_mu_vstrack_theta","All tracks, true electrons;neg2LL_mu;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truemu_neglogl_MIP_vstrack_theta = tfs->make<TH2F>("All_truemu_neglogl_MIP_vstrack_theta","All tracks, true muons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truep_neglogl_MIP_vstrack_theta  = tfs->make<TH2F>("All_truep_neglogl_MIP_vstrack_theta","All tracks, true protons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truepi_neglogl_MIP_vstrack_theta = tfs->make<TH2F>("All_truepi_neglogl_MIP_vstrack_theta","All tracks, true pions;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_trueK_neglogl_MIP_vstrack_theta  = tfs->make<TH2F>("All_trueK_neglogl_MIP_vstrack_theta","All tracks, true kaons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truee_neglogl_MIP_vstrack_theta  = tfs->make<TH2F>("All_truee_neglogl_MIP_vstrack_theta","All tracks, true electrons;neg2LL_MIP;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truemu_neglogl_minmuMIP_vstrack_theta = tfs->make<TH2F>("All_truemu_neglogl_minmuMIP_vstrack_theta","All tracks, true muons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truep_neglogl_minmuMIP_vstrack_theta  = tfs->make<TH2F>("All_truep_neglogl_minmuMIP_vstrack_theta","All tracks, true protons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truepi_neglogl_minmuMIP_vstrack_theta = tfs->make<TH2F>("All_truepi_neglogl_minmuMIP_vstrack_theta","All tracks, true pions;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_trueK_neglogl_minmuMIP_vstrack_theta  = tfs->make<TH2F>("All_trueK_neglogl_minmuMIP_vstrack_theta","All tracks, true kaons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truee_neglogl_minmuMIP_vstrack_theta  = tfs->make<TH2F>("All_truee_neglogl_minmuMIP_vstrack_theta","All tracks, true electrons;min(neg2LL_mu, neg2LL_MIP);Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truemu_neglogl_p_vstrack_theta = tfs->make<TH2F>("All_truemu_neglogl_p_vstrack_theta","All tracks, true muons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truep_neglogl_p_vstrack_theta  = tfs->make<TH2F>("All_truep_neglogl_p_vstrack_theta","All tracks, true protons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truepi_neglogl_p_vstrack_theta = tfs->make<TH2F>("All_truepi_neglogl_p_vstrack_theta","All tracks, true pions;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_trueK_neglogl_p_vstrack_theta  = tfs->make<TH2F>("All_trueK_neglogl_p_vstrack_theta","All tracks, true kaons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truee_neglogl_p_vstrack_theta  = tfs->make<TH2F>("All_truee_neglogl_p_vstrack_theta","All tracks, true electrons;neg2LL_p;Track track_theta",400,0,400,150,0,TMath::Pi());
-    All_truemu_neglogl_mu_vsnhits = tfs->make<TH2F>("All_truemu_neglogl_mu_vsnhits","All tracks, true muons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    All_truep_neglogl_mu_vsnhits  = tfs->make<TH2F>("All_truep_neglogl_mu_vsnhits","All tracks, true protons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    All_truepi_neglogl_mu_vsnhits = tfs->make<TH2F>("All_truepi_neglogl_mu_vsnhits","All tracks, true pions;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    All_trueK_neglogl_mu_vsnhits  = tfs->make<TH2F>("All_trueK_neglogl_mu_vsnhits","All tracks, true kaons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    All_truee_neglogl_mu_vsnhits  = tfs->make<TH2F>("All_truee_neglogl_mu_vsnhits","All tracks, true electrons;neg2LL_mu;No. hits",400,0,400,500,0,500);
-    All_truemu_neglogl_MIP_vsnhits = tfs->make<TH2F>("All_truemu_neglogl_MIP_vsnhits","All tracks, true muons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    All_truep_neglogl_MIP_vsnhits  = tfs->make<TH2F>("All_truep_neglogl_MIP_vsnhits","All tracks, true protons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    All_truepi_neglogl_MIP_vsnhits = tfs->make<TH2F>("All_truepi_neglogl_MIP_vsnhits","All tracks, true pions;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    All_trueK_neglogl_MIP_vsnhits  = tfs->make<TH2F>("All_trueK_neglogl_MIP_vsnhits","All tracks, true kaons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    All_truee_neglogl_MIP_vsnhits  = tfs->make<TH2F>("All_truee_neglogl_MIP_vsnhits","All tracks, true electrons;neg2LL_MIP;No. hits",400,0,400,500,0,500);
-    All_truemu_neglogl_minmuMIP_vsnhits = tfs->make<TH2F>("All_truemu_neglogl_minmuMIP_vsnhits","All tracks, true muons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    All_truep_neglogl_minmuMIP_vsnhits  = tfs->make<TH2F>("All_truep_neglogl_minmuMIP_vsnhits","All tracks, true protons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    All_truepi_neglogl_minmuMIP_vsnhits = tfs->make<TH2F>("All_truepi_neglogl_minmuMIP_vsnhits","All tracks, true pions;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    All_trueK_neglogl_minmuMIP_vsnhits  = tfs->make<TH2F>("All_trueK_neglogl_minmuMIP_vsnhits","All tracks, true kaons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    All_truee_neglogl_minmuMIP_vsnhits  = tfs->make<TH2F>("All_truee_neglogl_minmuMIP_vsnhits","All tracks, true electrons;min(neg2LL_mu, neg2LL_MIP);No. hits",400,0,400,500,0,500);
-    All_truemu_neglogl_p_vsnhits = tfs->make<TH2F>("All_truemu_neglogl_p_vsnhits","All tracks, true muons;neg2LL_p;No. hits",400,0,400,500,0,500);
-    All_truep_neglogl_p_vsnhits  = tfs->make<TH2F>("All_truep_neglogl_p_vsnhits","All tracks, true protons;neg2LL_p;No. hits",400,0,400,500,0,500);
-    All_truepi_neglogl_p_vsnhits = tfs->make<TH2F>("All_truepi_neglogl_p_vsnhits","All tracks, true pions;neg2LL_p;No. hits",400,0,400,500,0,500);
-    All_trueK_neglogl_p_vsnhits  = tfs->make<TH2F>("All_trueK_neglogl_p_vsnhits","All tracks, true kaons;neg2LL_p;No. hits",400,0,400,500,0,500);
-    All_truee_neglogl_p_vsnhits  = tfs->make<TH2F>("All_truee_neglogl_p_vsnhits","All tracks, true electrons;neg2LL_p;No. hits",400,0,400,500,0,500);
-
-    All_truemu_neglogl_muvsp  = tfs->make<TH2F>("All_truemu_neglogl_muvsp","All tracks, true muons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    All_truep_neglogl_muvsp   = tfs->make<TH2F>("All_truep_neglogl_muvsp","All tracks, true protons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    All_truepi_neglogl_muvsp  = tfs->make<TH2F>("All_truepi_neglogl_muvsp","All tracks, true pions;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    All_trueK_neglogl_muvsp   = tfs->make<TH2F>("All_trueK_neglogl_muvsp","All tracks, true kaons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    All_truee_neglogl_muvsp   = tfs->make<TH2F>("All_truee_neglogl_muvsp","All tracks, true electrons;neg2LL_mu;neg2LL_p",400,0,400,400,0,400);
-    All_truemu_neglogl_muvspi  = tfs->make<TH2F>("All_truemu_neglogl_muvspi","All tracks, true muons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    All_truep_neglogl_muvspi   = tfs->make<TH2F>("All_truep_neglogl_muvspi","All tracks, true protons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    All_truepi_neglogl_muvspi  = tfs->make<TH2F>("All_truepi_neglogl_muvspi","All tracks, true pions;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    All_trueK_neglogl_muvspi   = tfs->make<TH2F>("All_trueK_neglogl_muvspi","All tracks, true kaons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-    All_truee_neglogl_muvspi   = tfs->make<TH2F>("All_truee_neglogl_muvspi","All tracks, true electrons;neg2LL_mu;neg2LL_pi",400,0,400,400,0,400);
-
-    All_truemu_neglogl_MIPvsp  = tfs->make<TH2F>("All_truemu_neglogl_MIPvsp","All tracks, true muons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    All_truep_neglogl_MIPvsp   = tfs->make<TH2F>("All_truep_neglogl_MIPvsp","All tracks, true protons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    All_truepi_neglogl_MIPvsp   = tfs->make<TH2F>("All_truepi_neglogl_MIPvsp","All tracks, true pions;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    All_trueK_neglogl_MIPvsp   = tfs->make<TH2F>("All_trueK_neglogl_MIPvsp","All tracks, true kaons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    All_truee_neglogl_MIPvsp   = tfs->make<TH2F>("All_truee_neglogl_MIPvsp","All tracks, true electrons;neg2LL_MIP;neg2LL_p",400,0,400,400,0,400);
-    All_truemu_neglogl_minmuMIPvsp  = tfs->make<TH2F>("All_truemu_neglogl_minmuMIPvsp","All tracks, true muons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    All_truep_neglogl_minmuMIPvsp   = tfs->make<TH2F>("All_truep_neglogl_minmuMIPvsp","All tracks, true protons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    All_truepi_neglogl_minmuMIPvsp   = tfs->make<TH2F>("All_truepi_neglogl_minmuMIPvsp","All tracks, true pions;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    All_trueK_neglogl_minmuMIPvsp   = tfs->make<TH2F>("All_trueK_neglogl_minmuMIPvsp","All tracks, true kaons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-    All_truee_neglogl_minmuMIPvsp   = tfs->make<TH2F>("All_truee_neglogl_minmuMIPvsp","All tracks, true electrons;min(neg2LL_mu, neg2LL_MIP);neg2LL_p",400,0,400,400,0,400);
-
-    All_truemu_neglogl_muoverp  = tfs->make<TH1F>("All_truemu_neglogl_muoverp","All tracks, true muons;neg2LL_mu/neg2LL_p;",200,0,50);
-    All_truep_neglogl_muoverp   = tfs->make<TH1F>("All_truep_neglogl_muoverp","All tracks, true protons;neg2LL_mu/neg2LL_p;",200,0,50);
-    All_truepi_neglogl_muoverp  = tfs->make<TH1F>("All_truepi_neglogl_muoverp","All tracks, true pions;neg2LL_mu/neg2LL_p;",200,0,50);
-    All_trueK_neglogl_muoverp   = tfs->make<TH1F>("All_trueK_neglogl_muoverp","All tracks, true kaons;neg2LL_mu/neg2LL_p;",200,0,50);
-    All_truee_neglogl_muoverp   = tfs->make<TH1F>("All_truee_neglogl_muoverp","All tracks, true electrons;neg2LL_mu/neg2LL_p;",200,0,50);
-    All_truemu_neglogl_muminusp  = tfs->make<TH1F>("All_truemu_neglogl_muminusp","All tracks, true muons;neg2LL_mu-neg2LL_p;",200,-200,200);
-    All_truep_neglogl_muminusp   = tfs->make<TH1F>("All_truep_neglogl_muminusp","All tracks, true protons;neg2LL_mu-neg2LL_p;",200,-200,200);
-    All_truepi_neglogl_muminusp  = tfs->make<TH1F>("All_truepi_neglogl_muminusp","All tracks, true pions;neg2LL_mu-neg2LL_p;",200,-200,200);
-    All_trueK_neglogl_muminusp   = tfs->make<TH1F>("All_trueK_neglogl_muminusp","All tracks, true kaons;neg2LL_K;",200,-200,200);
-    All_truee_neglogl_muminusp   = tfs->make<TH1F>("All_truee_neglogl_muminusp","All tracks, true electrons;neg2LL_K;",200,-200,200);
-
-    All_truemu_neglogl_MIPminusp  = tfs->make<TH1F>("All_truemu_neglogl_MIPminusp","All tracks, true muons;neg2LL_MIP-neg2LL_p;",200,-200,200);
-    All_truep_neglogl_MIPminusp   = tfs->make<TH1F>("All_truep_neglogl_MIPminusp","All tracks, true protons;neg2LL_MIP-neg2LL_p;",200,-200,200);
-    All_truepi_neglogl_MIPminusp   = tfs->make<TH1F>("All_truepi_neglogl_MIPminusp","All tracks, true pions;neg2LL_MIP-neg2LL_p;",200,-200,200);
-    All_trueK_neglogl_MIPminusp   = tfs->make<TH1F>("All_trueK_neglogl_MIPminusp","All tracks, true kaons;neg2LL_MIP-neg2LL_p;",200,-200,200);
-    All_truee_neglogl_MIPminusp   = tfs->make<TH1F>("All_truee_neglogl_MIPminusp","All tracks, true electrons;neg2LL_MIP-neg2LL_p;",200,-200,200);
-    All_truemu_neglogl_minmuMIPminusp  = tfs->make<TH1F>("All_truemu_neglogl_minmuMIPminusp","All tracks, true muons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",200,-200,200);
-    All_truep_neglogl_minmuMIPminusp   = tfs->make<TH1F>("All_truep_neglogl_minmuMIPminusp","All tracks, true protons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",200,-200,200);
-    All_truepi_neglogl_minmuMIPminusp   = tfs->make<TH1F>("All_truepi_neglogl_minmuMIPminusp","All tracks, true pions;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",200,-200,200);
-    All_trueK_neglogl_minmuMIPminusp   = tfs->make<TH1F>("All_trueK_neglogl_minmuMIPminusp","All tracks, true kaons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",200,-200,200);
-    All_truee_neglogl_minmuMIPminusp   = tfs->make<TH1F>("All_truee_neglogl_minmuMIPminusp","All tracks, true electrons;min(neg2LL_MIP, neg2LL_mu)-neg2LL_p;",200,-200,200);
-
-    All_truemu_smallest_neglogl  = tfs->make<TH1F>("All_truemu_smallest_neglogl","All tracks, true muons;Particle type with smallest neg2LL;",5,0,5);
-    All_truep_smallest_neglogl   = tfs->make<TH1F>("All_truep_smallest_neglogl","All tracks, true protons;Particle type with smallest neg2LL;",5,0,5);
-    All_truepi_smallest_neglogl  = tfs->make<TH1F>("All_truepi_smallest_neglogl","All tracks, true pions;Particle type with smallest neg2LL;",5,0,5);
-    All_trueK_smallest_neglogl   = tfs->make<TH1F>("All_trueK_smallest_neglogl","All tracks, true kaons;Particle type with smallest neg2LL;",5,0,5);
-    All_truee_smallest_neglogl   = tfs->make<TH1F>("All_truee_smallest_neglogl","All tracks, true electrons;Particle type with smallest neg2LL;",5,0,5);
-
-    for (size_t i=1; i<=5; i++){
-      All_truemu_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      All_truep_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      All_truepi_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      All_trueK_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-      All_truee_smallest_neglogl->GetXaxis()->SetBinLabel(i,particles[i-1]);
-    }
-
-    All_truemu_PIDA = tfs->make<TH1F>("All_truemu_PIDA","All tracks, true muons;PIDA;",300,0,30);
-    All_truep_PIDA  = tfs->make<TH1F>("All_truep_PIDA","All tracks, true protons;PIDA;",300,0,30);
-    All_truepi_PIDA = tfs->make<TH1F>("All_truepi_PIDA","All tracks, true pions;PIDA;",300,0,30);
-    All_trueK_PIDA  = tfs->make<TH1F>("All_trueK_PIDA","All tracks, true kaons;PIDA;",300,0,30);
-    All_truee_PIDA  = tfs->make<TH1F>("All_truee_PIDA","All tracks, true electrons;PIDA;",300,0,30);
 
     All_chargeEndOverStart_directionCorrect   = tfs->make<TH1F>("All_chargeEndOverStart_directionCorrect", "All tracks;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
     All_chargeEndOverStart_directionIncorrect = tfs->make<TH1F>("All_chargeEndOverStart_directionIncorrect", "All tracks;Charge_{End of track}/Charge_{Start of track};", 100, 0, 10);
@@ -1870,12 +797,6 @@ void ParticleIdValidationPlots::beginJob(){
     Contained_chargeEndOverStartVersusNHits_directionCorrect   = tfs->make<TH2F>("Contained_chargeEndOverStartVersusNHits_directionCorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};number of hits used in average", 200, 0, 10, 6, 0, 6);
     Contained_chargeEndOverStartVersusNHits_directionIncorrect = tfs->make<TH2F>("Contained_chargeEndOverStartVersusNHits_directionIncorrect", "Contained tracks only;Charge_{End of track}/Charge_{Start of track};", 200, 0, 10, 6, 0, 6);
     ;
-
-    All_truemu_dEdxtr_len = tfs->make<TH2F>("All_truemu_dEdxtr_len","All tracks, true muons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_truep_dEdxtr_len  = tfs->make<TH2F>("All_truep_dEdxtr_len","All tracks, true protons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_truepi_dEdxtr_len = tfs->make<TH2F>("All_truepi_dEdxtr_len","All tracks, true pions;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_trueK_dEdxtr_len  = tfs->make<TH2F>("All_trueK_dEdxtr_len","All tracks, true kaons;Track length (cm);dE/dx",100,0,700,100,0,50);
-    All_truee_dEdxtr_len  = tfs->make<TH2F>("All_truee_dEdxtr_len","All tracks, true electrons;Track length (cm);dE/dx",100,0,700,100,0,50);
 
     All_correctdirection = tfs->make<TH2F>("All_correctdirection","All tracks, reconstructed correct direction;true particle;PID direction correct?",4,0,4,2,0,2);
     All_incorrectdirection = tfs->make<TH2F>("All_incorrectdirection","All tracks, reconstructed incorrect direction;true particle;PID direction correct?",4,0,4,2,0,2);
