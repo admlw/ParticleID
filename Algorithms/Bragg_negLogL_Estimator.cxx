@@ -188,8 +188,8 @@ namespace particleid{
     } // residual range shift
 
     if (n_hits_used_total == 0)
-      return 9999999;
-    else return -2*std::log(likelihoodNdf);
+      return -9999999;
+    else return likelihoodNdf;//-2*std::log(likelihoodNdf);
 
   } // getneglogL
 
