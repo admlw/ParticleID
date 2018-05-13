@@ -1,21 +1,38 @@
 #include "LandauGaussianPlot.h"
 
+/**
+ * This uses the landau-gaussian in LandauGaussian.h to produce a 
+ * "probability map" for protons, muons, and muons with no Bragg Peak. It
+ * also produces a profile TGraphAsymmErrors where the point represents
+ * the MPV of the distribution and the upper and lower limits represent
+ * the 84th and 16th quantiles.
+ * This is mostly for demonstration purposes.
+ */
+
 void LandauGaussianPlot(){
 
-  int nxbins = 1000;
-  int nybins = 1000;
-  
+  const int nxbins = 50;
+  const double xbinlow = 0;
+  const double xbinhigh = 30;
+  const int nybins = 1000;
+  const double ybinlow = 0;
+  const double ybinhigh = 50;
+
   // default data:
-  double muonlandauwidth = 0.09;
-  double muongaussianwidth = 0.2;
-  double protonlandauwidth = 0.19;
-  double protongaussianwidth = 0.2;
-    
+  /**
+    double muonlandauwidth = 0.09;
+    double muongaussianwidth = 0.2;
+    double protonlandauwidth = 0.19;
+    double protongaussianwidth = 0.2;
+    */
   // default MC:
-  //double muonlandauwidth = 0.09;
-  //double muongaussianwidth = 0.09;
-  //double protonlandauwidth = 0.19;
-  //double protongaussianwidth = 0.09;
+  double muonlandauwidth = 0.09;
+  double muongaussianwidth = 0.09;
+  double protonlandauwidth = 0.19;
+  double protongaussianwidth = 0.09;
+
+  double muonMeanMPVCorrection = 0.60302250;
+  double protonMeanMPVCorrection = 1.1297;
 
   Theory_dEdx_resrange();
 
@@ -24,11 +41,24 @@ void LandauGaussianPlot(){
 
   /** muon */
 
-  TH2D *h_muon = new TH2D("h_muon", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
+  /** variables for creating TGraphAsymmErrors*/
+  double muon_resRg[nxbins];
+  double muon_resRg_up[nxbins];
+  double muon_resRg_down[nxbins];
+  double muon_mpv[nxbins];
+  double muon_errup[nxbins];
+  double muon_errdown[nxbins];
+
+  TH2D *h_muon = new TH2D("h_muon", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, xbinlow, xbinhigh, nybins, ybinlow, ybinhigh);
+
+  double xbinwidth = h_muon->GetXaxis()->GetBinLowEdge(nxbins) / h_muon->GetNbinsX();
+  double halfbinwidthx = xbinwidth/2.0;
+  double ybinwidth = h_muon->GetYaxis()->GetBinLowEdge(nybins) / h_muon->GetNbinsY();
+  double halfbinwidthy = ybinwidth/2.0; 
 
   for (int i = 0; i < nxbins; i++){
 
-    langaus->SetParameters(muonlandauwidth, g_ThdEdxRR_Muon->Eval((i)*30./(double)nxbins, 0, "S"), 1.0, muongaussianwidth);
+    langaus->SetParameters(muonlandauwidth, g_ThdEdxRR_Muon->Eval((i)*xbinhigh/(double)nxbins, 0, "S")-muonMeanMPVCorrection, 1.0, muongaussianwidth);
 
     for (int j = 0; j < nybins; j++){
 
@@ -36,7 +66,29 @@ void LandauGaussianPlot(){
 
     }
 
+    /** 
+     * project out chosen x bin in order to use
+     * GetQuantiles method which is only available in TH1s, then find
+     * the 16th and 84th quantiles
+     */
+
+    TH1D* h_muon_proj_y = (TH1D*)h_muon->ProjectionY("h_muon_proj_y", i, i+1);
+    Double_t yq[2];
+    Double_t xq[2] = {0.16, 0.84};
+    h_muon_proj_y->GetQuantiles(1,&yq[0], &xq[0]);
+    h_muon_proj_y->GetQuantiles(1,&yq[1], &xq[1]);
+
+    muon_resRg[i] = i*xbinhigh/double(nxbins) - halfbinwidthx;
+    muon_resRg_up[i] = 0;
+    muon_resRg_down[i] = 0;
+    muon_mpv[i] = h_muon_proj_y->GetBinCenter(h_muon_proj_y->GetMaximumBin());
+    muon_errup[i] = yq[1] - muon_mpv[i];
+    muon_errdown[i] = muon_mpv[i] - yq[0];
+
   }
+
+  TGraphAsymmErrors* gr_muon_profile_x = new TGraphAsymmErrors(nxbins, muon_resRg, muon_mpv, muon_resRg_down, muon_resRg_up, muon_errdown, muon_errup);
+  gr_muon_profile_x->SetName("gr_muon_profile_x");
 
   TCanvas *c1 = new TCanvas("c1", "c1", 500, 500);
   c1->cd();
@@ -45,19 +97,49 @@ void LandauGaussianPlot(){
 
   /** muonnobragg */
 
-  TH2D *h_muonnobragg = new TH2D("h_muonnobragg", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
+  /** variables for creating TGraphAsymmErrors*/
+  double muonnobragg_resRg[nxbins];
+  double muonnobragg_resRg_up[nxbins];
+  double muonnobragg_resRg_down[nxbins];
+  double muonnobragg_mpv[nxbins];
+  double muonnobragg_errup[nxbins];
+  double muonnobragg_errdown[nxbins];
+
+  TH2D *h_muonnobragg = new TH2D("h_muonnobragg", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, xbinlow, xbinhigh, nybins, ybinlow, ybinhigh);
 
   for (int i = 0; i < nxbins; i++){
 
-    langaus->SetParameters(muonlandauwidth, g_ThdEdxRR_MuonNoBragg->Eval((i)*30./(double)nxbins, 0, "S"), 1.0, muongaussianwidth);
+    langaus->SetParameters(muonlandauwidth, g_ThdEdxRR_MuonNoBragg->Eval((i)*xbinhigh/(double)nxbins, 0, "S"), 1.0, muongaussianwidth);
 
-  for (int j = 0; j < nybins; j++){
+    for (int j = 0; j < nybins; j++){
 
       h_muonnobragg->SetBinContent(i,j,langaus->Eval(h_muonnobragg->GetYaxis()->GetBinCenter(j)));
 
     }
 
+    /** 
+     * project out chosen x bin in order to use
+     * GetQuantiles method which is only available in TH1s, then find
+     * the 16th and 84th quantiles
+     */
+
+    TH1D* h_muonnobragg_proj_y = (TH1D*)h_muonnobragg->ProjectionY("h_muonnobragg_proj_y", i, i+1);
+    Double_t yq[2];
+    Double_t xq[2] = {0.16, 0.84};
+    h_muonnobragg_proj_y->GetQuantiles(1,&yq[0], &xq[0]);
+    h_muonnobragg_proj_y->GetQuantiles(1,&yq[1], &xq[1]);
+
+    muonnobragg_resRg[i] = i*xbinhigh/double(nxbins) - halfbinwidthx;
+    muonnobragg_resRg_up[i] = 0;
+    muonnobragg_resRg_down[i] = 0;
+    muonnobragg_mpv[i] = h_muonnobragg_proj_y->GetBinCenter(h_muonnobragg_proj_y->GetMaximumBin());
+    muonnobragg_errdown[i] = muonnobragg_mpv[i] - yq[0];
+    muonnobragg_errup[i] = yq[1] - muonnobragg_mpv[i];
+
   }
+
+  TGraphAsymmErrors* gr_muonnobragg_profile_x = new TGraphAsymmErrors(nxbins, muonnobragg_resRg, muonnobragg_mpv, muonnobragg_resRg_down, muonnobragg_resRg_up, muonnobragg_errdown, muonnobragg_errup);
+  gr_muonnobragg_profile_x->SetName("gr_muonnobragg_profile_x");
 
   TCanvas *c3 = new TCanvas("c3", "c3", 500, 500);
   c3->cd();
@@ -66,11 +148,20 @@ void LandauGaussianPlot(){
 
   /** proton */
 
-  TH2D *h_proton = new TH2D("h_proton", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
+  /** variables for creating TGraphAsymmErrors*/
+  double proton_resRg[nxbins];
+  double proton_resRg_up[nxbins];
+  double proton_resRg_down[nxbins];
+  double proton_mpv[nxbins];
+  double proton_errup[nxbins];
+  double proton_errdown[nxbins];
+
+
+  TH2D *h_proton = new TH2D("h_proton", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, xbinlow, xbinhigh, nybins, ybinlow, ybinhigh);
 
   for (int i = 0; i < nxbins; i++){
 
-    langaus->SetParameters(protonlandauwidth, g_ThdEdxRR_Proton->Eval((i)*30./(double)nxbins, 0, "S"), 1.0, protonlandauwidth);
+    langaus->SetParameters(protonlandauwidth, (g_ThdEdxRR_Proton->Eval((i)*xbinhigh/(double)nxbins, 0, "S"))-protonMeanMPVCorrection, 1.0, protongaussianwidth);
 
     for (int j = 0; j < nybins; j++){
 
@@ -78,8 +169,29 @@ void LandauGaussianPlot(){
 
     }
 
+    /** 
+     * project out chosen x bin in order to use
+     * GetQuantiles method which is only available in TH1s, then find
+     * the 16th and 84th quantiles
+     */
+
+    TH1D* h_proton_proj_y = (TH1D*)h_proton->ProjectionY("h_proton_proj_y", i, i+1);
+    Double_t yq[2];
+    Double_t xq[2] = {0.16, 0.84};
+    h_proton_proj_y->GetQuantiles(1,&yq[0], &xq[0]);
+    h_proton_proj_y->GetQuantiles(1,&yq[1], &xq[1]);
+
+    proton_resRg[i] = i*xbinhigh/double(nxbins) - halfbinwidthx;
+    proton_resRg_up[i] = 0;
+    proton_resRg_down[i] = 0;
+    proton_mpv[i] = h_proton_proj_y->GetBinCenter(h_proton_proj_y->GetMaximumBin());
+    proton_errdown[i] = proton_mpv[i] - yq[0];
+    proton_errup[i] = yq[1] - proton_mpv[i];
+
   }
 
+  TGraphAsymmErrors* gr_proton_profile_x = new TGraphAsymmErrors(nxbins, proton_resRg, proton_mpv, proton_resRg_down, proton_resRg_up, proton_errdown, proton_errup);
+  gr_proton_profile_x->SetName("gr_proton_profile_x");
 
   TCanvas *c2 = new TCanvas("c2", "c2", 500, 500);
   c2->cd();
@@ -88,7 +200,7 @@ void LandauGaussianPlot(){
 
   /** combined */
 
-  TH2D *h_combined = new TH2D("h_combined", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, 0, 30, nybins, 0, 20);
+  TH2D *h_combined = new TH2D("h_combined", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, xbinlow, xbinhigh, nybins, ybinlow, ybinhigh);
 
   for (int i = 0; i < nxbins*nybins; i++){
 
@@ -96,12 +208,24 @@ void LandauGaussianPlot(){
 
   }
 
+  // Write histograms and graphs to file
   TFile* f = new TFile("likelihoodMaps.root", "RECREATE");
   f->cd();
+  g_ThdEdxRR_Proton->SetName("gr_proton");
+  g_ThdEdxRR_Proton->Write();
+  g_ThdEdxRR_Muon->SetName("gr_muon");
+  g_ThdEdxRR_Muon->Write();
+  g_ThdEdxRR_MuonNoBragg->SetName("gr_muonnobragg");
+  g_ThdEdxRR_MuonNoBragg->Write();
   h_muon->Write();
   h_muonnobragg->Write();
   h_proton->Write();
   h_combined->Write();
+  gr_muon_profile_x->Write();
+  gr_muonnobragg_profile_x->Write();
+  gr_proton_profile_x->Write();
+
+
 }
 
 void Theory_dEdx_resrange(){
@@ -217,7 +341,7 @@ void Theory_dEdx_resrange(){
   g_ThdEdxRR_MuonNoBragg->SetPoint(105, 0.45,  1.6);
   g_ThdEdxRR_MuonNoBragg->SetPoint(106, 0.15,  1.6);
 
- 
+
   // Proton
   g_ThdEdxRR_Proton = new TGraph(107);
   g_ThdEdxRR_Proton->SetPoint(0,   31.95, 4.14);
