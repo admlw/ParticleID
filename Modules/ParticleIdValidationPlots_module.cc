@@ -818,7 +818,6 @@ void ParticleIdValidationPlots::endSubRun(art::SubRun const &sr) {
    // Note: the entire subrun's POT is recorded in the tree for every event.
    // You must only add it once per subrun to get the correct number.
 
-   std::cout << "Hello I'm ending a subRun and setting POT" << std::endl;
    art::Handle<sumdata::POTSummary> potsum_h;
 
    if (!isData) { // MC only (data is dealt with using Zarko's script)
