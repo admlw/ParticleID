@@ -51,3 +51,6 @@ ignore/*
 *.png
 *.pdf
 *.list*
+
+# Annoying vim things
+*.nfs*
