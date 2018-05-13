@@ -12,10 +12,21 @@ braggalgo_mcc8:
   dEdxLandauWidthMu : 0.09
   dEdxLandauWidthPi : 0.09
   dEdxLandauWidthK  : 0.09
+  dEdxLandauWidthMIP: 0.09
   dEdxGausWidthP    : 0.09
   dEdxGausWidthMu   : 0.09
   dEdxGausWidthPi   : 0.09
   dEdxGausWidthK    : 0.09
+  dEdxGausWidthMIP  : 0.09
+
+  # offsets: 
+  #   - negative shifts the peak of the landaugaussian left 
+  #   - positive shifts the peak of the landaugaussian right
+  PeakOffsetP : 10
+  PeakOffsetMu: 0
+  PeakOffsetPi: 0
+  PeakOffsetK : 0
+  PeakOffset  : 0
 
   NHitsToDrop: 1
 
@@ -39,10 +50,21 @@ braggalgo_mcc8_data:
   dEdxLandauWidthMu : 0.09
   dEdxLandauWidthPi : 0.09
   dEdxLandauWidthK  : 0.09
+  dEdxLandauWidthMIP: 0.09
   dEdxGausWidthP    : 0.20
   dEdxGausWidthMu   : 0.20
   dEdxGausWidthPi   : 0.20
   dEdxGausWidthK    : 0.20
+  dEdxGausWidthMIP  : 0.20
+
+  # offsets: 
+  #   - negative shifts the peak of the landaugaussian left 
+  #   - positive shifts the peak of the landaugaussian right
+  PeakOffsetP : 0
+  PeakOffsetMu: 0
+  PeakOffsetPi: 0
+  PeakOffsetK : 0
+  PeakOffset  : 0
 
   NHitsToDrop: 1
 

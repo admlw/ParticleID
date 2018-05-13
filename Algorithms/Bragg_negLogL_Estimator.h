@@ -49,10 +49,17 @@ namespace particleid{
     double gausWidth_pi;
     double gausWidth_k;
     double gausWidth_p;
+    double gausWidth_mip;
     double landauWidth_mu;
     double landauWidth_pi;
     double landauWidth_k;
     double landauWidth_p;
+    double landauWidth_mip;
+    double offset_p;
+    double offset_mu;
+    double offset_pi;
+    double offset_k;
+    double offset_mip;
     int nHitsToDrop;
     double endPointFloatShort;
     double endPointFloatLong;
