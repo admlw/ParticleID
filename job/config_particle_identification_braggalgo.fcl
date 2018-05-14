@@ -7,17 +7,17 @@ BEGIN_PROLOG
 braggalgo_mcc8:
 {
 
-  # dEdx widths
-  dEdxLandauWidthP  : 0.19
-  dEdxLandauWidthMu : 0.09
-  dEdxLandauWidthPi : 0.09
-  dEdxLandauWidthK  : 0.09
-  dEdxLandauWidthMIP: 0.09
-  dEdxGausWidthP    : 0.09
-  dEdxGausWidthMu   : 0.09
-  dEdxGausWidthPi   : 0.09
-  dEdxGausWidthK    : 0.09
-  dEdxGausWidthMIP  : 0.09
+  # dEdx widths, per plane
+  dEdxLandauWidthP  : [ 0.19, 1.19, 2.19 ]
+  dEdxLandauWidthMu : [ 0.09, 1.09, 2.09 ]
+  dEdxLandauWidthPi : [ 0.09, 1.09, 2.09 ]
+  dEdxLandauWidthK  : [ 0.09, 1.09, 2.09 ]
+  dEdxLandauWidthMIP: [ 0.09, 1.09, 2.09 ]
+  dEdxGausWidthP    : [ 0.09, 1.09, 2.09 ]
+  dEdxGausWidthMu   : [ 0.09, 1.09, 2.09 ]
+  dEdxGausWidthPi   : [ 0.09, 1.09, 2.09 ]
+  dEdxGausWidthK    : [ 0.09, 1.09, 2.09 ]
+  dEdxGausWidthMIP  : [ 0.09, 1.09, 2.09 ]
 
   # offsets: 
   #   - negative shifts the peak of the landaugaussian left 
@@ -45,17 +45,17 @@ braggalgo_mcc8:
 braggalgo_mcc8_data:
 {
 
-  # dEdx widths
-  dEdxLandauWidthP  : 0.19
-  dEdxLandauWidthMu : 0.09
-  dEdxLandauWidthPi : 0.09
-  dEdxLandauWidthK  : 0.09
-  dEdxLandauWidthMIP: 0.09
-  dEdxGausWidthP    : 0.20
-  dEdxGausWidthMu   : 0.20
-  dEdxGausWidthPi   : 0.20
-  dEdxGausWidthK    : 0.20
-  dEdxGausWidthMIP  : 0.20
+  # dEdx widths, per plane
+  dEdxLandauWidthP  : [ 0.19, 1.19, 2.19 ]
+  dEdxLandauWidthMu : [ 0.09, 1.09, 2.09 ]
+  dEdxLandauWidthPi : [ 0.09, 1.09, 2.09 ]
+  dEdxLandauWidthK  : [ 0.09, 1.09, 2.09 ]
+  dEdxLandauWidthMIP: [ 0.09, 1.09, 2.09 ]
+  dEdxGausWidthP    : [ 0.20, 1.20, 2.20 ]
+  dEdxGausWidthMu   : [ 0.20, 1.20, 2.20 ]
+  dEdxGausWidthPi   : [ 0.20, 1.20, 2.20 ]
+  dEdxGausWidthK    : [ 0.20, 1.20, 2.20 ]
+  dEdxGausWidthMIP  : [ 0.20, 1.20, 2.20 ]
 
   # offsets: 
   #   - negative shifts the peak of the landaugaussian left 

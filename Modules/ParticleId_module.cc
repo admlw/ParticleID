@@ -156,225 +156,259 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = caloFromTracks.at(track->ID());
 
-    // for time being, only use Y plane calorimetry
+    std::vector<anab::sParticleIDAlgScores> AlgScoresVec;
+
+    // Variables for ParticleID Class
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_mu    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_p     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_pi    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_k     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_mu    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_p     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_pi    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_k     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> noBragg_fwd_MIP = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+
+    std::vector<anab::sParticleIDAlgScores> PIDAval_mean   = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> PIDAval_median = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> PIDAval_kde    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> dEdxtruncmean  = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> trk_depE       = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+   
+    // only need a single entry for this... actually can probably remove this eventually.
+    anab::sParticleIDAlgScores trk_rangeE_mu;  
+    anab::sParticleIDAlgScores trk_rangeE_p;   
+    anab::sParticleIDAlgScores trklen;
+    
     art::Ptr< anab:: Calorimetry > calo;
     int planenum = -1;
     for (auto c : caloFromTrack){
       planenum = c->PlaneID().Plane;
-      if (planenum != 2) continue; // Only use calorimetry from collection plane
       calo = c;
-    }
 
-    // Check that caloFromTrack is a valid object
-    if (!calo){
-      std::cout << "[ParticleID] Calorimetry on plane " << planenum << " is unavailable. Skipping." << std::endl;
-      continue;
-    }
+      // Check that caloFromTrack is a valid object
+      if (!calo){
+        std::cout << "[ParticleID] Calorimetry on plane " << planenum << " is unavailable. Skipping." << std::endl;
+        continue;
+      }
 
-    std::vector<double> dEdx = calo->dEdx();
-    std::vector<double> resRange = calo->ResidualRange();
-    std::vector<double> trkpitchvec = calo->TrkPitchVec();
+      std::vector<double> dEdx = calo->dEdx();
+      std::vector<double> resRange = calo->ResidualRange();
+      std::vector<double> trkpitchvec = calo->TrkPitchVec();
 
-    // int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
-    // std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
+      // int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
+      // std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
 
-    // Vairables for ParticleID Class
-    std::vector<anab::sParticleIDAlgScores> AlgScoresVec;
-    anab::sParticleIDAlgScores Bragg_fwd_mu;
-    anab::sParticleIDAlgScores Bragg_fwd_p;
-    anab::sParticleIDAlgScores Bragg_fwd_pi;
-    anab::sParticleIDAlgScores Bragg_fwd_k;
-    anab::sParticleIDAlgScores Bragg_bwd_mu;
-    anab::sParticleIDAlgScores Bragg_bwd_p;
-    anab::sParticleIDAlgScores Bragg_bwd_pi;
-    anab::sParticleIDAlgScores Bragg_bwd_k;
-    anab::sParticleIDAlgScores noBragg_fwd_MIP;
-    anab::sParticleIDAlgScores PIDAval_mean;
-    anab::sParticleIDAlgScores PIDAval_median;
-    anab::sParticleIDAlgScores PIDAval_kde;
-    anab::sParticleIDAlgScores dEdxtruncmean;
-    anab::sParticleIDAlgScores trklen;
-    anab::sParticleIDAlgScores trk_depE;
-    anab::sParticleIDAlgScores trk_rangeE_mu;
-    anab::sParticleIDAlgScores trk_rangeE_p;
+      // bool   isContained = false;
 
-    // bool   isContained = false;
+      // Evaluate PID only for fully-contained particles
+      // TVector3 trackStart = track->Vertex();
+      // TVector3 trackEnd = track->End();
 
-    // Evaluate PID only for fully-contained particles
-    // TVector3 trackStart = track->Vertex();
-    // TVector3 trackEnd = track->End();
+      // if (fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
+      //   isContained = true;
+      // }
 
-    // if (fid.isInFiducialVolume(trackStart, fv) && fid.isInFiducialVolume(trackEnd, fv)){
-    //   isContained = true;
-    // }
+      // if (isContained){
 
-    // if (isContained){
+      // Check if particle has reconstructed "daughters" - if it does, there may be no Bragg peak
+      // and PID might not be accurate
+      // if (nDaughters == 0){
 
-    // Check if particle has reconstructed "daughters" - if it does, there may be no Bragg peak
-    // and PID might not be accurate
-    // if (nDaughters == 0){
+      // std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
 
-    // std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
+      /**
+       * Algorithm 1: BraggPeakLLH
+       * Uses B. Ballers theory, along with landau-gaussian distributions with
+       * widths measured from data and simulation to estimate the likelihood for
+       * each hit in a track to have come from each particle species.
+       */
+      Bragg_fwd_mu.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_fwd_p.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_fwd_pi.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_fwd_k.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_bwd_mu.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_bwd_p.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_bwd_pi.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_bwd_k.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_fwd_mu.at(planenum).fVariableType = anab::kLogL_fwd;
+      Bragg_fwd_p.at(planenum).fVariableType  = anab::kLogL_fwd;
+      Bragg_fwd_pi.at(planenum).fVariableType = anab::kLogL_fwd;
+      Bragg_fwd_k.at(planenum).fVariableType  = anab::kLogL_fwd;
+      Bragg_bwd_mu.at(planenum).fVariableType = anab::kLogL_bwd;
+      Bragg_bwd_p.at(planenum).fVariableType  = anab::kLogL_bwd;
+      Bragg_bwd_pi.at(planenum).fVariableType = anab::kLogL_bwd;
+      Bragg_bwd_k.at(planenum).fVariableType  = anab::kLogL_bwd;
+      Bragg_fwd_mu.at(planenum).fAssumedPdg   = 13;
+      Bragg_fwd_p.at(planenum).fAssumedPdg    = 2212;
+      Bragg_fwd_pi.at(planenum).fAssumedPdg   = 211;
+      Bragg_fwd_k.at(planenum).fAssumedPdg    = 321;
+      Bragg_bwd_mu.at(planenum).fAssumedPdg   = 13;
+      Bragg_bwd_p.at(planenum).fAssumedPdg    = 2212;
+      Bragg_bwd_pi.at(planenum).fAssumedPdg   = 211;
+      Bragg_bwd_k.at(planenum).fAssumedPdg    = 321;
+      Bragg_fwd_mu.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_mu.at(planenum).fAssumedPdg, true, planenum);
+      Bragg_fwd_p.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_p.at(planenum).fAssumedPdg,  true, planenum);
+      Bragg_fwd_pi.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_pi.at(planenum).fAssumedPdg, true, planenum);
+      Bragg_fwd_k.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_k.at(planenum).fAssumedPdg,  true, planenum);
+      Bragg_bwd_mu.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_mu.at(planenum).fAssumedPdg, false, planenum);
+      Bragg_bwd_p.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_p.at(planenum).fAssumedPdg,  false, planenum);
+      Bragg_bwd_pi.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_pi.at(planenum).fAssumedPdg, false, planenum);
+      Bragg_bwd_k.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_k.at(planenum).fAssumedPdg,  false, planenum);
+      Bragg_fwd_mu.at(planenum).fPlaneID      = c->PlaneID(); 
+      Bragg_fwd_p.at(planenum).fPlaneID       = c->PlaneID(); 
+      Bragg_fwd_pi.at(planenum).fPlaneID      = c->PlaneID(); 
+      Bragg_fwd_k.at(planenum).fPlaneID       = c->PlaneID(); 
+      Bragg_bwd_mu.at(planenum).fPlaneID      = c->PlaneID(); 
+      Bragg_bwd_p.at(planenum).fPlaneID       = c->PlaneID(); 
+      Bragg_bwd_pi.at(planenum).fPlaneID      = c->PlaneID(); 
+      Bragg_bwd_k.at(planenum).fPlaneID       = c->PlaneID(); 
+
+      // Special case: MIP-like probability
+      // fit to the flat MIP region of dEdx with residual range > 15 cm
+      noBragg_fwd_MIP.at(planenum).fAlgName = "BraggPeakLLH";
+      noBragg_fwd_MIP.at(planenum).fVariableType = anab::kLogL_fwd;
+      noBragg_fwd_MIP.at(planenum).fAssumedPdg = 0;
+      noBragg_fwd_MIP.at(planenum).fValue = braggcalc.getNegLogL(dEdx, resRange, noBragg_fwd_MIP.at(planenum).fAssumedPdg, true, planenum);
+
+      AlgScoresVec.push_back(Bragg_fwd_mu.at(planenum));
+      AlgScoresVec.push_back(Bragg_fwd_p.at(planenum));
+      AlgScoresVec.push_back(Bragg_fwd_pi.at(planenum));
+      AlgScoresVec.push_back(Bragg_fwd_k.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_mu.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_p.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_pi.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_k.at(planenum));
+      AlgScoresVec.push_back(noBragg_fwd_MIP.at(planenum));
+
+
+      /**
+       * Algorithm 2: PIDA
+       * This makes use of Bruce home-brewed PIDA calculation, which can be
+       * calculated via three methods:
+       * (1) mean (original implementation from B. Baller)
+       * (2) median (T. Yang & V. Meddage)
+       * (3) kernel density estimator (A. Lister)
+       */
+
+      // mean
+      PIDAval_mean.at(planenum).fAlgName = "PIDA_mean";
+      PIDAval_mean.at(planenum).fVariableType = anab::kPIDA;
+      PIDAval_mean.at(planenum).fValue = pida.getPida(dEdx, resRange, "mean");
+      PIDAval_mean.at(planenum).fPlaneID = c->PlaneID();
+      AlgScoresVec.push_back(PIDAval_mean.at(planenum));
+
+      // median
+      PIDAval_median.at(planenum).fAlgName = "PIDA_median";
+      PIDAval_median.at(planenum).fVariableType = anab::kPIDA;
+      PIDAval_median.at(planenum).fValue = pida.getPida(dEdx, resRange, "median");
+      PIDAval_median.at(planenum).fPlaneID = c->PlaneID();
+      AlgScoresVec.push_back(PIDAval_median.at(planenum));
+
+      // median
+      PIDAval_kde.at(planenum).fAlgName = "PIDA_kde";
+      PIDAval_kde.at(planenum).fVariableType = anab::kPIDA;
+      PIDAval_kde.at(planenum).fValue = pida.getPida(dEdx, resRange, "kde");
+      PIDAval_kde.at(planenum).fPlaneID = c->PlaneID();
+      AlgScoresVec.push_back(PIDAval_kde.at(planenum));
+
+
+      /**
+       * Algorithm 3: Truncated mean dE/dx versus track length
+       * Makes use of the "Truncated Mean" algorithm developed by D. Caratelli
+       * to plot the truncated mean dE/dx  of a track
+       * versus its length for separation.
+       */
+
+      size_t nmin = 1;
+      size_t nmax = 1;
+      const size_t currentiteration = 0;
+      const size_t lmin = 1;
+      const float convergencelimit = 0.1;
+      const float nsigma = 1.0;
+
+      dEdxtruncmean.at(planenum).fAlgName = "TruncatedMean";
+      dEdxtruncmean.at(planenum).fVariableType = anab::kdEdxtruncmean;
+      dEdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
+      dEdxtruncmean.at(planenum).fPlaneID = c->PlaneID();
+
+      AlgScoresVec.push_back(dEdxtruncmean.at(planenum));
+
+      /**
+       * Algorithm 4: Deposited energy vs energy by range
+       * Calculate deposited energy from product of dEdx and trkpitchvec vectors 
+       * (there is a KineticEnergy object in anab::Calorimetry that already 
+       * does this, but due to a bug it currently does not use the calibrated 
+       * dEdx)
+       */
+
+      double depE = 0;
+      for (size_t i_hit=0; i_hit < dEdx.size(); i_hit++){
+        depE += dEdx.at(i_hit)*trkpitchvec.at(i_hit);
+      }
+
+      trk_depE.at(planenum).fAlgName = "DepEvsRangeE";
+      trk_depE.at(planenum).fVariableType = anab::kEdeposited;
+      trk_depE.at(planenum).fValue = depE;
+      trk_depE.at(planenum).fPlaneID = c->PlaneID();
+
+      AlgScoresVec.push_back(trk_depE.at(planenum));
+    
+    } // loop calorimetry objects
 
     /**
-     * Algorithm 1: PIDA
-     * This makes use of Bruce home-brewed PIDA calculation, which can be
-     * calculated via three methods:
-     * (1) mean (original implementation from B. Baller)
-     * (2) median (T. Yang & V. Meddage)
-     * (3) kernel density estimator (A. Lister)
+     * Now get additional information which isn't on a per-plane basis
      */
 
-    // mean
-    PIDAval_mean.fAlgName = "PIDA_mean";
-    PIDAval_mean.fVariableType = anab::kPIDA;
-    PIDAval_mean.fValue = pida.getPida(dEdx, resRange, "mean");
-    AlgScoresVec.push_back(PIDAval_mean);
-
-    // median
-    PIDAval_median.fAlgName = "PIDA_median";
-    PIDAval_median.fVariableType = anab::kPIDA;
-    PIDAval_median.fValue = pida.getPida(dEdx, resRange, "median");
-    AlgScoresVec.push_back(PIDAval_median);
-
-    // median
-    PIDAval_kde.fAlgName = "PIDA_kde";
-    PIDAval_kde.fVariableType = anab::kPIDA;
-    PIDAval_kde.fValue = pida.getPida(dEdx, resRange, "kde");
-    AlgScoresVec.push_back(PIDAval_kde);
-
-    /**
-     * Algorithm 2: BraggPeakLLH
-     * Uses B. Ballers theory, along with landau-gaussian distributions with
-     * widths measured from data and simulation to estimate the likelihood for
-     * each hit in a track to have come from each particle species.
-     */
-    Bragg_fwd_mu.fAlgName = "BraggPeakLLH";
-    Bragg_fwd_p.fAlgName  = "BraggPeakLLH";
-    Bragg_fwd_pi.fAlgName = "BraggPeakLLH";
-    Bragg_fwd_k.fAlgName  = "BraggPeakLLH";
-    Bragg_bwd_mu.fAlgName = "BraggPeakLLH";
-    Bragg_bwd_p.fAlgName  = "BraggPeakLLH";
-    Bragg_bwd_pi.fAlgName = "BraggPeakLLH";
-    Bragg_bwd_k.fAlgName  = "BraggPeakLLH";
-    Bragg_fwd_mu.fVariableType = anab::kLogL_fwd;
-    Bragg_fwd_p.fVariableType  = anab::kLogL_fwd;
-    Bragg_fwd_pi.fVariableType = anab::kLogL_fwd;
-    Bragg_fwd_k.fVariableType  = anab::kLogL_fwd;
-    Bragg_bwd_mu.fVariableType = anab::kLogL_bwd;
-    Bragg_bwd_p.fVariableType  = anab::kLogL_bwd;
-    Bragg_bwd_pi.fVariableType = anab::kLogL_bwd;
-    Bragg_bwd_k.fVariableType  = anab::kLogL_bwd;
-    Bragg_fwd_mu.fAssumedPdg = 13;
-    Bragg_fwd_p.fAssumedPdg = 2212;
-    Bragg_fwd_pi.fAssumedPdg = 211;
-    Bragg_fwd_k.fAssumedPdg = 321;
-    Bragg_bwd_mu.fAssumedPdg = 13;
-    Bragg_bwd_p.fAssumedPdg = 2212;
-    Bragg_bwd_pi.fAssumedPdg = 211;
-    Bragg_bwd_k.fAssumedPdg = 321;
-    Bragg_fwd_mu.fValue = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_mu.fAssumedPdg, true);
-    Bragg_fwd_p.fValue  = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_p.fAssumedPdg,  true);
-    Bragg_fwd_pi.fValue = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_pi.fAssumedPdg, true);
-    Bragg_fwd_k.fValue  = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_k.fAssumedPdg,  true);
-    Bragg_bwd_mu.fValue = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_mu.fAssumedPdg, false);
-    Bragg_bwd_p.fValue  = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_p.fAssumedPdg,  false);
-    Bragg_bwd_pi.fValue = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_pi.fAssumedPdg, false);
-    Bragg_bwd_k.fValue  = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_k.fAssumedPdg,  false);
-
-    // Special case: MIP-like probability
-    // fit to the flat MIP region of dEdx with residual range > 15 cm
-    noBragg_fwd_MIP.fAlgName = "BraggPeakLLH";
-    noBragg_fwd_MIP.fVariableType = anab::kLogL_fwd;
-    noBragg_fwd_MIP.fAssumedPdg = 0;
-    noBragg_fwd_MIP.fValue = braggcalc.getNegLogL(dEdx, resRange, noBragg_fwd_MIP.fAssumedPdg, true);
-
-    AlgScoresVec.push_back(Bragg_fwd_mu);
-    AlgScoresVec.push_back(Bragg_fwd_p);
-    AlgScoresVec.push_back(Bragg_fwd_pi);
-    AlgScoresVec.push_back(Bragg_fwd_k);
-    AlgScoresVec.push_back(Bragg_bwd_mu);
-    AlgScoresVec.push_back(Bragg_bwd_p);
-    AlgScoresVec.push_back(Bragg_bwd_pi);
-    AlgScoresVec.push_back(Bragg_bwd_k);
-    AlgScoresVec.push_back(noBragg_fwd_MIP);
-
-    /**
-     * Algorithm 3: Truncated mean dE/dx versus track length
-     * Makes use of the "Truncated Mean" algorithm developed by D. Caratelli
-     * to plot the truncated mean dE/dx  of a track
-     * versus its length for separation.
-     */
-    dEdxtruncmean.fAlgName = "TruncatedMean";
-    dEdxtruncmean.fVariableType = anab::kdEdxtruncmean;
     trklen.fAlgName = "TruncatedMean";
     trklen.fVariableType = anab::kTrackLength;
-
-    size_t nmin = 1;
-    size_t nmax = 1;
-    const size_t currentiteration = 0;
-    const size_t lmin = 1;
-    const float convergencelimit = 0.1;
-    const float nsigma = 1.0;
-    dEdxtruncmean.fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
     trklen.fValue = track->Length();
-
-    AlgScoresVec.push_back(dEdxtruncmean);
     AlgScoresVec.push_back(trklen);
 
     /**
-     * Algorithm 4: Deposited energy vs energy by range
-     * Calculate deposited energy from product of dEdx and trkpitchvec vectors (there is a KineticEnergy object in anab::Calorimetry that already does this, but due to a bug it currently does not use the calibrated dEdx)
+    * Get energy estimation by range (code for momentum by range copied from analysistree, then convert momentum to energy)
+    * Calculations only exist in TrackMomentumCalculator for muons and protons
+    * TrackMomentumCalculator returns GeV, multiply by 1000 to get MeV
+    */
+    trkf::TrackMomentumCalculator trkm;
+    double track_rangeP_mu = trkm.GetTrackMomentum(track->Length(),13)*1000.;
+    double track_rangeP_p = trkm.GetTrackMomentum(track->Length(),2212)*1000.;
+
+    /** 
+     * Now convert P->E
+     * From TrackMomentumCalculator::GetTrackMomentum: P = TMath::Sqrt((KE*KE)+(2*M*KE))
+     * P = TMath::Sqrt((E*E)-(M*M)) and E = KE+M
+     * => KE = TMath::Sqrt((P*P)+(M*M))-M
+     * TrackMometumCalculator uses Muon_M = 105.7 MeV, Proton_M = 938.272 MeV so use these values here
      */
-    trk_depE.fAlgName = "DepEvsRangeE";
-    trk_depE.fVariableType = anab::kEdeposited;
+
     trk_rangeE_mu.fAlgName = "DepEvsRangeE";
     trk_rangeE_mu.fVariableType = anab::kEbyRange;
     trk_rangeE_mu.fAssumedPdg = 13;
     trk_rangeE_p.fAlgName = "DepEvsRangeE";
     trk_rangeE_p.fVariableType = anab::kEbyRange;
     trk_rangeE_p.fAssumedPdg = 2212;
-
-    double depE = 0;
-    for (size_t i_hit=0; i_hit < dEdx.size(); i_hit++){
-      depE += dEdx.at(i_hit)*trkpitchvec.at(i_hit);
-    }
-    trk_depE.fValue = depE;
-
-    // Get energy estimation by range (code for momentum by range copied from analysistree, then convert momentum to energy)
-    // Calculations only exist in TrackMomentumCalculator for muons and protons
-    // TrackMomentumCalculator returns GeV, multiply by 1000 to get MeV
-    trkf::TrackMomentumCalculator trkm;
-    double track_rangeP_mu = trkm.GetTrackMomentum(track->Length(),13)*1000.;
-    double track_rangeP_p = trkm.GetTrackMomentum(track->Length(),2212)*1000.;
-
-    // Now convert P->E
-    // From TrackMomentumCalculator::GetTrackMomentum: P = TMath::Sqrt((KE*KE)+(2*M*KE))
-    // P = TMath::Sqrt((E*E)-(M*M)) and E = KE+M
-    // => KE = TMath::Sqrt((P*P)+(M*M))-M
-    // TrackMometumCalculator uses Muon_M = 105.7 MeV, Proton_M = 938.272 MeV so use these values here
     trk_rangeE_mu.fValue = TMath::Sqrt((track_rangeP_mu*track_rangeP_mu)+(105.7*105.7)) - 105.7;
     trk_rangeE_p.fValue = TMath::Sqrt((track_rangeP_p*track_rangeP_p)+(938.272*938.272)) - 938.272;
-
-    AlgScoresVec.push_back(trk_depE);
     AlgScoresVec.push_back(trk_rangeE_mu);
     AlgScoresVec.push_back(trk_rangeE_p);
 
-      /*  }
+   
+    /*  }
 
-          } // end if(isContained)
-          else{
-      // If particle is *not* contained, assume it is a muon
-      // Set pdg=13. No other PID variables will be set because those are only filled for contained particles
-      pdg = 13;
-      }*/
+        } // end if(isContained)
+        else{
+    // If particle is *not* contained, assume it is a muon
+    // Set pdg=13. No other PID variables will be set because those are only filled for contained particles
+    pdg = 13;
+    }*/
 
 
-      // -------------------------------------------------------------------------- //
-      // Finally, fill product with the variables that we calculated above and make assns
+    // -------------------------------------------------------------------------- //
+    // Finally, fill product with the variables that we calculated above and make assns
 
-      //std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
-      anab::ParticleID PID_object(AlgScoresVec);
+    //std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
+    anab::ParticleID PID_object(AlgScoresVec);
     particleIDCollection->push_back(PID_object);
 
     //std::cout << "[ParticleID] Making assn... " << std::endl;
