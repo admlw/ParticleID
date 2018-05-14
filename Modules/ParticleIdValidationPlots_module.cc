@@ -97,7 +97,11 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
 
     TTree *pidTree;
 
+    int run = -999;
+    int sub_run = -999;
+    int event = -999;
     int true_PDG = -999;
+    double true_purity = -999;
     double true_start_momentum = -999;
     double true_start_x = -999;
     double true_start_y = -999;
@@ -106,6 +110,7 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double true_end_x = -999;
     double true_end_y = -999;
     double true_end_z = -999;
+    int track_id = -999;
     double track_start_x;
     double track_start_y;
     double track_start_z;
@@ -204,6 +209,10 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
 
 void ParticleIdValidationPlots::analyze(art::Event const & e)
 {
+  run = e.run();
+  sub_run = e.subRun();
+  event = e.event();
+
   isData = e.isRealData();
 
   if (!isData) std::cout << "[ParticleIDValidation] Running simulated data." << std::endl;
@@ -232,6 +241,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   for (auto& track : trackCollection){
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = calo_from_tracks.at(track->ID());
 
+    track_id = track->ID();
     track_length = track->Length();
     track_theta = track->Theta();
     track_phi = track->Phi();
@@ -259,7 +269,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
       std::unordered_map<int,double> trkide;
       double maxe=-1, tote=0;
-
+      double purity = -999;
+      
       std::vector<simb::MCParticle const*> particle_vec;
       std::vector<anab::BackTrackerHitMatchingData const*> match_vec;
 
@@ -280,9 +291,11 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           }
         }//end loop over particles per hit
 
-      }
+        purity = maxe/tote; 
 
-      true_PDG = matched_mcparticle->PdgCode();
+      }
+      
+      true_purity = purity;
       true_PDG = matched_mcparticle->PdgCode();
       true_start_momentum = matched_mcparticle->P();
       true_start_x = matched_mcparticle->Vx();
@@ -706,7 +719,11 @@ void ParticleIdValidationPlots::beginJob(){
 
   pidTree = tfs->make<TTree>("pidTree" , "pidTree");
 
+  pidTree->Branch( "run"                     , &run                 ) ;
+  pidTree->Branch( "sub_run"                 , &sub_run             ) ;
+  pidTree->Branch( "event"                   , &event               ) ;
   pidTree->Branch( "true_PDG"                , &true_PDG            ) ;
+  pidTree->Branch( "true_purity"             , &true_purity         ) ;
   pidTree->Branch( "true_start_momentum"     , &true_start_momentum ) ;
   pidTree->Branch( "true_start_x"            , &true_start_x        ) ;
   pidTree->Branch( "true_start_y"            , &true_start_y        ) ;
@@ -715,6 +732,7 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "true_end_x"              , &true_end_x          ) ;
   pidTree->Branch( "true_end_y"              , &true_end_y          ) ;
   pidTree->Branch( "true_end_z"              , &true_end_z          ) ;
+  pidTree->Branch( "track_id"                , &track_id            ) ;
   pidTree->Branch( "track_start_x"           , &track_start_x       ) ;
   pidTree->Branch( "track_start_y"           , &track_start_y       ) ;
   pidTree->Branch( "track_start_z"           , &track_start_z       ) ;
@@ -829,5 +847,6 @@ void ParticleIdValidationPlots::endSubRun(art::SubRun const &sr) {
    potTree->Fill();
 
 }
+
 
 DEFINE_ART_MODULE(ParticleIdValidationPlots)
