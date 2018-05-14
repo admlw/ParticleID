@@ -99,7 +99,6 @@ namespace particleid{
         theorypred = theory.g_ThdEdxRR_Muon;
         gausWidth = gausWidth_mu.at(planenum);
         landauWidth = landauWidth_mu.at(planenum);
-        std::cout << gausWidth << " " << landauWidth << std::endl;
         offset = offset_mu;
         break;
       case 2212: // proton
@@ -107,8 +106,6 @@ namespace particleid{
         theorypred = theory.g_ThdEdxRR_Proton;
         gausWidth = gausWidth_p.at(planenum);
         landauWidth = landauWidth_p.at(planenum);
-        std::cout << gausWidth << " " << landauWidth << std::endl;
-
         offset = offset_p;
         break;
       case 211: // pion
@@ -116,7 +113,6 @@ namespace particleid{
         theorypred = theory.g_ThdEdxRR_Pion;
         gausWidth = gausWidth_pi.at(planenum);
         landauWidth = landauWidth_pi.at(planenum);
-        std::cout << gausWidth << " " << landauWidth << std::endl;
         offset = offset_pi;
         break;
       case 321: // kaon
@@ -124,7 +120,6 @@ namespace particleid{
         theorypred = theory.g_ThdEdxRR_Kaon;
         gausWidth = gausWidth_k.at(planenum);
         landauWidth = landauWidth_k.at(planenum);
-        std::cout << gausWidth << " " << landauWidth << std::endl;
         offset = offset_k;
         break;
       case 0: // special case: fit to MIP region of muon prediction with no Bragg peak
@@ -132,7 +127,6 @@ namespace particleid{
         theorypred = theory.g_ThdEdxRR_MuonNoBragg;
         gausWidth = gausWidth_mip.at(planenum);
         landauWidth = landauWidth_mip.at(planenum);
-        std::cout << gausWidth << " " << landauWidth << std::endl;
         offset = offset_mip;
         break;
       default:
