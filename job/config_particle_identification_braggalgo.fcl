@@ -22,7 +22,7 @@ braggalgo_mcc8:
   # offsets: 
   #   - negative shifts the peak of the landaugaussian left 
   #   - positive shifts the peak of the landaugaussian right
-  PeakOffsetP : 10
+  PeakOffsetP : 0
   PeakOffsetMu: 0
   PeakOffsetPi: 0
   PeakOffsetK : 0
