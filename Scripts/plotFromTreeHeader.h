@@ -104,13 +104,13 @@ void CalcPIDvars(treevars *vars){
   vars->track_neglogl_mipoverp = vars->track_neglogl_mip / vars->track_neglogl_p;
   vars->track_neglogl_minmumipoverp = vars->track_neglogl_minmumip / vars->track_neglogl_p;
 
-  vars->track_Lmu_0to1 = vars->track_neglogl_mu/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_p+vars->track_neglogl_mip);
-  vars->track_Lmip_0to1 = vars->track_neglogl_mip/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_p+vars->track_neglogl_mip);
-  vars->track_Lpi_0to1 = vars->track_neglogl_pi/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_p+vars->track_neglogl_mip);
-  vars->track_Lp_0to1 = vars->track_neglogl_p/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_p+vars->track_neglogl_mip);
+  vars->track_Lmu_0to1 = vars->track_neglogl_mu/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
+  vars->track_Lmip_0to1 = vars->track_neglogl_mip/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
+  vars->track_Lpi_0to1 = vars->track_neglogl_pi/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
+  vars->track_Lp_0to1 = vars->track_neglogl_p/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
 
-  vars->track_Lmumip_0to1 = (vars->track_neglogl_mu+vars->track_neglogl_mip)/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_p+vars->track_neglogl_mip);
-  vars->track_Lmumippi_0to1 = (vars->track_neglogl_mu+vars->track_neglogl_mip+vars->track_neglogl_pi)/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_p+vars->track_neglogl_mip);
+  vars->track_Lmumip_0to1 = (vars->track_neglogl_mu+vars->track_neglogl_mip)/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
+  vars->track_Lmumippi_0to1 = (vars->track_neglogl_mu+vars->track_neglogl_mip+vars->track_neglogl_pi)/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
 }
 
 

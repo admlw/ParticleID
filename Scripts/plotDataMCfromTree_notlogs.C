@@ -51,10 +51,10 @@ std::vector<std::vector<double>> bins = {
                     {50,-400,100}, // track_chi2_muminusp
                     {50,0,1}, // track_Lmu_0to1
                     {50,0,1}, // track_Lmip_0to1
-                    {50,0,3}, // track_Lpi_0to1
+                    {50,0,1}, // track_Lpi_0to1
                     {50,0,1}, // track_Lp_0to1
                     {50,0,1}, // track_Lmumip_0to1
-                    {50,0,3}, // track_Lmumippi_0to1
+                    {50,0,1}, // track_Lmumippi_0to1
                     {100,-100,100}, // track_depE_minus_rangeE_mu
                     {100,-100,100} // track_depE_minus_rangeE_p
                     };
