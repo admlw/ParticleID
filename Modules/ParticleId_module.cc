@@ -174,12 +174,12 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<anab::sParticleIDAlgScores> PIDAval_kde    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> dEdxtruncmean  = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> trk_depE       = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
-   
+
     // only need a single entry for this... actually can probably remove this eventually.
     anab::sParticleIDAlgScores trk_rangeE_mu;  
     anab::sParticleIDAlgScores trk_rangeE_p;   
     anab::sParticleIDAlgScores trklen;
-    
+
     art::Ptr< anab:: Calorimetry > calo;
     int planenum = -1;
     for (auto c : caloFromTrack){
@@ -187,7 +187,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       calo = c;
 
       // Check that caloFromTrack is a valid object
-      if (!calo){
+      if (!calo || planenum < 0 || planenum > 2){
         std::cout << "[ParticleID] Calorimetry on plane " << planenum << " is unavailable. Skipping." << std::endl;
         continue;
       }
@@ -353,7 +353,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       trk_depE.at(planenum).fPlaneID = c->PlaneID();
 
       AlgScoresVec.push_back(trk_depE.at(planenum));
-    
+
     } // loop calorimetry objects
 
     /**
@@ -366,10 +366,10 @@ void UBPID::ParticleId::produce(art::Event & e)
     AlgScoresVec.push_back(trklen);
 
     /**
-    * Get energy estimation by range (code for momentum by range copied from analysistree, then convert momentum to energy)
-    * Calculations only exist in TrackMomentumCalculator for muons and protons
-    * TrackMomentumCalculator returns GeV, multiply by 1000 to get MeV
-    */
+     * Get energy estimation by range (code for momentum by range copied from analysistree, then convert momentum to energy)
+     * Calculations only exist in TrackMomentumCalculator for muons and protons
+     * TrackMomentumCalculator returns GeV, multiply by 1000 to get MeV
+     */
     trkf::TrackMomentumCalculator trkm;
     double track_rangeP_mu = trkm.GetTrackMomentum(track->Length(),13)*1000.;
     double track_rangeP_p = trkm.GetTrackMomentum(track->Length(),2212)*1000.;
@@ -393,7 +393,7 @@ void UBPID::ParticleId::produce(art::Event & e)
     AlgScoresVec.push_back(trk_rangeE_mu);
     AlgScoresVec.push_back(trk_rangeE_p);
 
-   
+
     /*  }
 
         } // end if(isContained)
