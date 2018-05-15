@@ -42,19 +42,19 @@ namespace particleid{
   public:
     void configure(fhicl::ParameterSet const &p);
     void printConfiguration();
-    double getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward);
+    double getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum);
 
   private:
-    double gausWidth_mu;
-    double gausWidth_pi;
-    double gausWidth_k;
-    double gausWidth_p;
-    double gausWidth_mip;
-    double landauWidth_mu;
-    double landauWidth_pi;
-    double landauWidth_k;
-    double landauWidth_p;
-    double landauWidth_mip;
+    std::vector<double> gausWidth_mu;
+    std::vector<double> gausWidth_pi;
+    std::vector<double> gausWidth_k;
+    std::vector<double> gausWidth_p;
+    std::vector<double> gausWidth_mip;
+    std::vector<double> landauWidth_mu;
+    std::vector<double> landauWidth_pi;
+    std::vector<double> landauWidth_k;
+    std::vector<double> landauWidth_p;
+    std::vector<double> landauWidth_mip;
     double offset_p;
     double offset_mu;
     double offset_pi;

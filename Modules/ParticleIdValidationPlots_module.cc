@@ -17,6 +17,11 @@
  *
  * \date 2018/04/18
  *
+ * \notes
+ * - There are some checks in here to make sure that the plane id is between 
+ *   0 and 2. This is because the calorimetry module will return a value of
+ *   -1 when there are no hits in a specific plane.
+ *
  */
 
 // Art
@@ -49,6 +54,9 @@
 
 // Algorithms
 #include "uboone/ParticleID/Algorithms/FiducialVolume.h"
+
+// cpp
+#include <vector>
 
 class ParticleIdValidationPlots;
 
@@ -97,7 +105,11 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
 
     TTree *pidTree;
 
+    int run = -999;
+    int sub_run = -999;
+    int event = -999;
     int true_PDG = -999;
+    double true_purity = -999;
     double true_start_momentum = -999;
     double true_start_x = -999;
     double true_start_y = -999;
@@ -106,39 +118,42 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double true_end_x = -999;
     double true_end_y = -999;
     double true_end_z = -999;
+    int track_id = -999;
     double track_start_x;
     double track_start_y;
     double track_start_z;
     double track_end_x;
     double track_end_y;
     double track_end_z;
-    double track_neglogl_fwd_mu;
-    double track_neglogl_fwd_p;
-    double track_neglogl_fwd_pi;
-    double track_neglogl_fwd_k;
-    double track_neglogl_fwd_mip;
-    double track_neglogl_bwd_mu;
-    double track_neglogl_bwd_p;
-    double track_neglogl_bwd_pi;
-    double track_neglogl_bwd_k;
-    // double track_neglogl_bwd_mip; // not used right now
-    double track_PIDA_mean;
-    double track_PIDA_median;
-    double track_PIDA_kde;
+    std::vector<double> track_neglogl_fwd_mu;
+    std::vector<double> track_neglogl_fwd_p;
+    std::vector<double> track_neglogl_fwd_pi;
+    std::vector<double> track_neglogl_fwd_k;
+    std::vector<double> track_neglogl_fwd_mip;
+    std::vector<double> track_neglogl_bwd_mu;
+    std::vector<double> track_neglogl_bwd_p;
+    std::vector<double> track_neglogl_bwd_pi;
+    std::vector<double> track_neglogl_bwd_k;
+    std::vector<double> track_PIDA_mean;
+    std::vector<double> track_PIDA_median;
+    std::vector<double> track_PIDA_kde;
+    std::vector<double> track_dEdx;
+    std::vector<double> track_depE;
     double track_Chi2Proton;
     double track_Chi2Kaon;
     double track_Chi2Pion;
     double track_Chi2Muon;
     double track_length;
-    double track_dEdx;
     double track_theta;
     double track_phi;
     double track_nhits;
-    double track_depE;
     double track_rangeE_mu;
     double track_rangeE_p;
     std::vector<double> track_dEdx_perhit;
     std::vector<double> track_resrange_perhit;
+    std::vector<std::vector<double>> dEdx;
+    std::vector<std::vector<double>> resRange;
+
 
     /** Histograms for all tracks, i.e. can be used by data */
     TH2F *All_chargeEndOverStart_sm0_5_dEdxrr;
@@ -204,6 +219,10 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
 
 void ParticleIdValidationPlots::analyze(art::Event const & e)
 {
+  run = e.run();
+  sub_run = e.subRun();
+  event = e.event();
+
   isData = e.isRealData();
 
   if (!isData) std::cout << "[ParticleIDValidation] Running simulated data." << std::endl;
@@ -230,8 +249,27 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   TVector3 true_end;
 
   for (auto& track : trackCollection){
+    /** reset default values */
+    dEdx.resize(3);
+    resRange.resize(3);
+    track_neglogl_fwd_mu.resize(3,-999.);
+    track_neglogl_fwd_p.resize(3,-999.);
+    track_neglogl_fwd_pi.resize(3,-999.);
+    track_neglogl_fwd_k.resize(3,-999.);
+    track_neglogl_fwd_mip.resize(3,-999.);
+    track_neglogl_bwd_mu.resize(3,-999.);
+    track_neglogl_bwd_p.resize(3,-999.);
+    track_neglogl_bwd_pi.resize(3,-999.);
+    track_neglogl_bwd_k.resize(3,-999.);
+    track_PIDA_mean.resize(3,-999.);
+    track_PIDA_median.resize(3,-999.);
+    track_PIDA_kde.resize(3,-999.);
+    track_dEdx.resize(3,-999.);
+    track_depE.resize(3,-999.);
+
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = calo_from_tracks.at(track->ID());
 
+    track_id = track->ID();
     track_length = track->Length();
     track_theta = track->Theta();
     track_phi = track->Phi();
@@ -259,6 +297,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
       std::unordered_map<int,double> trkide;
       double maxe=-1, tote=0;
+      double purity = -999;
 
       std::vector<simb::MCParticle const*> particle_vec;
       std::vector<anab::BackTrackerHitMatchingData const*> match_vec;
@@ -280,9 +319,11 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           }
         }//end loop over particles per hit
 
+        purity = maxe/tote; 
+
       }
 
-      true_PDG = matched_mcparticle->PdgCode();
+      true_purity = purity;
       true_PDG = matched_mcparticle->PdgCode();
       true_start_momentum = matched_mcparticle->P();
       true_start_x = matched_mcparticle->Vx();
@@ -317,22 +358,20 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     int planenum = -1;
     for (auto c : caloFromTrack){
       planenum = c->PlaneID().Plane;
-      if (planenum != 2) continue;
       calo = c;
+      if (planenum < 0 || planenum > 2){
+        std::cout << "[ParticleIDValidation] No information for plane " << planenum << std::endl;
+        continue;
+      }
+      dEdx.at(planenum) = calo->dEdx();
+      resRange.at(planenum) = calo->ResidualRange();
     }
-
-    if (!calo){
-      std::cout << "[ParticleIDValidation] Did not find a valid calorimetry object for plane " << planenum << ". Skipping plane." << std::endl;
-      continue;
-    }
-    std::vector<double> dEdx = calo->dEdx();
-    std::vector<double> resRange = calo->ResidualRange();
 
     /**
-    * Get hit charge of first and final 5 hits of track to try and find the
-    * direction of the track. If there are fewer than 10 hits then take half
-    * of the total hits.
-    */
+     * Get hit charge of first and final 5 hits of track to try and find the
+     * direction of the track. If there are fewer than 10 hits then take half
+     * of the total hits.
+     */
 
     double nhits = resRange.size();
     // find how many hits to use
@@ -347,104 +386,107 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     double averagedEdxTrackEnd=0;
 
     // loop dEdx and take average of first n hits and last n hits
-    for (int i = 0; i < (int)dEdx.size(); i++){
-
-      if (i < hitsToUse) averagedEdxTrackStart+=dEdx.at(i);
-      else if (i > nhits - hitsToUse -1) averagedEdxTrackEnd+=dEdx.at(i);
-
-    }
-
-    averagedEdxTrackStart = averagedEdxTrackStart/hitsToUse;
-    averagedEdxTrackEnd   = averagedEdxTrackEnd/hitsToUse;
-
-    double dEdxStartEndRatio = averagedEdxTrackEnd/averagedEdxTrackStart;
-
-    /**
-     * Now check the reconstructed direction we found and compare it against
-     * the true direction.
-     */
 
     TVector3 RecoTrackDir, TrueTrackDir;
-    if (!fIsDataPlots){
+    if (dEdx.at(2).size() > 0) {
 
-      RecoTrackDir = {track->End().X()-track->Start().X(),
-        track->End().Y()-track->Start().Y(),
-        track->End().Z()-track->Start().Z()};
-      RecoTrackDir = RecoTrackDir.Unit();
+      for (int i = 0; i < (int)dEdx.at(2).size(); i++){
 
-      TrueTrackDir = true_end - true_start;
-      TrueTrackDir = TrueTrackDir.Unit();
-
-      // If dot product < 0, track direction is wrong
-      if (RecoTrackDir.Dot(TrueTrackDir) < 0){
-
-        All_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
-        All_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
-
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
-          TrueBragg_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
-        }
-
-        if (fid.isInFiducialVolume(true_start, fv) && fid.isInFiducialVolume(true_end, fv)){
-          Contained_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
-          Contained_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
-        }
-
-      }
-      // else, track direction is correct
-      else{
-
-        All_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
-        All_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
-
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
-          TrueBragg_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
-        }
-
-        if (fid.isInFiducialVolume(true_start, fv) && fid.isInFiducialVolume(true_end, fv)){
-          Contained_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
-          Contained_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
-        }
+        if (i < hitsToUse) averagedEdxTrackStart+=dEdx.at(2).at(i);
+        else if (i > nhits - hitsToUse -1) averagedEdxTrackEnd+=dEdx.at(2).at(i);
 
       }
 
+      averagedEdxTrackStart = averagedEdxTrackStart/hitsToUse;
+      averagedEdxTrackEnd   = averagedEdxTrackEnd/hitsToUse;
+
+      double dEdxStartEndRatio = averagedEdxTrackEnd/averagedEdxTrackStart;
+
+      /**
+       * Now check the reconstructed direction we found and compare it against
+       * the true direction.
+       */
+
+      if (!fIsDataPlots){
+
+        RecoTrackDir = {track->End().X()-track->Start().X(),
+          track->End().Y()-track->Start().Y(),
+          track->End().Z()-track->Start().Z()};
+        RecoTrackDir = RecoTrackDir.Unit();
+
+        TrueTrackDir = true_end - true_start;
+        TrueTrackDir = TrueTrackDir.Unit();
+
+        // If dot product < 0, track direction is wrong
+        if (RecoTrackDir.Dot(TrueTrackDir) < 0){
+
+          All_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
+          All_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
+
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
+            TrueBragg_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
+          }
+
+          if (fid.isInFiducialVolume(true_start, fv) && fid.isInFiducialVolume(true_end, fv)){
+            Contained_chargeEndOverStart_directionIncorrect->Fill(dEdxStartEndRatio);
+            Contained_chargeEndOverStartVersusNHits_directionIncorrect->Fill(dEdxStartEndRatio, hitsToUse);
+          }
+
+        }
+        // else, track direction is correct
+        else{
+
+          All_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
+          All_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
+
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
+            TrueBragg_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
+          }
+
+          if (fid.isInFiducialVolume(true_start, fv) && fid.isInFiducialVolume(true_end, fv)){
+            Contained_chargeEndOverStart_directionCorrect->Fill(dEdxStartEndRatio);
+            Contained_chargeEndOverStartVersusNHits_directionCorrect->Fill(dEdxStartEndRatio, hitsToUse);
+          }
+
+        }
+
+      }
+
+      /**
+       * Make plots of dEdx versus residual range for different track start/end
+       * ratios.
+       *
+       * Note that here we don't need to check if fIsDataPlots because TrueBragg is
+       * false by construction if fIsDataPlots = true
+       */
+
+      if (dEdxStartEndRatio < 0.5){
+        for (int i=0; i < (int)resRange.size(); i++){
+          All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
+          }
+        }
+      }
+      else if (dEdxStartEndRatio > 2.0){
+        for (int i=0; i < (int)resRange.size(); i++){
+          All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
+          }
+        }
+      }
+      else {
+        for (int i=0; i < (int)resRange.size(); i++){
+          All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
+          if (TrueBragg){
+            TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
+          }
+        }
+      }
     }
-
-    /**
-     * Make plots of dEdx versus residual range for different track start/end
-     * ratios.
-     *
-     * Note that here we don't need to check if fIsDataPlots because TrueBragg is
-     * false by construction if fIsDataPlots = true
-     */
-
-    if (dEdxStartEndRatio < 0.5){
-      for (int i=0; i < (int)resRange.size(); i++){
-        All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        }
-      }
-    }
-    else if (dEdxStartEndRatio > 2.0){
-      for (int i=0; i < (int)resRange.size(); i++){
-        All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        }
-      }
-    }
-    else {
-      for (int i=0; i < (int)resRange.size(); i++){
-        All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        if (TrueBragg){
-          TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(i),dEdx.at(i));
-        }
-      }
-    }
-
     /**
      * Calculate PID variables
      */
@@ -464,12 +506,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     double Bragg_bwd_pi = -999;
     double Bragg_bwd_K = -999;
     double noBragg_fwd_MIP = -999;
-    double PIDAval_mean = -999;
-    double PIDAval_median = -999;
-    double PIDAval_kde = -999;
-    double dEdxtruncmean = -999;
     double trklen = -999;
-    double depE = -999;
     double rangeE_mu = -999;
     double rangeE_p = -999;
 
@@ -485,6 +522,13 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     for (size_t i_algscore=0; i_algscore<AlgScoresVec.size(); i_algscore++){
 
       anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
+      int planeid = AlgScore.fPlaneID.Plane;
+
+      if (planeid < 0 || planeid > 2){
+        std::cout << "[ParticleIDValidation] No information for planeid " << planeid << std::endl;
+        continue;
+      }
+
 
       if (AlgScore.fAlgName == "BraggPeakLLH"){
 
@@ -502,30 +546,39 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           if (AlgScore.fAssumedPdg == 321)  Bragg_bwd_K  = AlgScore.fValue;
         }
 
+        track_neglogl_fwd_mu.at(planeid) = Bragg_fwd_mu;
+        track_neglogl_bwd_mu.at(planeid)= Bragg_bwd_mu;
+        track_neglogl_fwd_p.at(planeid) = Bragg_fwd_p;
+        track_neglogl_bwd_p.at(planeid) = Bragg_bwd_p;
+        track_neglogl_fwd_pi.at(planeid) = Bragg_fwd_pi;
+        track_neglogl_bwd_pi.at(planeid) = Bragg_bwd_pi;
+        track_neglogl_fwd_k.at(planeid) = Bragg_fwd_K;
+        track_neglogl_bwd_k.at(planeid) = Bragg_bwd_K;
+        track_neglogl_fwd_mip.at(planeid) = noBragg_fwd_MIP;
+
       } // if fAlName = BraggPeakLLH
 
       if (AlgScore.fAlgName == "PIDA_mean" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
-        PIDAval_mean = AlgScore.fValue;
+        track_PIDA_mean.at(planeid) = AlgScore.fValue;
 
-      if (AlgScore.fAlgName == "PIDA_medeian" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
-        PIDAval_median = AlgScore.fValue;
+      if (AlgScore.fAlgName == "PIDA_median" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
+        track_PIDA_median.at(planeid) = AlgScore.fValue;
 
       if (AlgScore.fAlgName == "PIDA_kde" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
-        PIDAval_kde = AlgScore.fValue;
+        track_PIDA_kde.at(planeid) = AlgScore.fValue;
 
       if (AlgScore.fAlgName == "TruncatedMean"){
-        if (anab::kVariableType(AlgScore.fVariableType) == anab::kdEdxtruncmean) dEdxtruncmean = AlgScore.fValue;
+        if (anab::kVariableType(AlgScore.fVariableType) == anab::kdEdxtruncmean) track_dEdx.at(planeid) = AlgScore.fValue;
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kTrackLength) trklen = AlgScore.fValue;
       }
 
       if (AlgScore.fAlgName == "DepEvsRangeE"){
-        if (anab::kVariableType(AlgScore.fVariableType) == anab::kEdeposited) depE = AlgScore.fValue;
+        if (anab::kVariableType(AlgScore.fVariableType) == anab::kEdeposited) track_depE.at(planeid) = AlgScore.fValue;
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kEbyRange){
           if (AlgScore.fAssumedPdg == 13) rangeE_mu = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 2212) rangeE_p = AlgScore.fValue;
         }
       }
-
 
     } // Loop over AlgScoresVec
 
@@ -544,26 +597,12 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
 
     // Now time to set some variables!
-    track_neglogl_fwd_mu = Bragg_fwd_mu;
-    track_neglogl_bwd_mu = Bragg_bwd_mu;
-    track_neglogl_fwd_p = Bragg_fwd_p;
-    track_neglogl_bwd_p = Bragg_bwd_p;
-    track_neglogl_fwd_pi = Bragg_fwd_pi;
-    track_neglogl_bwd_pi = Bragg_bwd_pi;
-    track_neglogl_fwd_k = Bragg_fwd_K;
-    track_neglogl_bwd_k = Bragg_bwd_K;
-    track_neglogl_fwd_mip = noBragg_fwd_MIP;
-    track_dEdx = dEdxtruncmean;
     track_length = trklen;
-    track_PIDA_mean = PIDAval_mean;
-    track_PIDA_median = PIDAval_median;
-    track_PIDA_kde = PIDAval_kde;
     track_nhits = nhits;
-    track_depE = depE;
     track_rangeE_mu = rangeE_mu;
     track_rangeE_p = rangeE_p;
-    track_dEdx_perhit = dEdx;
-    track_resrange_perhit = resRange;
+    track_dEdx_perhit = dEdx.at(2);
+    track_resrange_perhit = resRange.at(2);
 
     art::FindManyP<anab::ParticleID> trackPIDAssnforChi2(trackHandle, e, fPIDLabelChi2);
     if (!trackPIDAssnforChi2.isValid()){
@@ -706,7 +745,11 @@ void ParticleIdValidationPlots::beginJob(){
 
   pidTree = tfs->make<TTree>("pidTree" , "pidTree");
 
+  pidTree->Branch( "run"                     , &run                 ) ;
+  pidTree->Branch( "sub_run"                 , &sub_run             ) ;
+  pidTree->Branch( "event"                   , &event               ) ;
   pidTree->Branch( "true_PDG"                , &true_PDG            ) ;
+  pidTree->Branch( "true_purity"             , &true_purity         ) ;
   pidTree->Branch( "true_start_momentum"     , &true_start_momentum ) ;
   pidTree->Branch( "true_start_x"            , &true_start_x        ) ;
   pidTree->Branch( "true_start_y"            , &true_start_y        ) ;
@@ -715,6 +758,7 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "true_end_x"              , &true_end_x          ) ;
   pidTree->Branch( "true_end_y"              , &true_end_y          ) ;
   pidTree->Branch( "true_end_z"              , &true_end_z          ) ;
+  pidTree->Branch( "track_id"                , &track_id            ) ;
   pidTree->Branch( "track_start_x"           , &track_start_x       ) ;
   pidTree->Branch( "track_start_y"           , &track_start_y       ) ;
   pidTree->Branch( "track_start_z"           , &track_start_z       ) ;
@@ -730,7 +774,6 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_neglogl_bwd_p"     , &track_neglogl_bwd_p     ) ;
   pidTree->Branch( "track_neglogl_bwd_pi"    , &track_neglogl_bwd_pi    ) ;
   pidTree->Branch( "track_neglogl_bwd_k"     , &track_neglogl_bwd_k     ) ;
-  //pidTree->Branch( " track_neglogl_mip   " , track_neglogl_bwd_mip   ) ;
   pidTree->Branch( "track_PIDA_mean"         , &track_PIDA_mean          ) ;
   pidTree->Branch( "track_PIDA_median"       , &track_PIDA_median          ) ;
   pidTree->Branch( "track_PIDA_kde"          , &track_PIDA_kde          ) ;
@@ -815,19 +858,20 @@ void ParticleIdValidationPlots::beginJob(){
 
 // endSubRun function for MC POT counting
 void ParticleIdValidationPlots::endSubRun(art::SubRun const &sr) {
-   // Note: the entire subrun's POT is recorded in the tree for every event.
-   // You must only add it once per subrun to get the correct number.
+  // Note: the entire subrun's POT is recorded in the tree for every event.
+  // You must only add it once per subrun to get the correct number.
 
-   art::Handle<sumdata::POTSummary> potsum_h;
+  art::Handle<sumdata::POTSummary> potsum_h;
 
-   if (!isData) { // MC only (data is dealt with using Zarko's script)
-      if(sr.getByLabel("generator", potsum_h)) {
-         sr_pot = potsum_h->totpot;
-      }
-   }
+  if (!isData) { // MC only (data is dealt with using Zarko's script)
+    if(sr.getByLabel("generator", potsum_h)) {
+      sr_pot = potsum_h->totpot;
+    }
+  }
 
-   potTree->Fill();
+  potTree->Fill();
 
 }
+
 
 DEFINE_ART_MODULE(ParticleIdValidationPlots)
