@@ -8,16 +8,16 @@ braggalgo_mcc8:
 {
 
   # dEdx widths, per plane
-  dEdxLandauWidthP  : [ 0.19, 1.19, 2.19 ]
-  dEdxLandauWidthMu : [ 0.09, 1.09, 2.09 ]
-  dEdxLandauWidthPi : [ 0.09, 1.09, 2.09 ]
-  dEdxLandauWidthK  : [ 0.09, 1.09, 2.09 ]
-  dEdxLandauWidthMIP: [ 0.09, 1.09, 2.09 ]
-  dEdxGausWidthP    : [ 0.09, 1.09, 2.09 ]
-  dEdxGausWidthMu   : [ 0.09, 1.09, 2.09 ]
-  dEdxGausWidthPi   : [ 0.09, 1.09, 2.09 ]
-  dEdxGausWidthK    : [ 0.09, 1.09, 2.09 ]
-  dEdxGausWidthMIP  : [ 0.09, 1.09, 2.09 ]
+  dEdxLandauWidthP  : [ 0.23, 0.19, 0.13 ]
+  dEdxLandauWidthMu : [ 0.10, 0.12, 0.09 ]
+  dEdxLandauWidthPi : [ 0.10, 0.12, 0.09 ]
+  dEdxLandauWidthK  : [ 0.10, 0.12, 0.09 ]
+  dEdxLandauWidthMIP: [ 0.10, 0.12, 0.09 ]
+  dEdxGausWidthP    : [ 0.32, 0.32, 0.25 ]
+  dEdxGausWidthMu   : [ 0.09, 0.19, 0.09 ]
+  dEdxGausWidthPi   : [ 0.09, 0.19, 0.09 ]
+  dEdxGausWidthK    : [ 0.09, 0.19, 0.09 ]
+  dEdxGausWidthMIP  : [ 0.09, 0.19, 0.09 ]
 
   # offsets: 
   #   - negative shifts the peak of the landaugaussian left 
@@ -46,16 +46,16 @@ braggalgo_mcc8_data:
 {
 
   # dEdx widths, per plane
-  dEdxLandauWidthP  : [ 0.19, 1.19, 2.19 ]
-  dEdxLandauWidthMu : [ 0.09, 1.09, 2.09 ]
-  dEdxLandauWidthPi : [ 0.09, 1.09, 2.09 ]
-  dEdxLandauWidthK  : [ 0.09, 1.09, 2.09 ]
-  dEdxLandauWidthMIP: [ 0.09, 1.09, 2.09 ]
-  dEdxGausWidthP    : [ 0.20, 1.20, 2.20 ]
-  dEdxGausWidthMu   : [ 0.20, 1.20, 2.20 ]
-  dEdxGausWidthPi   : [ 0.20, 1.20, 2.20 ]
-  dEdxGausWidthK    : [ 0.20, 1.20, 2.20 ]
-  dEdxGausWidthMIP  : [ 0.20, 1.20, 2.20 ]
+  dEdxLandauWidthP  : [ 0.23, 0.19, 0.13 ]
+  dEdxLandauWidthMu : [ 0.10, 0.12, 0.09 ]
+  dEdxLandauWidthPi : [ 0.10, 0.12, 0.09 ]
+  dEdxLandauWidthK  : [ 0.10, 0.12, 0.09 ]
+  dEdxLandauWidthMIP: [ 0.10, 0.12, 0.09 ]
+  dEdxGausWidthP    : [ 0.45, 0.60, 0.31 ]
+  dEdxGausWidthMu   : [ 0.33, 0.53, 0.20 ]
+  dEdxGausWidthPi   : [ 0.33, 0.53, 0.20 ]
+  dEdxGausWidthK    : [ 0.33, 0.53, 0.20 ]
+  dEdxGausWidthMIP  : [ 0.33, 0.53, 0.20 ]
 
   # offsets: 
   #   - negative shifts the peak of the landaugaussian left 
