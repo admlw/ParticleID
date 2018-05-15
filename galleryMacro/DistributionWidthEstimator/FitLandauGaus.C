@@ -15,9 +15,11 @@ void FitLandauGaus(std::string filename, bool fixGaus=false)
   // All tracks
   TCanvas *c1 = new TCanvas();
 
-  TH1D *hdEdx_all = (TH1D*)f->Get("hdEdx_all");
+  TH1D *hdEdx_all = (TH1D*)f->Get("hdEdx_all_plane2");
   hdEdx_all->GetXaxis()->SetRangeUser(0,10);
   langaus->SetParameters(0.2,1.7,1000,0.1);
+  // Uncomment for data fit
+  //langaus->FixParameter(0,0.12);
   hdEdx_all->Fit(langaus,"","",0.,10.);
   hdEdx_all->Draw();
   hdEdx_all->Write("hdEdx_all");
@@ -33,7 +35,7 @@ void FitLandauGaus(std::string filename, bool fixGaus=false)
   langaus->SetParameters(0.1,1.7,1000,GausWidth);
   if (fixGaus) langaus->FixParameter(3, GausWidth);
   // True muons
-  TH1D *hdEdx_Muon = (TH1D*)f->Get("hdEdx_Muon");
+  TH1D *hdEdx_Muon = (TH1D*)f->Get("hdEdx_Muon_plane2");
   if (hdEdx_Muon->Integral() > 0){
     hdEdx_Muon->GetXaxis()->SetRangeUser(0,10);
     TCanvas *c2 = new TCanvas();
@@ -47,10 +49,10 @@ void FitLandauGaus(std::string filename, bool fixGaus=false)
   }
 
 
-  langaus->SetParameters(0.1,1.7,1000,GausWidth);
+  langaus->SetParameters(0.1,2.2,100,GausWidth);
   if (fixGaus) langaus->FixParameter(3, GausWidth);
-  // All tracks
-  TH1D *hdEdx_Proton = (TH1D*)f->Get("hdEdx_Proton");
+  // True protons
+  TH1D *hdEdx_Proton = (TH1D*)f->Get("hdEdx_Proton_plane2");
   if (hdEdx_Proton->Integral() > 0){
     hdEdx_Proton->Rebin(2);
     hdEdx_Proton->GetXaxis()->SetRangeUser(0,10);
