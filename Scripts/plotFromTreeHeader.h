@@ -1,57 +1,64 @@
 struct treevars{
   // These are the variables that are filled directly from the tree
   int true_PDG=-9999;
-  double track_neglogl_fwd_p=-9999;
-  double track_neglogl_fwd_mu=-9999;
-  double track_neglogl_fwd_pi=-9999;
-  double track_neglogl_fwd_k=-9999;
-  double track_neglogl_fwd_other=-9999;
-  double track_neglogl_fwd_mip=-9999;
-  double track_neglogl_bwd_p=-9999;
-  double track_neglogl_bwd_mu=-9999;
-  double track_neglogl_bwd_pi=-9999;
-  double track_neglogl_bwd_k=-9999;
-  double track_neglogl_bwd_other=-9999;
-  double track_PIDA_mean=-9999;
-  double track_PIDA_kde=-9999;
-  double track_chi2mu=-9999;
-  double track_chi2p=-9999;
-  double track_chi2pi=-9999;
-  double track_chi2k=-9999;
-  double track_depE=-9999;
+  std::vector<double> *track_neglogl_fwd_p=nullptr;
+  std::vector<double> *track_neglogl_fwd_mu=nullptr;
+  std::vector<double> *track_neglogl_fwd_pi=nullptr;
+  std::vector<double> *track_neglogl_fwd_k=nullptr;
+  std::vector<double> *track_neglogl_fwd_other=nullptr;
+  std::vector<double> *track_neglogl_fwd_mip=nullptr;
+  std::vector<double> *track_neglogl_bwd_p=nullptr;
+  std::vector<double> *track_neglogl_bwd_mu=nullptr;
+  std::vector<double> *track_neglogl_bwd_pi=nullptr;
+  std::vector<double> *track_neglogl_bwd_k=nullptr;
+  std::vector<double> *track_neglogl_bwd_other=nullptr;
+  std::vector<double> *track_PIDA_mean=nullptr;
+  std::vector<double> *track_PIDA_kde=nullptr;
+  std::vector<double> *track_depE=nullptr;
+  double track_chi2mu_plane2=-9999;
+  double track_chi2p_plane2=-9999;
+  double track_chi2pi_plane2=-9999;
+  double track_chi2k_plane2=-9999;
   double track_rangeE_mu=-9999;
   double track_rangeE_p=-9999;
 
+  // Make the chi2 variables std::vector<doubles> so we can handle them in the same way as the other variables
+  // This is just a cheat - we only have chi2 variables for collection plane right now, so set other values to 0 by hand. Fix this in the future!
+  std::vector<double> *track_chi2mu;
+  std::vector<double> *track_chi2p;
+  std::vector<double> *track_chi2pi;
+  std::vector<double> *track_chi2k;
+
   // These are derived quantities - derived from the values above in CalcPIDvars
-  double track_neglogl_p=-9999;
-  double track_neglogl_mu=-9999;
-  double track_neglogl_pi=-9999;
-  double track_neglogl_k=-9999;
-  double track_neglogl_mip=-9999;
-  double track_neglogl_minmumip=-9999;
-  double track_neglogl_muminusp=-9999;
-  double track_neglogl_mipminusp=-9999;
-  double track_neglogl_minmumipminusp=-9999;
-  double track_chi2_muminusp=-9999;
-  double track_depE_minus_rangeE_mu=-9999;
-  double track_depE_minus_rangeE_p=-9999;
+  std::vector<double> *track_neglogl_p;
+  std::vector<double> *track_neglogl_mu;
+  std::vector<double> *track_neglogl_pi;
+  std::vector<double> *track_neglogl_k;
+  std::vector<double> *track_neglogl_mip;
+  std::vector<double> *track_neglogl_minmumip;
+  std::vector<double> *track_neglogl_muminusp;
+  std::vector<double> *track_neglogl_mipminusp;
+  std::vector<double> *track_neglogl_minmumipminusp;
+  std::vector<double> *track_depE_minus_rangeE_mu;
+  std::vector<double> *track_depE_minus_rangeE_p;
+  std::vector<double> *track_chi2_muminusp;
 
   // These variables are for when "neglogl" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
-  double track_max_neglogl_p=-9999;
-  double track_max_neglogl_mu=-9999;
-  double track_max_neglogl_pi=-9999;
-  double track_max_neglogl_k=-9999;
-  double track_max_neglogl_mip=-9999;
-  double track_max_neglogl_maxmumip=-9999;
-  double track_neglogl_muoverp=-9999;
-  double track_neglogl_mipoverp=-9999;
-  double track_neglogl_minmumipoverp=-9999;
-  double track_Lmu_0to1=-9999;
-  double track_Lmip_0to1=-9999;
-  double track_Lpi_0to1=-9999;
-  double track_Lp_0to1=-9999;
-  double track_Lmumip_0to1=-9999;
-  double track_Lmumippi_0to1=-9999;
+  std::vector<double> *track_max_neglogl_p;
+  std::vector<double> *track_max_neglogl_mu;
+  std::vector<double> *track_max_neglogl_pi;
+  std::vector<double> *track_max_neglogl_k;
+  std::vector<double> *track_max_neglogl_mip;
+  std::vector<double> *track_max_neglogl_maxmumip;
+  std::vector<double> *track_neglogl_muoverp;
+  std::vector<double> *track_neglogl_mipoverp;
+  std::vector<double> *track_neglogl_minmumipoverp;
+  std::vector<double> *track_Lmu_0to1;
+  std::vector<double> *track_Lmip_0to1;
+  std::vector<double> *track_Lpi_0to1;
+  std::vector<double> *track_Lp_0to1;
+  std::vector<double> *track_Lmumip_0to1;
+  std::vector<double> *track_Lmumippi_0to1;
 };
 
 void settreevars(TTree *intree, treevars *varstoset){
@@ -67,50 +74,104 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_neglogl_bwd_k"   , &(varstoset->track_neglogl_bwd_k));
   intree->SetBranchAddress("track_PIDA_mean"       , &(varstoset->track_PIDA_mean));
   intree->SetBranchAddress("track_PIDA_kde"        , &(varstoset->track_PIDA_kde));
-  intree->SetBranchAddress("track_Chi2Muon", &(varstoset->track_chi2mu));
-  intree->SetBranchAddress("track_Chi2Proton", &(varstoset->track_chi2p));
-  intree->SetBranchAddress("track_Chi2Pion", &(varstoset->track_chi2pi));
-  intree->SetBranchAddress("track_Chi2Kaon", &(varstoset->track_chi2k));
+  intree->SetBranchAddress("track_Chi2Muon", &(varstoset->track_chi2mu_plane2));
+  intree->SetBranchAddress("track_Chi2Proton", &(varstoset->track_chi2p_plane2));
+  intree->SetBranchAddress("track_Chi2Pion", &(varstoset->track_chi2pi_plane2));
+  intree->SetBranchAddress("track_Chi2Kaon", &(varstoset->track_chi2k_plane2));
   intree->SetBranchAddress("track_depE", &(varstoset->track_depE));
   intree->SetBranchAddress("track_rangeE_mu", &(varstoset->track_rangeE_mu));
   intree->SetBranchAddress("track_rangeE_p", &(varstoset->track_rangeE_p));
+
+  intree->GetEntry(0);
+  size_t nplanes = varstoset->track_neglogl_fwd_p->size();
+
+  varstoset->track_chi2mu = new std::vector<double>(nplanes);
+  varstoset->track_chi2p = new std::vector<double>(nplanes);
+  varstoset->track_chi2pi = new std::vector<double>(nplanes);
+  varstoset->track_chi2k = new std::vector<double>(nplanes);
+
+  varstoset->track_neglogl_p = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_mu = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_pi = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_k = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_mip = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_minmumip = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_muminusp = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_mipminusp = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_minmumipminusp = new std::vector<double>(nplanes);
+  varstoset->track_depE_minus_rangeE_mu = new std::vector<double>(nplanes);
+  varstoset->track_depE_minus_rangeE_p = new std::vector<double>(nplanes);
+  varstoset->track_chi2_muminusp = new std::vector<double>(nplanes);
+
+  varstoset->track_max_neglogl_p = new std::vector<double>(nplanes);
+  varstoset->track_max_neglogl_mu = new std::vector<double>(nplanes);
+  varstoset->track_max_neglogl_pi = new std::vector<double>(nplanes);
+  varstoset->track_max_neglogl_k = new std::vector<double>(nplanes);
+  varstoset->track_max_neglogl_mip = new std::vector<double>(nplanes);
+  varstoset->track_max_neglogl_maxmumip = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_muoverp = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_mipoverp = new std::vector<double>(nplanes);
+  varstoset->track_neglogl_minmumipoverp = new std::vector<double>(nplanes);
+  varstoset->track_Lmu_0to1 = new std::vector<double>(nplanes);
+  varstoset->track_Lmip_0to1 = new std::vector<double>(nplanes);
+  varstoset->track_Lpi_0to1 = new std::vector<double>(nplanes);
+  varstoset->track_Lp_0to1 = new std::vector<double>(nplanes);
+  varstoset->track_Lmumip_0to1 = new std::vector<double>(nplanes);
+  varstoset->track_Lmumippi_0to1 = new std::vector<double>(nplanes);
 }
 
 void CalcPIDvars(treevars *vars){
-  vars->track_neglogl_p     = std::min(vars->track_neglogl_fwd_p     , vars->track_neglogl_bwd_p);
-  vars->track_neglogl_mu    = std::min(vars->track_neglogl_fwd_mu    , vars->track_neglogl_bwd_mu);
-  vars->track_neglogl_pi    = std::min(vars->track_neglogl_fwd_pi    , vars->track_neglogl_bwd_pi);
-  vars->track_neglogl_k     = std::min(vars->track_neglogl_fwd_k     , vars->track_neglogl_bwd_k);
-  vars->track_neglogl_mip   = vars->track_neglogl_fwd_mip;
+  //std::cout << "Calculating PID variables for " << vars->track_neglogl_fwd_p->size() << " planes" << std::endl;
+  for (size_t i_pl=0; i_pl < vars->track_neglogl_fwd_p->size(); i_pl++){
+    vars->track_neglogl_p->at(i_pl)     = std::min(vars->track_neglogl_fwd_p->at(i_pl)     , vars->track_neglogl_bwd_p->at(i_pl));
+    vars->track_neglogl_mu->at(i_pl)    = std::min(vars->track_neglogl_fwd_mu->at(i_pl)    , vars->track_neglogl_bwd_mu->at(i_pl));
+    vars->track_neglogl_pi->at(i_pl)    = std::min(vars->track_neglogl_fwd_pi->at(i_pl)    , vars->track_neglogl_bwd_pi->at(i_pl));
+    vars->track_neglogl_k->at(i_pl)     = std::min(vars->track_neglogl_fwd_k->at(i_pl)     , vars->track_neglogl_bwd_k->at(i_pl));
+    vars->track_neglogl_mip->at(i_pl)   = vars->track_neglogl_fwd_mip->at(i_pl);
 
-  vars->track_neglogl_minmumip = std::min(vars->track_neglogl_mu, vars->track_neglogl_mip);
+    vars->track_neglogl_minmumip->at(i_pl) = std::min(vars->track_neglogl_mu->at(i_pl), vars->track_neglogl_mip->at(i_pl));
 
-  vars->track_neglogl_muminusp = vars->track_neglogl_mu - vars->track_neglogl_p;
-  vars->track_neglogl_mipminusp = vars->track_neglogl_mip - vars->track_neglogl_p;
-  vars->track_neglogl_minmumipminusp = vars->track_neglogl_minmumip - vars->track_neglogl_p;
-  vars->track_chi2_muminusp = vars->track_chi2mu - vars->track_chi2p;
+    vars->track_neglogl_muminusp->at(i_pl) = vars->track_neglogl_mu->at(i_pl) - vars->track_neglogl_p->at(i_pl);
+    vars->track_neglogl_mipminusp->at(i_pl) = vars->track_neglogl_mip->at(i_pl) - vars->track_neglogl_p->at(i_pl);
+    vars->track_neglogl_minmumipminusp->at(i_pl) = vars->track_neglogl_minmumip->at(i_pl) - vars->track_neglogl_p->at(i_pl);
 
-  vars->track_depE_minus_rangeE_mu = vars->track_depE - vars->track_rangeE_mu;
-  vars->track_depE_minus_rangeE_p = vars->track_depE - vars->track_rangeE_p;
+    if (i_pl==0 || i_pl==1){
+      vars->track_chi2_muminusp->at(i_pl) = 0;
+      vars->track_chi2mu->at(i_pl) = 0;
+      vars->track_chi2p->at(i_pl) = 0;
+      vars->track_chi2k->at(i_pl) = 0;
+      vars->track_chi2pi->at(i_pl) = 0;
+    }
+    else{
+      vars->track_chi2mu->at(i_pl) = vars->track_chi2mu_plane2;
+      vars->track_chi2p->at(i_pl) = vars->track_chi2p_plane2;
+      vars->track_chi2k->at(i_pl) = vars->track_chi2k_plane2;
+      vars->track_chi2pi->at(i_pl) = vars->track_chi2pi_plane2;
+      vars->track_chi2_muminusp->at(i_pl) = vars->track_chi2mu_plane2 - vars->track_chi2p_plane2;
+    }
 
-  // These variables are for when "neglogl" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
-  vars->track_max_neglogl_p = std::max(vars->track_neglogl_fwd_p     , vars->track_neglogl_bwd_p);
-  vars->track_max_neglogl_mu = std::max(vars->track_neglogl_fwd_mu    , vars->track_neglogl_bwd_mu);
-  vars->track_max_neglogl_pi = std::max(vars->track_neglogl_fwd_pi    , vars->track_neglogl_bwd_pi);
-  vars->track_max_neglogl_k = std::max(vars->track_neglogl_fwd_k     , vars->track_neglogl_bwd_k);
-  vars->track_max_neglogl_mip = vars->track_neglogl_fwd_mip;
-  vars->track_max_neglogl_maxmumip = std::max(vars->track_neglogl_mu, vars->track_neglogl_mip);
-  vars->track_neglogl_muoverp = vars->track_neglogl_mu / vars->track_neglogl_p;
-  vars->track_neglogl_mipoverp = vars->track_neglogl_mip / vars->track_neglogl_p;
-  vars->track_neglogl_minmumipoverp = vars->track_neglogl_minmumip / vars->track_neglogl_p;
+    vars->track_depE_minus_rangeE_mu->at(i_pl) = vars->track_depE->at(i_pl) - vars->track_rangeE_mu;
+    vars->track_depE_minus_rangeE_p->at(i_pl) = vars->track_depE->at(i_pl) - vars->track_rangeE_p;
 
-  vars->track_Lmu_0to1 = vars->track_neglogl_mu/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
-  vars->track_Lmip_0to1 = vars->track_neglogl_mip/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
-  vars->track_Lpi_0to1 = vars->track_neglogl_pi/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
-  vars->track_Lp_0to1 = vars->track_neglogl_p/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
+    // These variables are for when "neglogl" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
+    vars->track_max_neglogl_p->at(i_pl) = std::max(vars->track_neglogl_fwd_p->at(i_pl)     , vars->track_neglogl_bwd_p->at(i_pl));
+    vars->track_max_neglogl_mu->at(i_pl) = std::max(vars->track_neglogl_fwd_mu->at(i_pl)    , vars->track_neglogl_bwd_mu->at(i_pl));
+    vars->track_max_neglogl_pi->at(i_pl) = std::max(vars->track_neglogl_fwd_pi->at(i_pl)    , vars->track_neglogl_bwd_pi->at(i_pl));
+    vars->track_max_neglogl_k->at(i_pl) = std::max(vars->track_neglogl_fwd_k->at(i_pl)     , vars->track_neglogl_bwd_k->at(i_pl));
+    vars->track_max_neglogl_mip->at(i_pl) = vars->track_neglogl_fwd_mip->at(i_pl);
+    vars->track_max_neglogl_maxmumip->at(i_pl) = std::max(vars->track_neglogl_mu->at(i_pl), vars->track_neglogl_mip->at(i_pl));
+    vars->track_neglogl_muoverp->at(i_pl) = vars->track_neglogl_mu->at(i_pl) / vars->track_neglogl_p->at(i_pl);
+    vars->track_neglogl_mipoverp->at(i_pl) = vars->track_neglogl_mip->at(i_pl) / vars->track_neglogl_p->at(i_pl);
+    vars->track_neglogl_minmumipoverp->at(i_pl) = vars->track_neglogl_minmumip->at(i_pl) / vars->track_neglogl_p->at(i_pl);
 
-  vars->track_Lmumip_0to1 = (vars->track_neglogl_mu+vars->track_neglogl_mip)/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
-  vars->track_Lmumippi_0to1 = (vars->track_neglogl_mu+vars->track_neglogl_mip+vars->track_neglogl_pi)/(vars->track_neglogl_p+vars->track_neglogl_mu+vars->track_neglogl_k+vars->track_neglogl_pi+vars->track_neglogl_mip);
+    vars->track_Lmu_0to1->at(i_pl) = vars->track_neglogl_mu->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+    vars->track_Lmip_0to1->at(i_pl) = vars->track_neglogl_mip->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+    vars->track_Lpi_0to1->at(i_pl) = vars->track_neglogl_pi->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+    vars->track_Lp_0to1->at(i_pl) = vars->track_neglogl_p->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+
+    vars->track_Lmumip_0to1->at(i_pl) = (vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_mip->at(i_pl))/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+    vars->track_Lmumippi_0to1->at(i_pl) = (vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_mip->at(i_pl)+vars->track_neglogl_pi->at(i_pl))/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+  }
 }
 
 
@@ -199,6 +260,8 @@ struct hist1D{
     hists->h_other->Scale(POTScaling);
     hists->h_all->Scale(POTScaling);
 
+    std::cout << "h_all MC->Integral() = " << hists->h_all->Integral() << std::endl;
+
     THStack *hs = new THStack("hs","hs");
     hs->Add(hists->h_p);
     hs->Add(hists->h_mu);
@@ -212,9 +275,49 @@ struct hist1D{
     hs->Draw("same hist");
     hists->h_all->Draw("same E2"); // Draw it again so errors are on top
     hists->l->Draw();
-  }
+}
 
-void OverlayData(TCanvas *c, hist1D *onbeam, hist1D *offbeam, double OffBeamScaling, double POTScaling){
+void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double OffBeamScaling){
+  // Note that there are no area-normalised options here because I'm not sure that makes sense
+  hists->h_all->GetYaxis()->SetTitle("No. tracks (POT normalised)");
+
+  hists->h_mu->Sumw2();
+  hists->h_p->Sumw2();
+  hists->h_pi->Sumw2();
+  hists->h_k->Sumw2();
+  hists->h_other->Sumw2();
+  hists->h_all->Sumw2();
+  offbeam->h_all->Sumw2();
+
+  hists->h_mu->Scale(POTScaling);
+  hists->h_p->Scale(POTScaling);
+  hists->h_pi->Scale(POTScaling);
+  hists->h_k->Scale(POTScaling);
+  hists->h_other->Scale(POTScaling);
+  hists->h_all->Scale(POTScaling);
+
+  offbeam->h_all->Scale(OffBeamScaling);
+  offbeam->h_all->SetFillColor(kWhite);
+  offbeam->h_all->SetLineColor(kBlack);
+
+  THStack *hs = new THStack("hs","hs");
+  hs->Add(hists->h_p);
+  hs->Add(hists->h_mu);
+  hs->Add(hists->h_pi);
+  hs->Add(hists->h_k);
+  hs->Add(hists->h_other);
+  hs->Add(offbeam->h_all);
+
+  hists->h_all->SetMaximum((hists->h_all->GetMaximum()+offbeam->h_all->GetMaximum())*1.2);
+  hists->h_all->SetMinimum(0);
+  hists->h_all->Draw("hist"); // Draw this one first because it knows about the axis titles
+  hs->Draw("same hist");
+  hists->h_all->Draw("same E2"); // Draw it again so errors are on top
+  hists->l->AddEntry(offbeam->h_all,"Data (off-beam)","f");
+  hists->l->Draw();
+}
+
+void OverlayOnMinusOffData(TCanvas *c, hist1D *onbeam, hist1D *offbeam, double OffBeamScaling, double POTScaling){
   TH1D *h_onminusoff = (TH1D*)onbeam->h_all->Clone("h_onminusoff");
 
   h_onminusoff->Sumw2();
@@ -225,6 +328,8 @@ void OverlayData(TCanvas *c, hist1D *onbeam, hist1D *offbeam, double OffBeamScal
     h_onminusoff->Scale(1.0/h_onminusoff->Integral());
   }
 
+  std::cout << "h_onminusoff->Integral() = " << h_onminusoff->Integral() << std::endl;
+
   h_onminusoff->SetMarkerStyle(20);
   h_onminusoff->SetMarkerSize(0.6);
 
@@ -233,6 +338,18 @@ void OverlayData(TCanvas *c, hist1D *onbeam, hist1D *offbeam, double OffBeamScal
 
   TLegend *l = (TLegend*)c->GetPrimitive("TPave");
   l->AddEntry(h_onminusoff,"Data (on-off beam)","lp");
+}
+
+void OverlayOnBeamData(TCanvas *c, hist1D *onbeam){
+
+  onbeam->h_all->SetMarkerStyle(20);
+  onbeam->h_all->SetMarkerSize(0.6);
+
+  c->cd();
+  onbeam->h_all->Draw("same p E1");
+
+  TLegend *l = (TLegend*)c->GetPrimitive("TPave");
+  l->AddEntry(onbeam->h_all,"Data (on-beam)","lp");
 }
 
 
