@@ -176,8 +176,8 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<anab::sParticleIDAlgScores> trk_depE       = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
     // only need a single entry for this... actually can probably remove this eventually.
-    anab::sParticleIDAlgScores trk_rangeE_mu;  
-    anab::sParticleIDAlgScores trk_rangeE_p;   
+    anab::sParticleIDAlgScores trk_rangeE_mu;
+    anab::sParticleIDAlgScores trk_rangeE_p;
     anab::sParticleIDAlgScores trklen;
 
     art::Ptr< anab:: Calorimetry > calo;
@@ -255,14 +255,14 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_p.at(planenum).fAssumedPdg,  false, planenum);
       Bragg_bwd_pi.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_pi.at(planenum).fAssumedPdg, false, planenum);
       Bragg_bwd_k.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_k.at(planenum).fAssumedPdg,  false, planenum);
-      Bragg_fwd_mu.at(planenum).fPlaneID      = c->PlaneID(); 
-      Bragg_fwd_p.at(planenum).fPlaneID       = c->PlaneID(); 
-      Bragg_fwd_pi.at(planenum).fPlaneID      = c->PlaneID(); 
-      Bragg_fwd_k.at(planenum).fPlaneID       = c->PlaneID(); 
-      Bragg_bwd_mu.at(planenum).fPlaneID      = c->PlaneID(); 
-      Bragg_bwd_p.at(planenum).fPlaneID       = c->PlaneID(); 
-      Bragg_bwd_pi.at(planenum).fPlaneID      = c->PlaneID(); 
-      Bragg_bwd_k.at(planenum).fPlaneID       = c->PlaneID(); 
+      Bragg_fwd_mu.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_fwd_p.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_fwd_pi.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_fwd_k.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_bwd_mu.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_bwd_p.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_bwd_pi.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_bwd_k.at(planenum).fPlaneID       = c->PlaneID();
 
       // Special case: MIP-like probability
       // fit to the flat MIP region of dEdx with residual range > 15 cm
@@ -270,6 +270,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       noBragg_fwd_MIP.at(planenum).fVariableType = anab::kLogL_fwd;
       noBragg_fwd_MIP.at(planenum).fAssumedPdg = 0;
       noBragg_fwd_MIP.at(planenum).fValue = braggcalc.getNegLogL(dEdx, resRange, noBragg_fwd_MIP.at(planenum).fAssumedPdg, true, planenum);
+      noBragg_fwd_MIP.at(planenum).fPlaneID = c->PlaneID();
 
       AlgScoresVec.push_back(Bragg_fwd_mu.at(planenum));
       AlgScoresVec.push_back(Bragg_fwd_p.at(planenum));
@@ -336,9 +337,9 @@ void UBPID::ParticleId::produce(art::Event & e)
 
       /**
        * Algorithm 4: Deposited energy vs energy by range
-       * Calculate deposited energy from product of dEdx and trkpitchvec vectors 
-       * (there is a KineticEnergy object in anab::Calorimetry that already 
-       * does this, but due to a bug it currently does not use the calibrated 
+       * Calculate deposited energy from product of dEdx and trkpitchvec vectors
+       * (there is a KineticEnergy object in anab::Calorimetry that already
+       * does this, but due to a bug it currently does not use the calibrated
        * dEdx)
        */
 
@@ -374,7 +375,7 @@ void UBPID::ParticleId::produce(art::Event & e)
     double track_rangeP_mu = trkm.GetTrackMomentum(track->Length(),13)*1000.;
     double track_rangeP_p = trkm.GetTrackMomentum(track->Length(),2212)*1000.;
 
-    /** 
+    /**
      * Now convert P->E
      * From TrackMomentumCalculator::GetTrackMomentum: P = TMath::Sqrt((KE*KE)+(2*M*KE))
      * P = TMath::Sqrt((E*E)-(M*M)) and E = KE+M
