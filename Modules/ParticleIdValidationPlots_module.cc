@@ -18,7 +18,7 @@
  * \date 2018/04/18
  *
  * \notes
- * - There are some checks in here to make sure that the plane id is between 
+ * - There are some checks in here to make sure that the plane id is between
  *   0 and 2. This is because the calorimetry module will return a value of
  *   -1 when there are no hits in a specific plane.
  *
@@ -319,7 +319,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           }
         }//end loop over particles per hit
 
-        purity = maxe/tote; 
+        purity = maxe/tote;
 
       }
 
@@ -619,7 +619,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         //std::cout << "trackPIDforChi2.at(" << i_plane << ")->PlaneID().Plane = " << trackPIDforChi2.at(i_plane)->PlaneID().Plane << std::endl;
 
         // Use collection plane only
-        if (trackPIDforChi2.at(i_plane)->PlaneID().Plane != 2) continue;
+        //if (trackPIDforChi2.at(i_plane)->PlaneID().Plane != 2) continue;
 
         track_Chi2Proton = trackPIDforChi2.at(i_plane)->Chi2Proton();
         track_Chi2Pion   = trackPIDforChi2.at(i_plane)->Chi2Pion();
