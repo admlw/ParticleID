@@ -11,12 +11,12 @@
 
 void LandauGaussianPlot(){
 
-  const int nxbins = 50;
+  const int nxbins = 500;
   const double xbinlow = 0;
   const double xbinhigh = 30;
-  const int nybins = 1000;
+  const int nybins = 500;
   const double ybinlow = 0;
-  const double ybinhigh = 50;
+  const double ybinhigh = 20;
 
   // default data:
   /**
@@ -28,10 +28,16 @@ void LandauGaussianPlot(){
   // default MC:
   double muonlandauwidth = 0.09;
   double muongaussianwidth = 0.09;
+  double pionlandauwidth = 0.09;
+  double piongaussianwidth = 0.09;
+  double kaonlandauwidth = 0.09;
+  double kaongaussianwidth = 0.09;
   double protonlandauwidth = 0.19;
   double protongaussianwidth = 0.09;
 
   double muonMeanMPVCorrection = 0.60302250;
+  double pionMeanMPVCorrection = 0.60302250;
+  double kaonMeanMPVCorrection = 0.60302250;
   double protonMeanMPVCorrection = 1.1297;
 
   Theory_dEdx_resrange();
@@ -198,6 +204,111 @@ void LandauGaussianPlot(){
   h_proton->SetContour(100);
   h_proton->Draw("col2");
 
+  /** pion */
+
+  /** variables for creating TGraphAsymmErrors*/
+  double pion_resRg[nxbins];
+  double pion_resRg_up[nxbins];
+  double pion_resRg_down[nxbins];
+  double pion_mpv[nxbins];
+  double pion_errup[nxbins];
+  double pion_errdown[nxbins];
+
+
+  TH2D *h_pion = new TH2D("h_pion", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, xbinlow, xbinhigh, nybins, ybinlow, ybinhigh);
+
+  for (int i = 0; i < nxbins; i++){
+
+    langaus->SetParameters(pionlandauwidth, (g_ThdEdxRR_Pion->Eval((i)*xbinhigh/(double)nxbins, 0, "S"))-pionMeanMPVCorrection, 1.0, piongaussianwidth);
+
+    for (int j = 0; j < nybins; j++){
+
+      h_pion->SetBinContent(i,j,langaus->Eval(h_pion->GetYaxis()->GetBinCenter(j)));
+
+    }
+
+    /** 
+     * project out chosen x bin in order to use
+     * GetQuantiles method which is only available in TH1s, then find
+     * the 16th and 84th quantiles
+     */
+
+    TH1D* h_pion_proj_y = (TH1D*)h_pion->ProjectionY("h_pion_proj_y", i, i+1);
+    Double_t yq[2];
+    Double_t xq[2] = {0.16, 0.84};
+    h_pion_proj_y->GetQuantiles(1,&yq[0], &xq[0]);
+    h_pion_proj_y->GetQuantiles(1,&yq[1], &xq[1]);
+
+    pion_resRg[i] = i*xbinhigh/double(nxbins) - halfbinwidthx;
+    pion_resRg_up[i] = 0;
+    pion_resRg_down[i] = 0;
+    pion_mpv[i] = h_pion_proj_y->GetBinCenter(h_pion_proj_y->GetMaximumBin());
+    pion_errdown[i] = pion_mpv[i] - yq[0];
+    pion_errup[i] = yq[1] - pion_mpv[i];
+
+  }
+
+  TGraphAsymmErrors* gr_pion_profile_x = new TGraphAsymmErrors(nxbins, pion_resRg, pion_mpv, pion_resRg_down, pion_resRg_up, pion_errdown, pion_errup);
+  gr_pion_profile_x->SetName("gr_pion_profile_x");
+
+  TCanvas *c4 = new TCanvas("c4", "c4", 500, 500);
+  c4->cd();
+  h_pion->SetContour(100);
+  h_pion->Draw("col2");
+
+  /** kaon */
+
+  /** variables for creating TGraphAsymmErrors*/
+  double kaon_resRg[nxbins];
+  double kaon_resRg_up[nxbins];
+  double kaon_resRg_down[nxbins];
+  double kaon_mpv[nxbins];
+  double kaon_errup[nxbins];
+  double kaon_errdown[nxbins];
+
+
+  TH2D *h_kaon = new TH2D("h_kaon", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, xbinlow, xbinhigh, nybins, ybinlow, ybinhigh);
+
+  for (int i = 0; i < nxbins; i++){
+
+    langaus->SetParameters(kaonlandauwidth, (g_ThdEdxRR_Kaon->Eval((i)*xbinhigh/(double)nxbins, 0, "S"))-kaonMeanMPVCorrection, 1.0, kaongaussianwidth);
+
+    for (int j = 0; j < nybins; j++){
+
+      h_kaon->SetBinContent(i,j,langaus->Eval(h_kaon->GetYaxis()->GetBinCenter(j)));
+
+    }
+
+    /** 
+     * project out chosen x bin in order to use
+     * GetQuantiles method which is only available in TH1s, then find
+     * the 16th and 84th quantiles
+     */
+
+    TH1D* h_kaon_proj_y = (TH1D*)h_kaon->ProjectionY("h_kaon_proj_y", i, i+1);
+    Double_t yq[2];
+    Double_t xq[2] = {0.16, 0.84};
+    h_kaon_proj_y->GetQuantiles(1,&yq[0], &xq[0]);
+    h_kaon_proj_y->GetQuantiles(1,&yq[1], &xq[1]);
+
+    kaon_resRg[i] = i*xbinhigh/double(nxbins) - halfbinwidthx;
+    kaon_resRg_up[i] = 0;
+    kaon_resRg_down[i] = 0;
+    kaon_mpv[i] = h_kaon_proj_y->GetBinCenter(h_kaon_proj_y->GetMaximumBin());
+    kaon_errdown[i] = kaon_mpv[i] - yq[0];
+    kaon_errup[i] = yq[1] - kaon_mpv[i];
+
+  }
+
+  TGraphAsymmErrors* gr_kaon_profile_x = new TGraphAsymmErrors(nxbins, kaon_resRg, kaon_mpv, kaon_resRg_down, kaon_resRg_up, kaon_errdown, kaon_errup);
+  gr_kaon_profile_x->SetName("gr_kaon_profile_x");
+
+  TCanvas *c5 = new TCanvas("c5", "c5", 500, 500);
+  c5->cd();
+  h_kaon->SetContour(100);
+  h_kaon->Draw("col2");
+
+
   /** combined */
 
   TH2D *h_combined = new TH2D("h_combined", ";Residual Range (cm); dE/dx (MeV/cm)", nxbins, xbinlow, xbinhigh, nybins, ybinlow, ybinhigh);
@@ -217,9 +328,15 @@ void LandauGaussianPlot(){
   g_ThdEdxRR_Muon->Write();
   g_ThdEdxRR_MuonNoBragg->SetName("gr_muonnobragg");
   g_ThdEdxRR_MuonNoBragg->Write();
+  g_ThdEdxRR_Pion->SetName("gr_pion");
+  g_ThdEdxRR_Pion->Write();
+  g_ThdEdxRR_Kaon->SetName("gr_kaon");
+  g_ThdEdxRR_Kaon->Write();
   h_muon->Write();
   h_muonnobragg->Write();
   h_proton->Write();
+  h_pion->Write();
+  h_kaon->Write();
   h_combined->Write();
   gr_muon_profile_x->Write();
   gr_muonnobragg_profile_x->Write();
