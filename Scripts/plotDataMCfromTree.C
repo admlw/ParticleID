@@ -3,93 +3,93 @@
 // What variables do we want these plots as a function of?
 std::vector<double> GetPIDvarstoplot(treevars *vars){
   std::vector<double> varstoplot = {
-                      vars->track_neglogl_p,
-                      vars->track_neglogl_mu,
-                      vars->track_neglogl_pi,
-                      vars->track_neglogl_k,
-                      vars->track_neglogl_mip,
-                      vars->track_neglogl_minmumip,
-                      vars->track_chi2mu,
-                      vars->track_chi2p,
-                      vars->track_chi2pi,
-                      vars->track_chi2k,
-                      vars->track_PIDA_kde,
-                      vars->track_PIDA_mean,
-                      vars->track_neglogl_muminusp,
-                      vars->track_neglogl_mipminusp,
-                      vars->track_neglogl_minmumipminusp,
-                      vars->track_chi2_muminusp,
-                      vars->track_depE_minus_rangeE_mu,
-                      vars->track_depE_minus_rangeE_p
-                      };
+    vars->track_neglogl_p,
+    vars->track_neglogl_mu,
+    vars->track_neglogl_pi,
+    vars->track_neglogl_k,
+    vars->track_neglogl_mip,
+    vars->track_neglogl_minmumip,
+    vars->track_chi2mu,
+    vars->track_chi2p,
+    vars->track_chi2pi,
+    vars->track_chi2k,
+    vars->track_PIDA_kde,
+    vars->track_PIDA_mean,
+    vars->track_neglogl_muminusp,
+    vars->track_neglogl_mipminusp,
+    vars->track_neglogl_minmumipminusp,
+    vars->track_chi2_muminusp,
+    vars->track_depE_minus_rangeE_mu,
+    vars->track_depE_minus_rangeE_p
+  };
   return varstoplot;
 };
 
 // Binning (nbins, binlow, binhigh) in the same order as the vector above
 std::vector<std::vector<int>> bins = {
-                    {40,0,15}, // track_neglogl_p
-                    {40,0,15}, // track_neglogl_mu
-                    {40,0,15}, // track_neglogl_pi
-                    {40,0,15}, // track_neglogl_k
-                    {40,0,15}, // track_neglogl_mip
-                    {40,0,15}, // track_neglogl_minmumip
-                    {25,0,125}, // track_chi2mu
-                    {30,0,300}, // track_chi2p
-                    {25,0,125}, // track_chi2pi
-                    {30,0,300}, // track_chi2k
-                    {40,0,30}, // track_PIDA_kde
-                    {40,0,30}, // track_PIDA_mean
-                    {40,-20,7}, // track_neglogl_muminusp
-                    {40,-20,15}, // track_neglogl_mipminusp
-                    {50,-20,7}, // track_neglogl_minmumipminusp
-                    {50,-400,100}, // track_chi2_muminusp
-                    {100,-100,100}, // track_depE_minus_rangeE_mu
-                    {100,-100,100} // track_depE_minus_rangeE_p
-                    };
+  {40,0,15}, // track_neglogl_p
+  {40,0,15}, // track_neglogl_mu
+  {40,0,15}, // track_neglogl_pi
+  {40,0,15}, // track_neglogl_k
+  {40,0,15}, // track_neglogl_mip
+  {40,0,15}, // track_neglogl_minmumip
+  {25,0,125}, // track_chi2mu
+  {30,0,300}, // track_chi2p
+  {25,0,125}, // track_chi2pi
+  {30,0,300}, // track_chi2k
+  {40,0,30}, // track_PIDA_kde
+  {40,0,30}, // track_PIDA_mean
+  {40,-20,7}, // track_neglogl_muminusp
+  {40,-20,15}, // track_neglogl_mipminusp
+  {50,-20,7}, // track_neglogl_minmumipminusp
+  {50,-400,100}, // track_chi2_muminusp
+  {100,-100,100}, // track_depE_minus_rangeE_mu
+  {100,-100,100} // track_depE_minus_rangeE_p
+};
 
 // Histogram titles in the same order as the vector above
 std::vector<std::string> histtitles = {
-                    ";-2LogL_{p};",
-                    ";-2LogL_{#mu};",
-                    ";-2LogL_{#pi};",
-                    ";-2LogL_{K};",
-                    ";-2LogL_{MIP};",
-                    ";-2LogL_{#mu/MIP};",
-                    ";#chi^{2}_{#mu};",
-                    ";#chi^{2}_{p};",
-                    ";#chi^{2}_{#pi};",
-                    ";#chi^{2}_{K};",
-                    ";PIDa (by KDE);",
-                    ";PIDa (by mean);",
-                    ";(-2LogL_{#mu})-(-2LogL_{p});",
-                    ";(-2LogL_{MIP})-(-2LogL_{p});",
-                    ";(-2LogL_{#mu/MIP})-(-2LogL_{p});",
-                    ";#chi^{2}_{#mu}-#chi^{2}_{p};",
-                    ";Deposited energy - energy by range (muon assumption) [MeV];",
-                    ";Deposited energy - energy by range (proton assumption) [MeV];"
-                  };
+  ";-2LogL_{p};",
+  ";-2LogL_{#mu};",
+  ";-2LogL_{#pi};",
+  ";-2LogL_{K};",
+  ";-2LogL_{MIP};",
+  ";-2LogL_{#mu/MIP};",
+  ";#chi^{2}_{#mu};",
+  ";#chi^{2}_{p};",
+  ";#chi^{2}_{#pi};",
+  ";#chi^{2}_{K};",
+  ";PIDa (by KDE);",
+  ";PIDa (by mean);",
+  ";(-2LogL_{#mu})-(-2LogL_{p});",
+  ";(-2LogL_{MIP})-(-2LogL_{p});",
+  ";(-2LogL_{#mu/MIP})-(-2LogL_{p});",
+  ";#chi^{2}_{#mu}-#chi^{2}_{p};",
+  ";Deposited energy - energy by range (muon assumption) [MeV];",
+  ";Deposited energy - energy by range (proton assumption) [MeV];"
+};
 
 // What to call saved plots in the same order as the vector above
 std::vector<std::string> histnames = {
-                  "neg2LLp",
-                  "neg2LLmu",
-                  "neg2LLpi",
-                  "neg2LLk",
-                  "neg2LLmip",
-                  "neg2LLmumip",
-                  "chi2mu",
-                  "chi2p",
-                  "chi2pi",
-                  "chi2k",
-                  "pida_kde",
-                  "pida_mean",
-                  "neglogl_muminusp",
-                  "neglogl_mipminusp",
-                  "neglogl_mumipminusp",
-                  "chi2muminusp",
-                  "depErangeEmu",
-                  "depErangeEp"
-                };
+  "neg2LLp",
+  "neg2LLmu",
+  "neg2LLpi",
+  "neg2LLk",
+  "neg2LLmip",
+  "neg2LLmumip",
+  "chi2mu",
+  "chi2p",
+  "chi2pi",
+  "chi2k",
+  "pida_kde",
+  "pida_mean",
+  "neglogl_muminusp",
+  "neglogl_mipminusp",
+  "neglogl_mumipminusp",
+  "chi2muminusp",
+  "depErangeEmu",
+  "depErangeEp"
+};
 
 // ---------------------------------------------------- //
 //  Now the function starts
@@ -167,7 +167,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
     }
   }
 
-    // ----------------- Off-beam data
+  // ----------------- Off-beam data
   hist1D *offb_hists[nplots];
   if (t_offbeam){
     // Make histograms to fill
