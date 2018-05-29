@@ -139,6 +139,7 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::vector<double> track_PIDA_kde;
     std::vector<double> track_dEdx;
     std::vector<double> track_depE;
+    std::vector<double> track_nhits;
     double track_Chi2Proton;
     double track_Chi2Kaon;
     double track_Chi2Pion;
@@ -146,7 +147,6 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_length;
     double track_theta;
     double track_phi;
-    double track_nhits;
     double track_rangeE_mu;
     double track_rangeE_p;
     std::vector<double> track_dEdx_perhit;
@@ -266,6 +266,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_PIDA_kde.resize(3,-999.);
     track_dEdx.resize(3,-999.);
     track_depE.resize(3,-999.);
+    track_nhits.resize(3,-999);
 
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = calo_from_tracks.at(track->ID());
 
@@ -351,37 +352,38 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
     } // end if(!fIsDataPlots)
 
-    std::cout << "[ParticleIDValidation] Getting calorimetry information." << std::endl;
-
     // for time being, only use Y plane calorimetry
     art::Ptr< anab:: Calorimetry > calo;
     int planenum = -1;
+    int hitsToUse = 0;
     for (auto c : caloFromTrack){
       planenum = c->PlaneID().Plane;
       calo = c;
       if (planenum < 0 || planenum > 2){
-        std::cout << "[ParticleIDValidation] No information for plane " << planenum << std::endl;
+        std::cout << "[ParticleIDValidation] No calorimetry information for plane " << planenum << std::endl;
         continue;
       }
+      else std::cout << "[ParticleIDValidation] Getting information for plane " << planenum << std::endl;
       dEdx.at(planenum) = calo->dEdx();
       resRange.at(planenum) = calo->ResidualRange();
+
+      /**
+       * Get hit charge of first and final 5 hits of track to try and find the
+       * direction of the track. If there are fewer than 10 hits then take half
+       * of the total hits.
+       */
+
+      double nhits = resRange.at(planenum).size();
+      // find how many hits to use
+      if (nhits >= 2*fNHitsForTrackDirection)
+        hitsToUse = fNHitsForTrackDirection;
+      else{
+        hitsToUse = std::floor((double)nhits/2.0);
+      }
+
+      track_nhits.at(planenum) = nhits;
+
     }
-
-    /**
-     * Get hit charge of first and final 5 hits of track to try and find the
-     * direction of the track. If there are fewer than 10 hits then take half
-     * of the total hits.
-     */
-
-    double nhits = resRange.size();
-    // find how many hits to use
-    int hitsToUse;
-    if (nhits >= 2*fNHitsForTrackDirection)
-      hitsToUse = fNHitsForTrackDirection;
-    else{
-      hitsToUse = std::floor((double)nhits/2.0);
-    }
-
     double averagedEdxTrackStart=0;
     double averagedEdxTrackEnd=0;
 
@@ -393,7 +395,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       for (int i = 0; i < (int)dEdx.at(2).size(); i++){
 
         if (i < hitsToUse) averagedEdxTrackStart+=dEdx.at(2).at(i);
-        else if (i > nhits - hitsToUse -1) averagedEdxTrackEnd+=dEdx.at(2).at(i);
+        else if (i > track_nhits.at(2) - hitsToUse -1) averagedEdxTrackEnd+=dEdx.at(2).at(i);
 
       }
 
@@ -598,7 +600,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
     // Now time to set some variables!
     track_length = trklen;
-    track_nhits = nhits;
     track_rangeE_mu = rangeE_mu;
     track_rangeE_p = rangeE_p;
     track_dEdx_perhit = dEdx.at(2);
