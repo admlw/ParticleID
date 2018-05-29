@@ -191,6 +191,7 @@ void UBPID::ParticleId::produce(art::Event & e)
         std::cout << "[ParticleID] Calorimetry on plane " << planenum << " is unavailable. Skipping." << std::endl;
         continue;
       }
+      else std::cout << "[ParticleID] Getting calorimetry information for plane " << planenum << std::endl;
 
       std::vector<double> dEdx = calo->dEdx();
       std::vector<double> resRange = calo->ResidualRange();

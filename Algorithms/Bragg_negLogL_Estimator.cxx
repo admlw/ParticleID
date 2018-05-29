@@ -53,16 +53,16 @@ namespace particleid{
 
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] PRINTING CONFIGURATION: " << std::endl;
     for (int i = 0; i < 3; i++){
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Proton dE/dx gaus width : " << gausWidth_p.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Muon dE/dx gaus width   : " << gausWidth_mu.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Pion dE/dx gaus width   : " << gausWidth_pi.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_k.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_mip.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Proton dE/dx landau width : " << landauWidth_p.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Muon dE/dx landau width   : " << landauWidth_mu.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Pion dE/dx landau width   : " << landauWidth_pi.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " Kaon dE/dx landau width   : " << landauWidth_k.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] << Plane " << i << " MIP dE/dx landau width    : " << landauWidth_mip.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Proton dE/dx gaus width : " << gausWidth_p.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Muon dE/dx gaus width   : " << gausWidth_mu.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Pion dE/dx gaus width   : " << gausWidth_pi.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_k.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_mip.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Proton dE/dx landau width : " << landauWidth_p.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Muon dE/dx landau width   : " << landauWidth_mu.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Pion dE/dx landau width   : " << landauWidth_pi.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Kaon dE/dx landau width   : " << landauWidth_k.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " MIP dE/dx landau width    : " << landauWidth_mip.at(i) << std::endl;
     }
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Proton MPV Offset : " << offset_p   << std::endl;
     std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Muon MPV Offset   : " << offset_mu  << std::endl;
