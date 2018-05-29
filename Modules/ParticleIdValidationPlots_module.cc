@@ -125,15 +125,15 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_end_x;
     double track_end_y;
     double track_end_z;
-    std::vector<double> track_neglogl_fwd_mu;
-    std::vector<double> track_neglogl_fwd_p;
-    std::vector<double> track_neglogl_fwd_pi;
-    std::vector<double> track_neglogl_fwd_k;
-    std::vector<double> track_neglogl_fwd_mip;
-    std::vector<double> track_neglogl_bwd_mu;
-    std::vector<double> track_neglogl_bwd_p;
-    std::vector<double> track_neglogl_bwd_pi;
-    std::vector<double> track_neglogl_bwd_k;
+    std::vector<double> track_likelihood_fwd_mu;
+    std::vector<double> track_likelihood_fwd_p;
+    std::vector<double> track_likelihood_fwd_pi;
+    std::vector<double> track_likelihood_fwd_k;
+    std::vector<double> track_likelihood_fwd_mip;
+    std::vector<double> track_likelihood_bwd_mu;
+    std::vector<double> track_likelihood_bwd_p;
+    std::vector<double> track_likelihood_bwd_pi;
+    std::vector<double> track_likelihood_bwd_k;
     std::vector<double> track_PIDA_mean;
     std::vector<double> track_PIDA_median;
     std::vector<double> track_PIDA_kde;
@@ -252,15 +252,15 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     /** reset default values */
     dEdx.resize(3);
     resRange.resize(3);
-    track_neglogl_fwd_mu.resize(3,-999.);
-    track_neglogl_fwd_p.resize(3,-999.);
-    track_neglogl_fwd_pi.resize(3,-999.);
-    track_neglogl_fwd_k.resize(3,-999.);
-    track_neglogl_fwd_mip.resize(3,-999.);
-    track_neglogl_bwd_mu.resize(3,-999.);
-    track_neglogl_bwd_p.resize(3,-999.);
-    track_neglogl_bwd_pi.resize(3,-999.);
-    track_neglogl_bwd_k.resize(3,-999.);
+    track_likelihood_fwd_mu.resize(3,-999.);
+    track_likelihood_fwd_p.resize(3,-999.);
+    track_likelihood_fwd_pi.resize(3,-999.);
+    track_likelihood_fwd_k.resize(3,-999.);
+    track_likelihood_fwd_mip.resize(3,-999.);
+    track_likelihood_bwd_mu.resize(3,-999.);
+    track_likelihood_bwd_p.resize(3,-999.);
+    track_likelihood_bwd_pi.resize(3,-999.);
+    track_likelihood_bwd_k.resize(3,-999.);
     track_PIDA_mean.resize(3,-999.);
     track_PIDA_median.resize(3,-999.);
     track_PIDA_kde.resize(3,-999.);
@@ -548,15 +548,15 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           if (AlgScore.fAssumedPdg == 321)  Bragg_bwd_K  = AlgScore.fValue;
         }
 
-        track_neglogl_fwd_mu.at(planeid) = Bragg_fwd_mu;
-        track_neglogl_bwd_mu.at(planeid)= Bragg_bwd_mu;
-        track_neglogl_fwd_p.at(planeid) = Bragg_fwd_p;
-        track_neglogl_bwd_p.at(planeid) = Bragg_bwd_p;
-        track_neglogl_fwd_pi.at(planeid) = Bragg_fwd_pi;
-        track_neglogl_bwd_pi.at(planeid) = Bragg_bwd_pi;
-        track_neglogl_fwd_k.at(planeid) = Bragg_fwd_K;
-        track_neglogl_bwd_k.at(planeid) = Bragg_bwd_K;
-        track_neglogl_fwd_mip.at(planeid) = noBragg_fwd_MIP;
+        track_likelihood_fwd_mu.at(planeid) = Bragg_fwd_mu;
+        track_likelihood_bwd_mu.at(planeid)= Bragg_bwd_mu;
+        track_likelihood_fwd_p.at(planeid) = Bragg_fwd_p;
+        track_likelihood_bwd_p.at(planeid) = Bragg_bwd_p;
+        track_likelihood_fwd_pi.at(planeid) = Bragg_fwd_pi;
+        track_likelihood_bwd_pi.at(planeid) = Bragg_bwd_pi;
+        track_likelihood_fwd_k.at(planeid) = Bragg_fwd_K;
+        track_likelihood_bwd_k.at(planeid) = Bragg_bwd_K;
+        track_likelihood_fwd_mip.at(planeid) = noBragg_fwd_MIP;
 
       } // if fAlName = BraggPeakLLH
 
@@ -766,15 +766,15 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_end_x"             , &track_end_x         ) ;
   pidTree->Branch( "track_end_y"             , &track_end_y         ) ;
   pidTree->Branch( "track_end_z"             , &track_end_z         ) ;
-  pidTree->Branch( "track_neglogl_fwd_mu"    , &track_neglogl_fwd_mu    ) ;
-  pidTree->Branch( "track_neglogl_fwd_p"     , &track_neglogl_fwd_p     ) ;
-  pidTree->Branch( "track_neglogl_fwd_pi"    , &track_neglogl_fwd_pi    ) ;
-  pidTree->Branch( "track_neglogl_fwd_k"     , &track_neglogl_fwd_k     ) ;
-  pidTree->Branch( "track_neglogl_fwd_mip"   , &track_neglogl_fwd_mip   ) ;
-  pidTree->Branch( "track_neglogl_bwd_mu"    , &track_neglogl_bwd_mu    ) ;
-  pidTree->Branch( "track_neglogl_bwd_p"     , &track_neglogl_bwd_p     ) ;
-  pidTree->Branch( "track_neglogl_bwd_pi"    , &track_neglogl_bwd_pi    ) ;
-  pidTree->Branch( "track_neglogl_bwd_k"     , &track_neglogl_bwd_k     ) ;
+  pidTree->Branch( "track_likelihood_fwd_mu"    , &track_likelihood_fwd_mu    ) ;
+  pidTree->Branch( "track_likelihood_fwd_p"     , &track_likelihood_fwd_p     ) ;
+  pidTree->Branch( "track_likelihood_fwd_pi"    , &track_likelihood_fwd_pi    ) ;
+  pidTree->Branch( "track_likelihood_fwd_k"     , &track_likelihood_fwd_k     ) ;
+  pidTree->Branch( "track_likelihood_fwd_mip"   , &track_likelihood_fwd_mip   ) ;
+  pidTree->Branch( "track_likelihood_bwd_mu"    , &track_likelihood_bwd_mu    ) ;
+  pidTree->Branch( "track_likelihood_bwd_p"     , &track_likelihood_bwd_p     ) ;
+  pidTree->Branch( "track_likelihood_bwd_pi"    , &track_likelihood_bwd_pi    ) ;
+  pidTree->Branch( "track_likelihood_bwd_k"     , &track_likelihood_bwd_k     ) ;
   pidTree->Branch( "track_PIDA_mean"         , &track_PIDA_mean          ) ;
   pidTree->Branch( "track_PIDA_median"       , &track_PIDA_median          ) ;
   pidTree->Branch( "track_PIDA_kde"          , &track_PIDA_kde          ) ;

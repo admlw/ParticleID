@@ -16,14 +16,14 @@
 // Tracks are fit in both directions (forwards and backwards) to account for reconstruction
 // getting the track direction wrong, and the highest likelihood is returned
 
-#ifndef BRAGG_NEGLOGL_CXX
-#define BRAGG_NEGLOGL_CXX
+#ifndef BRAGG_LIKELIHOOD_CXX
+#define BRAGG_LIKELIHOOD_CXX
 
-#include "Bragg_negLogL_Estimator.h"
+#include "Bragg_Likelihood_Estimator.h"
 
 namespace particleid{
 
-  void Bragg_negLogL_Estimator::configure(fhicl::ParameterSet const &p){
+  void Bragg_Likelihood_Estimator::configure(fhicl::ParameterSet const &p){
 
     gausWidth_p   = p.get<std::vector<double>>("dEdxGausWidthP"  );
     gausWidth_mu  = p.get<std::vector<double>>("dEdxGausWidthMu" );
@@ -49,34 +49,34 @@ namespace particleid{
 
   }
 
-  void Bragg_negLogL_Estimator::printConfiguration(){
+  void Bragg_Likelihood_Estimator::printConfiguration(){
 
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] PRINTING CONFIGURATION: " << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] PRINTING CONFIGURATION: " << std::endl;
     for (int i = 0; i < 3; i++){
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Proton dE/dx gaus width : " << gausWidth_p.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Muon dE/dx gaus width   : " << gausWidth_mu.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Pion dE/dx gaus width   : " << gausWidth_pi.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_k.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_mip.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Proton dE/dx landau width : " << landauWidth_p.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Muon dE/dx landau width   : " << landauWidth_mu.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Pion dE/dx landau width   : " << landauWidth_pi.at(i) << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " Kaon dE/dx landau width   : " << landauWidth_k.at(i)  << std::endl;
-      std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Plane " << i << " MIP dE/dx landau width    : " << landauWidth_mip.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Proton dE/dx gaus width : " << gausWidth_p.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Muon dE/dx gaus width   : " << gausWidth_mu.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Pion dE/dx gaus width   : " << gausWidth_pi.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_k.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Kaon dE/dx gaus width   : " << gausWidth_mip.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Proton dE/dx landau width : " << landauWidth_p.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Muon dE/dx landau width   : " << landauWidth_mu.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Pion dE/dx landau width   : " << landauWidth_pi.at(i) << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " Kaon dE/dx landau width   : " << landauWidth_k.at(i)  << std::endl;
+      std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Plane " << i << " MIP dE/dx landau width    : " << landauWidth_mip.at(i) << std::endl;
     }
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Proton MPV Offset : " << offset_p   << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Muon MPV Offset   : " << offset_mu  << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Pion MPV Offset   : " << offset_pi  << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Kaon MPV Offset   : " << offset_k   << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> MIP MPV Offset    : " << offset_mip << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> Number of Hits to Drop : " << nHitsToDrop << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> End-point float long   : " << endPointFloatLong  << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> End-point float short  : " << endPointFloatShort  << std::endl;
-    std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> End-point step size    : " << endPointFloatStepSize  << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Proton MPV Offset : " << offset_p   << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Muon MPV Offset   : " << offset_mu  << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Pion MPV Offset   : " << offset_pi  << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Kaon MPV Offset   : " << offset_k   << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> MIP MPV Offset    : " << offset_mip << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> Number of Hits to Drop : " << nHitsToDrop << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> End-point float long   : " << endPointFloatLong  << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> End-point float short  : " << endPointFloatShort  << std::endl;
+    std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> End-point step size    : " << endPointFloatStepSize  << std::endl;
 
   }
 
-  double Bragg_negLogL_Estimator::getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum)
+  double Bragg_Likelihood_Estimator::getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum)
   {
 
     /**
@@ -95,43 +95,43 @@ namespace particleid{
 
     switch(absph){
       case 13: // muon
-        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to muon hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to muon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Muon;
         gausWidth = gausWidth_mu.at(planenum);
         landauWidth = landauWidth_mu.at(planenum);
         offset = offset_mu;
         break;
       case 2212: // proton
-        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to proton hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to proton hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Proton;
         gausWidth = gausWidth_p.at(planenum);
         landauWidth = landauWidth_p.at(planenum);
         offset = offset_p;
         break;
       case 211: // pion
-        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to pion hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to pion hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Pion;
         gausWidth = gausWidth_pi.at(planenum);
         landauWidth = landauWidth_pi.at(planenum);
         offset = offset_pi;
         break;
       case 321: // kaon
-        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood with respect to kaon hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to kaon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Kaon;
         gausWidth = gausWidth_k.at(planenum);
         landauWidth = landauWidth_k.at(planenum);
         offset = offset_k;
         break;
       case 0: // special case: fit to MIP region of muon prediction with no Bragg peak
-        //std::cout << "[ParticleID::Bragg_negLogL_Estimator] Calculating likelihood for non-Bragg MIP-like hypothesis" << std::endl;
+        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood for non-Bragg MIP-like hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_MuonNoBragg;
         gausWidth = gausWidth_mip.at(planenum);
         landauWidth = landauWidth_mip.at(planenum);
         offset = offset_mip;
         break;
       default:
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] ERROR: cannot calculate theoretical prediction for given particle hypothesis: " << particlehypothesis << ". Theoretical predictions are only available for charged muons (+/-13), pions (+/-211), kaons (+/-321), protons (2212), and non-Bragg MIP region (0)" << std::endl;
-        std::cout << "[ParticleID::Bragg_negLogL_Estimator] Exiting." << std::endl;
+        std::cout << "[ParticleID::Bragg_Likelihood_Estimator] ERROR: cannot calculate theoretical prediction for given particle hypothesis: " << particlehypothesis << ". Theoretical predictions are only available for charged muons (+/-13), pions (+/-211), kaons (+/-321), protons (2212), and non-Bragg MIP region (0)" << std::endl;
+        std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Exiting." << std::endl;
         throw;
     } // switch
 
@@ -144,10 +144,10 @@ namespace particleid{
     double langaus_mean_mpv_offset = langaus_mean - langaus_mpv;
 
     /*
-       std::cout << "[ParticleID::Bragg_negLogL_Estimator] SHIFT SUMMARY" << std::endl;
-       std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> langaus mean : " << langaus_mean << std::endl;
-       std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> langaus mpv  : " << langaus_mpv << std::endl;
-       std::cout << "[ParticleID::Bragg_negLogL_Estimator] >> offset value : " << langaus_mean_mpv_offset << std::endl;
+       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] SHIFT SUMMARY" << std::endl;
+       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> langaus mean : " << langaus_mean << std::endl;
+       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> langaus mpv  : " << langaus_mpv << std::endl;
+       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> offset value : " << langaus_mean_mpv_offset << std::endl;
        */
     /**
      * Now loop through hits (entries in dEdx and resRange vectors), compare to
@@ -211,8 +211,8 @@ namespace particleid{
            << "   theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl
            << "   theorypred->Eval(" << resrg_i << ") = " << theorypred->Eval(resrg_i) << std::endl
            << "   langaus->Eval(" << dEdx_i << ") = " << langaus->Eval(dEdx_i) << std::endl
-           << "   neg2logL(i) = " << likelihood_i << std::endl
-           << "   neg2logL total = " << likelihood << std::endl;
+           << "   Likelihood(i) = " << likelihood_i << std::endl
+           << "   Likelihood total = " << likelihood << std::endl;
            */
       } // Loop over i_hit
 
@@ -225,9 +225,9 @@ namespace particleid{
 
     if (n_hits_used_total == 0)
       return -9999999;
-    else return likelihoodNdf;//-2*std::log(likelihoodNdf);
+    else return likelihoodNdf;
 
-  } // getneglogL
+  } // getLikelihood
 
 
 } // particleid namespace

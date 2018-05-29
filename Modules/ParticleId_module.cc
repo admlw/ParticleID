@@ -43,7 +43,7 @@
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
 #include "uboone/ParticleID/Algorithms/FiducialVolume.h"
 #include "uboone/ParticleID/Algorithms/PIDA.h"
-#include "uboone/ParticleID/Algorithms/Bragg_negLogL_Estimator.h"
+#include "uboone/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
 #include "uboone/ParticleID/Algorithms/LandauGaussian.h"
 
 // root includes
@@ -86,7 +86,7 @@ class UBPID::ParticleId : public art::EDProducer {
     particleid::PIDA pida;
 
     // for likelihood-based PID
-    particleid::Bragg_negLogL_Estimator braggcalc;
+    particleid::Bragg_Likelihood_Estimator braggcalc;
 
     // For truncated mean
     TruncMean trm;
