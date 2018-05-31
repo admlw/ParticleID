@@ -32,15 +32,17 @@
     <!-- diffusion filter -->
     <stage name="particleId">
         <!--<inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.7_reco2_dev</inputdef>-->
-        <inputlist>&app_dir;/xml/input2.list</inputlist>
+        <inputlist>&app_dir;/xml/input.list</inputlist>
         <fcl>&app_dir;/job/run_particle_identification_UBXSec_withcalibrations_withvalidation.fcl</fcl>
         <bookdir>&data_dir;</bookdir>
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <numjobs>92</numjobs>
-        <maxfilesperjob>5</maxfilesperjob>
-        <memory>2500</memory>
+        <maxfilesperjob>3</maxfilesperjob>
+        <numjobs>154</numjobs>
+        <!--<maxfilesperjob>1</maxfilesperjob>
+        <numjobs>1</numjobs>-->
+        <memory>3000</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
         <schema>root</schema>

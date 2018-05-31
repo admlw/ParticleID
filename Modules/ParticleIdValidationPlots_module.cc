@@ -125,20 +125,21 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_end_x;
     double track_end_y;
     double track_end_z;
-    std::vector<double> track_neglogl_fwd_mu;
-    std::vector<double> track_neglogl_fwd_p;
-    std::vector<double> track_neglogl_fwd_pi;
-    std::vector<double> track_neglogl_fwd_k;
-    std::vector<double> track_neglogl_fwd_mip;
-    std::vector<double> track_neglogl_bwd_mu;
-    std::vector<double> track_neglogl_bwd_p;
-    std::vector<double> track_neglogl_bwd_pi;
-    std::vector<double> track_neglogl_bwd_k;
+    std::vector<double> track_likelihood_fwd_mu;
+    std::vector<double> track_likelihood_fwd_p;
+    std::vector<double> track_likelihood_fwd_pi;
+    std::vector<double> track_likelihood_fwd_k;
+    std::vector<double> track_likelihood_fwd_mip;
+    std::vector<double> track_likelihood_bwd_mu;
+    std::vector<double> track_likelihood_bwd_p;
+    std::vector<double> track_likelihood_bwd_pi;
+    std::vector<double> track_likelihood_bwd_k;
     std::vector<double> track_PIDA_mean;
     std::vector<double> track_PIDA_median;
     std::vector<double> track_PIDA_kde;
     std::vector<double> track_dEdx;
     std::vector<double> track_depE;
+    std::vector<double> track_nhits;
     double track_Chi2Proton;
     double track_Chi2Kaon;
     double track_Chi2Pion;
@@ -146,7 +147,6 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_length;
     double track_theta;
     double track_phi;
-    double track_nhits;
     double track_rangeE_mu;
     double track_rangeE_p;
     std::vector<double> track_dEdx_perhit;
@@ -252,20 +252,21 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     /** reset default values */
     dEdx.resize(3);
     resRange.resize(3);
-    track_neglogl_fwd_mu.resize(3,-999.);
-    track_neglogl_fwd_p.resize(3,-999.);
-    track_neglogl_fwd_pi.resize(3,-999.);
-    track_neglogl_fwd_k.resize(3,-999.);
-    track_neglogl_fwd_mip.resize(3,-999.);
-    track_neglogl_bwd_mu.resize(3,-999.);
-    track_neglogl_bwd_p.resize(3,-999.);
-    track_neglogl_bwd_pi.resize(3,-999.);
-    track_neglogl_bwd_k.resize(3,-999.);
+    track_likelihood_fwd_mu.resize(3,-999.);
+    track_likelihood_fwd_p.resize(3,-999.);
+    track_likelihood_fwd_pi.resize(3,-999.);
+    track_likelihood_fwd_k.resize(3,-999.);
+    track_likelihood_fwd_mip.resize(3,-999.);
+    track_likelihood_bwd_mu.resize(3,-999.);
+    track_likelihood_bwd_p.resize(3,-999.);
+    track_likelihood_bwd_pi.resize(3,-999.);
+    track_likelihood_bwd_k.resize(3,-999.);
     track_PIDA_mean.resize(3,-999.);
     track_PIDA_median.resize(3,-999.);
     track_PIDA_kde.resize(3,-999.);
     track_dEdx.resize(3,-999.);
     track_depE.resize(3,-999.);
+    track_nhits.resize(3,-999);
 
     std::vector< art::Ptr<anab::Calorimetry> > caloFromTrack = calo_from_tracks.at(track->ID());
 
@@ -351,37 +352,38 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
     } // end if(!fIsDataPlots)
 
-    std::cout << "[ParticleIDValidation] Getting calorimetry information." << std::endl;
-
     // for time being, only use Y plane calorimetry
     art::Ptr< anab:: Calorimetry > calo;
     int planenum = -1;
+    int hitsToUse = 0;
     for (auto c : caloFromTrack){
       planenum = c->PlaneID().Plane;
       calo = c;
       if (planenum < 0 || planenum > 2){
-        std::cout << "[ParticleIDValidation] No information for plane " << planenum << std::endl;
+        std::cout << "[ParticleIDValidation] No calorimetry information for plane " << planenum << std::endl;
         continue;
       }
+      else std::cout << "[ParticleIDValidation] Getting information for plane " << planenum << std::endl;
       dEdx.at(planenum) = calo->dEdx();
       resRange.at(planenum) = calo->ResidualRange();
+
+      /**
+       * Get hit charge of first and final 5 hits of track to try and find the
+       * direction of the track. If there are fewer than 10 hits then take half
+       * of the total hits.
+       */
+
+      double nhits = resRange.at(planenum).size();
+      // find how many hits to use
+      if (nhits >= 2*fNHitsForTrackDirection)
+        hitsToUse = fNHitsForTrackDirection;
+      else{
+        hitsToUse = std::floor((double)nhits/2.0);
+      }
+
+      track_nhits.at(planenum) = nhits;
+
     }
-
-    /**
-     * Get hit charge of first and final 5 hits of track to try and find the
-     * direction of the track. If there are fewer than 10 hits then take half
-     * of the total hits.
-     */
-
-    double nhits = resRange.size();
-    // find how many hits to use
-    int hitsToUse;
-    if (nhits >= 2*fNHitsForTrackDirection)
-      hitsToUse = fNHitsForTrackDirection;
-    else{
-      hitsToUse = std::floor((double)nhits/2.0);
-    }
-
     double averagedEdxTrackStart=0;
     double averagedEdxTrackEnd=0;
 
@@ -393,7 +395,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       for (int i = 0; i < (int)dEdx.at(2).size(); i++){
 
         if (i < hitsToUse) averagedEdxTrackStart+=dEdx.at(2).at(i);
-        else if (i > nhits - hitsToUse -1) averagedEdxTrackEnd+=dEdx.at(2).at(i);
+        else if (i > track_nhits.at(2) - hitsToUse -1) averagedEdxTrackEnd+=dEdx.at(2).at(i);
 
       }
 
@@ -546,15 +548,15 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           if (AlgScore.fAssumedPdg == 321)  Bragg_bwd_K  = AlgScore.fValue;
         }
 
-        track_neglogl_fwd_mu.at(planeid) = Bragg_fwd_mu;
-        track_neglogl_bwd_mu.at(planeid)= Bragg_bwd_mu;
-        track_neglogl_fwd_p.at(planeid) = Bragg_fwd_p;
-        track_neglogl_bwd_p.at(planeid) = Bragg_bwd_p;
-        track_neglogl_fwd_pi.at(planeid) = Bragg_fwd_pi;
-        track_neglogl_bwd_pi.at(planeid) = Bragg_bwd_pi;
-        track_neglogl_fwd_k.at(planeid) = Bragg_fwd_K;
-        track_neglogl_bwd_k.at(planeid) = Bragg_bwd_K;
-        track_neglogl_fwd_mip.at(planeid) = noBragg_fwd_MIP;
+        track_likelihood_fwd_mu.at(planeid) = Bragg_fwd_mu;
+        track_likelihood_bwd_mu.at(planeid)= Bragg_bwd_mu;
+        track_likelihood_fwd_p.at(planeid) = Bragg_fwd_p;
+        track_likelihood_bwd_p.at(planeid) = Bragg_bwd_p;
+        track_likelihood_fwd_pi.at(planeid) = Bragg_fwd_pi;
+        track_likelihood_bwd_pi.at(planeid) = Bragg_bwd_pi;
+        track_likelihood_fwd_k.at(planeid) = Bragg_fwd_K;
+        track_likelihood_bwd_k.at(planeid) = Bragg_bwd_K;
+        track_likelihood_fwd_mip.at(planeid) = noBragg_fwd_MIP;
 
       } // if fAlName = BraggPeakLLH
 
@@ -598,7 +600,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
     // Now time to set some variables!
     track_length = trklen;
-    track_nhits = nhits;
     track_rangeE_mu = rangeE_mu;
     track_rangeE_p = rangeE_p;
     track_dEdx_perhit = dEdx.at(2);
@@ -765,15 +766,15 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_end_x"             , &track_end_x         ) ;
   pidTree->Branch( "track_end_y"             , &track_end_y         ) ;
   pidTree->Branch( "track_end_z"             , &track_end_z         ) ;
-  pidTree->Branch( "track_neglogl_fwd_mu"    , &track_neglogl_fwd_mu    ) ;
-  pidTree->Branch( "track_neglogl_fwd_p"     , &track_neglogl_fwd_p     ) ;
-  pidTree->Branch( "track_neglogl_fwd_pi"    , &track_neglogl_fwd_pi    ) ;
-  pidTree->Branch( "track_neglogl_fwd_k"     , &track_neglogl_fwd_k     ) ;
-  pidTree->Branch( "track_neglogl_fwd_mip"   , &track_neglogl_fwd_mip   ) ;
-  pidTree->Branch( "track_neglogl_bwd_mu"    , &track_neglogl_bwd_mu    ) ;
-  pidTree->Branch( "track_neglogl_bwd_p"     , &track_neglogl_bwd_p     ) ;
-  pidTree->Branch( "track_neglogl_bwd_pi"    , &track_neglogl_bwd_pi    ) ;
-  pidTree->Branch( "track_neglogl_bwd_k"     , &track_neglogl_bwd_k     ) ;
+  pidTree->Branch( "track_likelihood_fwd_mu"    , &track_likelihood_fwd_mu    ) ;
+  pidTree->Branch( "track_likelihood_fwd_p"     , &track_likelihood_fwd_p     ) ;
+  pidTree->Branch( "track_likelihood_fwd_pi"    , &track_likelihood_fwd_pi    ) ;
+  pidTree->Branch( "track_likelihood_fwd_k"     , &track_likelihood_fwd_k     ) ;
+  pidTree->Branch( "track_likelihood_fwd_mip"   , &track_likelihood_fwd_mip   ) ;
+  pidTree->Branch( "track_likelihood_bwd_mu"    , &track_likelihood_bwd_mu    ) ;
+  pidTree->Branch( "track_likelihood_bwd_p"     , &track_likelihood_bwd_p     ) ;
+  pidTree->Branch( "track_likelihood_bwd_pi"    , &track_likelihood_bwd_pi    ) ;
+  pidTree->Branch( "track_likelihood_bwd_k"     , &track_likelihood_bwd_k     ) ;
   pidTree->Branch( "track_PIDA_mean"         , &track_PIDA_mean          ) ;
   pidTree->Branch( "track_PIDA_median"       , &track_PIDA_median          ) ;
   pidTree->Branch( "track_PIDA_kde"          , &track_PIDA_kde          ) ;
