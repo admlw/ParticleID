@@ -197,7 +197,6 @@ struct hist1D{
     }
     else if (TMath::Abs(pdg)==211){ // pion
       hists->h_pi->Fill(value);
-      std::cout << "Filling true pion" << std::endl;
     }
     else if (TMath::Abs(pdg)==321){ // kaon
       hists->h_k->Fill(value);
