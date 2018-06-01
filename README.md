@@ -70,4 +70,40 @@ enum kVariableType{
 }
 ```
 
+Below is a minimal example of how to access the result of a given PID algorithm (in this case, the result of Bragg_Likelihood_Estimator under a muon assumption):
 
+```
+art::FindManyP<anab::ParticleID> trackPIDAssn(trackHandle, e, fPIDLabel);
+if (!trackPIDAssn.isValid()){
+  std::cout << "[ParticleIDValidation] trackPIDAssn.isValid() == false. Skipping track." << std::endl;
+  continue;
+}
+    
+std::vector<art::Ptr<anab::ParticleID>> trackPID = trackPIDAssn.at(track->ID());
+if (trackPID.size() == 0){
+  std::cout << "[ParticleIDValidation] No track-PID association found for trackID " << track->ID() << ". Skipping track." << std::endl;
+  continue;
+}
+
+std::vector<anab::sParticleIDAlgScores> AlgScoresVec = trackPID.at(0)->ParticleIDAlgScores();
+    
+double Bragg_fwd_mu = -999;
+
+// Loop through AlgScoresVec and find the variables we want
+for (size_t i_algscore=0; i_algscore<AlgScoresVec.size(); i_algscore++){
+
+  anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
+  int planeid = AlgScore.fPlaneID.Plane;
+
+  if (planeid < 0 || planeid > 2){
+    std::cout << "[ParticleIDValidation] No information for planeid " << planeid << std::endl;
+    continue;
+  }
+  
+  if (AlgScore.fAlgName == "BraggPeakLLH"){
+    if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_fwd){
+       if (AlgScore.fAssumedPdg == 13)   Bragg_fwd_mu = AlgScore.fValue;
+    }
+  }
+}
+```
