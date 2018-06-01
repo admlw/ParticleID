@@ -363,7 +363,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         std::cout << "[ParticleIDValidation] No calorimetry information for plane " << planenum << std::endl;
         continue;
       }
-      else std::cout << "[ParticleIDValidation] Getting information for plane " << planenum << std::endl;
+      //else std::cout << "[ParticleIDValidation] Getting information for plane " << planenum << std::endl;
       dEdx.at(planenum) = calo->dEdx();
       resRange.at(planenum) = calo->ResidualRange();
 
@@ -390,7 +390,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     // loop dEdx and take average of first n hits and last n hits
 
     TVector3 RecoTrackDir, TrueTrackDir;
-    
+
     if (dEdx.at(2).size() > 0) {
 
       for (int i = 0; i < (int)dEdx.at(2).size(); i++){
