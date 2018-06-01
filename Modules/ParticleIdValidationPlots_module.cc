@@ -352,7 +352,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
     } // end if(!fIsDataPlots)
 
-    // for time being, only use Y plane calorimetry
     art::Ptr< anab:: Calorimetry > calo;
     int planenum = -1;
     int hitsToUse = 0;
@@ -489,6 +488,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
       }
     }
+
     /**
      * Calculate PID variables
      */
@@ -746,47 +746,47 @@ void ParticleIdValidationPlots::beginJob(){
 
   pidTree = tfs->make<TTree>("pidTree" , "pidTree");
 
-  pidTree->Branch( "run"                     , &run                 ) ;
-  pidTree->Branch( "sub_run"                 , &sub_run             ) ;
-  pidTree->Branch( "event"                   , &event               ) ;
-  pidTree->Branch( "true_PDG"                , &true_PDG            ) ;
-  pidTree->Branch( "true_purity"             , &true_purity         ) ;
-  pidTree->Branch( "true_start_momentum"     , &true_start_momentum ) ;
-  pidTree->Branch( "true_start_x"            , &true_start_x        ) ;
-  pidTree->Branch( "true_start_y"            , &true_start_y        ) ;
-  pidTree->Branch( "true_start_z"            , &true_start_z        ) ;
-  pidTree->Branch( "true_end_momentum"       , &true_end_momentum   ) ;
-  pidTree->Branch( "true_end_x"              , &true_end_x          ) ;
-  pidTree->Branch( "true_end_y"              , &true_end_y          ) ;
-  pidTree->Branch( "true_end_z"              , &true_end_z          ) ;
-  pidTree->Branch( "track_id"                , &track_id            ) ;
-  pidTree->Branch( "track_start_x"           , &track_start_x       ) ;
-  pidTree->Branch( "track_start_y"           , &track_start_y       ) ;
-  pidTree->Branch( "track_start_z"           , &track_start_z       ) ;
-  pidTree->Branch( "track_end_x"             , &track_end_x         ) ;
-  pidTree->Branch( "track_end_y"             , &track_end_y         ) ;
-  pidTree->Branch( "track_end_z"             , &track_end_z         ) ;
-  pidTree->Branch( "track_likelihood_fwd_mu"    , &track_likelihood_fwd_mu    ) ;
-  pidTree->Branch( "track_likelihood_fwd_p"     , &track_likelihood_fwd_p     ) ;
-  pidTree->Branch( "track_likelihood_fwd_pi"    , &track_likelihood_fwd_pi    ) ;
-  pidTree->Branch( "track_likelihood_fwd_k"     , &track_likelihood_fwd_k     ) ;
-  pidTree->Branch( "track_likelihood_fwd_mip"   , &track_likelihood_fwd_mip   ) ;
-  pidTree->Branch( "track_likelihood_bwd_mu"    , &track_likelihood_bwd_mu    ) ;
-  pidTree->Branch( "track_likelihood_bwd_p"     , &track_likelihood_bwd_p     ) ;
-  pidTree->Branch( "track_likelihood_bwd_pi"    , &track_likelihood_bwd_pi    ) ;
-  pidTree->Branch( "track_likelihood_bwd_k"     , &track_likelihood_bwd_k     ) ;
-  pidTree->Branch( "track_PIDA_mean"         , &track_PIDA_mean          ) ;
-  pidTree->Branch( "track_PIDA_median"       , &track_PIDA_median          ) ;
-  pidTree->Branch( "track_PIDA_kde"          , &track_PIDA_kde          ) ;
-  pidTree->Branch( "track_Chi2Proton"        , &track_Chi2Proton    ) ;
-  pidTree->Branch( "track_Chi2Pion"          , &track_Chi2Pion      ) ;
-  pidTree->Branch( "track_Chi2Kaon"          , &track_Chi2Kaon      ) ;
-  pidTree->Branch( "track_Chi2Muon"          , &track_Chi2Muon      ) ;
-  pidTree->Branch( "track_length"            , &track_length        ) ;
-  pidTree->Branch( "track_dEdx"              , &track_dEdx          ) ;
-  pidTree->Branch( "track_theta"             , &track_theta         ) ;
-  pidTree->Branch( "track_phi"               , &track_phi           ) ;
-  pidTree->Branch( "track_nhits"             , &track_nhits         ) ;
+  pidTree->Branch( "run"                      , &run                 ) ;
+  pidTree->Branch( "sub_run"                  , &sub_run             ) ;
+  pidTree->Branch( "event"                    , &event               ) ;
+  pidTree->Branch( "true_PDG"                 , &true_PDG            ) ;
+  pidTree->Branch( "true_purity"              , &true_purity         ) ;
+  pidTree->Branch( "true_start_momentum"      , &true_start_momentum ) ;
+  pidTree->Branch( "true_start_x"             , &true_start_x        ) ;
+  pidTree->Branch( "true_start_y"             , &true_start_y        ) ;
+  pidTree->Branch( "true_start_z"             , &true_start_z        ) ;
+  pidTree->Branch( "true_end_momentum"        , &true_end_momentum   ) ;
+  pidTree->Branch( "true_end_x"               , &true_end_x          ) ;
+  pidTree->Branch( "true_end_y"               , &true_end_y          ) ;
+  pidTree->Branch( "true_end_z"               , &true_end_z          ) ;
+  pidTree->Branch( "track_id"                 , &track_id            ) ;
+  pidTree->Branch( "track_start_x"            , &track_start_x       ) ;
+  pidTree->Branch( "track_start_y"            , &track_start_y       ) ;
+  pidTree->Branch( "track_start_z"            , &track_start_z       ) ;
+  pidTree->Branch( "track_end_x"              , &track_end_x         ) ;
+  pidTree->Branch( "track_end_y"              , &track_end_y         ) ;
+  pidTree->Branch( "track_end_z"              , &track_end_z         ) ;
+  pidTree->Branch( "track_likelihood_fwd_mu"  , &track_likelihood_fwd_mu    ) ;
+  pidTree->Branch( "track_likelihood_fwd_p"   , &track_likelihood_fwd_p     ) ;
+  pidTree->Branch( "track_likelihood_fwd_pi"  , &track_likelihood_fwd_pi    ) ;
+  pidTree->Branch( "track_likelihood_fwd_k"   , &track_likelihood_fwd_k     ) ;
+  pidTree->Branch( "track_likelihood_fwd_mip" , &track_likelihood_fwd_mip   ) ;
+  pidTree->Branch( "track_likelihood_bwd_mu"  , &track_likelihood_bwd_mu    ) ;
+  pidTree->Branch( "track_likelihood_bwd_p"   , &track_likelihood_bwd_p     ) ;
+  pidTree->Branch( "track_likelihood_bwd_pi"  , &track_likelihood_bwd_pi    ) ;
+  pidTree->Branch( "track_likelihood_bwd_k"   , &track_likelihood_bwd_k     ) ;
+  pidTree->Branch( "track_PIDA_mean"          , &track_PIDA_mean          ) ;
+  pidTree->Branch( "track_PIDA_median"        , &track_PIDA_median          ) ;
+  pidTree->Branch( "track_PIDA_kde"           , &track_PIDA_kde          ) ;
+  pidTree->Branch( "track_Chi2Proton"         , &track_Chi2Proton    ) ;
+  pidTree->Branch( "track_Chi2Pion"           , &track_Chi2Pion      ) ;
+  pidTree->Branch( "track_Chi2Kaon"           , &track_Chi2Kaon      ) ;
+  pidTree->Branch( "track_Chi2Muon"           , &track_Chi2Muon      ) ;
+  pidTree->Branch( "track_length"             , &track_length        ) ;
+  pidTree->Branch( "track_dEdx"               , &track_dEdx          ) ;
+  pidTree->Branch( "track_theta"              , &track_theta         ) ;
+  pidTree->Branch( "track_phi"                , &track_phi           ) ;
+  pidTree->Branch( "track_nhits"              , &track_nhits         ) ;
 
   pidTree->Branch( "track_depE"              , &track_depE          ) ;
   pidTree->Branch( "track_rangeE_mu"         , &track_rangeE_mu     ) ;

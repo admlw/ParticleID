@@ -104,6 +104,9 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   std::cout << "                   planes, this should happen a maximum of one time per track." << std::endl;
   std::cout << "                   If more than one plane has an ID of -1 for a single track," << std::endl;
   std::cout << "                   contact the authors." << std::endl;
+  std::cout << "[ParticleID] Note: Note that each PID variable is provided on a per-plane basis," << std::endl;
+  std::cout << "                   however we currently do not recommend using induction plane" << std::endl;
+  std::cout << "                   Particle ID or calorimetry. Proceed with caution." << std::endl;
 
   fhicl::ParameterSet const p_fv     = p.get<fhicl::ParameterSet>("FiducialVolume");
   fhicl::ParameterSet const p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
