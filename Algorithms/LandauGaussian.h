@@ -1,5 +1,7 @@
-// Convoluted Landau and Gaussian Fitting function
-// Taken from https://root.cern.ch/root/html/tutorials/fit/langaus.C.html
+/**
+ * Convoluted Landau and Gaussian Fitting function
+ * Taken from https://root.cern.ch/root/html/tutorials/fit/langaus.C.html
+ */
 
 #ifndef LANDAUGAUSSIAN_H
 #define LANDAUGAUSSIAN_H

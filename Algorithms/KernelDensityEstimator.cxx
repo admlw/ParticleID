@@ -1,3 +1,14 @@
+/**
+ * This uses a Gaussian Kernel implementation of the kernel density estimator.
+ * KDEs are used to predict the underlying distribution of sparse data sets by
+ * replacing each data point with a gaussian and summing the individual
+ * Gaussians to produce some distribution.
+ *
+ * This implementation is a slightly more advanced implementation of this, in 
+ * particular it scales the Gaussian width in an anti-correlated way to the 
+ * local density of data points.
+ */
+
 #include "KernelDensityEstimator.h"
 
 namespace kde{

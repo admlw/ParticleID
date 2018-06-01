@@ -8,8 +8,8 @@
 // Likelihood is calculated by comparing the measured dE/dx at a given residual range
 // to the expected dE/dx at that residual range. Assumes that dE/dx is Landau distributed
 // with a mean given by the theoreticl prediction in the Theory_dEdx_resrange class
-// (calculated by Bruce Baller), and a width that is user-configurable but has
-// a default value of 0.2 for protons and 0.1 for muons/pions/kaons.
+// (calculated by Bruce Baller), and a width that is user-configurable. The default widths
+// contained in the fcl files have been measured from v06_26_01_13 data and simulation.
 //
 // Can be run for the following particle species: muon, pion, Kaon, proton
 //
@@ -143,12 +143,6 @@ namespace particleid{
     double langaus_mpv  = langaus->GetMaximumX();
     double langaus_mean_mpv_offset = langaus_mean - langaus_mpv;
 
-    /*
-       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] SHIFT SUMMARY" << std::endl;
-       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> langaus mean : " << langaus_mean << std::endl;
-       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> langaus mpv  : " << langaus_mpv << std::endl;
-       std::cout << "[ParticleID::Bragg_Likelihood_Estimator] >> offset value : " << langaus_mean_mpv_offset << std::endl;
-       */
     /**
      * Now loop through hits (entries in dEdx and resRange vectors), compare to
      * theoretical prediction, and calculate likelihood
@@ -206,14 +200,7 @@ namespace particleid{
         }
 
         likelihood += likelihood_i;
-        /*
-           std::cout << "Algorithm --- " << std::endl
-           << "   theorypred->Eval(" << resrg_i << ",0,S) = " << theorypred->Eval(resrg_i,0,"S") << std::endl
-           << "   theorypred->Eval(" << resrg_i << ") = " << theorypred->Eval(resrg_i) << std::endl
-           << "   langaus->Eval(" << dEdx_i << ") = " << langaus->Eval(dEdx_i) << std::endl
-           << "   Likelihood(i) = " << likelihood_i << std::endl
-           << "   Likelihood total = " << likelihood << std::endl;
-           */
+   
       } // Loop over i_hit
 
       if (likelihood/n_hits_used > likelihoodNdf){

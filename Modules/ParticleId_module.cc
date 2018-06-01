@@ -13,7 +13,7 @@
  *
  * \brief ParticleId producer module
  *
- * \author Kirsty Duffy (kduffy@fnal.gov), Adam Lister (alister1@lancaster.ac.uk)
+ * \author Kirsty Duffy (kduffy@fnal.gov), Adam Lister (a.lister1@lancaster.ac.uk)
  *
  * \date 2018/04/18
  *
@@ -99,6 +99,15 @@ class UBPID::ParticleId : public art::EDProducer {
 UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
 {
 
+  std::cout << "[ParticleID] Note: A plane ID of -1 is expected when a track has no calorimetry" << std::endl;
+  std::cout << "                   objects in a plane. Because reconstruction demands hits in two" << std::endl;
+  std::cout << "                   planes, this should happen a maximum of one time per track." << std::endl;
+  std::cout << "                   If more than one plane has an ID of -1 for a single track," << std::endl;
+  std::cout << "                   contact the authors." << std::endl;
+  std::cout << "[ParticleID] Note: Note that each PID variable is provided on a per-plane basis," << std::endl;
+  std::cout << "                   however we currently do not recommend using induction plane" << std::endl;
+  std::cout << "                   Particle ID or calorimetry. Proceed with caution." << std::endl;
+
   fhicl::ParameterSet const p_fv     = p.get<fhicl::ParameterSet>("FiducialVolume");
   fhicl::ParameterSet const p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
   fhicl::ParameterSet const p_bragg  = p.get<fhicl::ParameterSet>("BraggAlgo");
@@ -148,7 +157,9 @@ void UBPID::ParticleId::produce(art::Event & e)
 
   for (auto& track : trackCollection){
 
-    // Skip tracks/events with no valid calorimetry object associated to it
+    // Skip tracks/events with no valid calorimetry object associated to it.
+    // In practice this should be 0 tracks (0 hits = 0 tracks), but this is
+    // just here for edge cases.
     if (!caloFromTracks.isValid()){
       std::cout << "[ParticleID] Calorimetry<->Track associations are not valid for this track. Skipping." << std::endl;
       continue;
@@ -172,13 +183,14 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<anab::sParticleIDAlgScores> PIDAval_mean   = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> PIDAval_median = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> PIDAval_kde    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+  
     std::vector<anab::sParticleIDAlgScores> dEdxtruncmean  = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    
     std::vector<anab::sParticleIDAlgScores> trk_depE       = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
-    // only need a single entry for this... actually can probably remove this eventually.
     anab::sParticleIDAlgScores trk_rangeE_mu;
     anab::sParticleIDAlgScores trk_rangeE_p;
-    anab::sParticleIDAlgScores trklen;
+    anab::sParticleIDAlgScores trklen; // only here for ease of validation
 
     art::Ptr< anab:: Calorimetry > calo;
     int planenum = -1;
@@ -191,11 +203,15 @@ void UBPID::ParticleId::produce(art::Event & e)
         std::cout << "[ParticleID] Calorimetry on plane " << planenum << " is unavailable. Skipping." << std::endl;
         continue;
       }
-      //else std::cout << "[ParticleID] Getting calorimetry information for plane " << planenum << std::endl;
 
       std::vector<double> dEdx = calo->dEdx();
       std::vector<double> resRange = calo->ResidualRange();
       std::vector<double> trkpitchvec = calo->TrkPitchVec();
+
+      /**
+       * Initially wanted to only perform particle ID on tracks which Bragged, 
+       * in the TPC, but changed direction. This is left here for testing purposes.
+       */
 
       // int nDaughters = GetNDaughterTracks((*trackHandle), track->ID(), fCutDistance, fCutFraction);
       // std::cout << "[ParticleID]  Found track with " << nDaughters << " reconstructed daughters." << std::endl;
@@ -265,8 +281,8 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_pi.at(planenum).fPlaneID      = c->PlaneID();
       Bragg_bwd_k.at(planenum).fPlaneID       = c->PlaneID();
 
-      // Special case: MIP-like probability
-      // fit to the flat MIP region of dEdx with residual range > 15 cm
+      // Special case: MIP-like probability. fAssumedPdg == 0 tells the Bragg
+      // algorithm to use the "No-Bragg" theory case
       noBragg_fwd_MIP.at(planenum).fAlgName = "BraggPeakLLH";
       noBragg_fwd_MIP.at(planenum).fVariableType = anab::kLikelihood_fwd;
       noBragg_fwd_MIP.at(planenum).fAssumedPdg = 0;
@@ -282,7 +298,6 @@ void UBPID::ParticleId::produce(art::Event & e)
       AlgScoresVec.push_back(Bragg_bwd_pi.at(planenum));
       AlgScoresVec.push_back(Bragg_bwd_k.at(planenum));
       AlgScoresVec.push_back(noBragg_fwd_MIP.at(planenum));
-
 
       /**
        * Algorithm 2: PIDA
@@ -395,6 +410,10 @@ void UBPID::ParticleId::produce(art::Event & e)
     AlgScoresVec.push_back(trk_rangeE_mu);
     AlgScoresVec.push_back(trk_rangeE_p);
 
+    /**
+     * Initially wanted to only perform particle ID on tracks which Bragged 
+     * in the TPC, but changed direction. This is left here for testing purposes.
+     */
 
     /*  }
 
@@ -409,11 +428,9 @@ void UBPID::ParticleId::produce(art::Event & e)
     // -------------------------------------------------------------------------- //
     // Finally, fill product with the variables that we calculated above and make assns
 
-    //std::cout << "[ParticleID] >> Making particleIDCollection... " << std::endl;
     anab::ParticleID PID_object(AlgScoresVec);
     particleIDCollection->push_back(PID_object);
 
-    //std::cout << "[ParticleID] Making assn... " << std::endl;
     util::CreateAssn(*this, e, *particleIDCollection, track, *trackParticleIdAssn);
 
   }
