@@ -29,7 +29,7 @@
         <local>/pnfs/uboone/resilient/users/alister1/tars/pid_test.tar</local>
     </larsoft>
 
-    <!-- diffusion filter -->
+    <!-- particle id producer -->
     <stage name="particleId">
         <!--<inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.7_reco2_dev</inputdef>-->
         <inputlist>&app_dir;/xml/input.list</inputlist>
@@ -41,7 +41,9 @@
         <maxfilesperjob>3</maxfilesperjob>
         <numjobs>154</numjobs>
         <!--<maxfilesperjob>1</maxfilesperjob>
-        <numjobs>1</numjobs>-->
+        <numjobs>1</numjobs>
+        <numevents>10</numevents>
+        <memory>2000</memory>-->
         <memory>3000</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->

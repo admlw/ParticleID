@@ -42,4 +42,34 @@ void makeTheoryCurvePlot(){
 
   c1->SaveAs("theoryCurves.png");
 
+  TCanvas *c2 = new TCanvas("c2", "", 500, 500);
+  gr_muon->SetLineColor(kBlack);
+  gr_muon->SetLineWidth(1);
+  gr_muon->GetXaxis()->SetRangeUser(0,30);
+  gr_muon->SetTitle(";Residual Range (cm); dE/dx (MeV/cm)");
+  gr_muon->Draw("apl");
+
+  TGraph *gr_muon_shiftl = new TGraph(107);
+  double shift = 0;
+  for (int i = 0; i < 107; i++){
+
+    gr_muon_shiftl->SetPoint(i, i*(30./107.), gr_muon->Eval(i*30./107. - 1.0));
+
+  }
+
+  gr_muon_shiftl->SetLineColor(kGreen+1);
+  gr_muon_shiftl->Draw("samepl");
+
+  TGraph *gr_muon_shiftr = new TGraph(107);
+  shift = 0;
+  for (int i = 0; i < 107; i++){
+
+    gr_muon_shiftr->SetPoint(i, i*(30./107.), gr_muon->Eval(i*30./107. + 1.0));
+
+  }
+
+  gr_muon_shiftr->SetLineColor(kRed-3);
+  gr_muon_shiftr->Draw("samepl");
+
+
 }
