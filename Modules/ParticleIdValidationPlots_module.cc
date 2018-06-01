@@ -535,14 +535,14 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
       if (AlgScore.fAlgName == "BraggPeakLLH"){
 
-        if (anab::kVariableType(AlgScore.fVariableType) == anab::kLogL_fwd){
+        if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_fwd){
           if (AlgScore.fAssumedPdg == 13)   Bragg_fwd_mu = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 2212) Bragg_fwd_p =  AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 211)  Bragg_fwd_pi = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 321)  Bragg_fwd_K  = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 0)    noBragg_fwd_MIP = AlgScore.fValue;
         }
-        else if (anab::kVariableType(AlgScore.fVariableType) == anab::kLogL_bwd){
+        else if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_bwd){
           if (AlgScore.fAssumedPdg == 13)   Bragg_bwd_mu = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 2212) Bragg_bwd_p =  AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 211)  Bragg_bwd_pi = AlgScore.fValue;
@@ -588,14 +588,14 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     /*
     // Some couts for debugging
     std::cout  << "[ParticleIDValidation] From analyzer module:" << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL mu fwd = " << Bragg_fwd_mu << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL p fwd = " << Bragg_fwd_p << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL pi fwd = " << Bragg_fwd_pi << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL K fwd = " << Bragg_fwd_K << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL mu bwd = " << Bragg_bwd_mu << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL p bwd = " << Bragg_bwd_p << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL pi bwd = " << Bragg_bwd_pi << std::endl
-    std::cout  << "[ParticleIDValidation] neg2LogL K bwd = " << Bragg_bwd_K << std::endl;
+    std::cout  << "[ParticleIDValidation] Likelihood mu fwd = " << Bragg_fwd_mu << std::endl
+    std::cout  << "[ParticleIDValidation] Likelihood p fwd = " << Bragg_fwd_p << std::endl
+    std::cout  << "[ParticleIDValidation] Likelihood pi fwd = " << Bragg_fwd_pi << std::endl
+    std::cout  << "[ParticleIDValidation] Likelihood K fwd = " << Bragg_fwd_K << std::endl
+    std::cout  << "[ParticleIDValidation] Likelihood mu bwd = " << Bragg_bwd_mu << std::endl
+    std::cout  << "[ParticleIDValidation] Likelihood p bwd = " << Bragg_bwd_p << std::endl
+    std::cout  << "[ParticleIDValidation] Likelihood pi bwd = " << Bragg_bwd_pi << std::endl
+    std::cout  << "[ParticleIDValidation] Likelihood K bwd = " << Bragg_bwd_K << std::endl;
     */
 
 

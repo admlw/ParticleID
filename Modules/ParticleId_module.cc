@@ -232,14 +232,14 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p.at(planenum).fAlgName       = "BraggPeakLLH";
       Bragg_bwd_pi.at(planenum).fAlgName      = "BraggPeakLLH";
       Bragg_bwd_k.at(planenum).fAlgName       = "BraggPeakLLH";
-      Bragg_fwd_mu.at(planenum).fVariableType = anab::kLogL_fwd;
-      Bragg_fwd_p.at(planenum).fVariableType  = anab::kLogL_fwd;
-      Bragg_fwd_pi.at(planenum).fVariableType = anab::kLogL_fwd;
-      Bragg_fwd_k.at(planenum).fVariableType  = anab::kLogL_fwd;
-      Bragg_bwd_mu.at(planenum).fVariableType = anab::kLogL_bwd;
-      Bragg_bwd_p.at(planenum).fVariableType  = anab::kLogL_bwd;
-      Bragg_bwd_pi.at(planenum).fVariableType = anab::kLogL_bwd;
-      Bragg_bwd_k.at(planenum).fVariableType  = anab::kLogL_bwd;
+      Bragg_fwd_mu.at(planenum).fVariableType = anab::kLikelihood_fwd;
+      Bragg_fwd_p.at(planenum).fVariableType  = anab::kLikelihood_fwd;
+      Bragg_fwd_pi.at(planenum).fVariableType = anab::kLikelihood_fwd;
+      Bragg_fwd_k.at(planenum).fVariableType  = anab::kLikelihood_fwd;
+      Bragg_bwd_mu.at(planenum).fVariableType = anab::kLikelihood_bwd;
+      Bragg_bwd_p.at(planenum).fVariableType  = anab::kLikelihood_bwd;
+      Bragg_bwd_pi.at(planenum).fVariableType = anab::kLikelihood_bwd;
+      Bragg_bwd_k.at(planenum).fVariableType  = anab::kLikelihood_bwd;
       Bragg_fwd_mu.at(planenum).fAssumedPdg   = 13;
       Bragg_fwd_p.at(planenum).fAssumedPdg    = 2212;
       Bragg_fwd_pi.at(planenum).fAssumedPdg   = 211;
@@ -248,14 +248,14 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p.at(planenum).fAssumedPdg    = 2212;
       Bragg_bwd_pi.at(planenum).fAssumedPdg   = 211;
       Bragg_bwd_k.at(planenum).fAssumedPdg    = 321;
-      Bragg_fwd_mu.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_mu.at(planenum).fAssumedPdg, true, planenum);
-      Bragg_fwd_p.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_p.at(planenum).fAssumedPdg,  true, planenum);
-      Bragg_fwd_pi.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_pi.at(planenum).fAssumedPdg, true, planenum);
-      Bragg_fwd_k.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_fwd_k.at(planenum).fAssumedPdg,  true, planenum);
-      Bragg_bwd_mu.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_mu.at(planenum).fAssumedPdg, false, planenum);
-      Bragg_bwd_p.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_p.at(planenum).fAssumedPdg,  false, planenum);
-      Bragg_bwd_pi.at(planenum).fValue        = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_pi.at(planenum).fAssumedPdg, false, planenum);
-      Bragg_bwd_k.at(planenum).fValue         = braggcalc.getNegLogL(dEdx, resRange, Bragg_bwd_k.at(planenum).fAssumedPdg,  false, planenum);
+      Bragg_fwd_mu.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_mu.at(planenum).fAssumedPdg, true, planenum);
+      Bragg_fwd_p.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_p.at(planenum).fAssumedPdg,  true, planenum);
+      Bragg_fwd_pi.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_pi.at(planenum).fAssumedPdg, true, planenum);
+      Bragg_fwd_k.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_k.at(planenum).fAssumedPdg,  true, planenum);
+      Bragg_bwd_mu.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_mu.at(planenum).fAssumedPdg, false, planenum);
+      Bragg_bwd_p.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_p.at(planenum).fAssumedPdg,  false, planenum);
+      Bragg_bwd_pi.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_pi.at(planenum).fAssumedPdg, false, planenum);
+      Bragg_bwd_k.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_k.at(planenum).fAssumedPdg,  false, planenum);
       Bragg_fwd_mu.at(planenum).fPlaneID      = c->PlaneID();
       Bragg_fwd_p.at(planenum).fPlaneID       = c->PlaneID();
       Bragg_fwd_pi.at(planenum).fPlaneID      = c->PlaneID();
@@ -268,9 +268,9 @@ void UBPID::ParticleId::produce(art::Event & e)
       // Special case: MIP-like probability
       // fit to the flat MIP region of dEdx with residual range > 15 cm
       noBragg_fwd_MIP.at(planenum).fAlgName = "BraggPeakLLH";
-      noBragg_fwd_MIP.at(planenum).fVariableType = anab::kLogL_fwd;
+      noBragg_fwd_MIP.at(planenum).fVariableType = anab::kLikelihood_fwd;
       noBragg_fwd_MIP.at(planenum).fAssumedPdg = 0;
-      noBragg_fwd_MIP.at(planenum).fValue = braggcalc.getNegLogL(dEdx, resRange, noBragg_fwd_MIP.at(planenum).fAssumedPdg, true, planenum);
+      noBragg_fwd_MIP.at(planenum).fValue = braggcalc.getLikelihood(dEdx, resRange, noBragg_fwd_MIP.at(planenum).fAssumedPdg, true, planenum);
       noBragg_fwd_MIP.at(planenum).fPlaneID = c->PlaneID();
 
       AlgScoresVec.push_back(Bragg_fwd_mu.at(planenum));

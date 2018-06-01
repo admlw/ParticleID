@@ -2,7 +2,7 @@
 // dEdx vs residual range to predicted Bragg peak
 //
 // Takes in dE/dx and residual range vectors, and a particle species, and returns
-// -2logL, where the L is likelihood for the data to have been produced for that
+// the likelihood, L, for the data to have been produced for that
 // given particle species
 //
 // Likelihood is calculated by comparing the measured dE/dx at a given residual range
@@ -76,7 +76,7 @@ namespace particleid{
 
   }
 
-  double Bragg_Likelihood_Estimator::getNegLogL(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum)
+  double Bragg_Likelihood_Estimator::getLikelihood(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum)
   {
 
     /**
