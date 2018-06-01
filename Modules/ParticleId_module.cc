@@ -219,7 +219,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       // std::cout << "[ParticleID]  >> Track is fully contained and has no daughters " << std::endl;
 
       /**
-       * Algorithm 1: BraggPeakLLH
+       * Algorithm 1: Bragg_Likelihood
        * Uses B. Ballers theory, along with landau-gaussian distributions with
        * widths measured from data and simulation to estimate the likelihood for
        * each hit in a track to have come from each particle species.
