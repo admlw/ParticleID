@@ -1,17 +1,17 @@
 struct treevars{
   // These are the variables that are filled directly from the tree
   int true_PDG=-9999;
-  std::vector<double> *track_neglogl_fwd_p=nullptr;
-  std::vector<double> *track_neglogl_fwd_mu=nullptr;
-  std::vector<double> *track_neglogl_fwd_pi=nullptr;
-  std::vector<double> *track_neglogl_fwd_k=nullptr;
-  std::vector<double> *track_neglogl_fwd_other=nullptr;
-  std::vector<double> *track_neglogl_fwd_mip=nullptr;
-  std::vector<double> *track_neglogl_bwd_p=nullptr;
-  std::vector<double> *track_neglogl_bwd_mu=nullptr;
-  std::vector<double> *track_neglogl_bwd_pi=nullptr;
-  std::vector<double> *track_neglogl_bwd_k=nullptr;
-  std::vector<double> *track_neglogl_bwd_other=nullptr;
+  std::vector<double> *track_likelihood_fwd_p=nullptr;
+  std::vector<double> *track_likelihood_fwd_mu=nullptr;
+  std::vector<double> *track_likelihood_fwd_pi=nullptr;
+  std::vector<double> *track_likelihood_fwd_k=nullptr;
+  std::vector<double> *track_likelihood_fwd_other=nullptr;
+  std::vector<double> *track_likelihood_fwd_mip=nullptr;
+  std::vector<double> *track_likelihood_bwd_p=nullptr;
+  std::vector<double> *track_likelihood_bwd_mu=nullptr;
+  std::vector<double> *track_likelihood_bwd_pi=nullptr;
+  std::vector<double> *track_likelihood_bwd_k=nullptr;
+  std::vector<double> *track_likelihood_bwd_other=nullptr;
   std::vector<double> *track_PIDA_mean=nullptr;
   std::vector<double> *track_PIDA_kde=nullptr;
   std::vector<double> *track_depE=nullptr;
@@ -30,29 +30,29 @@ struct treevars{
   std::vector<double> *track_chi2k;
 
   // These are derived quantities - derived from the values above in CalcPIDvars
-  std::vector<double> *track_neglogl_p;
-  std::vector<double> *track_neglogl_mu;
-  std::vector<double> *track_neglogl_pi;
-  std::vector<double> *track_neglogl_k;
-  std::vector<double> *track_neglogl_mip;
-  std::vector<double> *track_neglogl_minmumip;
-  std::vector<double> *track_neglogl_muminusp;
-  std::vector<double> *track_neglogl_mipminusp;
-  std::vector<double> *track_neglogl_minmumipminusp;
+  std::vector<double> *track_likelihood_p;
+  std::vector<double> *track_likelihood_mu;
+  std::vector<double> *track_likelihood_pi;
+  std::vector<double> *track_likelihood_k;
+  std::vector<double> *track_likelihood_mip;
+  std::vector<double> *track_likelihood_minmumip;
+  std::vector<double> *track_likelihood_muminusp;
+  std::vector<double> *track_likelihood_mipminusp;
+  std::vector<double> *track_likelihood_minmumipminusp;
   std::vector<double> *track_depE_minus_rangeE_mu;
   std::vector<double> *track_depE_minus_rangeE_p;
   std::vector<double> *track_chi2_muminusp;
 
-  // These variables are for when "neglogl" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
-  std::vector<double> *track_max_neglogl_p;
-  std::vector<double> *track_max_neglogl_mu;
-  std::vector<double> *track_max_neglogl_pi;
-  std::vector<double> *track_max_neglogl_k;
-  std::vector<double> *track_max_neglogl_mip;
-  std::vector<double> *track_max_neglogl_maxmumip;
-  std::vector<double> *track_neglogl_muoverp;
-  std::vector<double> *track_neglogl_mipoverp;
-  std::vector<double> *track_neglogl_minmumipoverp;
+  // These variables are for when "likelihood" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
+  std::vector<double> *track_max_likelihood_p;
+  std::vector<double> *track_max_likelihood_mu;
+  std::vector<double> *track_max_likelihood_pi;
+  std::vector<double> *track_max_likelihood_k;
+  std::vector<double> *track_max_likelihood_mip;
+  std::vector<double> *track_max_likelihood_maxmumip;
+  std::vector<double> *track_likelihood_muoverp;
+  std::vector<double> *track_likelihood_mipoverp;
+  std::vector<double> *track_likelihood_minmumipoverp;
   std::vector<double> *track_Lmu_0to1;
   std::vector<double> *track_Lmip_0to1;
   std::vector<double> *track_Lpi_0to1;
@@ -63,15 +63,15 @@ struct treevars{
 
 void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("true_PDG"              , &(varstoset->true_PDG));
-  intree->SetBranchAddress("track_neglogl_fwd_p"   , &(varstoset->track_neglogl_fwd_p));
-  intree->SetBranchAddress("track_neglogl_fwd_mu"  , &(varstoset->track_neglogl_fwd_mu));
-  intree->SetBranchAddress("track_neglogl_fwd_pi"  , &(varstoset->track_neglogl_fwd_pi));
-  intree->SetBranchAddress("track_neglogl_fwd_k"   , &(varstoset->track_neglogl_fwd_k));
-  intree->SetBranchAddress("track_neglogl_fwd_mip" , &(varstoset->track_neglogl_fwd_mip));
-  intree->SetBranchAddress("track_neglogl_bwd_p"   , &(varstoset->track_neglogl_bwd_p));
-  intree->SetBranchAddress("track_neglogl_bwd_mu"  , &(varstoset->track_neglogl_bwd_mu));
-  intree->SetBranchAddress("track_neglogl_bwd_pi"  , &(varstoset->track_neglogl_bwd_pi));
-  intree->SetBranchAddress("track_neglogl_bwd_k"   , &(varstoset->track_neglogl_bwd_k));
+  intree->SetBranchAddress("track_likelihood_fwd_p"   , &(varstoset->track_likelihood_fwd_p));
+  intree->SetBranchAddress("track_likelihood_fwd_mu"  , &(varstoset->track_likelihood_fwd_mu));
+  intree->SetBranchAddress("track_likelihood_fwd_pi"  , &(varstoset->track_likelihood_fwd_pi));
+  intree->SetBranchAddress("track_likelihood_fwd_k"   , &(varstoset->track_likelihood_fwd_k));
+  intree->SetBranchAddress("track_likelihood_fwd_mip" , &(varstoset->track_likelihood_fwd_mip));
+  intree->SetBranchAddress("track_likelihood_bwd_p"   , &(varstoset->track_likelihood_bwd_p));
+  intree->SetBranchAddress("track_likelihood_bwd_mu"  , &(varstoset->track_likelihood_bwd_mu));
+  intree->SetBranchAddress("track_likelihood_bwd_pi"  , &(varstoset->track_likelihood_bwd_pi));
+  intree->SetBranchAddress("track_likelihood_bwd_k"   , &(varstoset->track_likelihood_bwd_k));
   intree->SetBranchAddress("track_PIDA_mean"       , &(varstoset->track_PIDA_mean));
   intree->SetBranchAddress("track_PIDA_kde"        , &(varstoset->track_PIDA_kde));
   intree->SetBranchAddress("track_Chi2Muon", &(varstoset->track_chi2mu_plane2));
@@ -83,35 +83,35 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_rangeE_p", &(varstoset->track_rangeE_p));
 
   intree->GetEntry(0);
-  size_t nplanes = varstoset->track_neglogl_fwd_p->size();
+  size_t nplanes = varstoset->track_likelihood_fwd_p->size();
 
   varstoset->track_chi2mu = new std::vector<double>(nplanes);
   varstoset->track_chi2p = new std::vector<double>(nplanes);
   varstoset->track_chi2pi = new std::vector<double>(nplanes);
   varstoset->track_chi2k = new std::vector<double>(nplanes);
 
-  varstoset->track_neglogl_p = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_mu = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_pi = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_k = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_mip = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_minmumip = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_muminusp = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_mipminusp = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_minmumipminusp = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_p = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_mu = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_pi = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_k = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_mip = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_minmumip = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_muminusp = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_mipminusp = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_minmumipminusp = new std::vector<double>(nplanes);
   varstoset->track_depE_minus_rangeE_mu = new std::vector<double>(nplanes);
   varstoset->track_depE_minus_rangeE_p = new std::vector<double>(nplanes);
   varstoset->track_chi2_muminusp = new std::vector<double>(nplanes);
 
-  varstoset->track_max_neglogl_p = new std::vector<double>(nplanes);
-  varstoset->track_max_neglogl_mu = new std::vector<double>(nplanes);
-  varstoset->track_max_neglogl_pi = new std::vector<double>(nplanes);
-  varstoset->track_max_neglogl_k = new std::vector<double>(nplanes);
-  varstoset->track_max_neglogl_mip = new std::vector<double>(nplanes);
-  varstoset->track_max_neglogl_maxmumip = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_muoverp = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_mipoverp = new std::vector<double>(nplanes);
-  varstoset->track_neglogl_minmumipoverp = new std::vector<double>(nplanes);
+  varstoset->track_max_likelihood_p = new std::vector<double>(nplanes);
+  varstoset->track_max_likelihood_mu = new std::vector<double>(nplanes);
+  varstoset->track_max_likelihood_pi = new std::vector<double>(nplanes);
+  varstoset->track_max_likelihood_k = new std::vector<double>(nplanes);
+  varstoset->track_max_likelihood_mip = new std::vector<double>(nplanes);
+  varstoset->track_max_likelihood_maxmumip = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_muoverp = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_mipoverp = new std::vector<double>(nplanes);
+  varstoset->track_likelihood_minmumipoverp = new std::vector<double>(nplanes);
   varstoset->track_Lmu_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lmip_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lpi_0to1 = new std::vector<double>(nplanes);
@@ -121,19 +121,19 @@ void settreevars(TTree *intree, treevars *varstoset){
 }
 
 void CalcPIDvars(treevars *vars){
-  //std::cout << "Calculating PID variables for " << vars->track_neglogl_fwd_p->size() << " planes" << std::endl;
-  for (size_t i_pl=0; i_pl < vars->track_neglogl_fwd_p->size(); i_pl++){
-    vars->track_neglogl_p->at(i_pl)     = std::min(vars->track_neglogl_fwd_p->at(i_pl)     , vars->track_neglogl_bwd_p->at(i_pl));
-    vars->track_neglogl_mu->at(i_pl)    = std::min(vars->track_neglogl_fwd_mu->at(i_pl)    , vars->track_neglogl_bwd_mu->at(i_pl));
-    vars->track_neglogl_pi->at(i_pl)    = std::min(vars->track_neglogl_fwd_pi->at(i_pl)    , vars->track_neglogl_bwd_pi->at(i_pl));
-    vars->track_neglogl_k->at(i_pl)     = std::min(vars->track_neglogl_fwd_k->at(i_pl)     , vars->track_neglogl_bwd_k->at(i_pl));
-    vars->track_neglogl_mip->at(i_pl)   = vars->track_neglogl_fwd_mip->at(i_pl);
+  //std::cout << "Calculating PID variables for " << vars->track_likelihood_fwd_p->size() << " planes" << std::endl;
+  for (size_t i_pl=0; i_pl < vars->track_likelihood_fwd_p->size(); i_pl++){
+    vars->track_likelihood_p->at(i_pl)     = std::min(vars->track_likelihood_fwd_p->at(i_pl)     , vars->track_likelihood_bwd_p->at(i_pl));
+    vars->track_likelihood_mu->at(i_pl)    = std::min(vars->track_likelihood_fwd_mu->at(i_pl)    , vars->track_likelihood_bwd_mu->at(i_pl));
+    vars->track_likelihood_pi->at(i_pl)    = std::min(vars->track_likelihood_fwd_pi->at(i_pl)    , vars->track_likelihood_bwd_pi->at(i_pl));
+    vars->track_likelihood_k->at(i_pl)     = std::min(vars->track_likelihood_fwd_k->at(i_pl)     , vars->track_likelihood_bwd_k->at(i_pl));
+    vars->track_likelihood_mip->at(i_pl)   = vars->track_likelihood_fwd_mip->at(i_pl);
 
-    vars->track_neglogl_minmumip->at(i_pl) = std::min(vars->track_neglogl_mu->at(i_pl), vars->track_neglogl_mip->at(i_pl));
+    vars->track_likelihood_minmumip->at(i_pl) = std::min(vars->track_likelihood_mu->at(i_pl), vars->track_likelihood_mip->at(i_pl));
 
-    vars->track_neglogl_muminusp->at(i_pl) = vars->track_neglogl_mu->at(i_pl) - vars->track_neglogl_p->at(i_pl);
-    vars->track_neglogl_mipminusp->at(i_pl) = vars->track_neglogl_mip->at(i_pl) - vars->track_neglogl_p->at(i_pl);
-    vars->track_neglogl_minmumipminusp->at(i_pl) = vars->track_neglogl_minmumip->at(i_pl) - vars->track_neglogl_p->at(i_pl);
+    vars->track_likelihood_muminusp->at(i_pl) = vars->track_likelihood_mu->at(i_pl) - vars->track_likelihood_p->at(i_pl);
+    vars->track_likelihood_mipminusp->at(i_pl) = vars->track_likelihood_mip->at(i_pl) - vars->track_likelihood_p->at(i_pl);
+    vars->track_likelihood_minmumipminusp->at(i_pl) = vars->track_likelihood_minmumip->at(i_pl) - vars->track_likelihood_p->at(i_pl);
 
     if (i_pl==0 || i_pl==1){
       vars->track_chi2_muminusp->at(i_pl) = 0;
@@ -153,24 +153,24 @@ void CalcPIDvars(treevars *vars){
     vars->track_depE_minus_rangeE_mu->at(i_pl) = vars->track_depE->at(i_pl) - vars->track_rangeE_mu;
     vars->track_depE_minus_rangeE_p->at(i_pl) = vars->track_depE->at(i_pl) - vars->track_rangeE_p;
 
-    // These variables are for when "neglogl" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
-    vars->track_max_neglogl_p->at(i_pl) = std::max(vars->track_neglogl_fwd_p->at(i_pl)     , vars->track_neglogl_bwd_p->at(i_pl));
-    vars->track_max_neglogl_mu->at(i_pl) = std::max(vars->track_neglogl_fwd_mu->at(i_pl)    , vars->track_neglogl_bwd_mu->at(i_pl));
-    vars->track_max_neglogl_pi->at(i_pl) = std::max(vars->track_neglogl_fwd_pi->at(i_pl)    , vars->track_neglogl_bwd_pi->at(i_pl));
-    vars->track_max_neglogl_k->at(i_pl) = std::max(vars->track_neglogl_fwd_k->at(i_pl)     , vars->track_neglogl_bwd_k->at(i_pl));
-    vars->track_max_neglogl_mip->at(i_pl) = vars->track_neglogl_fwd_mip->at(i_pl);
-    vars->track_max_neglogl_maxmumip->at(i_pl) = std::max(vars->track_neglogl_mu->at(i_pl), vars->track_neglogl_mip->at(i_pl));
-    vars->track_neglogl_muoverp->at(i_pl) = vars->track_neglogl_mu->at(i_pl) / vars->track_neglogl_p->at(i_pl);
-    vars->track_neglogl_mipoverp->at(i_pl) = vars->track_neglogl_mip->at(i_pl) / vars->track_neglogl_p->at(i_pl);
-    vars->track_neglogl_minmumipoverp->at(i_pl) = vars->track_neglogl_minmumip->at(i_pl) / vars->track_neglogl_p->at(i_pl);
+    // These variables are for when "likelihood" is actually not a log, but just a likelihood (then we want the maximum likelihood, and likelihood ratio instead of subtraction)
+    vars->track_max_likelihood_p->at(i_pl) = std::max(vars->track_likelihood_fwd_p->at(i_pl)     , vars->track_likelihood_bwd_p->at(i_pl));
+    vars->track_max_likelihood_mu->at(i_pl) = std::max(vars->track_likelihood_fwd_mu->at(i_pl)    , vars->track_likelihood_bwd_mu->at(i_pl));
+    vars->track_max_likelihood_pi->at(i_pl) = std::max(vars->track_likelihood_fwd_pi->at(i_pl)    , vars->track_likelihood_bwd_pi->at(i_pl));
+    vars->track_max_likelihood_k->at(i_pl) = std::max(vars->track_likelihood_fwd_k->at(i_pl)     , vars->track_likelihood_bwd_k->at(i_pl));
+    vars->track_max_likelihood_mip->at(i_pl) = vars->track_likelihood_fwd_mip->at(i_pl);
+    vars->track_max_likelihood_maxmumip->at(i_pl) = std::max(vars->track_likelihood_mu->at(i_pl), vars->track_likelihood_mip->at(i_pl));
+    vars->track_likelihood_muoverp->at(i_pl) = vars->track_likelihood_mu->at(i_pl) / vars->track_likelihood_p->at(i_pl);
+    vars->track_likelihood_mipoverp->at(i_pl) = vars->track_likelihood_mip->at(i_pl) / vars->track_likelihood_p->at(i_pl);
+    vars->track_likelihood_minmumipoverp->at(i_pl) = vars->track_likelihood_minmumip->at(i_pl) / vars->track_likelihood_p->at(i_pl);
 
-    vars->track_Lmu_0to1->at(i_pl) = vars->track_neglogl_mu->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
-    vars->track_Lmip_0to1->at(i_pl) = vars->track_neglogl_mip->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
-    vars->track_Lpi_0to1->at(i_pl) = vars->track_neglogl_pi->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
-    vars->track_Lp_0to1->at(i_pl) = vars->track_neglogl_p->at(i_pl)/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+    vars->track_Lmu_0to1->at(i_pl) = vars->track_likelihood_mu->at(i_pl)/(vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
+    vars->track_Lmip_0to1->at(i_pl) = vars->track_likelihood_mip->at(i_pl)/(vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
+    vars->track_Lpi_0to1->at(i_pl) = vars->track_likelihood_pi->at(i_pl)/(vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
+    vars->track_Lp_0to1->at(i_pl) = vars->track_likelihood_p->at(i_pl)/(vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
 
-    vars->track_Lmumip_0to1->at(i_pl) = (vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_mip->at(i_pl))/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
-    vars->track_Lmumippi_0to1->at(i_pl) = (vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_mip->at(i_pl)+vars->track_neglogl_pi->at(i_pl))/(vars->track_neglogl_p->at(i_pl)+vars->track_neglogl_mu->at(i_pl)+vars->track_neglogl_k->at(i_pl)+vars->track_neglogl_pi->at(i_pl)+vars->track_neglogl_mip->at(i_pl));
+    vars->track_Lmumip_0to1->at(i_pl) = (vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl))/(vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
+    vars->track_Lmumippi_0to1->at(i_pl) = (vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl)+vars->track_likelihood_pi->at(i_pl))/(vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
   }
 }
 
