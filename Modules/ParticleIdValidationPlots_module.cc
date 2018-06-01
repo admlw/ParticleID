@@ -363,7 +363,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         std::cout << "[ParticleIDValidation] No calorimetry information for plane " << planenum << std::endl;
         continue;
       }
-      //else std::cout << "[ParticleIDValidation] Getting information for plane " << planenum << std::endl;
       dEdx.at(planenum) = calo->dEdx();
       resRange.at(planenum) = calo->ResidualRange();
 
@@ -618,8 +617,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       std::vector<art::Ptr<anab::ParticleID>> trackPIDforChi2 = trackPIDAssnforChi2.at(track->ID());
 
       for (size_t i_plane=0; i_plane<trackPIDforChi2.size(); i_plane++){
-        //std::cout << "trackPIDforChi2.at(" << i_plane << ")->PlaneID().Plane = " << trackPIDforChi2.at(i_plane)->PlaneID().Plane << std::endl;
-
+        
         // Use collection plane only
         //if (trackPIDforChi2.at(i_plane)->PlaneID().Plane != 2) continue;
 
@@ -627,6 +625,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         track_Chi2Pion   = trackPIDforChi2.at(i_plane)->Chi2Pion();
         track_Chi2Kaon   = trackPIDforChi2.at(i_plane)->Chi2Kaon();
         track_Chi2Muon   = trackPIDforChi2.at(i_plane)->Chi2Muon();
+      
       } // end loop over i_plane
     } // end else
 
