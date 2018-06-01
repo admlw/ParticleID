@@ -390,6 +390,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     // loop dEdx and take average of first n hits and last n hits
 
     TVector3 RecoTrackDir, TrueTrackDir;
+    
     if (dEdx.at(2).size() > 0) {
 
       for (int i = 0; i < (int)dEdx.at(2).size(); i++){
@@ -465,7 +466,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
        */
 
       if (dEdxStartEndRatio < 0.5){
-        for (int i=0; i < (int)resRange.size(); i++){
+        for (int i=0; i < (int)resRange.at(2).size(); i++){
           All_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
           if (TrueBragg){
             TrueBragg_chargeEndOverStart_sm0_5_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
@@ -473,7 +474,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
       }
       else if (dEdxStartEndRatio > 2.0){
-        for (int i=0; i < (int)resRange.size(); i++){
+        for (int i=0; i < (int)resRange.at(2).size(); i++){
           All_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
           if (TrueBragg){
             TrueBragg_chargeEndOverStart_gr2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
@@ -481,7 +482,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
       }
       else {
-        for (int i=0; i < (int)resRange.size(); i++){
+        for (int i=0; i < (int)resRange.at(2).size(); i++){
           All_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
           if (TrueBragg){
             TrueBragg_chargeEndOverStart_0_5to2_dEdxrr->Fill(resRange.at(2).at(i),dEdx.at(2).at(i));
