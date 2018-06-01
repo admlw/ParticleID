@@ -1,3 +1,7 @@
+/**
+ * Re-implementation of PIDA algorithm originally developed by B. Baller.
+ */
+
 #include "PIDA.h"
 
 namespace particleid{

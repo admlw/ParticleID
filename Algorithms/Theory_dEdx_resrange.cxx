@@ -1,9 +1,11 @@
-// Implementation of class to hold Theoretical predictions for dEdx vs residual range
-// For protons, kaons, pions, and muons
-// Taken from Bruce Baller's spread sheet: MicroBooNE DocDB-6572
+/**
+ * Implementation of class to hold Theoretical predictions for dEdx vs residual range
+ * For protons, kaons, pions, and muons
+ * Taken from Bruce Baller's spread sheet: MicroBooNE DocDB-6572
 
-// Converted to TGraphs, where x is Res Range(cm), and y is dE/dx(MeV/cm)
-// Also provided as TSpline3s for easier querying
+ * Converted to TGraphs, where x is Res Range(cm), and y is dE/dx(MeV/cm)
+ * Also provided as TSpline3s for easier querying
+ */
 
 #ifndef THEORY_DEDX_RESRANGE_CXX
 #define THEORY_DEDX_RESRANGE_CXX
