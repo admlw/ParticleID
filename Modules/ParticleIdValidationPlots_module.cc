@@ -13,7 +13,7 @@
  *
  * \brief ParticleId analyzer module
  *
- * \author Kirsty Duffy (kduffy@fnal.gov), Adam Lister (alister1@lancaster.ac.uk)
+ * \author Kirsty Duffy (kduffy@fnal.gov), Adam Lister (a.lister1@lancaster.ac.uk)
  *
  * \date 2018/04/18
  *
