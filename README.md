@@ -21,9 +21,19 @@ Makes use of D. Caratelli's "Truncated Mean" algorithm to plot the mean dE/dx of
 __Deposited Energy vs Energy By Range__
 Calculates deposited energy, and compares against the energy by range under different assumptions for separation.
 
-## Dependencies
+## Package Information and Dependencies
 
-The producer module has a single dependency: lardataobj feature branch `feature/feature/kduffy_pidrefactor_v1_11_00_04`. This contains an extension to the anab::ParticleID class, in the form of a struct: 
+This package has been validated against uboonecode v06_26_01_13, but it should be "simple" to take this to later production versions. It should also be reasonably east to port this to develop releases, with one caveat: New data files as of ubooneocde v06_78_00 are using the 2d-deconvolution, and the plan is to move to using this for simulated data in the near future. This would require significantly more work to re-calibrate the data products and re-measure the Landau and Gaussian widths. **If you're using develop proceed with caution**. 
+
+For v06_26_01_13, this package has two dependencies: 
+- lardataobj feature branch `feature/feature/kduffy_pidrefactor_v1_11_00_04` 
+  - This contains an extension of the structure of the anab::ParticleID class, as shown below.
+- larana feature branch `origin/feature/alister1_TruncatedMeanPort` 
+  - This contains a port of D. Caratelli's TruncatedMean class.
+
+It is likely that if using a newer version of the production code will mean you do not need the larana feature branch.
+
+### Structure of Updated anab::ParticleID Class
 
 ```
 struct sParticleIDAlgScores {
