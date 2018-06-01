@@ -35,7 +35,7 @@ It is likely that if using a newer version of the production code will mean you 
 
 ### Structure of Updated anab::ParticleID Class
 
-```
+```cpp
 struct sParticleIDAlgScores {
 
   std::string fAlgName;
@@ -50,7 +50,7 @@ struct sParticleIDAlgScores {
 
 which holds the output of any generic PID algorithm. Here, `kVariableType` is an enum which can take the following values:
 
-```
+```cpp
 enum kVariableType{
   kGOF,
   kLikelihood,
@@ -72,7 +72,7 @@ enum kVariableType{
 
 Below is a minimal example of how to access the result of a given PID algorithm (in this case, the result of Bragg_Likelihood_Estimator under a muon assumption):
 
-```
+```cpp
 art::FindManyP<anab::ParticleID> trackPIDAssn(trackHandle, e, fPIDLabel);
 if (!trackPIDAssn.isValid()){
   std::cout << "[ParticleIDValidation] trackPIDAssn.isValid() == false. Skipping track." << std::endl;
