@@ -5,21 +5,21 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
   std::vector<std::vector<double>> varstoplot;
   for (size_t i=0; i<3; i++){
     varstoplot.push_back({
-      vars->track_max_neglogl_p->at(i),
-      vars->track_max_neglogl_mu->at(i),
-      vars->track_max_neglogl_pi->at(i),
-      vars->track_max_neglogl_k->at(i),
-      vars->track_max_neglogl_mip->at(i),
-      vars->track_max_neglogl_maxmumip->at(i),
+      vars->track_max_likelihood_p->at(i),
+      vars->track_max_likelihood_mu->at(i),
+      vars->track_max_likelihood_pi->at(i),
+      vars->track_max_likelihood_k->at(i),
+      vars->track_max_likelihood_mip->at(i),
+      vars->track_max_likelihood_maxmumip->at(i),
       vars->track_chi2mu->at(i),
       vars->track_chi2p->at(i),
       vars->track_chi2pi->at(i),
       vars->track_chi2k->at(i),
       vars->track_PIDA_kde->at(i),
       vars->track_PIDA_mean->at(i),
-      vars->track_neglogl_muoverp->at(i),
-      vars->track_neglogl_mipoverp->at(i),
-      vars->track_neglogl_minmumipoverp->at(i),
+      vars->track_likelihood_muoverp->at(i),
+      vars->track_likelihood_mipoverp->at(i),
+      vars->track_likelihood_minmumipoverp->at(i),
       vars->track_chi2_muminusp->at(i),
       vars->track_Lmu_0to1->at(i),
       vars->track_Lmip_0to1->at(i),
@@ -51,21 +51,21 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
 
 // Binning (nbins, binlow, binhigh) in the same order as the vector above
 std::vector<std::vector<double>> bins = {
-                    {20,0,0.6}, // track_max_neglogl_p
-                    {40,0,0.6}, // track_max_neglogl_mu
-                    {40,0,0.6}, // track_max_neglogl_pi
-                    {40,0,0.4}, // track_max_neglogl_k
-                    {40,0,0.6}, // track_max_neglogl_mip
-                    {40,0,0.6}, // track_max_neglogl_minmumip
+                    {20,0,0.6}, // track_max_likelihood_p
+                    {40,0,0.6}, // track_max_likelihood_mu
+                    {40,0,0.6}, // track_max_likelihood_pi
+                    {40,0,0.4}, // track_max_likelihood_k
+                    {40,0,0.6}, // track_max_likelihood_mip
+                    {40,0,0.6}, // track_max_likelihood_minmumip
                     {25,0,125}, // track_chi2mu
                     {30,0,300}, // track_chi2p
                     {25,0,125}, // track_chi2pi
                     {30,0,300}, // track_chi2k
                     {40,0,30}, // track_PIDA_kde
                     {40,0,30}, // track_PIDA_mean
-                    {60,0,60}, // track_neglogl_muoverp
-                    {60,0,60}, // track_neglogl_mipoverp
-                    {60,0,60}, // track_neglogl_minmumipoverp
+                    {60,0,60}, // track_likelihood_muoverp
+                    {60,0,60}, // track_likelihood_mipoverp
+                    {60,0,60}, // track_likelihood_minmumipoverp
                     {50,-400,100}, // track_chi2_muminusp
                     {50,0,1}, // track_Lmu_0to1
                     {50,0,1}, // track_Lmip_0to1

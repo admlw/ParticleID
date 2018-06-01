@@ -3,21 +3,21 @@
 // What variables do we want these plots as a function of?
 std::vector<double> GetPIDvarstoplot(treevars *vars){
   std::vector<double> varstoplot = {
-    vars->track_neglogl_p,
-    vars->track_neglogl_mu,
-    vars->track_neglogl_pi,
-    vars->track_neglogl_k,
-    vars->track_neglogl_mip,
-    vars->track_neglogl_minmumip,
+    vars->track_likelihood_p,
+    vars->track_likelihood_mu,
+    vars->track_likelihood_pi,
+    vars->track_likelihood_k,
+    vars->track_likelihood_mip,
+    vars->track_likelihood_minmumip,
     vars->track_chi2mu,
     vars->track_chi2p,
     vars->track_chi2pi,
     vars->track_chi2k,
     vars->track_PIDA_kde,
     vars->track_PIDA_mean,
-    vars->track_neglogl_muminusp,
-    vars->track_neglogl_mipminusp,
-    vars->track_neglogl_minmumipminusp,
+    vars->track_likelihood_muminusp,
+    vars->track_likelihood_mipminusp,
+    vars->track_likelihood_minmumipminusp,
     vars->track_chi2_muminusp,
     vars->track_depE_minus_rangeE_mu,
     vars->track_depE_minus_rangeE_p
@@ -27,21 +27,21 @@ std::vector<double> GetPIDvarstoplot(treevars *vars){
 
 // Binning (nbins, binlow, binhigh) in the same order as the vector above
 std::vector<std::vector<int>> bins = {
-  {40,0,15}, // track_neglogl_p
-  {40,0,15}, // track_neglogl_mu
-  {40,0,15}, // track_neglogl_pi
-  {40,0,15}, // track_neglogl_k
-  {40,0,15}, // track_neglogl_mip
-  {40,0,15}, // track_neglogl_minmumip
+  {40,0,15}, // track_likelihood_p
+  {40,0,15}, // track_likelihood_mu
+  {40,0,15}, // track_likelihood_pi
+  {40,0,15}, // track_likelihood_k
+  {40,0,15}, // track_likelihood_mip
+  {40,0,15}, // track_likelihood_minmumip
   {25,0,125}, // track_chi2mu
   {30,0,300}, // track_chi2p
   {25,0,125}, // track_chi2pi
   {30,0,300}, // track_chi2k
   {40,0,30}, // track_PIDA_kde
   {40,0,30}, // track_PIDA_mean
-  {40,-20,7}, // track_neglogl_muminusp
-  {40,-20,15}, // track_neglogl_mipminusp
-  {50,-20,7}, // track_neglogl_minmumipminusp
+  {40,-20,7}, // track_likelihood_muminusp
+  {40,-20,15}, // track_likelihood_mipminusp
+  {50,-20,7}, // track_likelihood_minmumipminusp
   {50,-400,100}, // track_chi2_muminusp
   {100,-100,100}, // track_depE_minus_rangeE_mu
   {100,-100,100} // track_depE_minus_rangeE_p
@@ -83,9 +83,9 @@ std::vector<std::string> histnames = {
   "chi2k",
   "pida_kde",
   "pida_mean",
-  "neglogl_muminusp",
-  "neglogl_mipminusp",
-  "neglogl_mumipminusp",
+  "likelihood_muminusp",
+  "likelihood_mipminusp",
+  "likelihood_mumipminusp",
   "chi2muminusp",
   "depErangeEmu",
   "depErangeEp"
