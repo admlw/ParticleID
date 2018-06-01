@@ -36,8 +36,8 @@ braggalgo_mcc8:
   #   - EndPointFloatLong     : how much longer do we allow the track to be?
   #   - EndPointFloatStepSize : step size beteween two variables
 
-  EndPointFloatShort    : -1.0
-  EndPointFloatLong     : 1.0
+  EndPointFloatShort    : -2.0
+  EndPointFloatLong     : 2.0
   EndPointFloatStepSize : 0.05
 
 }
@@ -74,8 +74,8 @@ braggalgo_mcc8_data:
   #   - EndPointFloatLong     : how much longer do we allow the track to be?
   #   - EndPointFloatStepSize : step size beteween two variables
 
-  EndPointFloatShort    : -1.0
-  EndPointFloatLong     : 1.0
+  EndPointFloatShort    : -2.0
+  EndPointFloatLong     : 2.0
   EndPointFloatStepSize : 0.05
 
 }
