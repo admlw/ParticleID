@@ -19,6 +19,8 @@ particleidvalidconfig:
   NHitsForTrackDirection: 5
 
   IsDataPlotsOnly: false
+
+  IsUBXSecSelected: true 
 }
 
 END_PROLOG

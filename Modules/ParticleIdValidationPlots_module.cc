@@ -47,6 +47,10 @@
 #include "lardataobj/AnalysisBase/Calorimetry.h"
 #include "larcoreobj/SummaryData/POTSummary.h"
 
+// UBXSec
+#include "uboone/UBXSec/DataTypes/SelectionResult.h"
+#include "uboone/UBXSec/DataTypes/TPCObject.h"
+
 // ROOT
 #include "TH1F.h"
 #include "TH2F.h"
@@ -88,6 +92,7 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::vector<double> fv;
 
     bool fIsDataPlots;
+    bool fIsUBXSecSelected;
     std::string fTrackLabel;
     std::string fHitLabel;
     std::string fHitTrackAssns;
@@ -203,6 +208,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   fhicl::ParameterSet const p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
 
   fIsDataPlots = p.get<bool>("IsDataPlotsOnly", "false");
+  fIsUBXSecSelected = p.get<bool>("IsUBXSecSelected", "false");
   fTrackLabel = p_labels.get<std::string>("TrackLabel","pandoraNu::McRecoStage2");
   fHitLabel = p_labels.get<std::string>("HitLabel","pandoraCosmicHitRemoval::McRecoStage2");
   fHitTrackAssns = p_labels.get<std::string>("HitTrackAssn","pandoraNu::McRecoStage2");
@@ -234,7 +240,65 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   art::Handle<std::vector<recob::Track>> trackHandle;
   e.getByLabel(fTrackLabel, trackHandle);
   std::vector<art::Ptr<recob::Track>> trackCollection;
+  
+  /**
+   * Two options for trackCollection, if isUBXSecSelected then
+   * only use tracks actually in the selected TPC object,
+   * if not then use all tracks which pass the cosmic filter
+   */
+ 
+  // first fill ptr vector
   art::fill_ptr_vector(trackCollection, trackHandle);
+  std::vector<art::Ptr<recob::Track>> trackPtrVector;
+
+  if (fIsUBXSecSelected == true){
+
+    art::Handle< std::vector<ubana::SelectionResult> > selectionHandle;
+    e.getByLabel("UBXSec", selectionHandle);
+
+    art::FindManyP<ubana::TPCObject> selectedTPCObjects(selectionHandle, e, "UBXSec");
+    art::Ptr<ubana::TPCObject> selectedTPCObject;
+
+    if (selectedTPCObjects.at(0).size() == 1){
+
+      selectedTPCObject = selectedTPCObjects.at(0).at(0);
+
+      const std::vector<recob::Track>& selectedTracks = selectedTPCObject->GetTracks();
+
+      for (size_t i = 0; i < selectedTracks.size(); i++){
+
+        recob::Track selectedTrack = selectedTracks.at(i);
+        int selectedTrackId = selectedTrack.ID();
+
+        // loop all tracks in the collection and find this track, then add the 
+        // pointer to that track to the trackPtrVector
+
+        for (auto& track : trackCollection){
+
+          int testTrackId = track->ID();
+
+          std::cout << "[ParticleIDValidation] Checking track " << testTrackId << std::endl;
+          
+          if (testTrackId == selectedTrackId){
+
+            std::cout << "[ParticleIDValidation] Found track ID match with ID " << testTrackId << std::endl;
+            trackPtrVector.push_back(track);
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+  else {
+    // if fIsUBXSecSelected == false, then we just want all tracks
+    // and so the trackPtrVector is just the trackCollection from
+    // earlier
+    trackPtrVector = trackCollection;
+  }
 
   art::Handle<std::vector<recob::Hit>> hitHandle;
   e.getByLabel(fHitLabel, hitHandle);
@@ -242,13 +306,15 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   art::FindManyP<recob::Hit> hits_from_tracks(trackHandle, e, fHitTrackAssns);
   art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, fCaloTrackAssns);
 
+
+
   /**
    * Variables which need to have scope throughout the code
    */
   TVector3 true_start;
   TVector3 true_end;
 
-  for (auto& track : trackCollection){
+  for (auto& track : trackPtrVector){
     /** reset default values */
     dEdx.resize(3);
     resRange.resize(3);

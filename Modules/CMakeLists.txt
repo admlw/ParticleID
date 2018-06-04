@@ -12,6 +12,8 @@ art_make( BASENAME_ONLY
   #uboonecode_uboone_MyClasses
 
   MODULE_LIBRARIES 
+  uboonecode_uboone_UBXSec_DataTypes
+  uboonecode_uboone_UBXSec_Algorithms
   uboonecode_uboone_ParticleID_Algorithms
   #uboonecode_uboone_MyClasses
   larcore_Geometry

@@ -38,12 +38,12 @@
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <maxfilesperjob>3</maxfilesperjob>
-        <numjobs>154</numjobs>
-        <!--<maxfilesperjob>1</maxfilesperjob>
+        <!--<maxfilesperjob>3</maxfilesperjob>
+        <numjobs>154</numjobs>-->
+        <maxfilesperjob>1</maxfilesperjob>
         <numjobs>1</numjobs>
-        <numevents>10</numevents>
-        <memory>2000</memory>-->
+        <numevents>20</numevents>
+        <!--<memory>2000</memory>-->
         <memory>3000</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
