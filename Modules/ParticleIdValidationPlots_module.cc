@@ -107,6 +107,8 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     /** Setup root trees  */
     TTree *potTree;
     double sr_pot = 0;
+    int sr_run = 0;
+    int sr_sub_run = 0;
 
     TTree *pidTree;
 
@@ -809,6 +811,8 @@ void ParticleIdValidationPlots::beginJob(){
 
   potTree = tfs->make<TTree>("potTree","potTree");
   potTree->Branch("sr_pot", &sr_pot, "sr_pot/D");
+  potTree->Branch("sr_run", &sr_run, "sr_run/I");
+  potTree->Branch("sr_sub_run", &sr_sub_run, "sr_sub_run/I");
 
   pidTree = tfs->make<TTree>("pidTree" , "pidTree");
 
@@ -935,6 +939,9 @@ void ParticleIdValidationPlots::endSubRun(art::SubRun const &sr) {
       sr_pot = potsum_h->totpot;
     }
   }
+
+  sr_run = sr.run();
+  sr_sub_run = sr.subRun();
 
   potTree->Fill();
 
