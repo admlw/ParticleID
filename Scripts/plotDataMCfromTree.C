@@ -17,6 +17,7 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_chi2k->at(i),
       vars->track_PIDA_kde->at(i),
       vars->track_PIDA_mean->at(i),
+      vars->track_PIDA_median->at(i),
       vars->track_likelihood_muoverp->at(i),
       vars->track_likelihood_mipoverp->at(i),
       vars->track_likelihood_maxmumipoverp->at(i),
@@ -27,6 +28,7 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_Lp_0to1->at(i),
       vars->track_Lmumip_0to1->at(i),
       vars->track_Lmumippi_0to1->at(i),
+      vars->track_Lmumip_0to1_nopionkaon->at(i),
       vars->track_depE_minus_rangeE_mu->at(i),
       vars->track_depE_minus_rangeE_p->at(i)
     });
@@ -52,17 +54,18 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
 // Binning (nbins, binlow, binhigh) in the same order as the vector above
 std::vector<std::vector<double>> bins = {
                     {20,0,0.6}, // track_likelihood_p
-                    {40,0,0.6}, // track_likelihood_mu
-                    {40,0,0.6}, // track_likelihood_pi
-                    {40,0,0.4}, // track_likelihood_k
-                    {40,0,0.6}, // track_likelihood_mip
-                    {40,0,0.6}, // track_likelihood_minmumip
+                    {40,0,1.0}, // track_likelihood_mu
+                    {40,0,1.0}, // track_likelihood_pi
+                    {40,0,0.6}, // track_likelihood_k
+                    {80,0,1.0}, // track_likelihood_mip
+                    {40,0,1.0}, // track_likelihood_minmumip
                     {25,0,125}, // track_chi2mu
                     {30,0,300}, // track_chi2p
                     {25,0,125}, // track_chi2pi
                     {30,0,300}, // track_chi2k
                     {40,0,30}, // track_PIDA_kde
                     {40,0,30}, // track_PIDA_mean
+                    {40,0,30}, // track_PIDA_median
                     {60,0,60}, // track_likelihood_muoverp
                     {60,0,60}, // track_likelihood_mipoverp
                     {60,0,60}, // track_likelihood_minmumipoverp
@@ -73,8 +76,9 @@ std::vector<std::vector<double>> bins = {
                     {50,0,1}, // track_Lp_0to1
                     {50,0,1}, // track_Lmumip_0to1
                     {50,0,1}, // track_Lmumippi_0to1
-                    {50,-100,100}, // track_depE_minus_rangeE_mu
-                    {50,-100,100} // track_depE_minus_rangeE_p
+                    {50,0,1}, // track_Lmumip_0to1_nopionkaon
+                    {50,-150,150}, // track_depE_minus_rangeE_mu
+                    {50,-300,100} // track_depE_minus_rangeE_p
                     };
 
 // Histogram titles in the same order as the vector above
@@ -91,6 +95,7 @@ std::vector<std::string> histtitles = {
                     ";#chi^{2}_{K};",
                     ";PIDa (by KDE);",
                     ";PIDa (by mean);",
+                    ";PIDa (by median);",
                     ";(L_{#mu})/(L_{p});",
                     ";(L_{MIP})/(L_{p});",
                     ";(L_{#mu/MIP})/(L_{p});",
@@ -101,6 +106,7 @@ std::vector<std::string> histtitles = {
                     ";L_{p}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP}+L_{#pi})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
+                    ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{p});",
                     ";Dep. E - E. by range (muon assumption) [MeV];",
                     ";Dep. E - E. by range (proton assumption) [MeV];"
                   };
@@ -119,6 +125,7 @@ std::vector<std::string> histnames = {
                   "chi2k",
                   "pida_kde",
                   "pida_mean",
+                  "pida_median",
                   "Lmuoverp",
                   "Lmipoverp",
                   "Lmumipoverp",
@@ -129,6 +136,7 @@ std::vector<std::string> histnames = {
                   "Lp0to1",
                   "Lmumip0to1",
                   "Lmumippi0to1",
+                  "Lmumip0to1nopionkaon",
                   "depErangeEmu",
                   "depErangeEp"
                 };
@@ -137,7 +145,7 @@ std::vector<std::string> histnames = {
 //  Now the function starts
 // ---------------------------------------------------- //
 
-void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string onbeamdatafile="", std::string offbeamdatafile="", double offbeamscaling=0., bool onminusoffbeam=true){
+void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string onbeamdatafile="", std::string offbeamdatafile="", double offbeamscaling=0., bool onminusoffbeam=true, bool templatefit=false){
 
   gStyle->SetTitleX(0.1f);
   gStyle->SetTitleW(0.8f);
@@ -170,7 +178,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
 
   // Sanity check: the plot vectors should be the same size
   t_bnbcos->GetEntry(0);
-  CalcPIDvars(&mc_vars);
+  CalcPIDvars(&mc_vars, true);
   std::vector<std::vector<double>> PIDvarstoplot_dummy = GetPIDvarstoplot(&mc_vars);
   if (PIDvarstoplot_dummy.size() != 3) std::cout << "WARNING PIDvarstoplot_dummy.size() = " << PIDvarstoplot_dummy.size() << ", should be 3." << std::endl;
   if (PIDvarstoplot_dummy.at(0).size() != bins.size()) std::cout << "WARNING PIDvarstoplot_dummy.size() = " << PIDvarstoplot_dummy.size() << "and bins.size() = " << bins.size() << ". This is going to cause you problems!" << std::endl;
@@ -191,7 +199,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
   // Loop through MC tree and fill plots
   for (int i = 0; i < t_bnbcos->GetEntries(); i++){
     t_bnbcos->GetEntry(i);
-    CalcPIDvars(&mc_vars);
+    CalcPIDvars(&mc_vars, true);
     std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&mc_vars);
 
     for (size_t i_pl=0; i_pl < nplanes; i_pl++){
@@ -217,7 +225,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
     // Loop through on-beam data tree and fill plots
     for (int i = 0; i < t_onbeam->GetEntries(); i++){
       t_onbeam->GetEntry(i);
-      CalcPIDvars(&onbeam_vars);
+      CalcPIDvars(&onbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&onbeam_vars);
 
 
@@ -244,7 +252,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
     // Loop through tree and fill plots
     for (int i = 0; i < t_offbeam->GetEntries(); i++){
       t_offbeam->GetEntry(i);
-      CalcPIDvars(&offbeam_vars);
+      CalcPIDvars(&offbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&offbeam_vars);
 
       for (size_t i_pl=0; i_pl < nplanes; i_pl++){
@@ -261,11 +269,14 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
   for (size_t i_pl=0; i_pl < nplanes; i_pl++){
     for (size_t i_h=0; i_h < nplots; i_h++){
       TCanvas *c1 = new TCanvas();
-      if (onminusoffbeam){
+      if (onminusoffbeam && templatefit == false){
         DrawMC(mc_hists[i_pl][i_h],POTscaling);
         if (f_onbeam && f_offbeam){
           OverlayOnMinusOffData(c1,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling);
         }
+      }
+      else if (onminusoffbeam && templatefit == true){
+        TemplateFit(mc_hists[i_pl][i_h], onb_hists[i_pl][i_h], offb_hists[i_pl][i_h], offbeamscaling, POTscaling);
       }
       else{
         if (f_onbeam && f_offbeam){
