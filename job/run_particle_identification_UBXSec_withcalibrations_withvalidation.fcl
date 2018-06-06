@@ -43,7 +43,7 @@ physics:
       pidcalibration: @local::microboone_calibrationdedx
       pandoraNucalipid: @local::microboone_chi2pid
       pid: @local::particleidconfig
-
+      
     }
 
     analyzers:

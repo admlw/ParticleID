@@ -48,6 +48,7 @@
 
 // root includes
 #include "TVector3.h"
+#include "TRandom3.h"
 
 // cpp includes
 #include <memory>
@@ -78,6 +79,8 @@ class UBPID::ParticleId : public art::EDProducer {
     std::string fCaloLabel;
     double fCutDistance;
     double fCutFraction;
+    bool fIsSimSmear;
+    std::vector<double> fSimGausSmearWidth;
 
     // fidvol related
     fidvol::fiducialVolume fid;
@@ -117,6 +120,8 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   fCaloLabel = p_labels.get< std::string > ("CalorimetryLabel");
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
+  fIsSimSmear = p.get< bool > ("IsSimulationSmearing");
+  fSimGausSmearWidth = p.get< std::vector<double> > ("SimulationGausSmearWidth");
 
   fv = fid.setFiducialVolume(fv, p_fv);
   fid.printFiducialVolume(fv);
@@ -137,6 +142,9 @@ void UBPID::ParticleId::produce(art::Event & e)
 
   if (!isData) std::cout << "[ParticleID] Running simulated data." << std::endl;
   else std::cout << "[ParticleID] Running physics data." << std::endl;
+
+  TRandom3 r(0);
+  std::cout << "[ParticleID] The randome number seed is " << r.GetSeed() << std::endl;
 
   // produce collection of particleID objects
   std::unique_ptr< std::vector<anab::ParticleID> > particleIDCollection( new std::vector<anab::ParticleID> );
@@ -207,6 +215,17 @@ void UBPID::ParticleId::produce(art::Event & e)
       std::vector<double> dEdx = calo->dEdx();
       std::vector<double> resRange = calo->ResidualRange();
       std::vector<double> trkpitchvec = calo->TrkPitchVec();
+
+      if (!isData && fIsSimSmear){
+
+        for (size_t i = 0; i < dEdx.size(); i++){
+
+          double simulationSmear = r.Gaus(1., fSimGausSmearWidth.at(planenum)); 
+          dEdx.at(i) = dEdx.at(i) * simulationSmear;
+
+        }
+
+      }
 
       /**
        * Initially wanted to only perform particle ID on tracks which Bragged, 
