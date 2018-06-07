@@ -1,0 +1,19 @@
+#include "config_simulation_calibration_producerlabels.fcl"
+
+BEGIN_PROLOG
+
+simulation_calibration:
+{
+
+  module_type: "CalibrateSimulatedData"
+
+  ProducerLabels: @local::cs_producerlabels_mcc8_UBXSec_simcalib 
+  
+  # simulation smearing width (i.e. the data dE/dx distribution is wider
+  # than the simulation dE/dx distribution and we want to account for that).
+  IsSimulationSmearing: true
+  SimulationGausSmearWidth: [0.32, 0.49, 0.18]
+
+}
+
+END_PROLOG

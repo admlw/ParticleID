@@ -16,6 +16,8 @@ art_make( BASENAME_ONLY
   uboone_UBFlashFinder
   uboonecode_uboone_SelectionTool_OpT0FinderBase
   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
+  larana_ParticleIdentification
+
   larcore_Geometry
   larcore_Geometry_Geometry_service
   uboone_RawData
@@ -76,6 +78,7 @@ art_make( BASENAME_ONLY
   lardataobj_RecoBase
   lardataobj_AnalysisBase
   lardata_Utilities
+  larana_ParticleIdentification
   larsim_Simulation lardataobj_Simulation 
   nusimdata_SimulationBase
   ${UBOONECODE_LIB}
@@ -99,5 +102,6 @@ art_make( BASENAME_ONLY
   ${ROOT_BASIC_LIB_LIST}
   )
 
+install_fhicl()
 install_headers()
 install_source()

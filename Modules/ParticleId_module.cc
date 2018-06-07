@@ -43,12 +43,12 @@
 #include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
 #include "uboone/ParticleID/Algorithms/FiducialVolume.h"
 #include "uboone/ParticleID/Algorithms/PIDA.h"
+#include "uboone/ParticleID/Algorithms/Chisq.h"
 #include "uboone/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
 #include "uboone/ParticleID/Algorithms/LandauGaussian.h"
 
 // root includes
 #include "TVector3.h"
-#include "TRandom3.h"
 
 // cpp includes
 #include <memory>
@@ -80,10 +80,12 @@ class UBPID::ParticleId : public art::EDProducer {
     double fCutDistance;
     double fCutFraction;
     bool fIsSimSmear;
-    std::vector<double> fSimGausSmearWidth;
 
     // fidvol related
     fidvol::fiducialVolume fid;
+
+    // for Chisq
+    particleid::Chisquare chisq;
 
     // for PIDA
     particleid::PIDA pida;
@@ -96,6 +98,8 @@ class UBPID::ParticleId : public art::EDProducer {
 
     //other
     bool isData;
+
+    fhicl::ParameterSet p_holder;
 };
 
 
@@ -114,14 +118,15 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   fhicl::ParameterSet const p_fv     = p.get<fhicl::ParameterSet>("FiducialVolume");
   fhicl::ParameterSet const p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
   fhicl::ParameterSet const p_bragg  = p.get<fhicl::ParameterSet>("BraggAlgo");
+  fhicl::ParameterSet const p_chi2pidalg = p.get<fhicl::ParameterSet>("Chi2PIDAlg");
+
+  p_holder = p_chi2pidalg;
 
   // fcl parameters
   fTrackLabel = p_labels.get< std::string > ("TrackLabel");
   fCaloLabel = p_labels.get< std::string > ("CalorimetryLabel");
   fCutDistance  = p.get< double > ("DaughterFinderCutDistance");
   fCutFraction  = p.get< double > ("DaughterFinderCutFraction");
-  fIsSimSmear = p.get< bool > ("IsSimulationSmearing");
-  fSimGausSmearWidth = p.get< std::vector<double> > ("SimulationGausSmearWidth");
 
   fv = fid.setFiducialVolume(fv, p_fv);
   fid.printFiducialVolume(fv);
@@ -133,6 +138,11 @@ UBPID::ParticleId::ParticleId(fhicl::ParameterSet const & p)
   produces< std::vector<anab::ParticleID> >();
   produces< art::Assns< recob::Track, anab::ParticleID> >();
 
+  std::cout << "[ParticleID] >> Track Label: " << fTrackLabel << std::endl;
+  std::cout << "[ParticleID] >> Calorimetry Label: " << fCaloLabel << std::endl;
+  std::cout << "[ParticleID] >> Cut Distance : " << fCutDistance << std::endl;
+  std::cout << "[ParticleID] >> Cut Fraction : " << fCutFraction << std::endl;
+
 }
 
 void UBPID::ParticleId::produce(art::Event & e)
@@ -142,9 +152,6 @@ void UBPID::ParticleId::produce(art::Event & e)
 
   if (!isData) std::cout << "[ParticleID] Running simulated data." << std::endl;
   else std::cout << "[ParticleID] Running physics data." << std::endl;
-
-  TRandom3 r(0);
-  std::cout << "[ParticleID] The randome number seed is " << r.GetSeed() << std::endl;
 
   // produce collection of particleID objects
   std::unique_ptr< std::vector<anab::ParticleID> > particleIDCollection( new std::vector<anab::ParticleID> );
@@ -188,6 +195,11 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<anab::sParticleIDAlgScores> Bragg_bwd_k     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> noBragg_fwd_MIP = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
+    std::vector<anab::sParticleIDAlgScores> Chi2_mu         = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()};
+    std::vector<anab::sParticleIDAlgScores> Chi2_p         = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()};
+    std::vector<anab::sParticleIDAlgScores> Chi2_pi         = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()};
+    std::vector<anab::sParticleIDAlgScores> Chi2_k         = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()};
+
     std::vector<anab::sParticleIDAlgScores> PIDAval_mean   = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> PIDAval_median = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> PIDAval_kde    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
@@ -215,17 +227,6 @@ void UBPID::ParticleId::produce(art::Event & e)
       std::vector<double> dEdx = calo->dEdx();
       std::vector<double> resRange = calo->ResidualRange();
       std::vector<double> trkpitchvec = calo->TrkPitchVec();
-
-      if (!isData && fIsSimSmear){
-
-        for (size_t i = 0; i < dEdx.size(); i++){
-
-          double simulationSmear = r.Gaus(1., fSimGausSmearWidth.at(planenum)); 
-          dEdx.at(i) = dEdx.at(i) * simulationSmear;
-
-        }
-
-      }
 
       /**
        * Initially wanted to only perform particle ID on tracks which Bragged, 
@@ -319,7 +320,42 @@ void UBPID::ParticleId::produce(art::Event & e)
       AlgScoresVec.push_back(noBragg_fwd_MIP.at(planenum));
 
       /**
-       * Algorithm 2: PIDA
+       * Algorithm 2: Chi2
+       */
+
+      std::vector<double> chisqValues = chisq.getChisq(calo, p_holder);
+
+      Chi2_mu.at(planenum).fAlgName = "Chi2";
+      Chi2_mu.at(planenum).fVariableType = anab::kGOF;
+      Chi2_mu.at(planenum).fAssumedPdg = 13;
+      Chi2_mu.at(planenum).fValue = chisqValues.at(0);
+      Chi2_mu.at(planenum).fPlaneID = c->PlaneID();
+
+      Chi2_p.at(planenum).fAlgName = "Chi2";
+      Chi2_p.at(planenum).fVariableType = anab::kGOF;
+      Chi2_p.at(planenum).fAssumedPdg = 2212;
+      Chi2_p.at(planenum).fValue = chisqValues.at(1);
+      Chi2_p.at(planenum).fPlaneID = c->PlaneID();
+
+      Chi2_pi.at(planenum).fAlgName = "Chi2";
+      Chi2_pi.at(planenum).fVariableType = anab::kGOF;
+      Chi2_pi.at(planenum).fAssumedPdg = 211;
+      Chi2_pi.at(planenum).fValue = chisqValues.at(2);
+      Chi2_pi.at(planenum).fPlaneID = c->PlaneID();
+
+      Chi2_k.at(planenum).fAlgName = "Chi2";
+      Chi2_k.at(planenum).fVariableType = anab::kGOF;
+      Chi2_k.at(planenum).fAssumedPdg = 321;
+      Chi2_k.at(planenum).fValue = chisqValues.at(3);
+      Chi2_k.at(planenum).fPlaneID = c->PlaneID();
+
+      AlgScoresVec.push_back(Chi2_mu.at(planenum));
+      AlgScoresVec.push_back(Chi2_p.at(planenum));
+      AlgScoresVec.push_back(Chi2_pi.at(planenum));
+      AlgScoresVec.push_back(Chi2_k.at(planenum));
+
+      /**
+       * Algorithm 3: PIDA
        * This makes use of Bruce home-brewed PIDA calculation, which can be
        * calculated via three methods:
        * (1) mean (original implementation from B. Baller)
@@ -350,7 +386,7 @@ void UBPID::ParticleId::produce(art::Event & e)
 
 
       /**
-       * Algorithm 3: Truncated mean dE/dx versus track length
+       * Algorithm 4: Truncated mean dE/dx versus track length
        * Makes use of the "Truncated Mean" algorithm developed by D. Caratelli
        * to plot the truncated mean dE/dx  of a track
        * versus its length for separation.
@@ -371,7 +407,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       AlgScoresVec.push_back(dEdxtruncmean.at(planenum));
 
       /**
-       * Algorithm 4: Deposited energy vs energy by range
+       * Algorithm 5: Deposited energy vs energy by range
        * Calculate deposited energy from product of dEdx and trkpitchvec vectors
        * (there is a KineticEnergy object in anab::Calorimetry that already
        * does this, but due to a bug it currently does not use the calibrated

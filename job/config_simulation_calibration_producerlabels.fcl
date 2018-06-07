@@ -1,0 +1,12 @@
+BEGIN_PROLOG
+
+cs_producerlabels_mcc8_UBXSec_simcalib:
+{
+
+  # producer label names
+  TrackLabel       : "pandoraNu::UBXSec"
+  CalorimetryLabel : "pidcalibration::particleid"
+
+}
+
+END_PROLOG

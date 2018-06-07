@@ -1,6 +1,7 @@
 #include "config_particle_identification_fiducialvolume.fcl"
 #include "config_particle_identification_producerlabels.fcl"
 #include "config_particle_identification_braggalgo.fcl"
+#include "pidalgorithms.fcl"
 
 #
 # configuration fcl file for particleId fcl parameters
@@ -22,13 +23,11 @@ particleidconfig:
   # fiducial volume dimensions
   FiducialVolume: @local::pidfidvol 
 
+  # needed for fcl
+  Chi2PIDAlg: @local::standard_chi2pidalg
+
   DaughterFinderCutDistance:  5.0 # cm
   DaughterFinderCutFraction:  0.5 # fraction of track length
-
-  # simulation smearing width (i.e. the data dE/dx distribution is wider
-  # than the simulation dE/dx distribution and we want to account for that).
-  IsSimulationSmearing: true
-  SimulationGausSmearWidth: [0.32, 0.49, 0.18]
 
 }
 

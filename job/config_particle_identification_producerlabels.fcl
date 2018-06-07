@@ -70,4 +70,37 @@ producerlabels_mcc8_UBXSec_data:
 
 }
 
+producerlabels_mcc8_UBXSec_simcalib:
+{
+
+# producer label names
+  TrackLabel       : "pandoraNu::UBXSec"
+  CalorimetryLabel : "simcalibration::particleid"
+
+  # validator labels
+  ParticleIdLabel     : "pid::particleid"
+  ParticleIdChi2Label : "pandoraNucalipid"
+  HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
+  HitTrackAssn        : "pandoraNu::UBXSec"
+  HitTruthAssn        : "pandoraCosmicHitRemoval::UBXSec"
+  CaloTrackAssn       : "simcalibration::particleid"
+
+}
+
+producerlabels_mcc8_UBXSec_simcalib_data:
+{
+
+# producer label names
+  TrackLabel       : "pandoraNu::UBXSec"
+  CalorimetryLabel : "pidcalibration::particleid"
+
+  # validator labels
+  ParticleIdLabel     : "pid::particleid"
+  ParticleIdChi2Label : "pandoraNucalipid"
+  HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
+  HitTrackAssn        : "pandoraNu::UBXSec"
+  CaloTrackAssn       : "simcalibration::particleid"
+
+}
+
 END_PROLOG

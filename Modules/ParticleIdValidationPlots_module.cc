@@ -223,6 +223,16 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   fv = fid.setFiducialVolume(fv, p_fv);
   fid.printFiducialVolume(fv);
 
+  std::cout << "[ParticleIdValidation] >> Use only UBXSec TPCObj-tracks? " << fIsUBXSecSelected << std::endl;
+  std::cout << "[ParticleIDValidation] >> Track label: " << fTrackLabel << std::endl;
+  std::cout << "[ParticleIDValidation] >> Hit label: " << fHitLabel << std::endl;
+  std::cout << "[ParticleIDValidation] >> Hit-track assns: " << fHitTrackAssns << std::endl;
+  std::cout << "[ParticleIDValidation] >> Hit-truth assns: " << fHitTruthAssns << std::endl;
+  std::cout << "[ParticleIDValidation] >> Calo-track assns: " << fCaloTrackAssns << std::endl;
+  std::cout << "[ParticleIDValidation] >> ParticleID label: " << fPIDLabel << std::endl;
+  std::cout << "[ParticleIDValidation] >> ParticleID Chi2 label: " << fPIDLabelChi2 << std::endl;
+  std::cout << "[ParticleIDValidation] >> NHits for track direction: " << fNHitsForTrackDirection << std::endl;
+
 }
 
 void ParticleIdValidationPlots::analyze(art::Event const & e)
@@ -316,7 +326,11 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   TVector3 true_start;
   TVector3 true_end;
 
+  std::cout << "[ParticleIDValidation] Track Pointer Vector Size " << trackPtrVector.size() << std::endl;
+
   for (auto& track : trackPtrVector){
+    std::cout << "found track" << std::endl;
+
     /** reset default values */
     dEdx.resize(3);
     resRange.resize(3);
@@ -650,6 +664,19 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
       }
 
+    if (AlgScore.fAlgName == "Chi2" && anab::kVariableType(AlgScore.fVariableType) == anab::kGOF){
+
+      if (AlgScore.fAssumedPdg == 13)
+        std::cout << "new muon assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
+      if (AlgScore.fAssumedPdg == 2212)
+        std::cout << "new proton assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
+      if (AlgScore.fAssumedPdg == 211)
+        std::cout << "new muon assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
+      if (AlgScore.fAssumedPdg == 321)
+        std::cout << "new kaon assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
+
+    }
+
     } // Loop over AlgScoresVec
 
     /*
@@ -693,9 +720,15 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         track_Chi2Pion   = trackPIDforChi2.at(i_plane)->Chi2Pion();
         track_Chi2Kaon   = trackPIDforChi2.at(i_plane)->Chi2Kaon();
         track_Chi2Muon   = trackPIDforChi2.at(i_plane)->Chi2Muon();
-      
+     
+        std::cout << "old muon assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane << ": " << track_Chi2Muon << std::endl;
+        std::cout << "old proton assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane<< ": " << track_Chi2Proton << std::endl;
+        std::cout << "old pion assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane<< ": " << track_Chi2Pion << std::endl;
+        std::cout << "old kaon assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane<< ": " << track_Chi2Kaon << std::endl;
+
       } // end loop over i_plane
     } // end else
+
 
 
     bool PID_fwd = false;
