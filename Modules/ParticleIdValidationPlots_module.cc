@@ -147,10 +147,10 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::vector<double> track_dEdx;
     std::vector<double> track_depE;
     std::vector<double> track_nhits;
-    double track_Chi2Proton;
-    double track_Chi2Kaon;
-    double track_Chi2Pion;
-    double track_Chi2Muon;
+    std::vector<double> track_Chi2Proton;
+    std::vector<double> track_Chi2Kaon;
+    std::vector<double> track_Chi2Pion;
+    std::vector<double> track_Chi2Muon;
     double track_length;
     double track_theta;
     double track_phi;
@@ -343,6 +343,10 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_likelihood_bwd_p.resize(3,-999.);
     track_likelihood_bwd_pi.resize(3,-999.);
     track_likelihood_bwd_k.resize(3,-999.);
+    track_Chi2Muon.resize(3,-999.);
+    track_Chi2Proton.resize(3, -999.);
+    track_Chi2Kaon.resize(3, -999.);
+    track_Chi2Pion.resize(3,-999.);
     track_PIDA_mean.resize(3,-999.);
     track_PIDA_median.resize(3,-999.);
     track_PIDA_kde.resize(3,-999.);
@@ -581,15 +585,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       continue;
     }
 
-    double Bragg_fwd_mu = -999;
-    double Bragg_fwd_p = -999;
-    double Bragg_fwd_pi = -999;
-    double Bragg_fwd_K = -999;
-    double Bragg_bwd_mu = -999;
-    double Bragg_bwd_p = -999;
-    double Bragg_bwd_pi = -999;
-    double Bragg_bwd_K = -999;
-    double noBragg_fwd_MIP = -999;
     double trklen = -999;
     double rangeE_mu = -999;
     double rangeE_p = -999;
@@ -617,30 +612,27 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       if (AlgScore.fAlgName == "BraggPeakLLH"){
 
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_fwd){
-          if (AlgScore.fAssumedPdg == 13)   Bragg_fwd_mu = AlgScore.fValue;
-          if (AlgScore.fAssumedPdg == 2212) Bragg_fwd_p =  AlgScore.fValue;
-          if (AlgScore.fAssumedPdg == 211)  Bragg_fwd_pi = AlgScore.fValue;
-          if (AlgScore.fAssumedPdg == 321)  Bragg_fwd_K  = AlgScore.fValue;
-          if (AlgScore.fAssumedPdg == 0)    noBragg_fwd_MIP = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 13)   track_likelihood_fwd_mu.at(planeid) = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 2212) track_likelihood_fwd_p.at(planeid) =  AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 211)  track_likelihood_fwd_pi.at(planeid) = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 321)  track_likelihood_fwd_k.at(planeid)  = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 0)    track_likelihood_fwd_mip.at(planeid) = AlgScore.fValue;
         }
         else if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_bwd){
-          if (AlgScore.fAssumedPdg == 13)   Bragg_bwd_mu = AlgScore.fValue;
-          if (AlgScore.fAssumedPdg == 2212) Bragg_bwd_p =  AlgScore.fValue;
-          if (AlgScore.fAssumedPdg == 211)  Bragg_bwd_pi = AlgScore.fValue;
-          if (AlgScore.fAssumedPdg == 321)  Bragg_bwd_K  = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 13)   track_likelihood_bwd_mu.at(planeid) = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 2212) track_likelihood_bwd_p.at(planeid) =  AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 211)  track_likelihood_bwd_pi.at(planeid) = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 321)  track_likelihood_bwd_k.at(planeid) =  AlgScore.fValue;
         }
 
-        track_likelihood_fwd_mu.at(planeid) = Bragg_fwd_mu;
-        track_likelihood_bwd_mu.at(planeid)= Bragg_bwd_mu;
-        track_likelihood_fwd_p.at(planeid) = Bragg_fwd_p;
-        track_likelihood_bwd_p.at(planeid) = Bragg_bwd_p;
-        track_likelihood_fwd_pi.at(planeid) = Bragg_fwd_pi;
-        track_likelihood_bwd_pi.at(planeid) = Bragg_bwd_pi;
-        track_likelihood_fwd_k.at(planeid) = Bragg_fwd_K;
-        track_likelihood_bwd_k.at(planeid) = Bragg_bwd_K;
-        track_likelihood_fwd_mip.at(planeid) = noBragg_fwd_MIP;
-
       } // if fAlName = BraggPeakLLH
+
+      if(AlgScore.fAlgName == "Chi2" && anab::kVariableType(AlgScore.fVariableType) == anab::kGOF){
+          if (AlgScore.fAssumedPdg == 13)   track_Chi2Muon.at(planeid) = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 2212) track_Chi2Proton.at(planeid) =  AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 211)  track_Chi2Pion.at(planeid) = AlgScore.fValue;
+          if (AlgScore.fAssumedPdg == 321)  track_Chi2Kaon.at(planeid) =  AlgScore.fValue;
+      }
 
       if (AlgScore.fAlgName == "PIDA_mean" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
         track_PIDA_mean.at(planeid) = AlgScore.fValue;
@@ -663,20 +655,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           if (AlgScore.fAssumedPdg == 2212) rangeE_p = AlgScore.fValue;
         }
       }
-
-    if (AlgScore.fAlgName == "Chi2" && anab::kVariableType(AlgScore.fVariableType) == anab::kGOF){
-
-      if (AlgScore.fAssumedPdg == 13)
-        std::cout << "new muon assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
-      if (AlgScore.fAssumedPdg == 2212)
-        std::cout << "new proton assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
-      if (AlgScore.fAssumedPdg == 211)
-        std::cout << "new muon assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
-      if (AlgScore.fAssumedPdg == 321)
-        std::cout << "new kaon assumption plane " << AlgScore.fPlaneID.Plane << ": " << AlgScore.fValue << std::endl;
-
-    }
-
     } // Loop over AlgScoresVec
 
     /*
@@ -699,7 +677,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_rangeE_p = rangeE_p;
     track_dEdx_perhit = dEdx.at(2);
     track_resrange_perhit = resRange.at(2);
-
+/**
+ * old implementation, keeping file I fix things...
+ *
     art::FindManyP<anab::ParticleID> trackPIDAssnforChi2(trackHandle, e, fPIDLabelChi2);
     if (!trackPIDAssnforChi2.isValid()){
       std::cout << "[ParticleIDValidation] trackPIDAssnforChi2.isValid() == false. Not filling Chi2 variables." << std::endl;
@@ -728,12 +708,11 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
       } // end loop over i_plane
     } // end else
-
-
+**/
 
     bool PID_fwd = false;
-    double Bragg_smallest = std::min({Bragg_fwd_mu, Bragg_bwd_mu, Bragg_fwd_p, Bragg_bwd_p, Bragg_fwd_pi, Bragg_bwd_pi, Bragg_fwd_K, Bragg_bwd_K, noBragg_fwd_MIP});
-    if (Bragg_smallest == Bragg_fwd_mu || Bragg_smallest == Bragg_fwd_p || Bragg_smallest == Bragg_fwd_pi || Bragg_smallest == Bragg_fwd_K || Bragg_smallest == noBragg_fwd_MIP) PID_fwd = true;
+    double Bragg_smallest = std::min({track_likelihood_fwd_mu.at(2), track_likelihood_fwd_p.at(2), track_likelihood_fwd_pi.at(2), track_likelihood_fwd_k.at(2), track_likelihood_fwd_mip.at(2), track_likelihood_bwd_mu.at(2), track_likelihood_bwd_p.at(2), track_likelihood_bwd_pi.at(2), track_likelihood_bwd_k.at(2)});
+    if (Bragg_smallest == track_likelihood_fwd_mu.at(2) || Bragg_smallest == track_likelihood_fwd_p.at(2) || Bragg_smallest == track_likelihood_fwd_pi.at(2) || Bragg_smallest == track_likelihood_fwd_k.at(2) || Bragg_smallest == track_likelihood_fwd_mip.at(2)) PID_fwd = true;
 
 
     // Histogram time
