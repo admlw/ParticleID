@@ -15,7 +15,7 @@
 <project name="&name;">
 
     <!-- project size -->
-    <numevents>50</numevents>
+    <numevents>10000</numevents>
 
     <!-- batchOS -->
     <os>SL6</os>
@@ -37,8 +37,11 @@
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <numjobs>250</numjobs>
-        <maxfilesperjob>4</maxfilesperjob>
+        <!--<numjobs>400</numjobs>
+        <maxfilesperjob>4</maxfilesperjob>-->
+        <numjobs>1</numjobs>
+        <maxfilesperjob>1</maxfilesperjob>
+        <numevents>10</numevents> 
         <memory>2500</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->

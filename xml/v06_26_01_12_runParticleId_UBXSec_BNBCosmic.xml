@@ -4,10 +4,10 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_13">
 <!ENTITY name "PIDproducer_UBXSec_BNBCosmic">
-<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/alister1/PID/PIDproducer_UBXSec_BNBCosmic">
+<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/alister1/PID/PIDproducer_UBXSec_BNBCosmic_test">
 <!ENTITY resilient_dir "/pnfs/uboone/resilient/users/alister1/PID/PIDproducer_UBXSec_BNBCosmic">
 <!ENTITY app_dir "/uboone/app/users/alister1/particleID/ubcode_v06_26_01_13/srcs/uboonecode/uboone/ParticleID">
-<!ENTITY data_dir "/uboone/data/users/alister1/PIDproducer_UBXSec_BNBCosmic">
+<!ENTITY data_dir "/uboone/data/users/alister1/PIDproducer_UBXSec_BNBCosmic_test">
 ]>
 
 <job>
@@ -15,7 +15,7 @@
 <project name="&name;">
 
     <!-- project size -->
-    <numevents>50</numevents>
+    <numevents>100000</numevents>
 
     <!-- batchOS -->
     <os>SL6</os>
@@ -30,7 +30,7 @@
     </larsoft>
 
     <!-- particle id producer -->
-    <stage name="particleId">
+    <stage name="particleIdTest">
         <!--<inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.7_reco2_dev</inputdef>-->
         <inputlist>&app_dir;/xml/input.list</inputlist>
         <fcl>&app_dir;/job/run_particle_identification_UBXSec_withcalibrations_withvalidation.fcl</fcl>
@@ -38,13 +38,14 @@
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <!--<maxfilesperjob>3</maxfilesperjob>
-        <numjobs>154</numjobs>-->
+        <!--<maxfilesperjob>1</maxfilesperjob>
+        <numjobs>460</numjobs>
+        <numevents>100</numevents>-->
         <maxfilesperjob>1</maxfilesperjob>
         <numjobs>1</numjobs>
-        <numevents>20</numevents>
+        <numevents>400</numevents>
         <!--<memory>2000</memory>-->
-        <memory>3000</memory>
+        <memory>4000</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
         <schema>root</schema>
