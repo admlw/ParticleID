@@ -42,6 +42,7 @@ physics:
 
       pidcalibration: @local::microboone_calibrationdedx
       pandoraNucalipid: @local::microboone_chi2pid
+      simcalibration: @local::simulation_calibration
       pid: @local::particleidconfig
 
     }
@@ -52,7 +53,7 @@ physics:
     }
 
     stream1: [ out1 ]
-    analysis: [ pidcalibration, pandoraNucalipid, pid ]
+    analysis: [ pidcalibration, pandoraNucalipid, simcalibration, pid ]
     validation: [ pidvalid ]
     trigger_paths: [ analysis ]
     end_paths: [ validation, stream1 ]
@@ -74,8 +75,10 @@ physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNucalo::UBXSec"
 physics.producers.pandoraNucalipid.TrackModuleLabel: "pandoraNu::UBXSec"
 physics.producers.pandoraNucalipid.CalorimetryModuleLabel: "pidcalibration::particleid"
 physics.producers.pandoraNucalipid.Chi2PIDAlg.UseMedian: true
-physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_data
 physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
-physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_data
 physics.analyzers.pidvalid.IsDataPlotsOnly: true
+physics.producers.pandoraNucalipid.Chi2PIDAlg.UseMedian: true
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib_data
+physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib_data
+physics.producers.simcalibration.IsSimulationSmearing: false
 services.DetectorClocksService.InheritClockConfig: false

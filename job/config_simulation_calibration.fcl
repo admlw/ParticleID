@@ -12,7 +12,8 @@ simulation_calibration:
   # simulation smearing width (i.e. the data dE/dx distribution is wider
   # than the simulation dE/dx distribution and we want to account for that).
   IsSimulationSmearing: true
-  SimulationGausSmearWidth: [0.32, 0.49, 0.18]
+  #SimulationGausSmearWidth: [0.32, 0.49, 0.18]
+  SimulationGausSmearWidth: [0.24, 0.34, 0.11]
 
 }
 

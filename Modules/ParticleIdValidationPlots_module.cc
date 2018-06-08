@@ -156,8 +156,12 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     double track_phi;
     double track_rangeE_mu;
     double track_rangeE_p;
-    std::vector<double> track_dEdx_perhit;
-    std::vector<double> track_resrange_perhit;
+    std::vector<double> track_dEdx_perhit_u;
+    std::vector<double> track_dEdx_perhit_v;
+    std::vector<double> track_dEdx_perhit_y;
+    std::vector<double> track_resrange_perhit_u;
+   std::vector<double> track_resrange_perhit_v;
+   std::vector<double> track_resrange_perhit_y;
     std::vector<std::vector<double>> dEdx;
     std::vector<std::vector<double>> resRange;
 
@@ -675,45 +679,16 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_length = trklen;
     track_rangeE_mu = rangeE_mu;
     track_rangeE_p = rangeE_p;
-    track_dEdx_perhit = dEdx.at(2);
-    track_resrange_perhit = resRange.at(2);
-/**
- * old implementation, keeping file I fix things...
- *
-    art::FindManyP<anab::ParticleID> trackPIDAssnforChi2(trackHandle, e, fPIDLabelChi2);
-    if (!trackPIDAssnforChi2.isValid()){
-      std::cout << "[ParticleIDValidation] trackPIDAssnforChi2.isValid() == false. Not filling Chi2 variables." << std::endl;
-      track_Chi2Proton = 9999;
-      track_Chi2Pion   = 9999;
-      track_Chi2Kaon   = 9999;
-      track_Chi2Muon   = 9999;
-    }
-    else{
-      std::vector<art::Ptr<anab::ParticleID>> trackPIDforChi2 = trackPIDAssnforChi2.at(track->ID());
-
-      for (size_t i_plane=0; i_plane<trackPIDforChi2.size(); i_plane++){
-        
-        // Use collection plane only
-        //if (trackPIDforChi2.at(i_plane)->PlaneID().Plane != 2) continue;
-
-        track_Chi2Proton = trackPIDforChi2.at(i_plane)->Chi2Proton();
-        track_Chi2Pion   = trackPIDforChi2.at(i_plane)->Chi2Pion();
-        track_Chi2Kaon   = trackPIDforChi2.at(i_plane)->Chi2Kaon();
-        track_Chi2Muon   = trackPIDforChi2.at(i_plane)->Chi2Muon();
-     
-        std::cout << "old muon assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane << ": " << track_Chi2Muon << std::endl;
-        std::cout << "old proton assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane<< ": " << track_Chi2Proton << std::endl;
-        std::cout << "old pion assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane<< ": " << track_Chi2Pion << std::endl;
-        std::cout << "old kaon assumption plane " << trackPIDforChi2.at(i_plane)->PlaneID().Plane<< ": " << track_Chi2Kaon << std::endl;
-
-      } // end loop over i_plane
-    } // end else
-**/
+    track_dEdx_perhit_u = dEdx.at(0);
+    track_dEdx_perhit_v = dEdx.at(1);
+    track_dEdx_perhit_y = dEdx.at(2);
+    track_resrange_perhit_u = resRange.at(0);
+    track_resrange_perhit_v = resRange.at(1);
+    track_resrange_perhit_y = resRange.at(2);
 
     bool PID_fwd = false;
     double Bragg_smallest = std::min({track_likelihood_fwd_mu.at(2), track_likelihood_fwd_p.at(2), track_likelihood_fwd_pi.at(2), track_likelihood_fwd_k.at(2), track_likelihood_fwd_mip.at(2), track_likelihood_bwd_mu.at(2), track_likelihood_bwd_p.at(2), track_likelihood_bwd_pi.at(2), track_likelihood_bwd_k.at(2)});
     if (Bragg_smallest == track_likelihood_fwd_mu.at(2) || Bragg_smallest == track_likelihood_fwd_p.at(2) || Bragg_smallest == track_likelihood_fwd_pi.at(2) || Bragg_smallest == track_likelihood_fwd_k.at(2) || Bragg_smallest == track_likelihood_fwd_mip.at(2)) PID_fwd = true;
-
 
     // Histogram time
     if (!fIsDataPlots){
@@ -873,8 +848,14 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_depE"              , &track_depE          ) ;
   pidTree->Branch( "track_rangeE_mu"         , &track_rangeE_mu     ) ;
   pidTree->Branch( "track_rangeE_p"          , &track_rangeE_p      ) ;
-  pidTree->Branch( "track_dEdx_perhit"       , &track_dEdx_perhit   ) ;
-  pidTree->Branch( "track_resrange_perhit"   , &track_resrange_perhit ) ;
+    pidTree->Branch( "track_dEdx_perhit_u"       , &track_dEdx_perhit_u   ) ;
+ pidTree->Branch( "track_dEdx_perhit_v"       , &track_dEdx_perhit_v   ) ;
+ pidTree->Branch( "track_dEdx_perhit_y"       , &track_dEdx_perhit_y   ) ;
+  pidTree->Branch( "track_resrange_perhit_u"   , &track_resrange_perhit_u ) ;
+  pidTree->Branch( "track_resrange_perhit_v"   , &track_resrange_perhit_v ) ;
+  pidTree->Branch( "track_resrange_perhit_y"   , &track_resrange_perhit_y ) ;
+
+
 
 
   /**
