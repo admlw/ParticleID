@@ -25,10 +25,10 @@ struct treevars{
 
   // Make the chi2 variables std::vector<doubles> so we can handle them in the same way as the other variables
   // This is just a cheat - we only have chi2 variables for collection plane right now, so set other values to 0 by hand. Fix this in the future!
-  std::vector<double> *track_chi2mu;
-  std::vector<double> *track_chi2p;
-  std::vector<double> *track_chi2pi;
-  std::vector<double> *track_chi2k;
+  std::vector<double> *track_chi2mu = nullptr;
+  std::vector<double> *track_chi2p = nullptr;
+  std::vector<double> *track_chi2pi = nullptr;
+  std::vector<double> *track_chi2k = nullptr;
 
   // These are derived quantities - derived from the values above in CalcPIDvars
   std::vector<double> *track_likelihood_p;
@@ -66,10 +66,10 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_PIDA_mean"       , &(varstoset->track_PIDA_mean));
   intree->SetBranchAddress("track_PIDA_kde"        , &(varstoset->track_PIDA_kde));
   intree->SetBranchAddress("track_PIDA_median"     ,&(varstoset->track_PIDA_median));
-  intree->SetBranchAddress("track_Chi2Muon", &(varstoset->track_chi2mu_plane2));
-  intree->SetBranchAddress("track_Chi2Proton", &(varstoset->track_chi2p_plane2));
-  intree->SetBranchAddress("track_Chi2Pion", &(varstoset->track_chi2pi_plane2));
-  intree->SetBranchAddress("track_Chi2Kaon", &(varstoset->track_chi2k_plane2));
+  intree->SetBranchAddress("track_Chi2Muon", &(varstoset->track_chi2mu));
+  intree->SetBranchAddress("track_Chi2Proton", &(varstoset->track_chi2p));
+  intree->SetBranchAddress("track_Chi2Pion", &(varstoset->track_chi2pi));
+  intree->SetBranchAddress("track_Chi2Kaon", &(varstoset->track_chi2k));
   intree->SetBranchAddress("track_depE", &(varstoset->track_depE));
   intree->SetBranchAddress("track_rangeE_mu", &(varstoset->track_rangeE_mu));
   intree->SetBranchAddress("track_rangeE_p", &(varstoset->track_rangeE_p));
@@ -106,7 +106,7 @@ void settreevars(TTree *intree, treevars *varstoset){
 void CalcPIDvars(treevars *vars, bool isScale){
   //std::cout << "Calculating PID variables for " << vars->track_likelihood_fwd_p->size() << " planes" << std::endl;
   for (size_t i_pl=0; i_pl < vars->track_likelihood_fwd_p->size(); i_pl++){
-    if (i_pl==0 || i_pl==1){
+/*    if (i_pl==0 || i_pl==1){
       vars->track_chi2_muminusp->at(i_pl) = 0;
       vars->track_chi2mu->at(i_pl) = 0;
       vars->track_chi2p->at(i_pl) = 0;
@@ -114,12 +114,13 @@ void CalcPIDvars(treevars *vars, bool isScale){
       vars->track_chi2pi->at(i_pl) = 0;
     }
     else{
-      vars->track_chi2mu->at(i_pl) = vars->track_chi2mu_plane2;
-      vars->track_chi2p->at(i_pl) = vars->track_chi2p_plane2;
-      vars->track_chi2k->at(i_pl) = vars->track_chi2k_plane2;
-      vars->track_chi2pi->at(i_pl) = vars->track_chi2pi_plane2;
-      vars->track_chi2_muminusp->at(i_pl) = vars->track_chi2mu_plane2 - vars->track_chi2p_plane2;
-    }
+    */
+      vars->track_chi2mu->at(i_pl) = vars->track_chi2mu->at(i_pl);
+      vars->track_chi2p->at(i_pl) = vars->track_chi2p->at(i_pl);
+      vars->track_chi2k->at(i_pl) = vars->track_chi2k->at(i_pl);
+      vars->track_chi2pi->at(i_pl) = vars->track_chi2pi->at(i_pl);
+      vars->track_chi2_muminusp->at(i_pl) = vars->track_chi2mu->at(i_pl) - vars->track_chi2p->at(i_pl);
+    //}
 
     //double scalefactor_mu = 0.821;
     //double scalefactor_p  = 0.913;
