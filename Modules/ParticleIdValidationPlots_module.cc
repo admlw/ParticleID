@@ -322,8 +322,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   art::FindManyP<recob::Hit> hits_from_tracks(trackHandle, e, fHitTrackAssns);
   art::FindManyP<anab::Calorimetry> calo_from_tracks(trackHandle, e, fCaloTrackAssns);
 
-
-
   /**
    * Variables which need to have scope throughout the code
    */

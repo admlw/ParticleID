@@ -7,6 +7,18 @@
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ *
+ * \class ParticleId
+ *
+ * \brief Calibration producer module
+ *
+ * \author Kirsty Duffy (kduffy@fnal.gov), Adam Lister (a.lister1@lancaster.ac.uk)
+ *
+ * \date 2018/04/18
+ *
+ */
+
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
@@ -33,8 +45,6 @@ namespace UBPID{
 class UBPID::CalibrateSimulatedData : public art::EDProducer {
   public:
     explicit CalibrateSimulatedData(fhicl::ParameterSet const & p);
-    // The compiler-generated destructor is fine for non-base
-    // classes without bare pointers or other resource use.
 
     // Plugins should not be copied or assigned.
     CalibrateSimulatedData(UBPID::CalibrateSimulatedData const &) = delete;
@@ -62,8 +72,6 @@ UBPID::CalibrateSimulatedData::CalibrateSimulatedData(fhicl::ParameterSet const 
   // Initialize member data here.
 {
 
-  // Call appropriate produces<>() functions here.
-
   fhicl::ParameterSet p_labels = p.get<fhicl::ParameterSet>("ProducerLabels");
 
   fCaloLabel = p_labels.get< std::string > ("CalorimetryLabel");
@@ -78,10 +86,9 @@ UBPID::CalibrateSimulatedData::CalibrateSimulatedData(fhicl::ParameterSet const 
   std::cout << "[CalibrateSimulatedData] >> Calo Label: " << fCaloLabel << std::endl;
   std::cout << "[CalibrateSimulatedData] The following is only useful if running simulated data" << std::endl;
   std::cout << "[CalibrateSimulatedData] >> Do simulation smearing? " << fIsSimSmear << std::endl;
-  std::cout << "[CalibrateSimulatedData] >> Smearing simulated data by [" << fSimGausSmearWidth.at(0) 
-          << ", " << fSimGausSmearWidth.at(1) << ", " << fSimGausSmearWidth.at(2) << "]"
-          << std::endl;
-
+  std::cout << "[CalibrateSimulatedData] >> Smearing simulated data by [" 
+    << fSimGausSmearWidth.at(0) << ", " << fSimGausSmearWidth.at(1) 
+    << ", " << fSimGausSmearWidth.at(2) << "]" << std::endl;
 
 }
 
@@ -96,7 +103,6 @@ void UBPID::CalibrateSimulatedData::produce(art::Event & e)
 
   std::unique_ptr< std::vector<anab::Calorimetry> > calorimetryCollection( new std::vector<anab::Calorimetry> );
   std::unique_ptr< art::Assns <recob::Track, anab::Calorimetry> > trackCalorimetryAssn( new art::Assns<recob::Track, anab::Calorimetry> );
-
 
   // tracks...
   art::Handle < std::vector<recob::Track> > trackHandle;
@@ -131,6 +137,10 @@ void UBPID::CalibrateSimulatedData::produce(art::Event & e)
       std::vector<double> resRange = calo->ResidualRange();
       std::vector<double> trkpitchvec = calo->TrkPitchVec();
 
+      /**
+       * If this is simulated data, then we want to smear the dE/dx values
+       * by a gaussian with a width defined in fcl
+       */
 
       if (!isData && fIsSimSmear){
 

@@ -438,7 +438,8 @@ void UBPID::ParticleId::produce(art::Event & e)
     AlgScoresVec.push_back(trklen);
 
     /**
-     * Get energy estimation by range (code for momentum by range copied from analysistree, then convert momentum to energy)
+     * Get energy estimation by range (code for momentum by range copied from 
+     * analysistree, then convert momentum to energy)
      * Calculations only exist in TrackMomentumCalculator for muons and protons
      * TrackMomentumCalculator returns GeV, multiply by 1000 to get MeV
      */
@@ -448,10 +449,14 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     /**
      * Now convert P->E
-     * From TrackMomentumCalculator::GetTrackMomentum: P = TMath::Sqrt((KE*KE)+(2*M*KE))
+     * From TrackMomentumCalculator::GetTrackMomentum: 
+     * P = TMath::Sqrt((KE*KE)+(2*M*KE))
      * P = TMath::Sqrt((E*E)-(M*M)) and E = KE+M
      * => KE = TMath::Sqrt((P*P)+(M*M))-M
-     * TrackMometumCalculator uses Muon_M = 105.7 MeV, Proton_M = 938.272 MeV so use these values here
+     * TrackMometumCalculator uses 
+     * Muon_M = 105.7 MeV, 
+     * Proton_M = 938.272 MeV 
+     * so use these values here
      */
 
     trk_rangeE_mu.fAlgName = "DepEvsRangeE";
@@ -479,9 +484,9 @@ void UBPID::ParticleId::produce(art::Event & e)
     pdg = 13;
     }*/
 
-
-    // -------------------------------------------------------------------------- //
-    // Finally, fill product with the variables that we calculated above and make assns
+    /**
+     * Fill ParticleID object and push back to event
+     */ 
 
     anab::ParticleID PID_object(AlgScoresVec);
     particleIDCollection->push_back(PID_object);
