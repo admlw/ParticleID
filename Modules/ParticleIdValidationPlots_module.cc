@@ -328,7 +328,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   TVector3 true_start;
   TVector3 true_end;
 
-  std::cout << "[ParticleIDValidation] Track Pointer Vector Size " << trackPtrVector.size() << std::endl;
 
   for (auto& track : trackPtrVector){
     std::cout << "found track" << std::endl;
@@ -447,7 +446,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       planenum = c->PlaneID().Plane;
       calo = c;
       if (planenum < 0 || planenum > 2){
-        std::cout << "[ParticleIDValidation] No calorimetry information for plane " << planenum << std::endl;
+        std::cout << "[ParticleIDValidation] No calorimetry information for plane " 
+          << planenum << std::endl;
         continue;
       }
       dEdx.at(planenum) = calo->dEdx();
@@ -611,6 +611,9 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       }
 
 
+      /**
+       * Algorithm 1: BraggLikelihood 
+       */
       if (AlgScore.fAlgName == "BraggPeakLLH"){
 
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_fwd){
@@ -629,12 +632,20 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
       } // if fAlName = BraggPeakLLH
 
+      /**
+       * Algorithm 2: Chi2
+       */ 
+
       if(AlgScore.fAlgName == "Chi2" && anab::kVariableType(AlgScore.fVariableType) == anab::kGOF){
           if (AlgScore.fAssumedPdg == 13)   track_Chi2Muon.at(planeid) = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 2212) track_Chi2Proton.at(planeid) =  AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 211)  track_Chi2Pion.at(planeid) = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 321)  track_Chi2Kaon.at(planeid) =  AlgScore.fValue;
       }
+
+      /**
+       * Algorithm 3: PIDA
+       */ 
 
       if (AlgScore.fAlgName == "PIDA_mean" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
         track_PIDA_mean.at(planeid) = AlgScore.fValue;
@@ -645,10 +656,18 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       if (AlgScore.fAlgName == "PIDA_kde" && anab::kVariableType(AlgScore.fVariableType) == anab::kPIDA)
         track_PIDA_kde.at(planeid) = AlgScore.fValue;
 
+      /**
+       * Algorithm 4: truncated dE/dx versus residual range
+       */ 
+
       if (AlgScore.fAlgName == "TruncatedMean"){
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kdEdxtruncmean) track_dEdx.at(planeid) = AlgScore.fValue;
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kTrackLength) trklen = AlgScore.fValue;
       }
+
+      /**
+       * Algorithm 5: Deposited energy versus residual range
+       */ 
 
       if (AlgScore.fAlgName == "DepEvsRangeE"){
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kEdeposited) track_depE.at(planeid) = AlgScore.fValue;
@@ -658,20 +677,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
         }
       }
     } // Loop over AlgScoresVec
-
-    /*
-    // Some couts for debugging
-    std::cout  << "[ParticleIDValidation] From analyzer module:" << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood mu fwd = " << Bragg_fwd_mu << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood p fwd = " << Bragg_fwd_p << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood pi fwd = " << Bragg_fwd_pi << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood K fwd = " << Bragg_fwd_K << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood mu bwd = " << Bragg_bwd_mu << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood p bwd = " << Bragg_bwd_p << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood pi bwd = " << Bragg_bwd_pi << std::endl
-    std::cout  << "[ParticleIDValidation] Likelihood K bwd = " << Bragg_bwd_K << std::endl;
-    */
-
 
     // Now time to set some variables!
     track_length = trklen;
@@ -684,6 +689,10 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_resrange_perhit_v = resRange.at(1);
     track_resrange_perhit_y = resRange.at(2);
 
+    /**
+     * Testing to see whether we can predict the direction of the track from
+     * the fwd/bwd likelihood variables
+     */
     bool PID_fwd = false;
     double Bragg_smallest = std::min({track_likelihood_fwd_mu.at(2), track_likelihood_fwd_p.at(2), track_likelihood_fwd_pi.at(2), track_likelihood_fwd_k.at(2), track_likelihood_fwd_mip.at(2), track_likelihood_bwd_mu.at(2), track_likelihood_bwd_p.at(2), track_likelihood_bwd_pi.at(2), track_likelihood_bwd_k.at(2)});
     if (Bragg_smallest == track_likelihood_fwd_mu.at(2) || Bragg_smallest == track_likelihood_fwd_p.at(2) || Bragg_smallest == track_likelihood_fwd_pi.at(2) || Bragg_smallest == track_likelihood_fwd_k.at(2) || Bragg_smallest == track_likelihood_fwd_mip.at(2)) PID_fwd = true;
