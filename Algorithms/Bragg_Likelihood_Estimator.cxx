@@ -137,11 +137,16 @@ namespace particleid{
 
     TF1 *langaus = new TF1("langaus", landauGaussian, 0, 100, 4);
 
-    // create langaus of correct width, and calculate offset between MPV and mean
+    /** 
+     * create landau of correct width, and calculate offset between MPV and mean
+     * n.b we want this to be the landau not the landau-gaussian
+     */
+     
     langaus->SetParameters(landauWidth, 10, 1, gausWidth);
-    double langaus_mean = langaus->Mean(0, 100);
-    double langaus_mpv  = langaus->GetMaximumX();
-    double langaus_mean_mpv_offset = langaus_mean - langaus_mpv;
+    TF1 *landau = new TF1("landau", "TMath::Landau(x, 10, landauWidth, 0)", -5, 100);
+    double landau_mean = landau->Mean(0, 100);
+    double landau_mpv  = landau->GetMaximumX();
+    double landau_mean_mpv_offset = landau_mean - landau_mpv;
 
     /**
      * Now loop through hits (entries in dEdx and resRange vectors), compare to
@@ -187,7 +192,7 @@ namespace particleid{
         if (resrg_i > 30.0) continue;
 
         // Set theoretical Landau distribution for given residual range
-        langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S")-langaus_mean_mpv_offset+offset,1, gausWidth);
+        langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S")-landau_mean_mpv_offset+offset,1, gausWidth);
 
         // Evaluate likelihood
         double likelihood_i = 0.;
