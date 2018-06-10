@@ -95,35 +95,30 @@ namespace particleid{
 
     switch(absph){
       case 13: // muon
-        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to muon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Muon;
         gausWidth = gausWidth_mu.at(planenum);
         landauWidth = landauWidth_mu.at(planenum);
         offset = offset_mu;
         break;
       case 2212: // proton
-        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to proton hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Proton;
         gausWidth = gausWidth_p.at(planenum);
         landauWidth = landauWidth_p.at(planenum);
         offset = offset_p;
         break;
       case 211: // pion
-        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to pion hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Pion;
         gausWidth = gausWidth_pi.at(planenum);
         landauWidth = landauWidth_pi.at(planenum);
         offset = offset_pi;
         break;
       case 321: // kaon
-        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood with respect to kaon hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_Kaon;
         gausWidth = gausWidth_k.at(planenum);
         landauWidth = landauWidth_k.at(planenum);
         offset = offset_k;
         break;
       case 0: // special case: fit to MIP region of muon prediction with no Bragg peak
-        //std::cout << "[ParticleID::Bragg_Likelihood_Estimator] Calculating likelihood for non-Bragg MIP-like hypothesis" << std::endl;
         theorypred = theory.g_ThdEdxRR_MuonNoBragg;
         gausWidth = gausWidth_mip.at(planenum);
         landauWidth = landauWidth_mip.at(planenum);
@@ -143,7 +138,8 @@ namespace particleid{
      */
      
     langaus->SetParameters(landauWidth, 10, 1, gausWidth);
-    TF1 *landau = new TF1("landau", "TMath::Landau(x, 10, landauWidth, 0)", -5, 100);
+    TF1 *landau = new TF1("landau", "TMath::Landau(x, [0], [1], [2])", 0, 100);
+    landau->SetParameters(10, landauWidth, 0);
     double landau_mean = landau->Mean(0, 100);
     double landau_mpv  = landau->GetMaximumX();
     double landau_mean_mpv_offset = landau_mean - landau_mpv;
@@ -189,7 +185,7 @@ namespace particleid{
          * Theory values are only defined up to 30 cm residual Range so we
          * can't compare beyond that
          */
-        if (resrg_i > 30.0) continue;
+        if (resrg_i > 30.0 || resrg_i < 0.0) continue;
 
         // Set theoretical Landau distribution for given residual range
         langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S")-landau_mean_mpv_offset+offset,1, gausWidth);
