@@ -3,6 +3,7 @@
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
 #include "config_particle_identification_validation.fcl"
+#include "config_simulation_calibration.fcl"
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"
 #include "particleid_microboone.fcl"
