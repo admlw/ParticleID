@@ -29,6 +29,8 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_Lmumip_0to1->at(i),
       vars->track_Lmumippi_0to1->at(i),
       vars->track_Lmumip_0to1_nopionkaon->at(i),
+      vars->track_Lmuovermip->at(i),
+      vars->track_Lmumipoverpi->at(i),
       vars->track_depE_minus_rangeE_mu->at(i),
       vars->track_depE_minus_rangeE_p->at(i)
     });
@@ -59,10 +61,10 @@ std::vector<std::vector<double>> bins = {
                     {40,0,0.6}, // track_likelihood_k
                     {80,0,1.0}, // track_likelihood_mip
                     {40,0,1.0}, // track_likelihood_minmumip
-                    {25,0,125}, // track_chi2mu
-                    {30,0,300}, // track_chi2p
-                    {25,0,125}, // track_chi2pi
-                    {30,0,300}, // track_chi2k
+                    {40,0,125}, // track_chi2mu
+                    {50,0,400}, // track_chi2p
+                    {40,0,125}, // track_chi2pi
+                    {40,0,300}, // track_chi2k
                     {40,0,30}, // track_PIDA_kde
                     {40,0,30}, // track_PIDA_mean
                     {40,0,30}, // track_PIDA_median
@@ -77,6 +79,8 @@ std::vector<std::vector<double>> bins = {
                     {50,0,1}, // track_Lmumip_0to1
                     {50,0,1}, // track_Lmumippi_0to1
                     {50,0,1}, // track_Lmumip_0to1_nopionkaon
+                    {50,0,3}, // track_Lmuovermip,
+                    {50,0,3}, // track_Lmumipoverpi,
                     {50,-150,150}, // track_depE_minus_rangeE_mu
                     {50,-300,100} // track_depE_minus_rangeE_p
                     };
@@ -107,6 +111,8 @@ std::vector<std::string> histtitles = {
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP}+L_{#pi})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{p});",
+                    ";(L_{#mu}/L_{MIP});",
+                    ";(L_{#mu/MIP}/L_{#pi});",
                     ";Dep. E - E. by range (muon assumption) [MeV];",
                     ";Dep. E - E. by range (proton assumption) [MeV];"
                   };
@@ -137,6 +143,8 @@ std::vector<std::string> histnames = {
                   "Lmumip0to1",
                   "Lmumippi0to1",
                   "Lmumip0to1nopionkaon",
+                  "Lmuovermip",
+                  "Lmumipoverpi",
                   "depErangeEmu",
                   "depErangeEp"
                 };

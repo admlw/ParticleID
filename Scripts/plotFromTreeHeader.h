@@ -47,6 +47,8 @@ struct treevars{
   std::vector<double> *track_Lmumip_0to1;
   std::vector<double> *track_Lmumippi_0to1;
   std::vector<double> *track_Lmumip_0to1_nopionkaon;
+  std::vector<double> *track_Lmuovermip;
+  std::vector<double> *track_Lmumipoverpi;
   std::vector<double> *track_depE_minus_rangeE_mu;
   std::vector<double> *track_depE_minus_rangeE_p;
   std::vector<double> *track_chi2_muminusp;
@@ -98,6 +100,8 @@ void settreevars(TTree *intree, treevars *varstoset){
   varstoset->track_Lmumip_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lmumippi_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lmumip_0to1_nopionkaon = new std::vector<double>(nplanes);
+  varstoset->track_Lmuovermip = new std::vector<double>(nplanes);
+  varstoset->track_Lmumipoverpi = new std::vector<double>(nplanes);
   varstoset->track_depE_minus_rangeE_mu = new std::vector<double>(nplanes);
   varstoset->track_depE_minus_rangeE_p = new std::vector<double>(nplanes);
   varstoset->track_chi2_muminusp = new std::vector<double>(nplanes);
@@ -152,6 +156,9 @@ void CalcPIDvars(treevars *vars, bool isScale){
     vars->track_Lmumippi_0to1->at(i_pl) = (vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl)+vars->track_likelihood_pi->at(i_pl))/denom;
     vars->track_depE_minus_rangeE_mu->at(i_pl) = vars->track_depE->at(i_pl) - vars->track_rangeE_mu;
     vars->track_depE_minus_rangeE_p->at(i_pl) = vars->track_depE->at(i_pl) - vars->track_rangeE_p;
+
+    vars->track_Lmuovermip->at(i_pl) = vars->track_likelihood_mu->at(i_pl) / vars->track_likelihood_mip->at(i_pl);
+    vars->track_Lmumipoverpi->at(i_pl) = std::max(vars->track_likelihood_mu->at(i_pl), vars->track_likelihood_mip->at(i_pl)) / vars->track_likelihood_pi->at(i_pl);
 
     vars->track_Lmumip_0to1_nopionkaon->at(i_pl) = (vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl))/(vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl)+vars->track_likelihood_p->at(i_pl));
 
@@ -281,22 +288,33 @@ void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double
   hists->h_all->Scale(POTScaling);
 
   offbeam->h_all->Scale(OffBeamScaling);
-  offbeam->h_all->SetFillColor(kWhite);
+  offbeam->h_all->SetFillColor(kBlack);
+  offbeam->h_all->SetFillStyle(3345);
   offbeam->h_all->SetLineColor(kBlack);
 
   THStack *hs = new THStack("hs","hs");
+  hs->Add(offbeam->h_all);
   hs->Add(hists->h_p);
   hs->Add(hists->h_mu);
   hs->Add(hists->h_pi);
   hs->Add(hists->h_k);
   hs->Add(hists->h_other);
-  hs->Add(offbeam->h_all);
+  
+  TH1D *h_err = (TH1D*)offbeam->h_all->Clone("h_err");
+  h_err->Add(hists->h_p);
+  h_err->Add(hists->h_mu);
+  h_err->Add(hists->h_pi);
+  h_err->Add(hists->h_k);
+  h_err->Add(hists->h_other);
+
+  h_err->SetFillColor(kBlack);
+  h_err->SetFillStyle(3345);
 
   hists->h_all->SetMaximum((hists->h_all->GetMaximum()+offbeam->h_all->GetMaximum())*1.2);
   hists->h_all->SetMinimum(0);
   hists->h_all->Draw("hist"); // Draw this one first because it knows about the axis titles
   hs->Draw("same hist");
-  hists->h_all->Draw("same E2"); // Draw it again so errors are on top
+  h_err->Draw("same E2"); // Draw it again so errors are on top
   hists->l->AddEntry(offbeam->h_all,"Data (off-beam)","f");
   hists->l->Draw();
 }
@@ -425,18 +443,27 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
    * draw them in this function rather than drawing using the function
    */
 
+  mchists->h_p->Sumw2();
+  mchists->h_mu->Sumw2();
+  mchists->h_pi->Sumw2();
+  if (isK) mchists->h_k->Sumw2();
+  mchists->h_other->Sumw2();
+
   mchists->h_mu->Scale(result_mu * (data->Integral()/mchists->h_mu->Integral()));
   mchists->h_p->Scale(result_p * (data->Integral()/mchists->h_p->Integral()));
   mchists->h_pi->Scale(result_pi * (data->Integral()/mchists->h_pi->Integral()));
   if (isK) mchists->h_k->Scale(result_k * (data->Integral()/mchists->h_k->Integral()));
   mchists->h_other->Scale(result_other * (data->Integral()/mchists->h_other->Integral()));
 
-  /*TH1D* hTotal = (TH1D*)mchists->h_mu->Clone("hTotal");
+  TH1D* hTotal = (TH1D*)mchists->h_mu->Clone("hTotal");
   hTotal->Add(mchists->h_p);
   hTotal->Add(mchists->h_pi);
   hTotal->Add(mchists->h_k);
   hTotal->Add(mchists->h_other);
-*/
+
+  hTotal->SetFillColor(kBlack);
+  hTotal->SetFillStyle(3345);
+
   THStack* hs = new THStack();
   hs->Add(mchists->h_p);
   hs->Add(mchists->h_mu);
@@ -444,10 +471,13 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   if (isK) hs->Add(mchists->h_k);
   hs->Add(mchists->h_other);
 
-  //hTotal->Draw();
  
-  hs->Draw("hist");
-
+  mchists->h_all->SetMaximum(data->GetMaximum()*1.3);
+  mchists->h_all->Draw();
+  hs->Draw("histsame");
+  hTotal->Draw("e2same");
+  data->SetMarkerStyle(20);
+  data->SetMarkerSize(0.6);
   data->Draw("same");
 }
 
