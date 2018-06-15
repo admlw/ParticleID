@@ -54,3 +54,7 @@ ignore/*
 
 # Annoying vim things
 *.nfs*
+
+
+# specific things to ignore
+Scripts/*.txt

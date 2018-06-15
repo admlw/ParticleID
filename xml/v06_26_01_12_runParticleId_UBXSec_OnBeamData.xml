@@ -37,11 +37,11 @@
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <!--<numjobs>400</numjobs>
-        <maxfilesperjob>4</maxfilesperjob>-->
-        <numjobs>1</numjobs>
+        <numjobs>400</numjobs>
+        <maxfilesperjob>4</maxfilesperjob>
+        <!--<numjobs>1</numjobs>
         <maxfilesperjob>1</maxfilesperjob>
-        <numevents>10</numevents> 
+        <numevents>10</numevents> -->
         <memory>2500</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
