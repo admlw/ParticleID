@@ -1,10 +1,24 @@
+/**
+ * intended to separate out protons from muons without using likelihoods 
+ * so that we don't bias the widths.
+ *
+ * run with root -l pid_onbeam.root plotProtons.C 
+ *
+ */ 
+
+// cpp
+#include <algorithm>
+#include <vector>
+
+// ROOT
 #include "TTree.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TCanvas.h"
-#include <algorithm>
-#include <vector>
+
+// local
+#include "../Algorithms/LandauGaussian.h"
 
 bool isInFV(TVector3 vec){
 
@@ -16,6 +30,12 @@ bool isInFV(TVector3 vec){
   else return false;
 
 }
+
+Double_t fitFunction(Double_t *x, Double_t *p){
+ 
+  return landauGaussian(x, p) + landauGaussian(x,&p[4]);
+  
+};
 
 void plotProtons(){
 
@@ -32,6 +52,8 @@ void plotProtons(){
   };
 
   int ntracks_demanded = 2;
+  double low_length = 65;
+  double high_length = 70;
 
   int run;
   int sub_run;
@@ -65,10 +87,12 @@ void plotProtons(){
   tree->SetBranchAddress("track_end_y", &track_end_y);
   tree->SetBranchAddress("track_end_z", &track_end_z);
 
+  // do not change
   int prev_run = 0;
   int prev_sub_run = 0;
   int prev_event = 0;
   int ntracks_in_event = 1;
+
   std::vector<dataFrame> dataFrames;
 
   TH2D* h_short = new TH2D("h_short", ";Residual Range (cm); dE/dx (MeV/cm)", 100, 0, 200, 50, 0, 10);
@@ -131,7 +155,7 @@ void plotProtons(){
             h_short->Fill(dataFrames.at(0).strkresrg.at(j), dataFrames.at(0).strkdedx.at(j));
 
             // take region between 40 and 45 residual range (to try and fit)
-            if (dataFrames.at(0).strkresrg.at(j) > 40 && dataFrames.at(0).strkresrg.at(j) < 45){
+            if (dataFrames.at(0).strkresrg.at(j) > low_length && dataFrames.at(0).strkresrg.at(j) < high_length){
 
               // 1d representation of above
               h_short_dedx->Fill(dataFrames.at(0).strkdedx.at(j));
@@ -149,11 +173,11 @@ void plotProtons(){
             }
 
             // protons identified as such by the likelihood algo
-            if(std::max(dataFrames.at(0).strk_pfwd, dataFrames.at(0).strk_pbwd) > 0.175){
+            if(std::max(dataFrames.at(0).strk_pfwd, dataFrames.at(0).strk_pbwd) > 0.18){
               h_short_likelihood_identified->Fill(dataFrames.at(0).strkresrg.at(j), dataFrames.at(0).strkdedx.at(j));
             
-                if (dataFrames.at(0).strkresrg.at(j) > 100
-                    && dataFrames.at(0).strkresrg.at(j) < 150){
+                if (dataFrames.at(0).strkresrg.at(j) > low_length
+                    && dataFrames.at(0).strkresrg.at(j) < high_length){
 
                   h_short_likelihood_identified_dedx->Fill(dataFrames.at(0).strkdedx.at(j));
 
@@ -202,24 +226,50 @@ void plotProtons(){
 
   TCanvas *c_short = new TCanvas();
   h_short->Draw("colz");
+  c_short->SaveAs("twoTrack_shortTrack_dedxresrg.png");
 
   TCanvas *c_short_likelihood_identified = new TCanvas();
   h_short_likelihood_identified->Draw("colz");
+  c_short_likelihood_identified->SaveAs("twoTrack_shortTrack_likelihoodidentified_dedxresrg.png");
+
 
   TCanvas *c_short_likelihood_identified_dedx = new TCanvas();
   h_short_likelihood_identified_dedx->Draw("colz");
 
+  TF1* lg = new TF1("lg", landauGaussian, 0, 10, 4);
+  lg->SetParameters(0.13, 1.7, 100, 0.25);
+  lg->FixParameter(0,0.13);
+  lg->SetParLimits(3,0, 5);
+  lg->SetParLimits(1,2.0, 4.0);
+  h_short_likelihood_identified_dedx->Fit(lg, "", "", 0.0, 10);
+  c_short_likelihood_identified_dedx->SaveAs("twoTrack_shortTrack_likelihoodidentified_dedx.png");
+  
   TCanvas *c_short_dedx = new TCanvas();
   h_short_dedx->Draw();
 
+  // now take this histogram and fit the sum of two landau-gaussians
+  TF1* fitFcn = new TF1("fitFcn", fitFunction, 0, 10, 8);
+  fitFcn->SetParameters(0.09, 1.7, 200, 0.2, 0.09, 3.5, 100, 0.175);
+  fitFcn->FixParameter(0, 0.09);
+  fitFcn->FixParameter(3, 0.2);
+  fitFcn->FixParameter(4, 0.13);
+  fitFcn->SetParLimits(5,1.7, 10.0);
+  h_short_dedx->Fit(fitFcn, "M", "", 1.2, 20);
+  //h_short_dedx->Fit(langaus_p, "+");
+
+  c_short_dedx->SaveAs("twoTrack_shortTrack_dedx.png");
+
   TCanvas *c_short_dedx_angle = new TCanvas();
   h_short_dedx_angle->Draw("colz");
+  c_short_dedx_angle->SaveAs("twoTrack_shortTrack_dedx_angle.png");
 
   TCanvas *c_short_dedx_anglecut = new TCanvas();
   h_short_dedx_anglecut->Draw();
+  c_short_dedx_anglecut->SaveAs("twoTrack_shortTrack_dedx_anglecut.png");
 
   TCanvas *c_long = new TCanvas();
   h_long->Draw("colz");
+  c_long->SaveAs("twoTrack_longTrack_dedxresrg.png");
 
 }
 
