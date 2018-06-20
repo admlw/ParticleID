@@ -44,6 +44,7 @@ struct treevars{
   std::vector<double> *track_Lmip_0to1;
   std::vector<double> *track_Lpi_0to1;
   std::vector<double> *track_Lp_0to1;
+  std::vector<double> *track_Lk_0to1;
   std::vector<double> *track_Lmumip_0to1;
   std::vector<double> *track_Lmumippi_0to1;
   std::vector<double> *track_Lmumip_0to1_nopionkaon;
@@ -97,6 +98,7 @@ void settreevars(TTree *intree, treevars *varstoset){
   varstoset->track_Lmip_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lpi_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lp_0to1 = new std::vector<double>(nplanes);
+  varstoset->track_Lk_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lmumip_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lmumippi_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lmumip_0to1_nopionkaon = new std::vector<double>(nplanes);
@@ -152,6 +154,7 @@ void CalcPIDvars(treevars *vars, bool isScale){
     vars->track_Lmip_0to1->at(i_pl) = vars->track_likelihood_mip->at(i_pl)/denom;
     vars->track_Lpi_0to1->at(i_pl) = vars->track_likelihood_pi->at(i_pl)/denom;
     vars->track_Lp_0to1->at(i_pl) = vars->track_likelihood_p->at(i_pl)/denom;
+    vars->track_Lk_0to1->at(i_pl) = vars->track_likelihood_k->at(i_pl)/denom;
     vars->track_Lmumip_0to1->at(i_pl) = (vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl))/denom;
     vars->track_Lmumippi_0to1->at(i_pl) = (vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl)+vars->track_likelihood_pi->at(i_pl))/denom;
     vars->track_depE_minus_rangeE_mu->at(i_pl) = vars->track_depE->at(i_pl) - vars->track_rangeE_mu;

@@ -26,6 +26,7 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_Lmip_0to1->at(i),
       vars->track_Lpi_0to1->at(i),
       vars->track_Lp_0to1->at(i),
+      vars->track_Lk_0to1->at(i),
       vars->track_Lmumip_0to1->at(i),
       vars->track_Lmumippi_0to1->at(i),
       vars->track_Lmumip_0to1_nopionkaon->at(i),
@@ -76,6 +77,7 @@ std::vector<std::vector<double>> bins = {
                     {50,0,1}, // track_Lmip_0to1
                     {50,0,1}, // track_Lpi_0to1
                     {50,0,1}, // track_Lp_0to1
+                    {50,0,1}, // track_Lk_0to1
                     {50,0,1}, // track_Lmumip_0to1
                     {50,0,1}, // track_Lmumippi_0to1
                     {50,0,1}, // track_Lmumip_0to1_nopionkaon
@@ -108,6 +110,7 @@ std::vector<std::string> histtitles = {
                     ";L_{MIP}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";L_{#pi}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";L_{p}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
+                    ";L_{k}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP}+L_{#pi})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{p});",
@@ -140,6 +143,7 @@ std::vector<std::string> histnames = {
                   "Lmip0to1",
                   "Lpi0to1",
                   "Lp0to1",
+                  "Lk0to1",
                   "Lmumip0to1",
                   "Lmumippi0to1",
                   "Lmumip0to1nopionkaon",
