@@ -148,7 +148,7 @@ void CalcPIDvars(treevars *vars, bool isScale){
     vars->track_likelihood_mipoverp->at(i_pl) = vars->track_likelihood_mip->at(i_pl) / vars->track_likelihood_p->at(i_pl);
     vars->track_likelihood_maxmumipoverp->at(i_pl) = vars->track_likelihood_maxmumip->at(i_pl) / vars->track_likelihood_p->at(i_pl);
 
-    double denom = (vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl)); 
+    double denom = (vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
 
     vars->track_Lmu_0to1->at(i_pl) = vars->track_likelihood_mu->at(i_pl)/denom;
     vars->track_Lmip_0to1->at(i_pl) = vars->track_likelihood_mip->at(i_pl)/denom;
@@ -302,7 +302,7 @@ void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double
   hs->Add(hists->h_pi);
   hs->Add(hists->h_k);
   hs->Add(hists->h_other);
-  
+
   TH1D *h_err = (TH1D*)offbeam->h_all->Clone("h_err");
   h_err->Add(hists->h_p);
   h_err->Add(hists->h_mu);
@@ -403,7 +403,7 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   mc->Add(mchists->h_pi);
   mc->Add(mchists->h_other);
   if (isK) mc->Add(mchists->h_k);
-  
+
   /** call fitting function */
   TFractionFitter* fit = new TFractionFitter(data, mc);
 
@@ -412,7 +412,7 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   fit->Constrain(2, pifrac*fracfloat, pifrac*(1+fracfloat));
   fit->Constrain(3, otherfrac*fracfloat, otherfrac*(1+fracfloat));
   if (isK) fit->Constrain(4, kfrac*fracfloat, kfrac*(1+fracfloat));
-  
+
   int stat = fit->Fit();
 
   double result_mu = 0;
@@ -441,8 +441,8 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   std::cout << "[TemplateFit] k     : " << result_k << "+/-" << result_k_err << std::endl;
   std::cout << "[TemplateFit] other : " << result_other << "+/-" << result_other_err << std::endl;
 
-  /** 
-   * draw result: because data histograms modified directly just 
+  /**
+   * draw result: because data histograms modified directly just
    * draw them in this function rather than drawing using the function
    */
 
@@ -474,7 +474,7 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   if (isK) hs->Add(mchists->h_k);
   hs->Add(mchists->h_other);
 
- 
+
   mchists->h_all->SetMaximum(data->GetMaximum()*1.3);
   mchists->h_all->Draw();
   hs->Draw("histsame");
@@ -484,7 +484,7 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   data->Draw("same");
 }
 
-void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow){
+void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr){
   std::vector<TH1D*> histstoeval = {
     hists->h_mu,
     hists->h_pi,
@@ -576,6 +576,21 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow){
 
     c->cd(histstoeval.size()+1);
     l->Draw();
+
+    if (fout){
+      fout->cd();
+      TString name = TString(histstoeval.at(i_h)->GetName());
+      name.Remove(0,9);
+      heff->Write(TString::Format("heff_%s",name.Data()).Data());
+      hpur->Write(TString::Format("hpur_%s",name.Data()).Data());
+      heffpur->Write(TString::Format("heffpur_%s",name.Data()).Data());
+    }
   }
+
+}
+
+void SaveHists(hist1D *hists, TFile *fout){
+  fout->cd();
+
 
 }
