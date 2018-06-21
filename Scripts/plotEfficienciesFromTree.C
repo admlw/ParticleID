@@ -180,7 +180,13 @@ std::vector<bool> MIPlow = {
 //  Now the function starts
 // ---------------------------------------------------- //
 
-void plotEfficienciesFromTree(std::string mcfile){
+void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
+
+  // Make a file to store output
+  TFile *fout = nullptr;
+  if (outfile!=NULL){
+    fout = new TFile(outfile.c_str(),"recreate");
+  }
 
   gStyle->SetTitleX(0.5);
   gStyle->SetTitleAlign(23);
@@ -237,7 +243,7 @@ void plotEfficienciesFromTree(std::string mcfile){
   for (size_t i_pl=0; i_pl < nplanes; i_pl++){
     for (size_t i_h=0; i_h < nplots; i_h++){
       TCanvas *c1 = new TCanvas();
-      DrawMCEffPur(c1, mc_hists[i_pl][i_h],MIPlow.at(i_h));
+      DrawMCEffPur(c1, mc_hists[i_pl][i_h],MIPlow.at(i_h),fout);
       c1->Print(std::string(histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());
       delete c1;
     }
