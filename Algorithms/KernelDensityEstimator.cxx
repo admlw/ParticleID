@@ -4,8 +4,8 @@
  * replacing each data point with a gaussian and summing the individual
  * Gaussians to produce some distribution.
  *
- * This implementation is a slightly more advanced implementation of this, in 
- * particular it scales the Gaussian width in an anti-correlated way to the 
+ * This implementation is a slightly more advanced implementation of this, in
+ * particular it scales the Gaussian width in an anti-correlated way to the
  * local density of data points.
  */
 
@@ -51,15 +51,15 @@ namespace kde{
     TF1* kernel;
 
     if (kernelType == "epo"){
-      kernel = new TF1("kernel", kde::KernelDensityEstimator::epoKernelFunction, -100, 100, 3); 
+      kernel = new TF1("kernel", kde::KernelDensityEstimator::epoKernelFunction, -100, 100, 3);
       kernel->SetParameters(kernelNormalisation, kernelMean, kernelBandwith);
-    }   
+    }
     else {
-      //kernel = new TF1("kernel", kde::KernelDensityEstimator::gausKernelFunction, -100, 100, 3); 
+      //kernel = new TF1("kernel", kde::KernelDensityEstimator::gausKernelFunction, -100, 100, 3);
       //kernel = new TF1("kernel", "[0] * (1./(std::sqrt(2*3.1415*std::pow([2],2))))*std::exp(-std::pow((x-[1]),2)/(2*std::pow([2],2)))", -100, 100);
       kernel = new TF1("kernel", "gaus", -100, 100);
       kernel->SetParameters(kernelNormalisation, kernelMean, kernelBandwith);
-    }  
+    }
 
     return kernel;
 
@@ -80,7 +80,7 @@ namespace kde{
     double kernelNormalisation = 1.0;
     double kernelMean = -1;
 
-    // KDE is built up of many gaussians. 
+    // KDE is built up of many gaussians.
     // Easiest way to do this is to append the formulas
     // to a string and then use that to construct
     // final KDE
@@ -106,7 +106,7 @@ namespace kde{
     if (doAdaptiveKde){
 
       //std::cout << "[KDE]  Using adaptive baseline." << std::endl;
-      
+
       double adaptiveBandwith = -1;
 
       for (size_t i = 0; i < kernels.size(); i++){
@@ -119,11 +119,11 @@ namespace kde{
         double kernelMean = kernel->GetParameter(1);
 
         kernel = (TF1*)getKernel(kernelNormalisation, kernelMean, adaptiveBandwith, kernelType);
-        
+
         double kernelIntegral = kernel->Integral(-100, 100);
 
-        if (kernelIntegral == 0){
-          return -1;       
+        if (!std::isnormal(kernelIntegral)){
+          return -1;
         }
 
         kernelNormalisation = 1./kernelIntegral;
