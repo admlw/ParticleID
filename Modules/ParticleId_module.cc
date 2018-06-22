@@ -203,9 +203,9 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<anab::sParticleIDAlgScores> PIDAval_mean   = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> PIDAval_median = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> PIDAval_kde    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
-  
+
     std::vector<anab::sParticleIDAlgScores> dEdxtruncmean  = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
-    
+
     std::vector<anab::sParticleIDAlgScores> trk_depE       = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
     anab::sParticleIDAlgScores trk_rangeE_mu;
@@ -217,7 +217,6 @@ void UBPID::ParticleId::produce(art::Event & e)
     for (auto c : caloFromTrack){
       planenum = c->PlaneID().Plane;
       calo = c;
-
       // Check that caloFromTrack is a valid object
       if (!calo || planenum < 0 || planenum > 2){
         std::cout << "[ParticleID] Calorimetry on plane " << planenum << " is unavailable. Skipping." << std::endl;
@@ -229,7 +228,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       std::vector<double> trkpitchvec = calo->TrkPitchVec();
 
       /**
-       * Initially wanted to only perform particle ID on tracks which Bragged, 
+       * Initially wanted to only perform particle ID on tracks which Bragged,
        * in the TPC, but changed direction. This is left here for testing purposes.
        */
 
@@ -322,7 +321,6 @@ void UBPID::ParticleId::produce(art::Event & e)
       /**
        * Algorithm 2: Chi2
        */
-
       std::vector<double> chisqValues = chisq.getChisq(calo, p_holder);
 
       Chi2_mu.at(planenum).fAlgName = "Chi2";
@@ -362,7 +360,6 @@ void UBPID::ParticleId::produce(art::Event & e)
        * (2) median (T. Yang & V. Meddage)
        * (3) kernel density estimator (A. Lister)
        */
-
       // mean
       PIDAval_mean.at(planenum).fAlgName = "PIDA_mean";
       PIDAval_mean.at(planenum).fVariableType = anab::kPIDA;
@@ -384,14 +381,12 @@ void UBPID::ParticleId::produce(art::Event & e)
       PIDAval_kde.at(planenum).fPlaneID = c->PlaneID();
       AlgScoresVec.push_back(PIDAval_kde.at(planenum));
 
-
       /**
        * Algorithm 4: Truncated mean dE/dx versus track length
        * Makes use of the "Truncated Mean" algorithm developed by D. Caratelli
        * to plot the truncated mean dE/dx  of a track
        * versus its length for separation.
        */
-
       size_t nmin = 1;
       size_t nmax = 1;
       const size_t currentiteration = 0;
@@ -401,11 +396,10 @@ void UBPID::ParticleId::produce(art::Event & e)
 
       dEdxtruncmean.at(planenum).fAlgName = "TruncatedMean";
       dEdxtruncmean.at(planenum).fVariableType = anab::kdEdxtruncmean;
-      dEdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
+      if (dEdx.size()>0) dEdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
       dEdxtruncmean.at(planenum).fPlaneID = c->PlaneID();
 
       AlgScoresVec.push_back(dEdxtruncmean.at(planenum));
-
       /**
        * Algorithm 5: Deposited energy vs energy by range
        * Calculate deposited energy from product of dEdx and trkpitchvec vectors
@@ -413,7 +407,6 @@ void UBPID::ParticleId::produce(art::Event & e)
        * does this, but due to a bug it currently does not use the calibrated
        * dEdx)
        */
-
       double depE = 0;
       for (size_t i_hit=0; i_hit < dEdx.size(); i_hit++){
         depE += dEdx.at(i_hit)*trkpitchvec.at(i_hit);
@@ -438,7 +431,7 @@ void UBPID::ParticleId::produce(art::Event & e)
     AlgScoresVec.push_back(trklen);
 
     /**
-     * Get energy estimation by range (code for momentum by range copied from 
+     * Get energy estimation by range (code for momentum by range copied from
      * analysistree, then convert momentum to energy)
      * Calculations only exist in TrackMomentumCalculator for muons and protons
      * TrackMomentumCalculator returns GeV, multiply by 1000 to get MeV
@@ -449,13 +442,13 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     /**
      * Now convert P->E
-     * From TrackMomentumCalculator::GetTrackMomentum: 
+     * From TrackMomentumCalculator::GetTrackMomentum:
      * P = TMath::Sqrt((KE*KE)+(2*M*KE))
      * P = TMath::Sqrt((E*E)-(M*M)) and E = KE+M
      * => KE = TMath::Sqrt((P*P)+(M*M))-M
-     * TrackMometumCalculator uses 
-     * Muon_M = 105.7 MeV, 
-     * Proton_M = 938.272 MeV 
+     * TrackMometumCalculator uses
+     * Muon_M = 105.7 MeV,
+     * Proton_M = 938.272 MeV
      * so use these values here
      */
 
@@ -471,7 +464,7 @@ void UBPID::ParticleId::produce(art::Event & e)
     AlgScoresVec.push_back(trk_rangeE_p);
 
     /**
-     * Initially wanted to only perform particle ID on tracks which Bragged 
+     * Initially wanted to only perform particle ID on tracks which Bragged
      * in the TPC, but changed direction. This is left here for testing purposes.
      */
 
@@ -486,18 +479,16 @@ void UBPID::ParticleId::produce(art::Event & e)
 
     /**
      * Fill ParticleID object and push back to event
-     */ 
+     */
 
     anab::ParticleID PID_object(AlgScoresVec);
     particleIDCollection->push_back(PID_object);
 
     util::CreateAssn(*this, e, *particleIDCollection, track, *trackParticleIdAssn);
-
   }
 
   e.put(std::move(particleIDCollection));
   e.put(std::move(trackParticleIdAssn));
-
 }
 
 DEFINE_ART_MODULE(UBPID::ParticleId)
