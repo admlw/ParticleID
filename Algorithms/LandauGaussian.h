@@ -53,11 +53,13 @@ inline Double_t landauGaussian(Double_t *x, Double_t *par){
       // Convolution integral of Landau and Gaussian by sum
       for(i=1.0; i<=np/2; i++) {
          xx = xlow + (i-.5) * step;
-         fland = TMath::Landau(xx,mpc,par[0]) / par[0];
+         Double_t fland_tmp = TMath::Landau(xx,mpc,par[0]) / par[0];
+         fland = std::max(fland_tmp,std::numeric_limits<double>::min());
          sum += fland * TMath::Gaus(x[0],xx,par[3]);
 
          xx = xupp - (i-.5) * step;
-         fland = TMath::Landau(xx,mpc,par[0]) / par[0];
+         fland_tmp = TMath::Landau(xx,mpc,par[0]) / par[0];
+         fland = std::max(fland_tmp,std::numeric_limits<double>::min());
          sum += fland * TMath::Gaus(x[0],xx,par[3]);
       }
 
