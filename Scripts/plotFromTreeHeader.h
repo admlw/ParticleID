@@ -22,6 +22,7 @@ struct treevars{
   double track_chi2k_plane2=-9999;
   double track_rangeE_mu=-9999;
   double track_rangeE_p=-9999;
+  double track_length = -9999;
 
   // Make the chi2 variables std::vector<doubles> so we can handle them in the same way as the other variables
   // This is just a cheat - we only have chi2 variables for collection plane right now, so set other values to 0 by hand. Fix this in the future!
@@ -76,6 +77,7 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_depE", &(varstoset->track_depE));
   intree->SetBranchAddress("track_rangeE_mu", &(varstoset->track_rangeE_mu));
   intree->SetBranchAddress("track_rangeE_p", &(varstoset->track_rangeE_p));
+  intree->SetBranchAddress("track_length", &(varstoset->track_length));
 
   intree->GetEntry(0);
   size_t nplanes = varstoset->track_likelihood_fwd_p->size();
@@ -109,23 +111,66 @@ void settreevars(TTree *intree, treevars *varstoset){
   varstoset->track_chi2_muminusp = new std::vector<double>(nplanes);
 }
 
+std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
+
+  double chi2 = 0;
+  double dof = 0;
+
+  for (int i = 0; i < o->GetNbinsX(); i++){
+
+    if (e->GetBinContent(i) != 0){
+  
+      chi2 += std::pow(o->GetBinContent(i) - e->GetBinContent(i),2)/e->GetBinContent(i);
+   
+    }
+    if (e->GetBinContent(i) != 0 || o->GetBinContent(i) !=0){
+      
+      dof++;
+
+    }
+  
+  }
+
+  std::pair<double,double> returner;
+  returner.first = chi2;
+  returner.second = dof;
+  return returner;
+
+}
+
+void OverlayChi2(TCanvas *c1, TString e_str, TString o_str){
+
+  TH1D* h_e = (TH1D*)c1->GetPrimitive("h_err");
+  TH1D* h_o = (TH1D*)c1->GetPrimitive(((std::string)o_str).c_str());
+
+  std::pair<double,double> chi2 = GetChi2(h_o, h_e);
+
+  TPaveText *pt = new TPaveText(0.17, 0.87, 0.42, 0.92, "NDC");
+  TString chi2string = Form("Chi2/NDF: %.2f/%g", chi2.first, chi2.second);
+  pt->SetFillColor(kWhite);
+  pt->AddText(((std::string)chi2string).c_str());
+  pt->SetTextSize(0.05);
+  pt->Draw("same");
+
+}
+
 void CalcPIDvars(treevars *vars, bool isScale){
   //std::cout << "Calculating PID variables for " << vars->track_likelihood_fwd_p->size() << " planes" << std::endl;
   for (size_t i_pl=0; i_pl < vars->track_likelihood_fwd_p->size(); i_pl++){
-/*    if (i_pl==0 || i_pl==1){
-      vars->track_chi2_muminusp->at(i_pl) = 0;
-      vars->track_chi2mu->at(i_pl) = 0;
-      vars->track_chi2p->at(i_pl) = 0;
-      vars->track_chi2k->at(i_pl) = 0;
-      vars->track_chi2pi->at(i_pl) = 0;
-    }
-    else{
-    */
-      vars->track_chi2mu->at(i_pl) = vars->track_chi2mu->at(i_pl);
-      vars->track_chi2p->at(i_pl) = vars->track_chi2p->at(i_pl);
-      vars->track_chi2k->at(i_pl) = vars->track_chi2k->at(i_pl);
-      vars->track_chi2pi->at(i_pl) = vars->track_chi2pi->at(i_pl);
-      vars->track_chi2_muminusp->at(i_pl) = vars->track_chi2mu->at(i_pl) - vars->track_chi2p->at(i_pl);
+    /*    if (i_pl==0 || i_pl==1){
+          vars->track_chi2_muminusp->at(i_pl) = 0;
+          vars->track_chi2mu->at(i_pl) = 0;
+          vars->track_chi2p->at(i_pl) = 0;
+          vars->track_chi2k->at(i_pl) = 0;
+          vars->track_chi2pi->at(i_pl) = 0;
+          }
+          else{
+          */
+    vars->track_chi2mu->at(i_pl) = vars->track_chi2mu->at(i_pl);
+    vars->track_chi2p->at(i_pl) = vars->track_chi2p->at(i_pl);
+    vars->track_chi2k->at(i_pl) = vars->track_chi2k->at(i_pl);
+    vars->track_chi2pi->at(i_pl) = vars->track_chi2pi->at(i_pl);
+    vars->track_chi2_muminusp->at(i_pl) = vars->track_chi2mu->at(i_pl) - vars->track_chi2p->at(i_pl);
     //}
 
     //double scalefactor_mu = 0.821;
@@ -211,6 +256,26 @@ struct hist1D{
   }
 };
 
+struct hist2D{
+  TH3D *h2D_mu;
+  TH3D *h2D_p;
+  TH3D *h2D_pi;
+  TH3D *h2D_k;
+  TH3D *h2D_other;
+  TH3D *h2D_all;
+
+  hist2D(std::string name                                 , std::string title , double nbinsx , double binlowx , double binhighx , double nbinsy , double binlowy , double binhighy, double nbinsz, double binlowz, double binhighz){
+    h2D_mu = new TH3D(std::string(name+"_mu").c_str()       , title.c_str(), nbinsx, binlowx, binhighx, nbinsy, binlowy, binhighy,nbinsz,binlowz,binhighz);
+    h2D_p = new TH3D(std::string(name+"_p").c_str()         , title.c_str(), nbinsx, binlowx, binhighx, nbinsy, binlowy, binhighy,nbinsz,binlowz,binhighz);
+    h2D_pi = new TH3D(std::string(name+"_pi").c_str()       , title.c_str(), nbinsx, binlowx, binhighx, nbinsy, binlowy, binhighy,nbinsz,binlowz,binhighz);
+    h2D_k = new TH3D(std::string(name+"_k").c_str()         , title.c_str(), nbinsx, binlowx, binhighx, nbinsy, binlowy, binhighy,nbinsz,binlowz,binhighz);
+    h2D_other = new TH3D(std::string(name+"_other").c_str() , title.c_str(), nbinsx, binlowx, binhighx, nbinsy, binlowy, binhighy,nbinsz,binlowz,binhighz);
+    h2D_all = new TH3D(std::string(name+"_all").c_str(),title.c_str(),nbinsx,binlowx,binhighx,nbinsy, binlowy,binhighy,nbinsz,binlowz,binhighz);
+
+  }
+
+};
+
 void FillHist(hist1D *hists, double value, int pdg){
   // Fill "all" histogram for every entry
   hists->h_all->Fill(value);
@@ -230,6 +295,29 @@ void FillHist(hist1D *hists, double value, int pdg){
   }
   else{ // other
     hists->h_other->Fill(value);
+  }
+}
+
+void Fill2DHist(hist2D *hists, double valuex, double valuey, double valuez, int pdg){
+
+  // Fill "all" histogram for every entry
+  hists->h2D_all->Fill(valuex, valuey, valuez);
+
+  // Now fill histograms by particle type
+  if (TMath::Abs(pdg)==13){ // muon
+    hists->h2D_mu->Fill(valuex, valuey, valuez);
+  }
+  else if (TMath::Abs(pdg)==2212){ // proton
+    hists->h2D_p->Fill(valuex, valuey, valuez);
+  }
+  else if (TMath::Abs(pdg)==211){ // pion
+    hists->h2D_pi->Fill(valuex, valuey, valuez);
+  }
+  else if (TMath::Abs(pdg)==321){ // kaon
+    hists->h2D_k->Fill(valuex, valuey, valuez);
+  }
+  else{ // other
+    hists->h2D_other->Fill(valuex, valuey, valuez);
   }
 }
 
@@ -476,13 +564,139 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
 
 
   mchists->h_all->SetMaximum(data->GetMaximum()*1.3);
+  mchists->h_all->SetFillColor(kWhite);
+  mchists->h_all->SetLineColor(kWhite);
   mchists->h_all->Draw();
   hs->Draw("histsame");
   hTotal->Draw("e2same");
   data->SetMarkerStyle(20);
   data->SetMarkerSize(0.6);
   data->Draw("same");
+  
+  std::pair<double,double> chi2 = GetChi2(data, hTotal);
+
+  TPaveText *pt = new TPaveText(0.17, 0.87, 0.42, 0.92, "NDC");
+  TString chi2string = Form("Chi2/NDF: %.2f/%g", chi2.first, chi2.second);
+  pt->SetFillColor(kWhite);
+  pt->AddText(((std::string)chi2string).c_str());
+  pt->SetTextSize(0.05);
+  pt->Draw("same");
+
+
 }
+
+void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *hists, bool MIPlow, double cut_value, double twodvar1, double twodvar2, std::vector<string> var_names, TFile *fout = nullptr){
+
+  if (cut_value == -999) return;
+
+  c_eff->Divide(2,2,0.0005,0.0005);
+  c_pur->Divide(2,2,0.0005,0.0005);
+  c_effpur->Divide(2,2,0.0005,0.0005);
+
+  std::vector<TH3D*> histstoeval = {
+    hists->h2D_mu,
+    hists->h2D_pi,
+    hists->h2D_p
+  };
+
+  std::vector<std::string> histtitles = {
+    "True muons",
+    "True pions",
+    "True protons"
+  };
+
+
+  for (int i_h=0; i_h<histstoeval.size(); i_h++){
+    TH2D *heff = nullptr; 
+    TH2D *hpur = nullptr; 
+    TH2D *heffpur = nullptr; 
+
+    //heff->SetTitle(histtitles.at(i_h).c_str());
+
+    int binVal = -999;
+    double temp = 1000;
+    for (int i_bin=1; i_bin <= histstoeval.at(i_h)->GetZaxis()->GetNbins(); i_bin++){
+
+      if (std::abs(histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(i_bin) - cut_value) < temp){
+        temp = std::abs(histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(i_bin) - cut_value); 
+        binVal = i_bin;
+      }
+
+    }
+
+    double xlow = histstoeval.at(i_h)->GetXaxis()->GetBinLowEdge(1);
+    double xhigh = histstoeval.at(i_h)->GetXaxis()->GetBinLowEdge(histstoeval.at(i_h)->GetNbinsX()+1);
+    double ylow = histstoeval.at(i_h)->GetYaxis()->GetBinLowEdge(1);
+    double yhigh = histstoeval.at(i_h)->GetYaxis()->GetBinLowEdge(histstoeval.at(i_h)->GetNbinsY()+1);
+    double zlow = histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(1);
+    double zhigh = histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(histstoeval.at(i_h)->GetNbinsZ()+1);
+  
+    TH2D* eff_denom = nullptr;
+    TH2D* eff_num   = nullptr;
+    TH2D* pur_denom = nullptr;
+    TH2D* pur_num   = nullptr;
+
+    double zlow_all = hists->h2D_all->GetZaxis()->GetBinLowEdge(0);
+    double zhigh_all = hists->h2D_all->GetZaxis()->GetBinLowEdge(hists->h2D_all->GetNbinsZ()+1);
+
+   if ((MIPlow && i_h < 2) || (!MIPlow && i_h ==2)){ // integrate from the bottom
+
+      histstoeval.at(i_h)->GetZaxis()->SetRangeUser(zlow, zhigh);
+      eff_denom = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("eff_denom");
+      
+      histstoeval.at(i_h)->GetZaxis()->SetRangeUser(zlow, cut_value);
+      eff_num = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("eff_num");
+      pur_num = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("pur_num");
+
+      hists->h2D_all->GetZaxis()->SetRangeUser(zlow_all, cut_value);
+      pur_denom = (TH2D*)hists->h2D_all->Project3D("xy")->Clone("pur_denom");
+
+      hists->h2D_all->GetZaxis()->SetRangeUser(zlow_all, zhigh_all);
+
+    }
+    else{ // integrate up to the top
+
+      histstoeval.at(i_h)->GetZaxis()->SetRangeUser(zlow, zhigh);
+      eff_denom = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("eff_denom");
+
+      histstoeval.at(i_h)->GetZaxis()->SetRangeUser(cut_value, zhigh);
+      eff_num = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("eff_num");
+      pur_num = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("pur_num");
+
+      hists->h2D_all->GetZaxis()->SetRangeUser(cut_value, zhigh_all);
+      pur_denom = (TH2D*)hists->h2D_all->Project3D("xy")->Clone("pur_denom");
+
+      hists->h2D_all->GetZaxis()->SetRangeUser(zlow_all, zhigh_all);
+
+    }
+
+    TH2D* eff_s = (TH2D*)eff_num->Clone("eff_s");
+    eff_s->Divide(eff_denom);
+
+    TH2D* pur_s = (TH2D*)pur_num->Clone("pur_s");
+    pur_s->Divide(pur_denom);
+
+    TH2D* effpur_s = (TH2D*)eff_s->Clone("effpur_s");
+    effpur_s->Multiply(pur_s);
+
+    c_eff->cd(i_h+1);
+    eff_s->SetTitle(std::string(histtitles.at(i_h)+";"+var_names.at(1)+";"+var_names.at(0)).c_str());
+    eff_s->GetZaxis()->SetRangeUser(0,1);
+    eff_s->Draw("colz");
+
+    c_pur->cd(i_h+1);
+    pur_s->SetTitle(std::string(histtitles.at(i_h)+";"+var_names.at(1)+";"+var_names.at(0)).c_str());
+    pur_s->GetZaxis()->SetRangeUser(0,1);
+    pur_s->Draw("colz");
+
+    c_effpur->cd(i_h+1);
+    effpur_s->SetTitle(std::string(histtitles.at(i_h)+";"+var_names.at(1)+";"+var_names.at(0)).c_str());
+    effpur_s->Draw("colz");
+
+  }
+
+}
+
 
 void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr){
   std::vector<TH1D*> histstoeval = {

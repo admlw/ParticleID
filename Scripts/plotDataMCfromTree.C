@@ -214,9 +214,11 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
     CalcPIDvars(&mc_vars, true);
     std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&mc_vars);
 
-    for (size_t i_pl=0; i_pl < nplanes; i_pl++){
-      for (size_t i_h = 0; i_h < nplots; i_h++){
-        FillHist(mc_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),mc_vars.true_PDG);
+    if (mc_vars.track_length > 0 && mc_vars.track_length < 10000){
+      for (size_t i_pl=0; i_pl < nplanes; i_pl++){
+        for (size_t i_h = 0; i_h < nplots; i_h++){
+          FillHist(mc_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),mc_vars.true_PDG);
+        }
       }
     }
 
@@ -240,13 +242,13 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       CalcPIDvars(&onbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&onbeam_vars);
 
-
-      for (size_t i_pl=0; i_pl < nplanes; i_pl++){
-        for (size_t i_h = 0; i_h < nplots; i_h++){
-          FillHist(onb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0); // 0 because there is no "true PDG" for data
+      if (onbeam_vars.track_length > 0 && onbeam_vars.track_length < 10000){
+        for (size_t i_pl=0; i_pl < nplanes; i_pl++){
+          for (size_t i_h = 0; i_h < nplots; i_h++){
+            FillHist(onb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0); // 0 because there is no "true PDG" for data
+          }
         }
       }
-
     }
   }
 
@@ -267,9 +269,11 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       CalcPIDvars(&offbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&offbeam_vars);
 
-      for (size_t i_pl=0; i_pl < nplanes; i_pl++){
-        for (size_t i_h = 0; i_h < nplots; i_h++){
-          FillHist(offb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0.); // 0 because there is no "true PDG" for data
+      if (offbeam_vars.track_length > 0 && offbeam_vars.track_length < 10000){
+        for (size_t i_pl=0; i_pl < nplanes; i_pl++){
+          for (size_t i_h = 0; i_h < nplots; i_h++){
+            FillHist(offb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0.); // 0 because there is no "true PDG" for data
+          }
         }
       }
     } // end loop over entries in tree
@@ -285,6 +289,9 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
         DrawMC(mc_hists[i_pl][i_h],POTscaling);
         if (f_onbeam && f_offbeam){
           OverlayOnMinusOffData(c1,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling);
+          TString e_str("h_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          OverlayChi2(c1, e_str, o_str);
         }
       }
       else if (onminusoffbeam && templatefit == true){
@@ -294,6 +301,9 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
         if (f_onbeam && f_offbeam){
           DrawMCPlusOffbeam(mc_hists[i_pl][i_h], offb_hists[i_pl][i_h], POTscaling, offbeamscaling);
           OverlayOnBeamData(c1, onb_hists[i_pl][i_h]);
+          TString e_str("h_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          OverlayChi2(c1, e_str, o_str);
         }
         else{
           DrawMC(mc_hists[i_pl][i_h],POTscaling);

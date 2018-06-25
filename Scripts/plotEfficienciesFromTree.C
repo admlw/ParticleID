@@ -16,6 +16,7 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_chi2pi->at(i),
       vars->track_chi2k->at(i),
       vars->track_PIDA_kde->at(i),
+      vars->track_PIDA_median->at(i),
       vars->track_PIDA_mean->at(i),
       vars->track_likelihood_muoverp->at(i),
       vars->track_likelihood_mipoverp->at(i),
@@ -65,6 +66,7 @@ std::vector<std::vector<double>> bins = {
                     {40,0,125}, // track_chi2pi
                     {40,0,300}, // track_chi2k
                     {40,0,30}, // track_PIDA_kde
+                    {40,0,30}, // track_PIDA_median
                     {40,0,30}, // track_PIDA_mean
                     {60,0,60}, // track_likelihood_muoverp
                     {60,0,60}, // track_likelihood_mipoverp
@@ -96,6 +98,7 @@ std::vector<std::string> histtitles = {
                     ";#chi^{2}_{#pi};",
                     ";#chi^{2}_{K};",
                     ";PIDa (by KDE);",
+                    ";PIDa (by median);",
                     ";PIDa (by mean);",
                     ";(L_{#mu})/(L_{p});",
                     ";(L_{MIP})/(L_{p});",
@@ -127,6 +130,7 @@ std::vector<std::string> histnames = {
                   "effpur_chi2pi",
                   "effpur_chi2k",
                   "effpur_pida_kde",
+                  "effpur_pida_median",
                   "effpur_pida_mean",
                   "effpur_Lmuoverp",
                   "effpur_Lmipoverp",
@@ -158,6 +162,7 @@ std::vector<bool> MIPlow = {
                     true, // track_chi2pi
                     false, // track_chi2k
                     true, // track_PIDA_kde
+                    true, // track_PIDA_median
                     true, // track_PIDA_mean
                     false, // track_likelihood_muminusp
                     false, // track_likelihood_mipminusp
@@ -175,6 +180,47 @@ std::vector<bool> MIPlow = {
                     true, // track_depE_minus_rangeE_mu
                     true // track_depE_minus_rangeE_p
                     };
+
+// cut values for evaluating 2D efficiency/purity plots in terms of track length and theta
+std::vector<double> cutValues = {
+                    -999, // track_likelihood_p
+                    -999, // track_likelihood_mu
+                    -999, // track_likelihood_pi
+                    -999, // track_likelihood_k
+                    -999, // track_likelihood_mip
+                    -999, // track_likelihood_minmumip
+                    -999, // track_chi2mu
+                    88.0, // track_chi2p
+                    -999, // track_chi2pi
+                    -999, // track_chi2k
+                    -999, // track_PIDA_kde
+                    -999, // track_PIDA_median
+                    12.5, // track_PIDA_mean
+                    -999, // track_likelihood_muminusp
+                    1.0, // track_likelihood_mipminusp
+                    -999, // track_likelihood_minmumipminusp
+                    -90.0, // track_chi2_muminusp
+                    -999, // track_Lmu_0to1
+                    -999, // track_Lmip_0to1
+                    -999, // track_Lpi_0to1
+                    -999, // track_Lp_0to1
+                    -999, // track_Lmumip_0to1
+                    -999, // track_Lmumippi_0to1
+                    0.68, // track_Lmumip0to1nopionkaon
+                    -999, // track_Lmuovermip
+                    -999, // track_Lmumipoverpi
+                    0.0, // track_depE_minus_rangeE_mu
+                    -999 // track_depE_minus_rangeE_p
+};
+
+std::vector<string> twodEffPurVars = {
+                    "track_length",
+                    "track_theta"
+};
+std::vector<std::vector<double>> twodEffPurVars_bins = {
+                    {50, 0, 700},
+                    {50, 0, 3.15}
+};
 
 // ---------------------------------------------------- //
 //  Now the function starts
@@ -212,13 +258,22 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
 
   // ----------------- MC
 
+  // set branch addresses for variables of interest
+  double twodvar1 = -999;
+  double twodvar2 = -999;
+
+  t_bnbcos->SetBranchAddress(twodEffPurVars.at(0).c_str(), &twodvar1);
+  t_bnbcos->SetBranchAddress(twodEffPurVars.at(1).c_str(), &twodvar2);
+
   // Make histograms to fill
   const size_t nplanes = PIDvarstoplot_dummy.size();
   const size_t nplots = PIDvarstoplot_dummy.at(0).size();
   hist1D *mc_hists[nplanes][nplots];
+  hist2D *mc_2dhists[nplanes][nplots];
   for (int i_pl=0; i_pl<nplanes; i_pl++){
     for (int i_h=0; i_h<nplots; i_h++){
       mc_hists[i_pl][i_h] = new hist1D(std::string("h_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h),bins.at(i_h).at(0),bins.at(i_h).at(1),bins.at(i_h).at(2));
+      mc_2dhists[i_pl][i_h] = new hist2D(std::string("h2d_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h)+";"+twodEffPurVars.at(0)+";"+twodEffPurVars.at(1), twodEffPurVars_bins.at(0).at(0), twodEffPurVars_bins.at(0).at(1), twodEffPurVars_bins.at(0).at(2), twodEffPurVars_bins.at(1).at(0), twodEffPurVars_bins.at(1).at(1), twodEffPurVars_bins.at(1).at(2), bins.at(i_h).at(0),bins.at(i_h).at(1),bins.at(i_h).at(2));
     }
   }
 
@@ -231,9 +286,11 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
     for (size_t i_pl=0; i_pl < nplanes; i_pl++){
       for (size_t i_h = 0; i_h < nplots; i_h++){
         FillHist(mc_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),mc_vars.true_PDG);
+        Fill2DHist(mc_2dhists[i_pl][i_h], twodvar1, twodvar2, PIDvarstoplot.at(i_pl).at(i_h), mc_vars.true_PDG);
       }
     }
 
+    
 
   } // end loop over entries in tree
 
@@ -246,6 +303,18 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
       DrawMCEffPur(c1, mc_hists[i_pl][i_h],MIPlow.at(i_h),fout);
       c1->Print(std::string(histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());
       delete c1;
+      TCanvas *c2 = new TCanvas();
+      TCanvas *c3 = new TCanvas();
+      TCanvas *c4 = new TCanvas();
+      DrawMCEffPur2D(c2, c3, c4, mc_2dhists[i_pl][i_h], MIPlow.at(i_h), cutValues.at(i_h), twodvar1, twodvar2, twodEffPurVars, fout);
+      if (cutValues.at(i_h) != -999){
+        c2->Print(std::string("eff_"+histnames[i_h]+std::string("_plane")+"_"+twodEffPurVars.at(0)+"_"+twodEffPurVars.at(1)+"_"+std::to_string(i_pl)+".png").c_str());
+        c3->Print(std::string("pur_"+histnames[i_h]+std::string("_plane")+"_"+twodEffPurVars.at(0)+"_"+twodEffPurVars.at(1)+"_"+std::to_string(i_pl)+".png").c_str());
+        c4->Print(std::string("effpur_"+histnames[i_h]+std::string("_plane")+"_"+twodEffPurVars.at(0)+"_"+twodEffPurVars.at(1)+"_"+std::to_string(i_pl)+".png").c_str());
+      }
+      delete c2;
+      delete c3;
+      delete c4;
     }
   }
 }
