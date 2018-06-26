@@ -15,6 +15,33 @@
 
 #include "truncatedMean.C"
 
+std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
+
+  double chi2 = 0;
+  double dof = 0;
+
+  for (int i = 0; i < o->GetNbinsX(); i++){
+
+    if (e->GetBinContent(i) != 0){
+  
+      chi2 += std::pow(o->GetBinContent(i) - e->GetBinContent(i),2)/e->GetBinContent(i);
+   
+    }
+    if (e->GetBinContent(i) != 0 || o->GetBinContent(i) !=0){
+      
+      dof++;
+
+    }
+  
+  }
+
+  std::pair<double,double> returner;
+  returner.first = chi2;
+  returner.second = dof;
+  return returner;
+
+}
+
 std::vector<double> templateFit(TH2D* mu, TH2D* p, TH2D* pi, TH2D* k, TH2D* other, TH2D* onbeam, TH2D* offbeam, double offBeamScaling, double potScaling){
 
   double fracFloat = 0.0;
@@ -174,14 +201,14 @@ void plotdEdxLengthComparison(){
 
   // length cuts are used to look at a slice of the
   // 2D distribution in dQ/dx space.
-  double track_length_high_cut = 20;
-  double track_length_low_cut = 15;
+  double track_length_high_cut = 30;
+  double track_length_low_cut = 25;
   double off_beam_scaling = 0.77;
-  double mc_scaling = 1.4;
+  double mc_scaling = 2.7;
   double proton_dqdx_scaling = 1.0;
   double proton_normalisation_scaling = 1.0;
   int highval = 300000;
-  bool isTemplateFit = false;
+  bool isTemplateFit = true;
 
   TTree *tree_mc = (TTree*)_file0->Get("pidvalid/pidTree");
 
@@ -198,12 +225,12 @@ void plotdEdxLengthComparison(){
 
   TTree *tree_data_onbeam = (TTree*)_file1->Get("pidvalid/pidTree");
 
-  TH2D* h_dEdx_length_proton = new TH2D("h_dEdx_length_proton", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 300);
-  TH2D* h_dEdx_length_muon   = new TH2D("h_dEdx_length_muon", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 300);
-  TH2D* h_dEdx_length_pion   = new TH2D("h_dEdx_length_pion", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 300);
-  TH2D* h_dEdx_length_kaon   = new TH2D("h_dEdx_length_kaon", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 300);
-  TH2D* h_dEdx_length_other  = new TH2D("h_dEdx_length_other", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 300);
-  TH2D* h_dEdx_length_total  = new TH2D("h_dEdx_length_total", ";<dQ/dx>_{tr} (e-/cm);track length(cm)", 50, -1, highval, 50, 0, 300);
+  TH2D* h_dEdx_length_proton = new TH2D("h_dEdx_length_proton", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 700);
+  TH2D* h_dEdx_length_muon   = new TH2D("h_dEdx_length_muon", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 700);
+  TH2D* h_dEdx_length_pion   = new TH2D("h_dEdx_length_pion", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 700);
+  TH2D* h_dEdx_length_kaon   = new TH2D("h_dEdx_length_kaon", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 700);
+  TH2D* h_dEdx_length_other  = new TH2D("h_dEdx_length_other", ";<dQ/dx>_{tr} (e-/cm);track length (cm)", 50, -1, highval, 50, 0, 700);
+  TH2D* h_dEdx_length_total  = new TH2D("h_dEdx_length_total", ";<dQ/dx>_{tr} (e-/cm);track length(cm)", 50, -1, highval, 50, 0, 700);
 
   TH1D* h_truemu = new TH1D("h_truemu", ";<dQdx>_{tr};", 50, 0, highval);
   TH1D* h_truep = new TH1D("h_truep", ";<dQdx>_{tr};", 50, 0, highval);
@@ -234,7 +261,7 @@ void plotdEdxLengthComparison(){
 
   TTree *tree_data_offbeam = (TTree*)_file2->Get("pidvalid/pidTree");
 
-  TH2D* h_dEdx_length_data_onbeam = new TH2D("h_dEdx_length_data_onbeam", ";<dQdx>_{tr} (e-/cm)", 50, -1, highval, 50, 0, 300);
+  TH2D* h_dEdx_length_data_onbeam = new TH2D("h_dEdx_length_data_onbeam", ";<dQdx>_{tr} (e-/cm)", 50, -1, highval, 50, 0, 700);
   TH1D* h_muID_data_onbeam = new TH1D("h_muID_data_onbeam", ";<dQdx>_{tr};", 50, 0, highval);
   TH1D* h_pID_data_onbeam = new TH1D("h_pID_data_onbeam", ";<dQdx>_{tr};", 50, 0, highval);
   TH1D* h_data_onbeam = new TH1D("h_data_onbeam", ";<dQdx>_{tr};", 50, 0, highval);
@@ -248,7 +275,7 @@ void plotdEdxLengthComparison(){
   tree_data_offbeam->SetBranchAddress("track_dEdx"  , &track_dEdx_data_offbeam);
   tree_data_offbeam->SetBranchAddress("track_dEdx_perhit_y", &track_dEdx_data_offbeam_perhit_y);
 
-  TH2D* h_dEdx_length_data_offbeam = new TH2D("h_dEdx_length_data_offbeam", ";<dQdx>_{tr} (e-/cm)", 50, -1, highval, 50, 0, 300);
+  TH2D* h_dEdx_length_data_offbeam = new TH2D("h_dEdx_length_data_offbeam", ";<dQdx>_{tr} (e-/cm)", 50, -1, highval, 50, 0, 700);
   TH1D* h_muID_data_offbeam = new TH1D("h_muID_data_offbeam", ";<dQdx>_{tr};", 50, 0, highval);
   TH1D* h_pID_data_offbeam = new TH1D("h_pID_data_offbeam", ";<dQdx>_{tr};", 50, 0, highval);
   TH1D* h_data_offbeam = new TH1D("h_data_offbeam", ";<dQdx>_{tr};", 50, 0, highval);
@@ -430,11 +457,15 @@ void plotdEdxLengthComparison(){
   h_dEdx_length_kaon->SetMarkerColor(TColor::GetColor(133, 1, 98));
   h_dEdx_length_other->SetMarkerColor(TColor::GetColor(197, 197, 197));
 
+  TCanvas *c1 = new TCanvas();
+
   h_dEdx_length_proton->Draw();
   h_dEdx_length_muon->Draw("same");
   h_dEdx_length_pion->Draw("same");
   h_dEdx_length_kaon->Draw("same");
   h_dEdx_length_other->Draw("same");
+
+  c1->SaveAs("truncateddedxlength_2d.png");
 
   TCanvas *c2 = new TCanvas();
   h_muID_truep->SetFillColor(TColor::GetColor(215, 48, 39));
@@ -523,12 +554,34 @@ void plotdEdxLengthComparison(){
   hs->Add(h_muID_truek);
   hs->Add(h_muID_trueother);
 
+  TH1D* hsTot = (TH1D*)h_muID_data_offbeam->Clone("hsTot");
+  hsTot->Add(h_muID_truep);
+  hsTot->Add(h_muID_truemu);
+  hsTot->Add(h_muID_truepi);
+  hsTot->Add(h_muID_truek);
+  hsTot->Add(h_muID_trueother);
+
   h_muID_data_onbeam->GetYaxis()->SetRangeUser(0, std::max(hs->GetMaximum(),h_muID_data_onbeam->GetMaximum())*1.1);
   h_muID_data_onbeam->Draw("pE0");
   hs->Draw("histsame");
   h_muID_data_onbeam->SetMarkerStyle(20);
   h_muID_data_onbeam->SetMarkerSize(0.6);
   h_muID_data_onbeam->Draw("psameE0");
+
+  std::cout << h_muID_data_onbeam->Integral() << " " << hs->GetHistogram()->Integral() << std::endl;
+
+  std::pair<double,double> chi2_muid = GetChi2(h_muID_data_onbeam, hsTot);
+
+  TPaveText *pt3 = new TPaveText(0.17, 0.87, 0.42, 0.92, "NDC");
+  TString chi2string_muid = Form("Chi2/NDF: %.2f/%g", chi2_muid.first, chi2_muid.second);
+  pt3->SetFillColor(kWhite);
+  pt3->AddText(((std::string)chi2string_muid).c_str());
+  pt3->SetTextSize(0.05);
+
+  pt3->Draw("same");
+
+  TString saveString2 = Form("truncdedxlength_muID_%ito%icm.png", (int)track_length_low_cut, (int)track_length_high_cut);
+  c2->SaveAs(saveString2);
 
   TCanvas *c3 = new TCanvas();
   h_pID_truep->SetFillColor(TColor::GetColor(215, 48, 39));
@@ -571,6 +624,13 @@ void plotdEdxLengthComparison(){
   hs2->Add(h_pID_truek);
   hs2->Add(h_pID_trueother);
 
+  TH1D* hs2Tot = (TH1D*)h_muID_data_offbeam->Clone("hs2Tot");
+  hs2Tot->Add(h_muID_truep);
+  hs2Tot->Add(h_muID_truemu);
+  hs2Tot->Add(h_muID_truepi);
+  hs2Tot->Add(h_muID_truek);
+  hs2Tot->Add(h_muID_trueother);
+
   h_pID_data_onbeam->GetYaxis()->SetRangeUser(0, std::max(hs2->GetMaximum(),h_pID_data_onbeam->GetMaximum())*1.1);
   h_pID_data_onbeam->Draw("pe0");
   hs2->Draw("histsame");
@@ -585,6 +645,19 @@ void plotdEdxLengthComparison(){
   std::cout << "number of muons: " << h_muID_truemu->Integral() + h_pID_truemu->Integral() << std::endl;
   std::cout << "muon Efficiency: " << h_muID_truemu->Integral() / (h_muID_truemu->Integral() + h_pID_truemu->Integral()) << std::endl;
   std::cout << "muon purity:     " << h_muID_truemu->Integral() / (h_muID_truemu->Integral() + h_muID_truepi->Integral() + h_muID_truek->Integral() + h_muID_trueother->Integral() + h_muID_truep->Integral()) << std::endl;
+
+  std::pair<double,double> chi2_pid = GetChi2(h_pID_data_onbeam, hs2Tot);
+
+  TPaveText *pt2 = new TPaveText(0.17, 0.87, 0.42, 0.92, "NDC");
+  TString chi2string_pid = Form("Chi2/NDF: %.2f/%g", chi2_pid.first, chi2_pid.second);
+  pt2->SetFillColor(kWhite);
+  pt2->AddText(((std::string)chi2string_pid).c_str());
+  pt2->SetTextSize(0.05);
+
+  pt2->Draw("same");
+
+  TString saveString3 = Form("truncdedxlength_pID_%ito%icm.png", (int)track_length_low_cut, (int)track_length_high_cut);
+  c3->SaveAs(saveString3);
 
   TCanvas *c8 = new TCanvas();
   h_truep->SetFillColor(TColor::GetColor(215, 48, 39));
@@ -624,6 +697,13 @@ void plotdEdxLengthComparison(){
   hs3->Add(h_truek);
   hs3->Add(h_trueother);
 
+  TH1D* hs3Tot = (TH1D*)h_muID_data_offbeam->Clone("hs3Tot");
+  hs3Tot->Add(h_muID_truep);
+  hs3Tot->Add(h_muID_truemu);
+  hs3Tot->Add(h_muID_truepi);
+  hs3Tot->Add(h_muID_truek);
+  hs3Tot->Add(h_muID_trueother);
+
   h_data_onbeam->GetYaxis()->SetRangeUser(0, std::max(hs3->GetMaximum(),h_data_onbeam->GetMaximum())*1.1);
   h_data_onbeam->Draw("pe0");
   hs3->Draw("histsame");
@@ -631,9 +711,22 @@ void plotdEdxLengthComparison(){
   h_data_onbeam->SetMarkerSize(0.6);
   h_data_onbeam->Draw("psamee0");
 
+  std::pair<double,double> chi2 = GetChi2(h_data_onbeam, hs3Tot);
+
+  TPaveText *pt = new TPaveText(0.17, 0.87, 0.42, 0.92, "NDC");
+  TString chi2string = Form("Chi2/NDF: %.2f/%g", chi2.first, chi2.second);
+  pt->SetFillColor(kWhite);
+  pt->AddText(((std::string)chi2string).c_str());
+  pt->SetTextSize(0.05);
+
+  pt->Draw("same");
+
+  TString saveString8 = Form("truncdedxlength_%ito%icm.png", (int)track_length_low_cut, (int)track_length_high_cut);
+  c8->SaveAs(saveString8);
+
   TCanvas *c4 = new TCanvas();
   
-  TH2D* hAdded = new TH2D("hAdded", ";<dQdx>_{tr} (e-/cm)", 50, -1, highval, 50, 0, 300);
+  TH2D* hAdded = new TH2D("hAdded", ";<dQdx>_{tr} (e-/cm)", 50, -1, highval, 50, 0, 700);
   hAdded->Add(h_dEdx_length_muon);
   hAdded->Add(h_dEdx_length_pion);
   hAdded->Add(h_dEdx_length_kaon);
