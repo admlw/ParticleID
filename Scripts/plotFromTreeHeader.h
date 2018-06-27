@@ -488,21 +488,22 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
   std::vector<TH1D*> histstoeval = {
     hists->h_mu,
     hists->h_pi,
-    hists->h_p
+    hists->h_p,
+    hists->h_k
   };
 
   std::vector<std::string> histtitles = {
     "True muons",
     "True pions",
-    "True protons"
+    "True protons",
+    "True kaons"
   };
+
+  gStyle->SetOptStat(0);
 
   c->Divide(2,2,0.0005,0.0005);
 
-  TLegend *l = new TLegend(0.2,0.2,0.8,0.8);
-  l->SetTextFont(132);
-  l->SetLineColor(kWhite);
-  l->SetFillColor(kWhite);
+  TLegend *l;
 
   for (int i_h=0; i_h<histstoeval.size(); i_h++){
     TH1D *heff = (TH1D*)hists->h_all->Clone("heff");
@@ -515,10 +516,13 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
 
     heff->SetTitle(histtitles.at(i_h).c_str());
 
+    double legendy=0.;
+    double legendpts=0.;
+
     for (int i_bin=1; i_bin <= histstoeval.at(i_h)->GetXaxis()->GetNbins(); i_bin++){
 
       double eff, pur;//, efferr, purerr;
-      if ((MIPlow && i_h < 2) || (!MIPlow && i_h ==2)){ // integrate from the bottom
+      if ((MIPlow && i_h != 2) || (!MIPlow && i_h ==2)){ // integrate from the bottom
         double selected_i = histstoeval.at(i_h)->Integral(1,i_bin);
         double total_i = histstoeval.at(i_h)->Integral();
         double selected_all = hists->h_all->Integral(1,i_bin);
@@ -527,6 +531,7 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
         pur = selected_i/selected_all;
 
         if (selected_i==0 && selected_all==0) pur = 0;
+        if (total_i==0) eff = 0;
       }
       else{ // integrate up to the top
         double selected_i = histstoeval.at(i_h)->Integral(i_bin,histstoeval.at(i_h)->GetXaxis()->GetNbins());
@@ -537,29 +542,34 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
         pur = selected_i/selected_all;
 
         if (selected_i==0 && selected_all==0) pur = 0;
+        if (total_i==0) eff = 0;
       }
 
       double effpur = eff*pur;
       heff->SetBinContent(i_bin,eff);
       hpur->SetBinContent(i_bin,pur);
       heffpur->SetBinContent(i_bin,effpur);
+
+      if (heff->GetXaxis()->GetBinCenter(i_bin)>0.7*heff->GetXaxis()->GetBinUpEdge(heff->GetXaxis()->GetLast())){
+        legendy+=eff;
+        legendpts++;
+      }
     }
 
     heff->SetLineColor(kRed);
     heff->SetMarkerColor(kRed);
     heff->SetMarkerStyle(20);
-    heff->SetMarkerSize(.3
-        );
+    heff->SetMarkerSize(.3);
+
     hpur->SetLineColor(kBlue);
     hpur->SetMarkerColor(kBlue);
     hpur->SetMarkerStyle(20);
-    hpur->SetMarkerSize(.3
-        );
+    hpur->SetMarkerSize(.3);
+
     heffpur->SetLineColor(kBlack);
     heffpur->SetMarkerColor(kBlack);
     heffpur->SetMarkerStyle(20);
-    heffpur->SetMarkerSize(.3
-        );
+    heffpur->SetMarkerSize(.3);
 
     heff->GetYaxis()->SetRangeUser(0,1.1);
 
@@ -569,12 +579,22 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
     heffpur->Draw("same p");
 
     if (i_h==0){
+      // if (MIPlow) l = new TLegend(0.5,0.3,0.88,0.6);
+      // else l = new TLegend(0.5,0.6,0.88,0.88);
+      legendy = legendy/legendpts;
+      if (legendy<0.6) l = new TLegend(0.5,0.6,0.88,0.88);
+      else l = new TLegend(0.5,0.3,0.88,0.6);
+      //if (legendy>0.6) l = new TLegend(0.5,(legendy*0.9)-0.3,0.88,legendy*0.9);
+      //else l = new TLegend(0.5,legendy*1.1,0.88,legendy*1.1+0.3);
+      l->SetTextFont(132);
+      l->SetLineColor(kWhite);
+      l->SetFillColor(kWhite);
       l->AddEntry(heff,"Efficiency","p");
       l->AddEntry(hpur,"Purity","p");
       l->AddEntry(heffpur,"Efficiency #times Purity","p");
     }
 
-    c->cd(histstoeval.size()+1);
+    c->cd(2);
     l->Draw();
 
     if (fout){
@@ -589,8 +609,8 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
 
 }
 
-void SaveHists(hist1D *hists, TFile *fout){
-  fout->cd();
-
-
-}
+// void SaveHists(hist1D *hists, TFile *fout){
+//   fout->cd();
+//
+//
+// }
