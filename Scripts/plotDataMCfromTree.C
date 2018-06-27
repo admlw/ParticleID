@@ -162,6 +162,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
   gStyle->SetTitleX(0.1f);
   gStyle->SetTitleW(0.8f);
   gStyle->SetTitleBorderSize(0.);
+  gStyle->SetOptStat(0);
 
   TFile *f_bnbcos = new TFile(mcfile.c_str(), "read");
   TTree *t_bnbcos = (TTree*)f_bnbcos->Get("pidvalid/pidTree");
