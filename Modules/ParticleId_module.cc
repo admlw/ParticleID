@@ -396,7 +396,13 @@ void UBPID::ParticleId::produce(art::Event & e)
 
       dEdxtruncmean.at(planenum).fAlgName = "TruncatedMean";
       dEdxtruncmean.at(planenum).fVariableType = anab::kdEdxtruncmean;
-      if (dEdx.size()>0) dEdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dEdx, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
+      if (dEdx.size()>0)
+      {
+        // Convert dEdx vector from double to a float. This is a bad hack because the truncated mean algorithm expects a float as input but dEdx is stored as a vector of doubles
+        std::vector<float> dEdx_float(dEdx.begin(),dEdx.end());
+        // Now calculate truncated mean
+        dEdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dEdx_float, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
+      }
       dEdxtruncmean.at(planenum).fPlaneID = c->PlaneID();
 
       AlgScoresVec.push_back(dEdxtruncmean.at(planenum));
