@@ -7,7 +7,7 @@ simulation_calibration:
 
   module_type: "CalibrateSimulatedData"
 
-  ProducerLabels: @local::cs_producerlabels_mcc8_UBXSec_simcalib 
+  ProducerLabels: @local::cs_producerlabels_mcc8_calib_simcalib 
   
   # simulation smearing width (i.e. the data dE/dx distribution is wider
   # than the simulation dE/dx distribution and we want to account for that).

@@ -1,19 +1,23 @@
 #
 # configuration fcl file for particleId fcl parameters
 #
+# naming convention is procuerlabels_< 1 >_simcalib< 2 >
+# < 1 > - which MCC version is this for? If running only over UBXSec tagged tracks then use
+#         mcc8_UBXSec, for instance
+# < 2 > - if this is for data then use '_data', else nothing
+# 
 
 BEGIN_PROLOG
 
-producerlabels_mcc8:
+producerlabels_mcc8_simcalib:
 {
 
   # producer label names
   TrackLabel       : "pandoraNu::McRecoStage2"
-  CalorimetryLabel : "pandoraNucali::McRecoCali"
+  CalorimetryLabel : "simcalibration::particleid"
 
   # validator labels
-  ParticleIdLabel     : "pid"
-  ParticleIdChi2Label : "pandoraNucalipid"
+  ParticleIdLabel     : "pid::particleid"
   HitLabel            : "pandoraCosmicHitRemoval::McRecoStage2"
   HitTrackAssn        : "pandoraNu::McRecoStage2"
   HitTruthAssn        : "crHitRemovalTruthMatch::McRecoStage2"
@@ -21,52 +25,18 @@ producerlabels_mcc8:
 
 }
 
-producerlabels_mcc8_data:
+producerlabels_mcc8_simcalib_data:
 {
 
   # producer label names
   TrackLabel       : "pandoraNu::DataRecoStage2"
-  CalorimetryLabel : "pandoraNucali::DataRecoStage2"
+  CalorimetryLabel : "simcalibration::particleid"
 
   # validator labels
-  ParticleIdLabel     : "pid"
-  ParticleIdChi2Label : "pandoraNucalipid"
+  ParticleIdLabel     : "pid::particleid"
   HitLabel            : "pandoraCosmicHitRemoval::DataRecoStage2"
   HitTrackAssn        : "pandoraNu::DataRecoStage2"
   CaloTrackAssn       : "pandoraNucali::DataRecoCali"
-
-}
-
-producerlabels_mcc8_UBXSec:
-{
-
-# producer label names
-  TrackLabel       : "pandoraNu::UBXSec"
-  CalorimetryLabel : "pidcalibration::particleid"
-
-  # validator labels
-  ParticleIdLabel     : "pid::particleid"
-  ParticleIdChi2Label : "pandoraNucalipid"
-  HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
-  HitTrackAssn        : "pandoraNu::UBXSec"
-  HitTruthAssn        : "pandoraCosmicHitRemoval::UBXSec"
-  CaloTrackAssn       : "pidcalibration::particleid"
-
-}
-
-producerlabels_mcc8_UBXSec_data:
-{
-
-# producer label names
-  TrackLabel       : "pandoraNu::UBXSec"
-  CalorimetryLabel : "pidcalibration::particleid"
-
-  # validator labels
-  ParticleIdLabel     : "pid::particleid"
-  ParticleIdChi2Label : "pandoraNucalipid"
-  HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
-  HitTrackAssn        : "pandoraNu::UBXSec"
-  CaloTrackAssn       : "pidcalibration::particleid"
 
 }
 
@@ -79,7 +49,6 @@ producerlabels_mcc8_UBXSec_simcalib:
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
-  ParticleIdChi2Label : "pandoraNucalipid"
   HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
   HitTrackAssn        : "pandoraNu::UBXSec"
   HitTruthAssn        : "pandoraCosmicHitRemoval::UBXSec"
@@ -92,11 +61,10 @@ producerlabels_mcc8_UBXSec_simcalib_data:
 
 # producer label names
   TrackLabel       : "pandoraNu::UBXSec"
-  CalorimetryLabel : "pidcalibration::particleid"
+  CalorimetryLabel : "simcalibration::particleid"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
-  ParticleIdChi2Label : "pandoraNucalipid"
   HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
   HitTrackAssn        : "pandoraNu::UBXSec"
   CaloTrackAssn       : "simcalibration::particleid"
