@@ -14,6 +14,14 @@ simulation_calibration:
   IsSimulationSmearing: true
   SimulationGausSmearWidth: [0.19, 0.30, 0.11]
 
+  # these can be used to set the random seed
+  # by default, the random seed is set based on the event, subrun and run 
+  # numbers.
+  # n.b.that a random seed of 0 means that ROOT will select a random number
+  # as the seed.
+  IsSetSeed: false
+  RandomSeed: 0
+
 }
 
 END_PROLOG

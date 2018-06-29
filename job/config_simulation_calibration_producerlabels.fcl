@@ -30,6 +30,15 @@ cs_producerlabels_mcc8_calib_simcalib_data:
 
 }
 
+cs_producerlabels_mcc8_calib_simcalib_data_pmtremap:
+{
+
+  # producer label names
+  TrackLabel       : "pandoraNu::DataPMTRemapRecoStage2"
+  CalorimetryLabel : "pandoraNucali::DataPMTRemapRecoStage2"
+
+}
+
 cs_producerlabels_mcc8_uncalib_simcalib:
 {
 

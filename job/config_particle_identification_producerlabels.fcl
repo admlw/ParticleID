@@ -40,6 +40,21 @@ producerlabels_mcc8_simcalib_data:
 
 }
 
+producerlabels_mcc8_simcalib_data_pmtremap:
+{
+
+  # producer label names
+  TrackLabel       : "pandoraNu::DataPMTRemapRecoStage2"
+  CalorimetryLabel : "simcalibration::particleid"
+
+  # validator labels
+  ParticleIdLabel     : "pid::particleid"
+  HitLabel            : "pandoraCosmicHitRemoval::DataPMTRemapRecoStage2"
+  HitTrackAssn        : "pandoraNu::DataPMTRemapRecoStage2"
+  CaloTrackAssn       : "pandoraNucali::DataPMTRemapRecoStage2"
+
+}
+
 producerlabels_mcc8_UBXSec_simcalib:
 {
 
