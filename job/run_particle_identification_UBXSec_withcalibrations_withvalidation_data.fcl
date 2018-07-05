@@ -8,6 +8,7 @@
 #include "caldata_microboone.fcl"
 #include "particleid_microboone.fcl"
 
+
 #
 # fcl file produces pandoraNucali calibrated objects and runs the particleid
 # on them, then performs validation.
@@ -42,10 +43,9 @@ physics:
     {
 
       pidcalibration: @local::microboone_calibrationdedx
-      pandoraNucalipid: @local::microboone_chi2pid
       simcalibration: @local::simulation_calibration
       pid: @local::particleidconfig
-
+      
     }
 
     analyzers:
@@ -54,7 +54,7 @@ physics:
     }
 
     stream1: [ out1 ]
-    analysis: [ pidcalibration, pandoraNucalipid, simcalibration, pid ]
+    analysis: [ pidcalibration, simcalibration, pid ]
     validation: [ pidvalid ]
     trigger_paths: [ analysis ]
     end_paths: [ validation, stream1 ]
@@ -73,13 +73,13 @@ outputs:
 physics.producers.pidcalibration.CaloAlg: @local::microboone_calorimetryalgmcc84data
 physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::UBXSec"
 physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNucalo::UBXSec"
-physics.producers.pandoraNucalipid.TrackModuleLabel: "pandoraNu::UBXSec"
-physics.producers.pandoraNucalipid.CalorimetryModuleLabel: "pidcalibration::particleid"
-physics.producers.pandoraNucalipid.Chi2PIDAlg.UseMedian: true
-physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
-physics.analyzers.pidvalid.IsDataPlotsOnly: true
-physics.producers.pandoraNucalipid.Chi2PIDAlg.UseMedian: true
+
+physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_UBXSec_uncalib_simcalib_data
+
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib_data
+physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
+
 physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib_data
-physics.producers.simcalibration.IsSimulationSmearing: false
+physics.analyzers.pidvalid.IsDataPlotsOnly: true
+
 services.DetectorClocksService.InheritClockConfig: false

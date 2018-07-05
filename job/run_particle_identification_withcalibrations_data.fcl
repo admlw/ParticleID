@@ -17,6 +17,7 @@ services:
     TimeTracker:   @local::microboone_time_tracker
     MemoryTracker: @local::microboone_memory_tracker
                    @table::microboone_simulation_services
+    TPCEnergyCalib: @local::microboone_tpcenergycalib_service
 
 } # services
 
@@ -32,12 +33,13 @@ physics:
 {
     producers:
     {
+        pidcalibration: @local::microboone_calibrationdedx
         simcalibration: @local::simulation_calibration
         pid: @local::particleidconfig
     }
 
     stream1: [ out1 ]
-    analysis: [ simcalibration, pid ]
+    analysis: [ pidcalibration, simcalibration, pid ]
     trigger_paths: [ analysis ]
     end_paths: [ stream1 ]
 }
@@ -52,11 +54,14 @@ outputs:
   }
 }
 
-services.DetectorClocksService.InheritClockConfig: false
+physics.producers.pidcalibration.CaloAlg: @local::microboone_calorimetryalgmcc84data
+physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::DataRecoStage2"
+physisc.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNuCalo::DataRecoStage2"
 
-physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_calib_simcalib_data
+physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_uncalib_simcalib_data
 physics.producers.simcalibration.IsSimulationSmearing: false
 
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_simcalib_data
 physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
 
+services.DetectorClocksService.InheritClockConfig: false

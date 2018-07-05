@@ -99,7 +99,6 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::string fCaloTrackAssns;
     std::string fHitTruthAssns;
     std::string fPIDLabel;
-    std::string fPIDLabelChi2;
     int fNHitsForTrackDirection;
 
     bool isData;
@@ -221,7 +220,6 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   fCaloTrackAssns = p_labels.get<std::string>("CaloTrackAssn", "pandoraNucali::McRecoStage2");
   fHitTruthAssns = p_labels.get<std::string>("HitTruthAssn","crHitRemovalTruthMatch::McRecoStage2");
   fPIDLabel = p_labels.get<std::string>("ParticleIdLabel");
-  fPIDLabelChi2 = p_labels.get<std::string>("ParticleIdChi2Label");
   fNHitsForTrackDirection = p.get<int>("NHitsForTrackDirection");
 
   fv = fid.setFiducialVolume(fv, p_fv);
@@ -234,7 +232,6 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   std::cout << "[ParticleIDValidation] >> Hit-truth assns: " << fHitTruthAssns << std::endl;
   std::cout << "[ParticleIDValidation] >> Calo-track assns: " << fCaloTrackAssns << std::endl;
   std::cout << "[ParticleIDValidation] >> ParticleID label: " << fPIDLabel << std::endl;
-  std::cout << "[ParticleIDValidation] >> ParticleID Chi2 label: " << fPIDLabelChi2 << std::endl;
   std::cout << "[ParticleIDValidation] >> NHits for track direction: " << fNHitsForTrackDirection << std::endl;
 
 }
@@ -293,11 +290,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
           int testTrackId = track->ID();
 
-          std::cout << "[ParticleIDValidation] Checking track " << testTrackId << std::endl;
-          
           if (testTrackId == selectedTrackId){
 
-            std::cout << "[ParticleIDValidation] Found track ID match with ID " << testTrackId << std::endl;
             trackPtrVector.push_back(track);
 
           }
@@ -330,7 +324,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
 
   for (auto& track : trackPtrVector){
-    std::cout << "found track" << std::endl;
 
     /** reset default values */
     dEdx.resize(3);
@@ -793,7 +786,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     }// end !fIsDataPlots
 
     // Finally, fill the tree
-    std::cout << "[ParticleIDValidation] Filling tree. " << std::endl;
     pidTree->Fill();
 
   } // Loop over tracks

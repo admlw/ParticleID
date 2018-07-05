@@ -12,7 +12,7 @@ particleidvalidconfig:
   
   module_type: "ParticleIdValidationPlots"
 
-  ProducerLabels: @local::producerlabels_mcc8
+  ProducerLabels: @local::producerlabels_mcc8_simcalib
 
   FiducialVolume: @local::pidfidvol
 

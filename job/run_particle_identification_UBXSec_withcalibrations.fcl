@@ -3,8 +3,10 @@
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
 #include "config_particle_identification_validation.fcl"
+#include "config_simulation_calibration.fcl"
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"
+#include "particleid_microboone.fcl"
 
 #
 # fcl file produces pandoraNucali calibrated objects and runs the particleid
@@ -40,12 +42,13 @@ physics:
     {
 
       pidcalibration: @local::microboone_calibrationdedx
+      simcalibration: @local::simulation_calibration
       pid: @local::particleidconfig
-
+      
     }
 
     stream1: [ out1 ]
-    analysis: [ pidcalibration, pid ]
+    analysis: [ pidcalibration, simcalibration, pid ]
     trigger_paths: [ analysis ]
     end_paths: [ stream1 ]
 }
@@ -60,7 +63,12 @@ outputs:
   }
 }
 
-physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::UBXSec"
+physics.producers.pidcalibration.TrackModuleLabel: "pandoraNu::UBXSec"
 physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNucalo::UBXSec"
-physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec
+
+physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_UBXSec_uncalib_simcalib
+
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib
+physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_simcalib
+
 services.DetectorClocksService.InheritClockConfig: false

@@ -2,6 +2,11 @@
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
+#include "config_particle_identification_validation.fcl"
+#include "config_simulation_calibration.fcl"
+#include "calibration_microboone.fcl"
+#include "caldata_microboone.fcl"
+#include "particleid_microboone.fcl"
 
 process_name: particleid
 
@@ -27,12 +32,13 @@ physics:
 {
     producers:
     {
+        simcalibration: @local::simulation_calibration
         pid: @local::particleidconfig
     }
 
     stream1: [ out1 ]
-    pidmod: [ pid ]
-    trigger_paths: [ pidmod ]
+    analysis: [ simcalibration, pid ]
+    trigger_paths: [ analysis ]
     end_paths: [ stream1 ]
 }
 
@@ -47,3 +53,9 @@ outputs:
 }
 
 services.DetectorClocksService.InheritClockConfig: false
+
+physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_calib_simcalib
+
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_simcalib
+physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_simcalib
+
