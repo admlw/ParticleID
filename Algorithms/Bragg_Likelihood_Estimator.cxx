@@ -46,6 +46,8 @@ namespace particleid{
     endPointFloatShort    = p.get<double>("EndPointFloatShort", -1.0);
     endPointFloatLong     = p.get<double>("EndPointFloatLong" , 1.0);
     endPointFloatStepSize = p.get<double>("EndPointFloatStepSize", 0.05);
+
+    checkRange = p.get<bool>("CheckRange", true);
   }
 
   void Bragg_Likelihood_Estimator::printConfiguration(){
@@ -193,7 +195,8 @@ namespace particleid{
          * can't compare beyond that
          Note: check range only if particle hypothesis is not 0 (i.e. don't bother checking range for MIP hypothesis because it doesn't look at the Bragg peak)
          */
-        if ((TMath::Abs(particlehypothesis)!=0) && (resrg_i > 30.0 || resrg_i < 0.0)) continue;
+        if (checkRange && (resrg_i > 30.0 || resrg_i < 0.0)) continue;
+
 
         // Set theoretical Landau distribution for given residual range
         langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S")-landau_mean_mpv_offset+offset,1, gausWidth);

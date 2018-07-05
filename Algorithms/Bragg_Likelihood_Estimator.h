@@ -64,6 +64,8 @@ namespace particleid{
     double endPointFloatShort;
     double endPointFloatLong;
     double endPointFloatStepSize;
+
+    bool checkRange;
   };
 
 }
