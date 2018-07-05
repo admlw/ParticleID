@@ -337,22 +337,22 @@ void UBPID::ParticleId::produce(art::Event & e)
       AlgScoresVec.push_back(noBragg_fwd_MIP.at(planenum));
 
       // Objects to store the residual range shift favoured by the likelihood PID
-      Bragg_fwd_mu_shift.at(planenum).fAlgName      = "BraggPeakLLH";
-      Bragg_fwd_p_shift.at(planenum).fAlgName       = "BraggPeakLLH";
-      Bragg_fwd_pi_shift.at(planenum).fAlgName      = "BraggPeakLLH";
-      Bragg_fwd_k_shift.at(planenum).fAlgName       = "BraggPeakLLH";
-      Bragg_bwd_mu_shift.at(planenum).fAlgName      = "BraggPeakLLH";
-      Bragg_bwd_p_shift.at(planenum).fAlgName       = "BraggPeakLLH";
-      Bragg_bwd_pi_shift.at(planenum).fAlgName      = "BraggPeakLLH";
-      Bragg_bwd_k_shift.at(planenum).fAlgName       = "BraggPeakLLH";
-      Bragg_fwd_mu_shift.at(planenum).fVariableType = anab::kNotSet;
-      Bragg_fwd_p_shift.at(planenum).fVariableType  = anab::kNotSet;
-      Bragg_fwd_pi_shift.at(planenum).fVariableType = anab::kNotSet;
-      Bragg_fwd_k_shift.at(planenum).fVariableType  = anab::kNotSet;
-      Bragg_bwd_mu_shift.at(planenum).fVariableType = anab::kNotSet;
-      Bragg_bwd_p_shift.at(planenum).fVariableType  = anab::kNotSet;
-      Bragg_bwd_pi_shift.at(planenum).fVariableType = anab::kNotSet;
-      Bragg_bwd_k_shift.at(planenum).fVariableType  = anab::kNotSet;
+      Bragg_fwd_mu_shift.at(planenum).fAlgName      = "BraggPeakLLH_shift";
+      Bragg_fwd_p_shift.at(planenum).fAlgName       = "BraggPeakLLH_shift";
+      Bragg_fwd_pi_shift.at(planenum).fAlgName      = "BraggPeakLLH_shift";
+      Bragg_fwd_k_shift.at(planenum).fAlgName       = "BraggPeakLLH_shift";
+      Bragg_bwd_mu_shift.at(planenum).fAlgName      = "BraggPeakLLH_shift";
+      Bragg_bwd_p_shift.at(planenum).fAlgName       = "BraggPeakLLH_shift";
+      Bragg_bwd_pi_shift.at(planenum).fAlgName      = "BraggPeakLLH_shift";
+      Bragg_bwd_k_shift.at(planenum).fAlgName       = "BraggPeakLLH_shift";
+      Bragg_fwd_mu_shift.at(planenum).fVariableType = anab::kLikelihood_fwd;
+      Bragg_fwd_p_shift.at(planenum).fVariableType  = anab::kLikelihood_fwd;
+      Bragg_fwd_pi_shift.at(planenum).fVariableType = anab::kLikelihood_fwd;
+      Bragg_fwd_k_shift.at(planenum).fVariableType  = anab::kLikelihood_fwd;
+      Bragg_bwd_mu_shift.at(planenum).fVariableType = anab::kLikelihood_bwd;
+      Bragg_bwd_p_shift.at(planenum).fVariableType  = anab::kLikelihood_bwd;
+      Bragg_bwd_pi_shift.at(planenum).fVariableType = anab::kLikelihood_bwd;
+      Bragg_bwd_k_shift.at(planenum).fVariableType  = anab::kLikelihood_bwd;
       Bragg_fwd_mu_shift.at(planenum).fAssumedPdg   = 13;
       Bragg_fwd_p_shift.at(planenum).fAssumedPdg    = 2212;
       Bragg_fwd_pi_shift.at(planenum).fAssumedPdg   = 211;
