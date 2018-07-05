@@ -46,8 +46,6 @@ namespace particleid{
     endPointFloatShort    = p.get<double>("EndPointFloatShort", -1.0);
     endPointFloatLong     = p.get<double>("EndPointFloatLong" , 1.0);
     endPointFloatStepSize = p.get<double>("EndPointFloatStepSize", 0.05);
-
-    checkRange = p.get<bool>("CheckRange", true);
   }
 
   void Bragg_Likelihood_Estimator::printConfiguration(){
@@ -77,7 +75,14 @@ namespace particleid{
 
   }
 
+  // Here is a dummy method for the case where you don't want to save the shift. It just calls the second method below but with a dummy variable for "shift"
   double Bragg_Likelihood_Estimator::getLikelihood(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum)
+  {
+    double dummy;
+    return Bragg_Likelihood_Estimator::getLikelihood( dEdx, resRange, particlehypothesis, forward, planenum, dummy);
+  }
+
+  double Bragg_Likelihood_Estimator::getLikelihood(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum, double &shift)
   {
 
     /**
@@ -154,6 +159,7 @@ namespace particleid{
 
     double likelihoodNdf = 0;
     int n_hits_used_total = 0;
+    double rr_shift_final = 0.;
 
     for (double rr_shift = endPointFloatShort; rr_shift < endPointFloatLong; rr_shift = rr_shift+endPointFloatStepSize){
 
@@ -185,8 +191,9 @@ namespace particleid{
         /**
          * Theory values are only defined up to 30 cm residual Range so we
          * can't compare beyond that
+         Note: check range only if particle hypothesis is not 0 (i.e. don't bother checking range for MIP hypothesis because it doesn't look at the Bragg peak)
          */
-        if (checkRange && (resrg_i > 30.0 || resrg_i < 0.0)) continue;
+        if ((TMath::Abs(particlehypothesis)!=0) && (resrg_i > 30.0 || resrg_i < 0.0)) continue;
 
         // Set theoretical Landau distribution for given residual range
         langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S")-landau_mean_mpv_offset+offset,1, gausWidth);
@@ -208,9 +215,15 @@ namespace particleid{
       if (likelihood/n_hits_used > likelihoodNdf){
         likelihoodNdf = likelihood/n_hits_used;
         n_hits_used_total = n_hits_used;
+        rr_shift_final = rr_shift;
       }
 
     } // residual range shift
+
+    // Set final residual range shift
+    if (shift){
+      shift = rr_shift_final;
+    }
 
     if (n_hits_used_total == 0)
       return -9999999;

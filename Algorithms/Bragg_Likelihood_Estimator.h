@@ -42,6 +42,7 @@ namespace particleid{
     void configure(fhicl::ParameterSet const &p);
     void printConfiguration();
     double getLikelihood(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum);
+    double getLikelihood(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum, double &shift);
 
   //private:
     std::vector<double> gausWidth_mu;
@@ -63,7 +64,6 @@ namespace particleid{
     double endPointFloatShort;
     double endPointFloatLong;
     double endPointFloatStepSize;
-    bool checkRange;
   };
 
 }
