@@ -195,6 +195,16 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<anab::sParticleIDAlgScores> Bragg_bwd_k     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
     std::vector<anab::sParticleIDAlgScores> noBragg_fwd_MIP = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
+    // Variables for storing residual range shift from ParticleID Class
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_mu_shift    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_p_shift     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_pi_shift    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_fwd_k_shift     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_mu_shift    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_p_shift     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_pi_shift    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> Bragg_bwd_k_shift     = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+
     std::vector<anab::sParticleIDAlgScores> Chi2_mu         = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()};
     std::vector<anab::sParticleIDAlgScores> Chi2_p         = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()};
     std::vector<anab::sParticleIDAlgScores> Chi2_pi         = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()};
@@ -259,6 +269,15 @@ void UBPID::ParticleId::produce(art::Event & e)
        * widths measured from data and simulation to estimate the likelihood for
        * each hit in a track to have come from each particle species.
        */
+       double shift_fwd_mu = -999.;
+       double shift_fwd_p  = -999.;
+       double shift_fwd_pi = -999.;
+       double shift_fwd_k  = -999.;
+       double shift_bwd_mu = -999.;
+       double shift_bwd_p  = -999.;
+       double shift_bwd_pi = -999.;
+       double shift_bwd_k  = -999.;
+
       Bragg_fwd_mu.at(planenum).fAlgName      = "BraggPeakLLH";
       Bragg_fwd_p.at(planenum).fAlgName       = "BraggPeakLLH";
       Bragg_fwd_pi.at(planenum).fAlgName      = "BraggPeakLLH";
@@ -283,14 +302,14 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p.at(planenum).fAssumedPdg    = 2212;
       Bragg_bwd_pi.at(planenum).fAssumedPdg   = 211;
       Bragg_bwd_k.at(planenum).fAssumedPdg    = 321;
-      Bragg_fwd_mu.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_mu.at(planenum).fAssumedPdg, true, planenum);
-      Bragg_fwd_p.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_p.at(planenum).fAssumedPdg,  true, planenum);
-      Bragg_fwd_pi.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_pi.at(planenum).fAssumedPdg, true, planenum);
-      Bragg_fwd_k.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_k.at(planenum).fAssumedPdg,  true, planenum);
-      Bragg_bwd_mu.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_mu.at(planenum).fAssumedPdg, false, planenum);
-      Bragg_bwd_p.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_p.at(planenum).fAssumedPdg,  false, planenum);
-      Bragg_bwd_pi.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_pi.at(planenum).fAssumedPdg, false, planenum);
-      Bragg_bwd_k.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_k.at(planenum).fAssumedPdg,  false, planenum);
+      Bragg_fwd_mu.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_mu.at(planenum).fAssumedPdg, true, planenum, shift_fwd_mu);
+      Bragg_fwd_p.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_p.at(planenum).fAssumedPdg,  true, planenum, shift_fwd_p);
+      Bragg_fwd_pi.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_pi.at(planenum).fAssumedPdg, true, planenum, shift_fwd_pi);
+      Bragg_fwd_k.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_fwd_k.at(planenum).fAssumedPdg,  true, planenum, shift_fwd_k);
+      Bragg_bwd_mu.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_mu.at(planenum).fAssumedPdg, false, planenum, shift_bwd_mu);
+      Bragg_bwd_p.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_p.at(planenum).fAssumedPdg,  false, planenum, shift_bwd_p);
+      Bragg_bwd_pi.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_pi.at(planenum).fAssumedPdg, false, planenum, shift_bwd_pi);
+      Bragg_bwd_k.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_k.at(planenum).fAssumedPdg,  false, planenum, shift_bwd_k);
       Bragg_fwd_mu.at(planenum).fPlaneID      = c->PlaneID();
       Bragg_fwd_p.at(planenum).fPlaneID       = c->PlaneID();
       Bragg_fwd_pi.at(planenum).fPlaneID      = c->PlaneID();
@@ -299,7 +318,6 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p.at(planenum).fPlaneID       = c->PlaneID();
       Bragg_bwd_pi.at(planenum).fPlaneID      = c->PlaneID();
       Bragg_bwd_k.at(planenum).fPlaneID       = c->PlaneID();
-
       // Special case: MIP-like probability. fAssumedPdg == 0 tells the Bragg
       // algorithm to use the "No-Bragg" theory case
       noBragg_fwd_MIP.at(planenum).fAlgName = "BraggPeakLLH";
@@ -317,6 +335,48 @@ void UBPID::ParticleId::produce(art::Event & e)
       AlgScoresVec.push_back(Bragg_bwd_pi.at(planenum));
       AlgScoresVec.push_back(Bragg_bwd_k.at(planenum));
       AlgScoresVec.push_back(noBragg_fwd_MIP.at(planenum));
+
+      // Objects to store the residual range shift favoured by the likelihood PID
+      Bragg_fwd_mu_shift.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_fwd_p_shift.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_fwd_pi_shift.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_fwd_k_shift.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_bwd_mu_shift.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_bwd_p_shift.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_bwd_pi_shift.at(planenum).fAlgName      = "BraggPeakLLH";
+      Bragg_bwd_k_shift.at(planenum).fAlgName       = "BraggPeakLLH";
+      Bragg_fwd_mu_shift.at(planenum).fVariableType = anab::kNotSet;
+      Bragg_fwd_p_shift.at(planenum).fVariableType  = anab::kNotSet;
+      Bragg_fwd_pi_shift.at(planenum).fVariableType = anab::kNotSet;
+      Bragg_fwd_k_shift.at(planenum).fVariableType  = anab::kNotSet;
+      Bragg_bwd_mu_shift.at(planenum).fVariableType = anab::kNotSet;
+      Bragg_bwd_p_shift.at(planenum).fVariableType  = anab::kNotSet;
+      Bragg_bwd_pi_shift.at(planenum).fVariableType = anab::kNotSet;
+      Bragg_bwd_k_shift.at(planenum).fVariableType  = anab::kNotSet;
+      Bragg_fwd_mu_shift.at(planenum).fAssumedPdg   = 13;
+      Bragg_fwd_p_shift.at(planenum).fAssumedPdg    = 2212;
+      Bragg_fwd_pi_shift.at(planenum).fAssumedPdg   = 211;
+      Bragg_fwd_k_shift.at(planenum).fAssumedPdg    = 321;
+      Bragg_bwd_mu_shift.at(planenum).fAssumedPdg   = 13;
+      Bragg_bwd_p_shift.at(planenum).fAssumedPdg    = 2212;
+      Bragg_bwd_pi_shift.at(planenum).fAssumedPdg   = 211;
+      Bragg_bwd_k_shift.at(planenum).fAssumedPdg    = 321;
+      Bragg_fwd_mu_shift.at(planenum).fValue        = shift_fwd_mu;
+      Bragg_fwd_p_shift.at(planenum).fValue         = shift_fwd_p;
+      Bragg_fwd_pi_shift.at(planenum).fValue        = shift_fwd_pi;
+      Bragg_fwd_k_shift.at(planenum).fValue         = shift_fwd_k;
+      Bragg_bwd_mu_shift.at(planenum).fValue        = shift_bwd_mu;
+      Bragg_bwd_p_shift.at(planenum).fValue         = shift_bwd_p;
+      Bragg_bwd_pi_shift.at(planenum).fValue        = shift_bwd_pi;
+      Bragg_bwd_k_shift.at(planenum).fValue         = shift_bwd_k;
+      Bragg_fwd_mu_shift.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_fwd_p_shift.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_fwd_pi_shift.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_fwd_k_shift.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_bwd_mu_shift.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_bwd_p_shift.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_bwd_pi_shift.at(planenum).fPlaneID      = c->PlaneID();
+      Bragg_bwd_k_shift.at(planenum).fPlaneID       = c->PlaneID();
 
       /**
        * Algorithm 2: Chi2
