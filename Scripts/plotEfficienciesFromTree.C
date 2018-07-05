@@ -20,6 +20,7 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_PIDA_mean->at(i),
       vars->track_likelihood_muoverp->at(i),
       vars->track_likelihood_mipoverp->at(i),
+      vars->track_lnlikelihood_mipoverp->at(i),
       vars->track_likelihood_maxmumipoverp->at(i),
       vars->track_chi2_muminusp->at(i),
       vars->track_Lmu_0to1->at(i),
@@ -71,6 +72,7 @@ std::vector<std::vector<double>> bins = {
                     {40,0,30}, // track_PIDA_mean
                     {60,0,60}, // track_likelihood_muoverp
                     {60,0,60}, // track_likelihood_mipoverp
+                    {60,-10,10}, // track_lnlikelihood_mipoverp
                     {60,0,60}, // track_likelihood_minmumipoverp
                     {50,-400,100}, // track_chi2_muminusp
                     {50,0,1}, // track_Lmu_0to1
@@ -104,6 +106,7 @@ std::vector<std::string> histtitles = {
                     ";PIDa (by mean);",
                     ";(L_{#mu})/(L_{p});",
                     ";(L_{MIP})/(L_{p});",
+                    ";ln(L_{MIP}/L_{p})",
                     ";(L_{#mu/MIP})/(L_{p});",
                     ";#chi^{2}_{#mu}-#chi^{2}_{p};",
                     ";L_{#mu}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
@@ -137,6 +140,7 @@ std::vector<std::string> histnames = {
                   "effpur_pida_mean",
                   "effpur_Lmuoverp",
                   "effpur_Lmipoverp",
+                  "effpur_lnLmipoverp",
                   "effpur_Lmumipoverp",
                   "effpur_chi2muminusp",
                   "effpur_Lmu0to1",
@@ -170,6 +174,7 @@ std::vector<bool> MIPlow = {
                     true, // track_PIDA_mean
                     false, // track_likelihood_muminusp
                     false, // track_likelihood_mipminusp
+                    false, // track_lnlikelihood_mipoverp
                     false, // track_likelihood_minmumipminusp
                     true, // track_chi2_muminusp
                     false, // track_Lmu_0to1
@@ -202,12 +207,14 @@ std::vector<double> cutValues = {
                     -999, // track_PIDA_median
                     12.5, // track_PIDA_mean
                     -999, // track_likelihood_muminusp
-                    1.0, // track_likelihood_mipminusp
+                    2.0, // track_likelihood_mipminusp
+                    1.0, // track_lnlikelihood_mipoverp
                     -999, // track_likelihood_minmumipminusp
                     -90.0, // track_chi2_muminusp
                     -999, // track_Lmu_0to1
                     -999, // track_Lmip_0to1
                     -999, // track_Lpi_0to1
+                    -999, // track_Lk_0to1
                     -999, // track_Lp_0to1
                     -999, // track_Lmumip_0to1
                     -999, // track_Lmumippi_0to1
@@ -295,7 +302,7 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
       }
     }
 
-    
+
 
   } // end loop over entries in tree
 
@@ -305,7 +312,7 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
   for (size_t i_pl=0; i_pl < nplanes; i_pl++){
     for (size_t i_h=0; i_h < nplots; i_h++){
       TCanvas *c1 = new TCanvas();
-      DrawMCEffPur(c1, mc_hists[i_pl][i_h],MIPlow.at(i_h),fout);
+      DrawMCEffPur(c1, mc_hists[i_pl][i_h],MIPlow.at(i_h),cutValues.at(i_h),fout);
       c1->Print(std::string(histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());
       delete c1;
       TCanvas *c2 = new TCanvas();
