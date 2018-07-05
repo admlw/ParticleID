@@ -378,6 +378,15 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_pi_shift.at(planenum).fPlaneID      = c->PlaneID();
       Bragg_bwd_k_shift.at(planenum).fPlaneID       = c->PlaneID();
 
+      AlgScoresVec.push_back(Bragg_fwd_mu_shift.at(planenum));
+      AlgScoresVec.push_back(Bragg_fwd_p_shift.at(planenum));
+      AlgScoresVec.push_back(Bragg_fwd_pi_shift.at(planenum));
+      AlgScoresVec.push_back(Bragg_fwd_k_shift.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_mu_shift.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_p_shift.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_pi_shift.at(planenum));
+      AlgScoresVec.push_back(Bragg_bwd_k_shift.at(planenum));
+
       /**
        * Algorithm 2: Chi2
        */
