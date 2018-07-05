@@ -474,7 +474,21 @@ void UBPID::ParticleId::produce(art::Event & e)
       }
       dEdxtruncmean.at(planenum).fPlaneID = c->PlaneID();
 
+      dQdxtruncmean.at(planenum).fAlgName = "TruncatedMean";
+      dQdxtruncmean.at(planenum).fVariableType = anab::kdQdxtruncmean;
+      if (dQdx.size()>0)
+      {
+        // Convert dQdx vector from double to a float. This is a bad hack because the truncated mean algorithm expects a float as input but dQdx is stored as a vector of doubles
+        std::vector<float> dQdx_float(dQdx.begin(),dQdx.end());
+        // Now calculate truncated mean
+        dQdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dQdx_float, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
+      }
+      dQdxtruncmean.at(planenum).fPlaneID = c->PlaneID();
+
       AlgScoresVec.push_back(dEdxtruncmean.at(planenum));
+      AlgScoresVec.push_back(dQdxtruncmean.at(planenum));
+
+
       /**
        * Algorithm 5: Deposited energy vs energy by range
        * Calculate deposited energy from product of dEdx and trkpitchvec vectors
