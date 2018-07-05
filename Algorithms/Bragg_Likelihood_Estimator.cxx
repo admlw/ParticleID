@@ -47,6 +47,7 @@ namespace particleid{
     endPointFloatLong     = p.get<double>("EndPointFloatLong" , 1.0);
     endPointFloatStepSize = p.get<double>("EndPointFloatStepSize", 0.05);
 
+    checkRange = p.get<bool>("CheckRange", true);
   }
 
   void Bragg_Likelihood_Estimator::printConfiguration(){
@@ -132,11 +133,11 @@ namespace particleid{
 
     TF1 *langaus = new TF1("langaus", landauGaussian, 0, 100, 4);
 
-    /** 
+    /**
      * create landau of correct width, and calculate offset between MPV and mean
      * n.b we want this to be the landau not the landau-gaussian
      */
-     
+
     langaus->SetParameters(landauWidth, 10, 1, gausWidth);
     TF1 *landau = new TF1("landau", "TMath::Landau(x, [0], [1], [2])", 0, 100);
     landau->SetParameters(10, landauWidth, 0);
@@ -185,7 +186,7 @@ namespace particleid{
          * Theory values are only defined up to 30 cm residual Range so we
          * can't compare beyond that
          */
-        if (resrg_i > 30.0 || resrg_i < 0.0) continue;
+        if (checkRange && (resrg_i > 30.0 || resrg_i < 0.0)) continue;
 
         // Set theoretical Landau distribution for given residual range
         langaus->SetParameters(landauWidth,theorypred->Eval(resrg_i,0,"S")-landau_mean_mpv_offset+offset,1, gausWidth);
@@ -201,7 +202,7 @@ namespace particleid{
         }
 
         likelihood += likelihood_i;
-   
+
       } // Loop over i_hit
 
       if (likelihood/n_hits_used > likelihoodNdf){

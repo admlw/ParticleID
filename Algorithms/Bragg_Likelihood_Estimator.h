@@ -43,7 +43,7 @@ namespace particleid{
     void printConfiguration();
     double getLikelihood(std::vector<double> dEdx, std::vector<double> resRange, int particlehypothesis, bool forward, int planenum);
 
-  private:
+  //private:
     std::vector<double> gausWidth_mu;
     std::vector<double> gausWidth_pi;
     std::vector<double> gausWidth_k;
@@ -63,9 +63,9 @@ namespace particleid{
     double endPointFloatShort;
     double endPointFloatLong;
     double endPointFloatStepSize;
-
+    bool checkRange;
   };
-  
+
 }
 
 #endif
