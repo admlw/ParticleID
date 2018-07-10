@@ -9,7 +9,7 @@ BEGIN_PROLOG
 
 particleidvalidconfig:
 {
-  
+
   module_type: "ParticleIdValidationPlots"
 
   ProducerLabels: @local::producerlabels_mcc8_simcalib
@@ -20,7 +20,10 @@ particleidvalidconfig:
 
   IsDataPlotsOnly: false
 
-  IsUBXSecSelected: true 
+  IsUBXSecSelected: true
+
+  # bragg algorithm fcl parameters
+  BraggAlgo: @local::braggalgo_mcc8_simcalib
 }
 
 END_PROLOG

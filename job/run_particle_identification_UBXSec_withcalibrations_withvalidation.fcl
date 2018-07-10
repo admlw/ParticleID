@@ -45,7 +45,7 @@ physics:
       pidcalibration: @local::microboone_calibrationdedx
       simcalibration: @local::simulation_calibration
       pid: @local::particleidconfig
-      
+
     }
 
     analyzers:
@@ -78,6 +78,7 @@ physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib
 
 physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib
+physics.analyzers.pidvalid.BraggAlgo: @local::braggalgo_mcc8_simcalib
 physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_simcalib
 
 services.DetectorClocksService.InheritClockConfig: false

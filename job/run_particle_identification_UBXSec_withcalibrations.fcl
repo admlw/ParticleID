@@ -44,7 +44,7 @@ physics:
       pidcalibration: @local::microboone_calibrationdedx
       simcalibration: @local::simulation_calibration
       pid: @local::particleidconfig
-      
+
     }
 
     stream1: [ out1 ]
