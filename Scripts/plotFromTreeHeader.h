@@ -40,6 +40,7 @@ struct treevars{
   std::vector<double> *track_likelihood_maxmumip;
   std::vector<double> *track_likelihood_muoverp;
   std::vector<double> *track_likelihood_mipoverp;
+  std::vector<double> *track_lnlikelihood_mipoverp;
   std::vector<double> *track_likelihood_maxmumipoverp;
   std::vector<double> *track_Lmu_0to1;
   std::vector<double> *track_Lmip_0to1;
@@ -95,6 +96,7 @@ void settreevars(TTree *intree, treevars *varstoset){
   varstoset->track_likelihood_maxmumip = new std::vector<double>(nplanes);
   varstoset->track_likelihood_muoverp = new std::vector<double>(nplanes);
   varstoset->track_likelihood_mipoverp = new std::vector<double>(nplanes);
+  varstoset->track_lnlikelihood_mipoverp = new std::vector<double>(nplanes);
   varstoset->track_likelihood_maxmumipoverp = new std::vector<double>(nplanes);
   varstoset->track_Lmu_0to1 = new std::vector<double>(nplanes);
   varstoset->track_Lmip_0to1 = new std::vector<double>(nplanes);
@@ -119,16 +121,16 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
   for (int i = 0; i < o->GetNbinsX(); i++){
 
     if (e->GetBinContent(i) != 0){
-  
+
       chi2 += std::pow(o->GetBinContent(i) - e->GetBinContent(i),2)/e->GetBinContent(i);
-   
+
     }
     if (e->GetBinContent(i) != 0 || o->GetBinContent(i) !=0){
-      
+
       dof++;
 
     }
-  
+
   }
 
   std::pair<double,double> returner;
@@ -141,14 +143,14 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 void OverlayChi2(TCanvas *c1, TString e_str, TString o_str){
 
   TH1D* h_e = (TH1D*)c1->GetPrimitive("h_err");
-  TH1D* h_o = (TH1D*)c1->GetPrimitive(((std::string)o_str).c_str());
+  TH1D* h_o = (TH1D*)c1->GetPrimitive(o_str.Data());
 
   std::pair<double,double> chi2 = GetChi2(h_o, h_e);
 
-  TPaveText *pt = new TPaveText(0.17, 0.87, 0.42, 0.92, "NDC");
+  TPaveText *pt = new TPaveText(0.15, 0.87, 0.45, 0.92, "NDC");
   TString chi2string = Form("Chi2/NDF: %.2f/%g", chi2.first, chi2.second);
   pt->SetFillColor(kWhite);
-  pt->AddText(((std::string)chi2string).c_str());
+  pt->AddText(chi2string.Data());
   pt->SetTextSize(0.05);
   pt->Draw("same");
 
@@ -191,6 +193,7 @@ void CalcPIDvars(treevars *vars, bool isScale){
     vars->track_likelihood_maxmumip->at(i_pl) = std::max(vars->track_likelihood_mu->at(i_pl), vars->track_likelihood_mip->at(i_pl));
     vars->track_likelihood_muoverp->at(i_pl) = vars->track_likelihood_mu->at(i_pl) / vars->track_likelihood_p->at(i_pl);
     vars->track_likelihood_mipoverp->at(i_pl) = vars->track_likelihood_mip->at(i_pl) / vars->track_likelihood_p->at(i_pl);
+    vars->track_lnlikelihood_mipoverp->at(i_pl) = TMath::Log(vars->track_likelihood_mipoverp->at(i_pl));
     vars->track_likelihood_maxmumipoverp->at(i_pl) = vars->track_likelihood_maxmumip->at(i_pl) / vars->track_likelihood_p->at(i_pl);
 
     double denom = (vars->track_likelihood_p->at(i_pl)+vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_k->at(i_pl)+vars->track_likelihood_pi->at(i_pl)+vars->track_likelihood_mip->at(i_pl));
@@ -321,7 +324,7 @@ void Fill2DHist(hist2D *hists, double valuex, double valuey, double valuez, int 
   }
 }
 
-void DrawMC(hist1D *hists, double POTScaling){
+void DrawMC(hist1D *hists, double POTScaling, double yrange){
   if (POTScaling == 0.){ // area normalise
     POTScaling = 1./hists->h_all->Integral();
     hists->h_all->GetYaxis()->SetTitle("No. tracks (area normalised)");
@@ -351,15 +354,32 @@ void DrawMC(hist1D *hists, double POTScaling){
   hs->Add(hists->h_k);
   hs->Add(hists->h_other);
 
-  hists->h_all->SetMaximum(hists->h_all->GetMaximum()*1.2);
+  if (yrange == -999){
+    hists->h_all->SetMaximum((hists->h_all->GetMaximum())*1.2);
+  }
+  else{
+    hists->h_all->SetMaximum(yrange);
+  }
   hists->h_all->SetMinimum(0);
   hists->h_all->Draw("hist"); // Draw this one first because it knows about the axis titles
   hs->Draw("same hist");
   hists->h_all->Draw("same E2"); // Draw it again so errors are on top
+
+  bool legendleft=false;
+  int nbinsx = hists->h_all->GetXaxis()->GetNbins();
+  for (int i_bin=(int)(nbinsx/2); i_bin < nbinsx+1; i_bin++){
+    if (hists->h_all->GetBinContent(i_bin)>0.6*hists->h_all->GetMaximum()){
+      legendleft=true;
+    }
+  }
+  if (legendleft){
+    hists->l->SetX1(0.19);
+    hists->l->SetX2(0.41);
+  }
   hists->l->Draw();
 }
 
-void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double OffBeamScaling){
+void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double OffBeamScaling, double yrange){
   // Note that there are no area-normalised options here because I'm not sure that makes sense
   hists->h_all->GetYaxis()->SetTitle("No. tracks (POT normalised)");
 
@@ -401,11 +421,29 @@ void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double
   h_err->SetFillColor(kBlack);
   h_err->SetFillStyle(3345);
 
-  hists->h_all->SetMaximum((hists->h_all->GetMaximum()+offbeam->h_all->GetMaximum())*1.2);
+  if (yrange == -999){
+    hists->h_all->SetMaximum((hists->h_all->GetMaximum()+offbeam->h_all->GetMaximum())*1.2);
+  }
+  else{
+    hists->h_all->SetMaximum(yrange);
+  }
   hists->h_all->SetMinimum(0);
   hists->h_all->Draw("hist"); // Draw this one first because it knows about the axis titles
   hs->Draw("same hist");
   h_err->Draw("same E2"); // Draw it again so errors are on top
+
+  bool legendleft=false;
+  int nbinsx = hists->h_all->GetXaxis()->GetNbins();
+  for (int i_bin=(int)(nbinsx/2); i_bin < nbinsx+1; i_bin++){
+    if (hists->h_all->GetBinContent(i_bin)>0.6*hists->h_all->GetMaximum()){
+      legendleft=true;
+    }
+  }
+  if (legendleft){
+    //std::cout << "Putting legend on the left" << std::endl;
+    hists->l->SetX1(0.19);
+    hists->l->SetX2(0.41);
+  }
   hists->l->AddEntry(offbeam->h_all,"Data (off-beam)","f");
   hists->l->Draw();
 }
@@ -448,7 +486,7 @@ void OverlayOnBeamData(TCanvas *c, hist1D *onbeam){
 /**
  * Function to perform template fit and draw result to canvas
  */
-void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double offbeamscaling, double POTscaling){
+void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double offbeamscaling, double POTscaling, double yrange){
 
   /** Scale offbeam to onbeam */
   offb_hists->h_all->Sumw2();
@@ -554,6 +592,7 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
 
   hTotal->SetFillColor(kBlack);
   hTotal->SetFillStyle(3345);
+  hTotal->SetMarkerSize(0);
 
   THStack* hs = new THStack();
   hs->Add(mchists->h_p);
@@ -562,27 +601,44 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   if (isK) hs->Add(mchists->h_k);
   hs->Add(mchists->h_other);
 
-
-  mchists->h_all->SetMaximum(data->GetMaximum()*1.3);
+  if (yrange == -999){
+    mchists->h_all->SetMaximum(data->GetMaximum()*1.3);
+  }
+  else{
+    mchists->h_all->SetMaximum(yrange);
+  }
   mchists->h_all->SetFillColor(kWhite);
   mchists->h_all->SetLineColor(kWhite);
+  mchists->h_all->SetMarkerSize(0.);
   mchists->h_all->Draw();
   hs->Draw("histsame");
   hTotal->Draw("e2same");
   data->SetMarkerStyle(20);
   data->SetMarkerSize(0.6);
   data->Draw("same");
-  
+
   std::pair<double,double> chi2 = GetChi2(data, hTotal);
 
-  TPaveText *pt = new TPaveText(0.17, 0.87, 0.42, 0.92, "NDC");
+  TPaveText *pt = new TPaveText(0.15, 0.87, 0.45, 0.92, "NDC");
   TString chi2string = Form("Chi2/NDF: %.2f/%g", chi2.first, chi2.second);
   pt->SetFillColor(kWhite);
-  pt->AddText(((std::string)chi2string).c_str());
+  pt->AddText(chi2string.Data());
   pt->SetTextSize(0.05);
   pt->Draw("same");
 
-
+  bool legendleft=false;
+  int nbinsx = hTotal->GetXaxis()->GetNbins();
+  for (int i_bin=(int)(nbinsx/2); i_bin < nbinsx+1; i_bin++){
+    if (hTotal->GetBinContent(i_bin)>0.6*hTotal->GetMaximum()){
+      legendleft=true;
+    }
+  }
+  if (legendleft){
+    mchists->l->SetX1(0.19);
+    mchists->l->SetX2(0.41);
+  }
+  mchists->l->AddEntry(data,"Data (on beam - off beam)","lp");
+  mchists->l->Draw();
 }
 
 void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *hists, bool MIPlow, double cut_value, double twodvar1, double twodvar2, std::vector<string> var_names, TFile *fout = nullptr){
@@ -607,9 +663,9 @@ void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *h
 
 
   for (int i_h=0; i_h<histstoeval.size(); i_h++){
-    TH2D *heff = nullptr; 
-    TH2D *hpur = nullptr; 
-    TH2D *heffpur = nullptr; 
+    TH2D *heff = nullptr;
+    TH2D *hpur = nullptr;
+    TH2D *heffpur = nullptr;
 
     //heff->SetTitle(histtitles.at(i_h).c_str());
 
@@ -618,7 +674,7 @@ void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *h
     for (int i_bin=1; i_bin <= histstoeval.at(i_h)->GetZaxis()->GetNbins(); i_bin++){
 
       if (std::abs(histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(i_bin) - cut_value) < temp){
-        temp = std::abs(histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(i_bin) - cut_value); 
+        temp = std::abs(histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(i_bin) - cut_value);
         binVal = i_bin;
       }
 
@@ -630,7 +686,7 @@ void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *h
     double yhigh = histstoeval.at(i_h)->GetYaxis()->GetBinLowEdge(histstoeval.at(i_h)->GetNbinsY()+1);
     double zlow = histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(1);
     double zhigh = histstoeval.at(i_h)->GetZaxis()->GetBinLowEdge(histstoeval.at(i_h)->GetNbinsZ()+1);
-  
+
     TH2D* eff_denom = nullptr;
     TH2D* eff_num   = nullptr;
     TH2D* pur_denom = nullptr;
@@ -643,7 +699,7 @@ void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *h
 
       histstoeval.at(i_h)->GetZaxis()->SetRangeUser(zlow, zhigh);
       eff_denom = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("eff_denom");
-      
+
       histstoeval.at(i_h)->GetZaxis()->SetRangeUser(zlow, cut_value);
       eff_num = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("eff_num");
       pur_num = (TH2D*)histstoeval.at(i_h)->Project3D("xy")->Clone("pur_num");
@@ -698,7 +754,7 @@ void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *h
 }
 
 
-void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr){
+void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, double cutval, TFile *fout = nullptr){
   std::vector<TH1D*> histstoeval = {
     hists->h_mu,
     hists->h_pi,
@@ -719,6 +775,11 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
 
   TLegend *l;
 
+  // Print out efficiency and purity at a given cut value to a txt file
+  ofstream outtxtfile;
+  outtxtfile.open("effpuratgivencutvals.txt",std::ios::app);
+  if (!outtxtfile.is_open()) std::cout << "[WARNING] Unable to open txt file to save muon/proton efficiency and purity at given cut values." << std::endl;
+
   for (int i_h=0; i_h<histstoeval.size(); i_h++){
     TH1D *heff = (TH1D*)hists->h_all->Clone("heff");
     TH1D *hpur = (TH1D*)hists->h_all->Clone("hpur");
@@ -737,9 +798,10 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
 
       double eff, pur;//, efferr, purerr;
       if ((MIPlow && i_h != 2) || (!MIPlow && i_h ==2)){ // integrate from the bottom
-        double selected_i = histstoeval.at(i_h)->Integral(1,i_bin);
-        double total_i = histstoeval.at(i_h)->Integral();
-        double selected_all = hists->h_all->Integral(1,i_bin);
+      // Assume cut is placed at the high edge of the bin (so includes this bin if integrating down)
+        double selected_i = histstoeval.at(i_h)->Integral(0,i_bin);
+        double total_i = histstoeval.at(i_h)->Integral(0,histstoeval.at(i_h)->GetXaxis()->GetNbins()+1);
+        double selected_all = hists->h_all->Integral(0,i_bin);
 
         eff = selected_i/total_i;
         pur = selected_i/selected_all;
@@ -748,9 +810,10 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
         if (total_i==0) eff = 0;
       }
       else{ // integrate up to the top
-        double selected_i = histstoeval.at(i_h)->Integral(i_bin,histstoeval.at(i_h)->GetXaxis()->GetNbins());
-        double total_i = histstoeval.at(i_h)->Integral();
-        double selected_all = hists->h_all->Integral(i_bin,histstoeval.at(i_h)->GetXaxis()->GetNbins());
+      // Assume cut is placed at the low edge of the bin (so doesn't include this bin if integrating up)
+        double selected_i = histstoeval.at(i_h)->Integral(i_bin+1,histstoeval.at(i_h)->GetXaxis()->GetNbins()+1);
+        double total_i = histstoeval.at(i_h)->Integral(0,histstoeval.at(i_h)->GetXaxis()->GetNbins()+1);
+        double selected_all = hists->h_all->Integral(i_bin+1,histstoeval.at(i_h)->GetXaxis()->GetNbins()+1);
 
         eff = selected_i/total_i;
         pur = selected_i/selected_all;
@@ -819,8 +882,24 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, TFile *fout = nullptr)
       hpur->Write(TString::Format("hpur_%s",name.Data()).Data());
       heffpur->Write(TString::Format("heffpur_%s",name.Data()).Data());
     }
-  }
+    // Print out efficiency and purity at a given cut value
+    if (cutval!=-999){
+      if (histtitles.at(i_h)=="True muons"){
+        outtxtfile << "\n" << hists->h_mu->GetName() << "\n";
+        outtxtfile << "Cut value = " << cutval << "\n";
+        outtxtfile << "    Muon Efficiency = " << heff->Interpolate(cutval) << "\n";
+        outtxtfile << "         Purity = " << hpur->Interpolate(cutval) << "\n";
+        outtxtfile << "         Eff*Pur = " << heffpur->Interpolate(cutval) << "\n";
+      }
+      else if (histtitles.at(i_h)=="True protons"){
+        outtxtfile << "    Proton Efficiency = " << heff->Interpolate(cutval) << "\n";
+        outtxtfile << "           Purity = " << hpur->Interpolate(cutval) << "\n";
+        outtxtfile << "           Eff*Pur = " << heffpur->Interpolate(cutval) << "\n";
+      }
+    }
 
+  }
+  outtxtfile.close();
 }
 
 // void SaveHists(hist1D *hists, TFile *fout){

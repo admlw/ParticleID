@@ -4,6 +4,10 @@ std::vector<double> marker_sizes = {0.4,0.4,0.5};
 void OverlayEfficiencyPlots(std::vector<std::string> inputfiles, std::vector<std::string> filedescriptions={}){
 
   gStyle->SetOptStat(0);
+  gStyle->SetTitleX(0.5);
+  gStyle->SetTitleAlign(23);
+  gStyle->SetOptTitle(1);
+  gStyle->SetTitleBorderSize(0.);
 
   // Check size of inputfiles vector
   std::cout << "Overlaying efficiency/purity curves from " << inputfiles.size() << " files." << std::endl;
@@ -52,6 +56,7 @@ void OverlayEfficiencyPlots(std::vector<std::string> inputfiles, std::vector<std
     for (size_t i_file=0; i_file < inputfiles.size(); i_file++){
 
       TFile *ftmp = TFile::Open(inputfiles.at(i_file).c_str(),"open");
+      //TFile *ftmp = new TFile(inputfiles.at(i_file).c_str(),"open");
 
       // Loop over particles (mu, pi, p)
       for (size_t i_p=0; i_p<particles.size(); i_p++){
@@ -67,6 +72,10 @@ void OverlayEfficiencyPlots(std::vector<std::string> inputfiles, std::vector<std
         if (!hpur) std::cout << "Did not find hpur in file " << inputfiles.at(i_file) << std::endl;
         if (!heffpur) std::cout << "Did not find heffpur in file " << inputfiles.at(i_file) << std::endl;
 
+        heff->SetDirectory(0);
+        hpur->SetDirectory(0);
+        heffpur->SetDirectory(0);
+
         if (i_p==1 && i_file==0){
           double legendy=0.;
           double legendpts=0.;
@@ -78,14 +87,23 @@ void OverlayEfficiencyPlots(std::vector<std::string> inputfiles, std::vector<std
           }
 
           legendy = legendy/legendpts;
-          if (legendy<0.6) l = new TLegend(0.5,0.6,0.88,0.88);
-          else l = new TLegend(0.5,0.3,0.88,0.6);
+          if (legendy<0.6) l = new TLegend(0.5,0.6,0.82,0.88);
+          else l = new TLegend(0.5,0.3,0.82,0.6);
           l->SetTextFont(132);
           l->SetLineColor(kWhite);
           l->SetFillColor(kWhite);
-          l->AddEntry(heff,"Efficiency","l");
-          l->AddEntry(hpur,"Purity","l");
-          l->AddEntry(heffpur,"Efficiency #times Purity","l");
+
+          TH1D *heff_clone = (TH1D*)heff->Clone("heff_clone");
+          TH1D *hpur_clone = (TH1D*)hpur->Clone("hpur_clone");
+          TH1D *heffpur_clone = (TH1D*)heffpur->Clone("heffpur_clone");
+
+          heff_clone->SetDirectory(0);
+          hpur_clone->SetDirectory(0);
+          heffpur_clone->SetDirectory(0);
+
+          l->AddEntry(heff_clone,"Efficiency","l");
+          l->AddEntry(hpur_clone,"Purity","l");
+          l->AddEntry(heffpur_clone,"Efficiency #times Purity","l");
         }
 
         int markerstyle = 20;
@@ -97,18 +115,21 @@ void OverlayEfficiencyPlots(std::vector<std::string> inputfiles, std::vector<std
 
         heff->SetFillStyle(0);
         heff->SetLineColor(kRed);
+        heff->SetLineWidth(1);
         heff->SetMarkerColor(kRed);
         heff->SetMarkerStyle(markerstyle);
         heff->SetMarkerSize(markersize);
 
         hpur->SetFillStyle(0);
         hpur->SetLineColor(kBlue);
+        hpur->SetLineWidth(1);
         hpur->SetMarkerColor(kBlue);
         hpur->SetMarkerStyle(markerstyle);
         hpur->SetMarkerSize(markersize);
 
         heffpur->SetFillStyle(0);
         heffpur->SetLineColor(kBlack);
+        heffpur->SetLineWidth(1);
         heffpur->SetMarkerColor(kBlack);
         heffpur->SetMarkerStyle(markerstyle);
         heffpur->SetMarkerSize(markersize);
@@ -126,28 +147,23 @@ void OverlayEfficiencyPlots(std::vector<std::string> inputfiles, std::vector<std
           hpur->Draw("same p");
           heffpur->Draw("same p");
         }
-        if (i_p==0){
+
+        if (i_p==1){
+          char *legentry = (char*)TString::Format("File %d",(int)i_file).Data();
+          if (filedescriptions.size()!=0){
+            legentry = (char*)filedescriptions.at(i_file).c_str();
+          }
+
           if (i_file==0){
-            if (filedescriptions.size()==0){
-              l->AddEntry(heffpur,TString::Format("File %d",(int)i_file).Data(),"pl");
-            }
-            else{
-              l->AddEntry(heffpur,filedescriptions.at(i_file).c_str(),"pl");
-            }
+            l->AddEntry(heffpur,legentry,"lp");
           }
           else{
-            if (filedescriptions.size()==0){
-              l->AddEntry(heffpur,TString::Format("File %d",(int)i_file).Data(),"p");
-            }
-            else{
-              l->AddEntry(heffpur,filedescriptions.at(i_file).c_str(),"p");
-            }
+            l->AddEntry(heffpur,legentry,"p");
           }
         }
-
       } // end loop over particles (i_p)
 
-      //ftmp->Close();
+      ftmp->Close();
 
     } // end loop over input files (i_file)
 

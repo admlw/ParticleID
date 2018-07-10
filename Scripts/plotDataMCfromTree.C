@@ -20,6 +20,7 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_PIDA_median->at(i),
       vars->track_likelihood_muoverp->at(i),
       vars->track_likelihood_mipoverp->at(i),
+      vars->track_lnlikelihood_mipoverp->at(i),
       vars->track_likelihood_maxmumipoverp->at(i),
       vars->track_chi2_muminusp->at(i),
       vars->track_Lmu_0to1->at(i),
@@ -29,6 +30,7 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_Lk_0to1->at(i),
       vars->track_Lmumip_0to1->at(i),
       vars->track_Lmumippi_0to1->at(i),
+      vars->track_Lmumip_0to1_nopionkaon->at(i),
       vars->track_Lmumip_0to1_nopionkaon->at(i),
       vars->track_Lmuovermip->at(i),
       vars->track_Lmumipoverpi->at(i),
@@ -71,6 +73,7 @@ std::vector<std::vector<double>> bins = {
                     {40,0,30}, // track_PIDA_median
                     {60,0,60}, // track_likelihood_muoverp
                     {60,0,60}, // track_likelihood_mipoverp
+                    {60,-10,10}, // track_lnlikelihood_mipoverp
                     {60,0,60}, // track_likelihood_minmumipoverp
                     {50,-400,100}, // track_chi2_muminusp
                     {50,0,1}, // track_Lmu_0to1
@@ -81,6 +84,7 @@ std::vector<std::vector<double>> bins = {
                     {50,0,1}, // track_Lmumip_0to1
                     {50,0,1}, // track_Lmumippi_0to1
                     {50,0,1}, // track_Lmumip_0to1_nopionkaon
+                    {50,0,1}, // track_Lmumip_0to1_nopionkaon_zoom
                     {50,0,3}, // track_Lmuovermip,
                     {50,0,3}, // track_Lmumipoverpi,
                     {50,-150,150}, // track_depE_minus_rangeE_mu
@@ -104,6 +108,7 @@ std::vector<std::string> histtitles = {
                     ";PIDa (by median);",
                     ";(L_{#mu})/(L_{p});",
                     ";(L_{MIP})/(L_{p});",
+                    ";ln(L_{MIP}/L_{p});",
                     ";(L_{#mu/MIP})/(L_{p});",
                     ";#chi^{2}_{#mu}-#chi^{2}_{p};",
                     ";L_{#mu}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
@@ -113,6 +118,7 @@ std::vector<std::string> histtitles = {
                     ";L_{k}/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
                     ";(L_{#mu}+L_{MIP}+L_{#pi})/(L_{#mu}+L_{MIP}+L_{#pi}+L_{p}+L_{K});",
+                    ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{p});",
                     ";(L_{#mu}+L_{MIP})/(L_{#mu}+L_{MIP}+L_{p});",
                     ";(L_{#mu}/L_{MIP});",
                     ";(L_{#mu/MIP}/L_{#pi});",
@@ -137,6 +143,7 @@ std::vector<std::string> histnames = {
                   "pida_median",
                   "Lmuoverp",
                   "Lmipoverp",
+                  "lnLmipoverp",
                   "Lmumipoverp",
                   "chi2muminusp",
                   "Lmu0to1",
@@ -147,10 +154,47 @@ std::vector<std::string> histnames = {
                   "Lmumip0to1",
                   "Lmumippi0to1",
                   "Lmumip0to1nopionkaon",
+                  "Lmumip0to1nopionkaon_zoom",
                   "Lmuovermip",
                   "Lmumipoverpi",
                   "depErangeEmu",
                   "depErangeEp"
+                };
+
+// Set y-axis range to zoom in if we need to
+// -999 means no zoom
+std::vector<double> yrange = {
+                  -999, // track_likelihood_p
+                  -999, // track_likelihood_mu
+                  -999, // track_likelihood_pi
+                  -999, // track_likelihood_k
+                  -999, // track_likelihood_mip
+                  -999, // track_likelihood_minmumip
+                  -999, // track_chi2mu
+                  -999, // track_chi2p
+                  -999, // track_chi2pi
+                  -999, // track_chi2k
+                  -999, // track_PIDA_kde
+                  -999, // track_PIDA_mean
+                  -999, // track_PIDA_median
+                  -999, // track_likelihood_muoverp
+                  -999, // track_likelihood_mipoverp
+                  -999, // track_lnlikelihood_mipoverp
+                  -999, // track_likelihood_minmumipoverp
+                  -999, // track_chi2_muminusp
+                  -999, // track_Lmu_0to1
+                  -999, // track_Lmip_0to1
+                  -999, // track_Lpi_0to1
+                  -999, // track_Lp_0to1
+                  -999, // track_Lk_0to1
+                  -999, // track_Lmumip_0to1
+                  -999, // track_Lmumippi_0to1
+                  -999, // track_Lmumip_0to1_nopionkaon
+                  1000, // track_Lmumip_0to1_nopionkaon_zoom
+                  -999, // track_Lmuovermip,
+                  -999, // track_Lmumipoverpi,
+                  -999, // track_depE_minus_rangeE_mu
+                  -999 // track_depE_minus_rangeE_p
                 };
 
 // ---------------------------------------------------- //
@@ -287,7 +331,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
     for (size_t i_h=0; i_h < nplots; i_h++){
       TCanvas *c1 = new TCanvas();
       if (onminusoffbeam && templatefit == false){
-        DrawMC(mc_hists[i_pl][i_h],POTscaling);
+        DrawMC(mc_hists[i_pl][i_h],POTscaling,yrange.at(i_h));
         if (f_onbeam && f_offbeam){
           OverlayOnMinusOffData(c1,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling);
           TString e_str("h_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
@@ -296,18 +340,18 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
         }
       }
       else if (onminusoffbeam && templatefit == true){
-        TemplateFit(mc_hists[i_pl][i_h], onb_hists[i_pl][i_h], offb_hists[i_pl][i_h], offbeamscaling, POTscaling);
+        TemplateFit(mc_hists[i_pl][i_h], onb_hists[i_pl][i_h], offb_hists[i_pl][i_h], offbeamscaling, POTscaling,yrange.at(i_h));
       }
       else{
         if (f_onbeam && f_offbeam){
-          DrawMCPlusOffbeam(mc_hists[i_pl][i_h], offb_hists[i_pl][i_h], POTscaling, offbeamscaling);
+          DrawMCPlusOffbeam(mc_hists[i_pl][i_h], offb_hists[i_pl][i_h], POTscaling, offbeamscaling,yrange.at(i_h));
           OverlayOnBeamData(c1, onb_hists[i_pl][i_h]);
           TString e_str("h_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
           OverlayChi2(c1, e_str, o_str);
         }
         else{
-          DrawMC(mc_hists[i_pl][i_h],POTscaling);
+          DrawMC(mc_hists[i_pl][i_h],POTscaling,yrange.at(i_h));
         }
       }
       c1->Print(std::string(histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());

@@ -15,12 +15,12 @@ void FitLandauGaus(std::string filename, bool fixGaus=false)
   // All tracks
   TCanvas *c1 = new TCanvas();
 
-  TH1D *hdEdx_all = (TH1D*)f->Get("hdEdx_all_plane2");
+  TH1D *hdEdx_all = (TH1D*)f->Get("hdEdx_all_plane2_BNB");
   hdEdx_all->GetXaxis()->SetRangeUser(0,10);
   langaus->SetParameters(0.2,1.7,1000,0.1);
   // Uncomment for data fit
-  //langaus->FixParameter(0,0.12);
-  hdEdx_all->Fit(langaus,"","",0.,10.);
+  langaus->FixParameter(0,0.09);
+  hdEdx_all->Fit(langaus,"","",1.,10.);
   hdEdx_all->Draw();
   hdEdx_all->Write("hdEdx_all");
   TF1 *fit_hdEdx_all = (TF1*)langaus->Clone("fit_hdEdx_all");
@@ -39,7 +39,7 @@ void FitLandauGaus(std::string filename, bool fixGaus=false)
   if (hdEdx_Muon->Integral() > 0){
     hdEdx_Muon->GetXaxis()->SetRangeUser(0,10);
     TCanvas *c2 = new TCanvas();
-    hdEdx_Muon->Fit(langaus,"","",0.,10.);
+    hdEdx_Muon->Fit(langaus,"","",1.,10.);
     hdEdx_Muon->Draw();
     hdEdx_Muon->Write("hdEdx_Muon");
     TF1 *fit_hdEdx_Muon = (TF1*)langaus->Clone("fit_hdEdx_Muon");
