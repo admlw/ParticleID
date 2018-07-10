@@ -75,6 +75,7 @@ physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::UBXSec"
 physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNucalo::UBXSec"
 
 physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_UBXSec_uncalib_simcalib_data
+physics.producers.simcalibration.IsSimulationSmearing: false
 
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib_data
 physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
