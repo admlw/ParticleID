@@ -61,6 +61,8 @@ class UBPID::CalibrateSimulatedData : public art::EDProducer {
     std::string fCaloLabel;
     std::string fTrackLabel;
     bool fIsSimSmear;
+    bool fIsSetSeed;
+    int fRandomSeed;
 
     std::vector<double> fSimGausSmearWidth;
 
@@ -78,6 +80,8 @@ UBPID::CalibrateSimulatedData::CalibrateSimulatedData(fhicl::ParameterSet const 
   fTrackLabel = p_labels.get< std::string > ("TrackLabel");
   fIsSimSmear = p.get< bool > ("IsSimulationSmearing");
   fSimGausSmearWidth = p.get< std::vector<double> > ("SimulationGausSmearWidth");
+  fIsSetSeed = p.get< bool > ("IsSetSeed");
+  fRandomSeed = p.get< int > ("RandomSeed");
 
   produces< std::vector<anab::Calorimetry> >();
   produces< art::Assns< recob::Track, anab::Calorimetry> >();
@@ -97,8 +101,23 @@ void UBPID::CalibrateSimulatedData::produce(art::Event & e)
 
   bool isData = e.isRealData();
 
+  // get seed
+  int run = e.run();
+  int sub_run = e.subRun();
+  int event = e.event();
+
   // setup random 
-  TRandom3 r(0);
+  TRandom3 r;
+  
+  if (fIsSetSeed){
+    r.SetSeed(fRandomSeed);
+  }
+  else{
+    std::string randomSeedString =  Form("%i%i%i", event, sub_run, run);
+    r.SetSeed(std::atoi(randomSeedString.c_str()));
+  }
+  
+  std::cout << "[CalibrateSimulatedData] Run " << run << " SubRun " << sub_run << " Event " << event << std::endl;
   std::cout << "[CalibrateSimulatedData] The random number seed is " << r.GetSeed() << std::endl;
 
   std::unique_ptr< std::vector<anab::Calorimetry> > calorimetryCollection( new std::vector<anab::Calorimetry> );
@@ -134,15 +153,13 @@ void UBPID::CalibrateSimulatedData::produce(art::Event & e)
       }
 
       std::vector<double> dEdx = calo->dEdx();
-      std::vector<double> resRange = calo->ResidualRange();
-      std::vector<double> trkpitchvec = calo->TrkPitchVec();
 
       /**
        * If this is simulated data, then we want to smear the dE/dx values
        * by a gaussian with a width defined in fcl
        */
 
-      if (!isData && fIsSimSmear){
+      if (isData == false && fIsSimSmear == true){
 
         for (size_t i = 0; i < dEdx.size(); i++){
 
@@ -158,10 +175,10 @@ void UBPID::CalibrateSimulatedData::produce(art::Event & e)
           calo->KineticEnergy(),
           dEdx,
           calo->dQdx(),
-          resRange,
+          calo->ResidualRange(),
           calo->DeadWireResRC(),
           calo->Range(),
-          calo->TrkPitchC(),
+          calo->TrkPitchVec(),
           calo->PlaneID()
           );
 
