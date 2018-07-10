@@ -215,6 +215,7 @@ void UBPID::ParticleId::produce(art::Event & e)
     std::vector<anab::sParticleIDAlgScores> PIDAval_kde    = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
     std::vector<anab::sParticleIDAlgScores> dEdxtruncmean  = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
+    std::vector<anab::sParticleIDAlgScores> dQdxtruncmean  = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
     std::vector<anab::sParticleIDAlgScores> trk_depE       = {anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores(), anab::sParticleIDAlgScores()} ;
 
@@ -234,6 +235,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       }
 
       std::vector<double> dEdx = calo->dEdx();
+      std::vector<double> dQdx = calo->dQdx();
       std::vector<double> resRange = calo->ResidualRange();
       std::vector<double> trkpitchvec = calo->TrkPitchVec();
 

@@ -59,6 +59,7 @@
 // Algorithms
 #include "uboone/ParticleID/Algorithms/FiducialVolume.h"
 #include "uboone/ParticleID/Algorithms/dQdxSeparatorMarco.h"
+#include "uboone/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
 
 // cpp
 #include <vector>
@@ -100,7 +101,7 @@ class ParticleIdValidationPlots : public art::EDAnalyzer {
     std::string fCaloTrackAssns;
     std::string fHitTruthAssns;
     std::string fPIDLabel;
-    std::string fPIDLabelChi2;
+    //std::string fPIDLabelChi2;
     int fNHitsForTrackDirection;
 
     bool isData;
@@ -236,7 +237,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   fCaloTrackAssns = p_labels.get<std::string>("CaloTrackAssn", "pandoraNucali::McRecoStage2");
   fHitTruthAssns = p_labels.get<std::string>("HitTruthAssn","crHitRemovalTruthMatch::McRecoStage2");
   fPIDLabel = p_labels.get<std::string>("ParticleIdLabel");
-  fPIDLabelChi2 = p_labels.get<std::string>("ParticleIdChi2Label");
+  //fPIDLabelChi2 = p_labels.get<std::string>("ParticleIdChi2Label");
   fNHitsForTrackDirection = p.get<int>("NHitsForTrackDirection");
 
   fv = fid.setFiducialVolume(fv, p_fv);
@@ -244,6 +245,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
 
   braggcalc.configure(p_bragg);
   braggcalc.checkRange=false;
+  braggcalc.nHitsToDrop = 0;
   braggcalc.printConfiguration();
 
   std::cout << "[ParticleIdValidation] >> Use only UBXSec TPCObj-tracks? " << fIsUBXSecSelected << std::endl;
@@ -253,7 +255,7 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
   std::cout << "[ParticleIDValidation] >> Hit-truth assns: " << fHitTruthAssns << std::endl;
   std::cout << "[ParticleIDValidation] >> Calo-track assns: " << fCaloTrackAssns << std::endl;
   std::cout << "[ParticleIDValidation] >> ParticleID label: " << fPIDLabel << std::endl;
-  std::cout << "[ParticleIDValidation] >> ParticleID Chi2 label: " << fPIDLabelChi2 << std::endl;
+  //std::cout << "[ParticleIDValidation] >> ParticleID Chi2 label: " << fPIDLabelChi2 << std::endl;
   std::cout << "[ParticleIDValidation] >> NHits for track direction: " << fNHitsForTrackDirection << std::endl;
 
 }
@@ -372,7 +374,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_likelihood_shift_bwd_p.resize(3,-999.);
     track_likelihood_shift_bwd_pi.resize(3,-999.);
     track_likelihood_shift_bwd_k.resize(3,-999.);
-    track_likelihood_shift_best.resize(3,-999.);
     track_Chi2Muon.resize(3,-999.);
     track_Chi2Proton.resize(3, -999.);
     track_Chi2Kaon.resize(3, -999.);
@@ -677,7 +678,6 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       } // if fAlgName = BraggPeakLLH
 
      if (AlgScore.fAlgName == "BraggPeakLLH_shift"){
-
        if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_fwd){
          if (AlgScore.fAssumedPdg == 13)   track_likelihood_shift_fwd_mu.at(planeid) = AlgScore.fValue;
          if (AlgScore.fAssumedPdg == 2212) track_likelihood_shift_fwd_p.at(planeid) =  AlgScore.fValue;
@@ -720,34 +720,19 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       /**
        * Algorithm 4: truncated dE/dx versus residual range
        */
+       // dQdx needs to be multiplied by a constant factor to convert from ADC to e/cm
+       // Multiply MC by 198 and data by 243
+       double dQdxcalibval = 198.;
+       if (isData){
+         dQdxcalibval = 243.;
+       }
 
       if (AlgScore.fAlgName == "TruncatedMean"){
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kdEdxtruncmean) track_dEdx.at(planeid) = AlgScore.fValue;
-        if (anab::kVariableType(AlgScore.fVariableType) == anab::kdQdxtruncmean) track_dQdx.at(planeid) = AlgScore.fValue;
+        if (anab::kVariableType(AlgScore.fVariableType) == anab::kdQdxtruncmean) track_dQdx.at(planeid) = AlgScore.fValue * dQdxcalibval;
         if (anab::kVariableType(AlgScore.fVariableType) == anab::kTrackLength) trklen = AlgScore.fValue;
       }
-
-      // Evaluate cut: is the track classed as a muon?
-      // Only evaluate for plane 2
-      track_dQdxtruncmeanvslength_isMuon=false;
-      if (planeid == 2){
-        // First: all long tracks are MIPs
-        if (trklen > 1000){
-          track_dQdxtruncmeanvslength_isMuon=true;
-        }
-
-        // Now evaluate Marco's cut
-        int l = std::round(trklen);
-        double dqdx_cut = _dqdx_cutvals.at(l);
-
-        std::cout << "[MIPConsistencyCheck_Marco] Track length is " << trklen << ", dqdx_cut is " << dqdx_cut << std::endl;
-        std::cout << "[MIPConsistencyCheck_Marco] \t Truncated mean dQ/dx for candidate is: " << track_dQdx.at(planeid) << std::endl;
-        std::cout << "[MIPConsistencyCheck_Marco] \t MIP consistent ? : " << (track_dQdx.at(planeid) <= dqdx_cut ? "YES" : "NO") << std::endl;
-
-        if (track_dQdx.at(planeid) <= dqdx_cut){
-          track_dQdxtruncmeanvslength_isMuon = true;
-        }
-      }
+      //std::cout << "planeid = " << planeid << ", trklen = " << trklen << ", dQdx = " << track_dQdx.at(planeid) << std::endl;
 
       /**
        * Algorithm 5: Deposited energy versus residual range
@@ -762,6 +747,37 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       }
     } // Loop over AlgScoresVec
 
+
+    // Evaluate cut: is the track classed as a muon?
+    // Only evaluate for plane 2
+    track_dQdxtruncmeanvslength_isMuon=false;
+    std::cout << "plane 2 trklen = " << trklen << ", dQdx = " << track_dQdx.at(2) << std::endl;
+    // First: all long tracks are MIPs
+    int l = std::round(trklen);
+    if (l<0){
+      track_dQdxtruncmeanvslength_isMuon=false;
+    }
+    else{
+      if (l >= 1000){
+        track_dQdxtruncmeanvslength_isMuon=true;
+      }
+      else{
+        // Now evaluate Marco's cut
+        double dqdx_cut = _dqdx_cutvals.at(l);
+
+        std::cout << "dqdx_cut = " << dqdx_cut << std::endl;
+
+        if (track_dQdx.at(2) <= dqdx_cut && track_dQdx.at(2)!=-999){
+          track_dQdxtruncmeanvslength_isMuon = true;
+        }
+
+        std::cout << "[ParticleIDValidation >> MIPConsistencyCheck_Marco] Track length is " << trklen << ", dqdx_cut is " << dqdx_cut << std::endl;
+      }
+
+      std::cout << "[ParticleIDValidation >> MIPConsistencyCheck_Marco] \t Truncated mean dQ/dx for candidate is: " << track_dQdx.at(2) << std::endl;
+      std::cout << "[ParticleIDValidation >> MIPConsistencyCheck_Marco] \t MIP consistent ? : " << (track_dQdxtruncmeanvslength_isMuon ? "YES" : "NO") << std::endl;
+    }
+
     // Now time to set some variables!
     track_length = trklen;
     track_rangeE_mu = rangeE_mu;
@@ -772,7 +788,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_resrange_perhit_u = resRange.at(0);
     track_resrange_perhit_v = resRange.at(1);
     track_resrange_perhit_y = resRange.at(2);
-
+    std::cout << "done" << std::endl;
     /**
      * Testing to see whether we can predict the direction of the track from
      * the fwd/bwd likelihood variables
@@ -940,7 +956,7 @@ void ParticleIdValidationPlots::beginJob(){
   pidTree->Branch( "track_Chi2Muon"           , &track_Chi2Muon      ) ;
   pidTree->Branch( "track_length"             , &track_length        ) ;
   pidTree->Branch( "track_dEdx"               , &track_dEdx          ) ;
-  pidTree->Branch( "track_dQdx"               , &track_dEdx          ) ;
+  pidTree->Branch( "track_dQdx"               , &track_dQdx          ) ;
   pidTree->Branch( "track_dQdxtruncmeanvslength_isMuon"  , &track_dQdxtruncmeanvslength_isMuon ) ;
   pidTree->Branch( "track_theta"              , &track_theta         ) ;
   pidTree->Branch( "track_phi"                , &track_phi           ) ;
