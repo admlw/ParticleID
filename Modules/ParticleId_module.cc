@@ -170,6 +170,10 @@ void UBPID::ParticleId::produce(art::Event & e)
   // calorimetry object...
   art::FindManyP<anab::Calorimetry> caloFromTracks(trackHandle, e, fCaloLabel);
 
+  // reserve space for the particle ID collection
+  // this seems to help with seg faults, but it's a little unclear why
+  particleIDCollection->reserve(trackCollection.size());
+
   for (auto& track : trackCollection){
 
     // Skip tracks/events with no valid calorimetry object associated to it.
