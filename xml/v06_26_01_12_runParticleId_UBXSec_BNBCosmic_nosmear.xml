@@ -3,11 +3,11 @@
 <!-- project details -->
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_13">
-<!ENTITY name "PIDproducer_UBXSec_OffBeamData">
-<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/alister1/PID/PIDproducer_UBXSec_OffBeamData">
-<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/alister1/PID/PIDproducer_UBXSec_OffBeamData">
+<!ENTITY name "PIDproducer_UBXSec_BNBCosmic">
+<!ENTITY scratch_dir "/pnfs/uboone/scratch/users/alister1/PID/PIDproducer_UBXSec_BNBCosmic_nosmear">
+<!ENTITY resilient_dir "/pnfs/uboone/resilient/users/alister1/PID/PIDproducer_UBXSec_BNBCosmic_nosmear">
 <!ENTITY app_dir "/uboone/app/users/alister1/particleID/ubcode_v06_26_01_13/srcs/uboonecode/uboone/ParticleID">
-<!ENTITY data_dir "/uboone/data/users/alister1/PIDproducer_UBXSec_OffBeamData">
+<!ENTITY data_dir "/uboone/data/users/alister1/PIDproducer_UBXSec_BNBCosmic_nosmear">
 ]>
 
 <job>
@@ -15,7 +15,7 @@
 <project name="&name;">
 
     <!-- project size -->
-    <numevents>10000</numevents>
+    <numevents>100000</numevents>
 
     <!-- batchOS -->
     <os>SL6</os>
@@ -29,18 +29,22 @@
         <local>/pnfs/uboone/resilient/users/alister1/tars/pid_test.tar</local>
     </larsoft>
 
-    <!-- diffusion filter -->
+    <!-- particle id producer -->
     <stage name="particleId">
-        <inputdef>prod_reco_optfilter_extbnb_ccinclusive_v13_mcc8_gooodruns_v4s</inputdef>
-        <fcl>&app_dir;/job/run_particle_identification_UBXSec_withcalibrations_withvalidation_data.fcl</fcl>
+        <!--<inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.7_reco2_dev</inputdef>-->
+        <inputlist>&app_dir;/xml/input.list</inputlist>
+        <fcl>&app_dir;/job/run_particle_identification_UBXSec_withcalibrations_withvalidation_nosmear.fcl</fcl>
         <bookdir>&data_dir;</bookdir>
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <numjobs>450</numjobs>
-        <maxfilesperjob>3</maxfilesperjob>
+        <maxfilesperjob>1</maxfilesperjob>
+        <numjobs>460</numjobs>
         <numevents>150</numevents>
-        <memory>2500</memory>
+        <!--<numjobs>10</numjobs>
+        <numevents>10</numevents>-->
+        <!--<memory>2000</memory>-->
+        <memory>6000</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
         <schema>root</schema>

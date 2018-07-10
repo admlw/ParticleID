@@ -31,17 +31,17 @@
 
     <!-- diffusion filter -->
     <stage name="particleId">
-        <inputdef>mdeltutt_prod_reco_optfilter_bnb_ccinclusive_v13_mcc8_goodruns_a</inputdef>
+        <inputdef>prod_reco_optfilter_bnb_ccinclusive_v13_mcc8_gooodruns_v4s</inputdef>
         <fcl>&app_dir;/job/run_particle_identification_UBXSec_withcalibrations_withvalidation_data.fcl</fcl>
         <bookdir>&data_dir;</bookdir>
         <workdir>&resilient_dir;</workdir>
         <outdir>&scratch_dir;</outdir>
         <logdir>&scratch_dir;</logdir>
-        <numjobs>400</numjobs>
-        <maxfilesperjob>4</maxfilesperjob>
-        <!--<numjobs>1</numjobs>
-        <maxfilesperjob>1</maxfilesperjob>
-        <numevents>10</numevents> -->
+        <numjobs>500</numjobs>
+        <maxfilesperjob>3</maxfilesperjob>
+        <!--<numjobs>10</numjobs>
+        <maxfilesperjob>1</maxfilesperjob>-->
+        <numevents>150</numevents>
         <memory>2500</memory>
         <datatier>pid</datatier>
         <!--<inputstream>test</inputstream>-->
