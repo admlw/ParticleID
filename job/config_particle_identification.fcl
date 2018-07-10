@@ -11,8 +11,8 @@ BEGIN_PROLOG
 
 particleidconfig:
 {
-  
-  module_type: "ParticleId" 
+
+  module_type: "ParticleId"
 
   # producer labels for PID + validation
   ProducerLabels: @local::producerlabels_mcc8_simcalib
@@ -21,7 +21,7 @@ particleidconfig:
   BraggAlgo: @local::braggalgo_mcc8_simcalib
 
   # fiducial volume dimensions
-  FiducialVolume: @local::pidfidvol 
+  FiducialVolume: @local::pidfidvol
 
   # needed for fcl
   Chi2PIDAlg: @local::standard_chi2pidalg
