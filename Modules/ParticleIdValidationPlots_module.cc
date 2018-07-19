@@ -609,14 +609,14 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
        */
       if (AlgScore.fAlgName == "BraggPeakLLH"){
 
-        if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_fwd){
+        if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood && anab::kTrackDir(AlgScore.fTrackDir) == anab::kForward){
           if (AlgScore.fAssumedPdg == 13)   track_likelihood_fwd_mu.at(planeid) = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 2212) track_likelihood_fwd_p.at(planeid) =  AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 211)  track_likelihood_fwd_pi.at(planeid) = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 321)  track_likelihood_fwd_k.at(planeid)  = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 0)    track_likelihood_fwd_mip.at(planeid) = AlgScore.fValue;
         }
-        else if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_bwd){
+        else if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood && anab::kTrackDir(AlgScore.fTrackDir) == anab::kBackward){
           if (AlgScore.fAssumedPdg == 13)   track_likelihood_bwd_mu.at(planeid) = AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 2212) track_likelihood_bwd_p.at(planeid) =  AlgScore.fValue;
           if (AlgScore.fAssumedPdg == 211)  track_likelihood_bwd_pi.at(planeid) = AlgScore.fValue;
