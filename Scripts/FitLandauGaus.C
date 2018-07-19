@@ -6,7 +6,7 @@
 
 void FitLandauGaus()
 {
-  TString plane("v");
+  TString plane("y");
   TF1 *langaus = new TF1("langaus", landauGaussian, 0, 10, 4);
   langaus->SetParNames("Landau width","Peak value","Normalisation","Gaussian width");
 
@@ -23,7 +23,7 @@ void FitLandauGaus()
 
   langaus->SetParameters(0.2,1.7,1000,0.1);
   // Uncomment for data fit
-  langaus->FixParameter(0,0.12);
+  langaus->FixParameter(0,0.09);
   h->Fit(langaus,"","",1.0,3.);
   h->Draw();
   
