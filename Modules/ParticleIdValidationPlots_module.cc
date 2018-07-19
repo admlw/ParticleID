@@ -60,6 +60,7 @@
 #include "uboone/ParticleID/Algorithms/FiducialVolume.h"
 #include "uboone/ParticleID/Algorithms/dQdxSeparatorMarco.h"
 #include "uboone/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
+#include "uboone/ParticleID/Algorithms/uB_PlaneIDBitsetHelperFunctions.h"
 
 // cpp
 #include <vector>
@@ -651,7 +652,7 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     for (size_t i_algscore=0; i_algscore<AlgScoresVec.size(); i_algscore++){
 
       anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
-      int planeid = AlgScore.fPlaneID.Plane;
+      int planeid = UBPID::uB_getSinglePlane(AlgScore.fPlaneID);
 
       if (planeid < 0 || planeid > 2){
         std::cout << "[ParticleIDValidation] No information for planeid " << planeid << std::endl;
@@ -681,13 +682,13 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       } // if fAlgName = BraggPeakLLH
 
      if (AlgScore.fAlgName == "BraggPeakLLH_shift"){
-       if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_fwd){
+       if (anab::kTrackDir(AlgScore.fTrackDir) == anab::kForward){
          if (AlgScore.fAssumedPdg == 13)   track_likelihood_shift_fwd_mu.at(planeid) = AlgScore.fValue;
          if (AlgScore.fAssumedPdg == 2212) track_likelihood_shift_fwd_p.at(planeid) =  AlgScore.fValue;
          if (AlgScore.fAssumedPdg == 211)  track_likelihood_shift_fwd_pi.at(planeid) = AlgScore.fValue;
          if (AlgScore.fAssumedPdg == 321)  track_likelihood_shift_fwd_k.at(planeid)  = AlgScore.fValue;
        }
-       else if (anab::kVariableType(AlgScore.fVariableType) == anab::kLikelihood_bwd){
+       else if (anab::kTrackDir(AlgScore.fTrackDir) == anab::kBackward){
          if (AlgScore.fAssumedPdg == 13)   track_likelihood_shift_bwd_mu.at(planeid) = AlgScore.fValue;
          if (AlgScore.fAssumedPdg == 2212) track_likelihood_shift_bwd_p.at(planeid) =  AlgScore.fValue;
          if (AlgScore.fAssumedPdg == 211)  track_likelihood_shift_bwd_pi.at(planeid) = AlgScore.fValue;

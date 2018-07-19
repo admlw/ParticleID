@@ -46,6 +46,7 @@
 #include "uboone/ParticleID/Algorithms/Chisq.h"
 #include "uboone/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
 #include "uboone/ParticleID/Algorithms/LandauGaussian.h"
+#include "uboone/ParticleID/Algorithms/uB_PlaneIDBitsetHelperFunctions.h"
 
 // root includes
 #include "TVector3.h"
@@ -324,14 +325,14 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_p.at(planenum).fAssumedPdg,  false, planenum, shift_bwd_p);
       Bragg_bwd_pi.at(planenum).fValue        = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_pi.at(planenum).fAssumedPdg, false, planenum, shift_bwd_pi);
       Bragg_bwd_k.at(planenum).fValue         = braggcalc.getLikelihood(dEdx, resRange, Bragg_bwd_k.at(planenum).fAssumedPdg,  false, planenum, shift_bwd_k);
-      Bragg_fwd_mu.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_fwd_p.at(planenum).fPlaneID       = c->PlaneID();
-      Bragg_fwd_pi.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_fwd_k.at(planenum).fPlaneID       = c->PlaneID();
-      Bragg_bwd_mu.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_bwd_p.at(planenum).fPlaneID       = c->PlaneID();
-      Bragg_bwd_pi.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_bwd_k.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_fwd_mu.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_fwd_p.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_fwd_pi.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_fwd_k.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_mu.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_p.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_pi.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_k.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
       // Special case: MIP-like probability. fAssumedPdg == 0 tells the Bragg
       // algorithm to use the "No-Bragg" theory case
       noBragg_fwd_MIP.at(planenum).fAlgName = "BraggPeakLLH";
@@ -339,7 +340,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       noBragg_fwd_MIP.at(planenum).fTrackDir = anab::kForward;
       noBragg_fwd_MIP.at(planenum).fAssumedPdg = 0;
       noBragg_fwd_MIP.at(planenum).fValue = braggcalc.getLikelihood(dEdx, resRange, noBragg_fwd_MIP.at(planenum).fAssumedPdg, true, planenum);
-      noBragg_fwd_MIP.at(planenum).fPlaneID = c->PlaneID();
+      noBragg_fwd_MIP.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       AlgScoresVec.push_back(Bragg_fwd_mu.at(planenum));
       AlgScoresVec.push_back(Bragg_fwd_p.at(planenum));
@@ -360,14 +361,22 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p_shift.at(planenum).fAlgName       = "BraggPeakLLH_shift";
       Bragg_bwd_pi_shift.at(planenum).fAlgName      = "BraggPeakLLH_shift";
       Bragg_bwd_k_shift.at(planenum).fAlgName       = "BraggPeakLLH_shift";
-      Bragg_fwd_mu_shift.at(planenum).fVariableType = anab::kLikelihood_fwd;
-      Bragg_fwd_p_shift.at(planenum).fVariableType  = anab::kLikelihood_fwd;
-      Bragg_fwd_pi_shift.at(planenum).fVariableType = anab::kLikelihood_fwd;
-      Bragg_fwd_k_shift.at(planenum).fVariableType  = anab::kLikelihood_fwd;
-      Bragg_bwd_mu_shift.at(planenum).fVariableType = anab::kLikelihood_bwd;
-      Bragg_bwd_p_shift.at(planenum).fVariableType  = anab::kLikelihood_bwd;
-      Bragg_bwd_pi_shift.at(planenum).fVariableType = anab::kLikelihood_bwd;
-      Bragg_bwd_k_shift.at(planenum).fVariableType  = anab::kLikelihood_bwd;
+      Bragg_fwd_mu_shift.at(planenum).fVariableType = anab::kLikelihood;
+      Bragg_fwd_p_shift.at(planenum).fVariableType  = anab::kLikelihood;
+      Bragg_fwd_pi_shift.at(planenum).fVariableType = anab::kLikelihood;
+      Bragg_fwd_k_shift.at(planenum).fVariableType  = anab::kLikelihood;
+      Bragg_bwd_mu_shift.at(planenum).fVariableType = anab::kLikelihood;
+      Bragg_bwd_p_shift.at(planenum).fVariableType  = anab::kLikelihood;
+      Bragg_bwd_pi_shift.at(planenum).fVariableType = anab::kLikelihood;
+      Bragg_bwd_k_shift.at(planenum).fVariableType  = anab::kLikelihood;
+      Bragg_fwd_mu_shift.at(planenum).fTrackDir = anab::kForward;
+      Bragg_fwd_p_shift.at(planenum).fTrackDir  = anab::kForward;
+      Bragg_fwd_pi_shift.at(planenum).fTrackDir = anab::kForward;
+      Bragg_fwd_k_shift.at(planenum).fTrackDir  = anab::kForward;
+      Bragg_bwd_mu_shift.at(planenum).fTrackDir = anab::kBackward;
+      Bragg_bwd_p_shift.at(planenum).fTrackDir  = anab::kBackward;
+      Bragg_bwd_pi_shift.at(planenum).fTrackDir = anab::kBackward;
+      Bragg_bwd_k_shift.at(planenum).fTrackDir  = anab::kBackward;
       Bragg_fwd_mu_shift.at(planenum).fAssumedPdg   = 13;
       Bragg_fwd_p_shift.at(planenum).fAssumedPdg    = 2212;
       Bragg_fwd_pi_shift.at(planenum).fAssumedPdg   = 211;
@@ -384,14 +393,14 @@ void UBPID::ParticleId::produce(art::Event & e)
       Bragg_bwd_p_shift.at(planenum).fValue         = shift_bwd_p;
       Bragg_bwd_pi_shift.at(planenum).fValue        = shift_bwd_pi;
       Bragg_bwd_k_shift.at(planenum).fValue         = shift_bwd_k;
-      Bragg_fwd_mu_shift.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_fwd_p_shift.at(planenum).fPlaneID       = c->PlaneID();
-      Bragg_fwd_pi_shift.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_fwd_k_shift.at(planenum).fPlaneID       = c->PlaneID();
-      Bragg_bwd_mu_shift.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_bwd_p_shift.at(planenum).fPlaneID       = c->PlaneID();
-      Bragg_bwd_pi_shift.at(planenum).fPlaneID      = c->PlaneID();
-      Bragg_bwd_k_shift.at(planenum).fPlaneID       = c->PlaneID();
+      Bragg_fwd_mu_shift.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_fwd_p_shift.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_fwd_pi_shift.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_fwd_k_shift.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_mu_shift.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_p_shift.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_pi_shift.at(planenum).fPlaneID      = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
+      Bragg_bwd_k_shift.at(planenum).fPlaneID       = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       AlgScoresVec.push_back(Bragg_fwd_mu_shift.at(planenum));
       AlgScoresVec.push_back(Bragg_fwd_p_shift.at(planenum));
@@ -412,28 +421,28 @@ void UBPID::ParticleId::produce(art::Event & e)
       Chi2_mu.at(planenum).fAssumedPdg = 13;
       Chi2_mu.at(planenum).fTrackDir = anab::kForward;
       Chi2_mu.at(planenum).fValue = chisqValues.at(0);
-      Chi2_mu.at(planenum).fPlaneID = c->PlaneID();
+      Chi2_mu.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       Chi2_p.at(planenum).fAlgName = "Chi2";
       Chi2_p.at(planenum).fVariableType = anab::kGOF;
       Chi2_p.at(planenum).fAssumedPdg = 2212;
       Chi2_p.at(planenum).fTrackDir = anab::kForward;
       Chi2_p.at(planenum).fValue = chisqValues.at(1);
-      Chi2_p.at(planenum).fPlaneID = c->PlaneID();
+      Chi2_p.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       Chi2_pi.at(planenum).fAlgName = "Chi2";
       Chi2_pi.at(planenum).fVariableType = anab::kGOF;
       Chi2_pi.at(planenum).fAssumedPdg = 211;
       Chi2_pi.at(planenum).fTrackDir = anab::kForward;
       Chi2_pi.at(planenum).fValue = chisqValues.at(2);
-      Chi2_pi.at(planenum).fPlaneID = c->PlaneID();
+      Chi2_pi.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       Chi2_k.at(planenum).fAlgName = "Chi2";
       Chi2_k.at(planenum).fVariableType = anab::kGOF;
       Chi2_k.at(planenum).fAssumedPdg = 321;
       Chi2_k.at(planenum).fTrackDir = anab::kForward;
       Chi2_k.at(planenum).fValue = chisqValues.at(3);
-      Chi2_k.at(planenum).fPlaneID = c->PlaneID();
+      Chi2_k.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       AlgScoresVec.push_back(Chi2_mu.at(planenum));
       AlgScoresVec.push_back(Chi2_p.at(planenum));
@@ -453,7 +462,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       PIDAval_mean.at(planenum).fVariableType = anab::kPIDA;
       PIDAval_mean.at(planenum).fTrackDir = anab::kForward;
       PIDAval_mean.at(planenum).fValue = pida.getPida(dEdx, resRange, "mean");
-      PIDAval_mean.at(planenum).fPlaneID = c->PlaneID();
+      PIDAval_mean.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
       AlgScoresVec.push_back(PIDAval_mean.at(planenum));
 
       // median
@@ -461,7 +470,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       PIDAval_median.at(planenum).fVariableType = anab::kPIDA;
       PIDAval_median.at(planenum).fTrackDir = anab::kForward;
       PIDAval_median.at(planenum).fValue = pida.getPida(dEdx, resRange, "median");
-      PIDAval_median.at(planenum).fPlaneID = c->PlaneID();
+      PIDAval_median.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
       AlgScoresVec.push_back(PIDAval_median.at(planenum));
 
       // median
@@ -469,7 +478,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       PIDAval_kde.at(planenum).fVariableType = anab::kPIDA;
       PIDAval_kde.at(planenum).fTrackDir = anab::kForward;
       PIDAval_kde.at(planenum).fValue = pida.getPida(dEdx, resRange, "kde");
-      PIDAval_kde.at(planenum).fPlaneID = c->PlaneID();
+      PIDAval_kde.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
       AlgScoresVec.push_back(PIDAval_kde.at(planenum));
 
       /**
@@ -495,7 +504,7 @@ void UBPID::ParticleId::produce(art::Event & e)
         // Now calculate truncated mean
         dEdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dEdx_float, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
       }
-      dEdxtruncmean.at(planenum).fPlaneID = c->PlaneID();
+      dEdxtruncmean.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       dQdxtruncmean.at(planenum).fAlgName = "TruncatedMean";
       dQdxtruncmean.at(planenum).fVariableType = anab::kdQdxtruncmean;
@@ -506,7 +515,7 @@ void UBPID::ParticleId::produce(art::Event & e)
         // Now calculate truncated mean
         dQdxtruncmean.at(planenum).fValue = (double)trm.CalcIterativeTruncMean(dQdx_float, nmin, nmax, currentiteration, lmin, convergencelimit, nsigma);
       }
-      dQdxtruncmean.at(planenum).fPlaneID = c->PlaneID();
+      dQdxtruncmean.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       AlgScoresVec.push_back(dEdxtruncmean.at(planenum));
       AlgScoresVec.push_back(dQdxtruncmean.at(planenum));
@@ -528,7 +537,7 @@ void UBPID::ParticleId::produce(art::Event & e)
       trk_depE.at(planenum).fVariableType = anab::kEdeposited;
       trk_depE.at(planenum).fTrackDir = anab::kNoDirection;
       trk_depE.at(planenum).fValue = depE;
-      trk_depE.at(planenum).fPlaneID = c->PlaneID();
+      trk_depE.at(planenum).fPlaneID = UBPID::uB_SinglePlaneGetBitset(c->PlaneID().Plane);
 
       AlgScoresVec.push_back(trk_depE.at(planenum));
 
