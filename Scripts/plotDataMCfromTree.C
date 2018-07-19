@@ -35,7 +35,11 @@ std::vector<std::vector<double>> GetPIDvarstoplot(treevars *vars){
       vars->track_Lmuovermip->at(i),
       vars->track_Lmumipoverpi->at(i),
       vars->track_depE_minus_rangeE_mu->at(i),
-      vars->track_depE_minus_rangeE_p->at(i)
+      vars->track_depE_minus_rangeE_p->at(i),
+      vars->track_Lmip_atstart->at(i),
+      vars->track_lnLmip_atstart->at(i),
+      vars->track_dEdx_mean_atstart->at(i),
+      vars->track_shift_bestL->at(i)
     });
   }
 
@@ -88,7 +92,11 @@ std::vector<std::vector<double>> bins = {
                     {50,0,3}, // track_Lmuovermip,
                     {50,0,3}, // track_Lmumipoverpi,
                     {50,-150,150}, // track_depE_minus_rangeE_mu
-                    {50,-300,100} // track_depE_minus_rangeE_p
+                    {50,-300,100}, // track_depE_minus_rangeE_p
+                    {100,0,2}, // track_Lmip_atstart
+                    {100,-10,10}, // track_lnLmip_atstart
+                    {50,0,10}, // track_dEdx_mean_atstart
+                    {20,-2,2} // track_shift_bestL
                     };
 
 // Histogram titles in the same order as the vector above
@@ -123,10 +131,14 @@ std::vector<std::string> histtitles = {
                     ";(L_{#mu}/L_{MIP});",
                     ";(L_{#mu/MIP}/L_{#pi});",
                     ";Dep. E - E. by range (muon assumption) [MeV];",
-                    ";Dep. E - E. by range (proton assumption) [MeV];"
+                    ";Dep. E - E. by range (proton assumption) [MeV];",
+                    ";L_{MIP} at start of track;",
+                    ";ln(L_{MIP}) at start of track;",
+                    ";Truncated Mean dE/dx at start of track;",
+                    ";Preferred shift for maximum likelihood [cm];"
                   };
-
-// What to call saved plots in the same order as the vector above
+//
+// // What to call saved plots in the same order as the vector above
 std::vector<std::string> histnames = {
                   "Lp",
                   "Lmu",
@@ -158,7 +170,11 @@ std::vector<std::string> histnames = {
                   "Lmuovermip",
                   "Lmumipoverpi",
                   "depErangeEmu",
-                  "depErangeEp"
+                  "depErangeEp",
+                  "Lmip_atstart",
+                  "lnLmip_atstart",
+                  "dEdx_truncmean_atstart",
+                  "shift_bestL"
                 };
 
 // Set y-axis range to zoom in if we need to
@@ -194,7 +210,11 @@ std::vector<double> yrange = {
                   -999, // track_Lmuovermip,
                   -999, // track_Lmumipoverpi,
                   -999, // track_depE_minus_rangeE_mu
-                  -999 // track_depE_minus_rangeE_p
+                  -999, // track_depE_minus_rangeE_p
+                  -999, // track_Lmip_atstart
+                  -999, // track_lnLmip_atstart
+                  -999, // track_dEdx_mean_atstart
+                  -999 // track_shift_bestL
                 };
 
 // ---------------------------------------------------- //
@@ -237,8 +257,13 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
   t_bnbcos->GetEntry(0);
   CalcPIDvars(&mc_vars, true);
   std::vector<std::vector<double>> PIDvarstoplot_dummy = GetPIDvarstoplot(&mc_vars);
-  if (PIDvarstoplot_dummy.size() != 3) std::cout << "WARNING PIDvarstoplot_dummy.size() = " << PIDvarstoplot_dummy.size() << ", should be 3." << std::endl;
+  if (PIDvarstoplot_dummy.size() != 3 && PIDvarstoplot_dummy.size() != 4) std::cout << "WARNING PIDvarstoplot_dummy.size() = " << PIDvarstoplot_dummy.size() << ", should be 3 or 4." << std::endl;
   if (PIDvarstoplot_dummy.at(0).size() != bins.size()) std::cout << "WARNING PIDvarstoplot_dummy.size() = " << PIDvarstoplot_dummy.size() << "and bins.size() = " << bins.size() << ". This is going to cause you problems!" << std::endl;
+  std::cout << "PIDvarstoplot_dummy.size() = " << PIDvarstoplot_dummy.at(0).size() << std::endl;
+  std::cout << "bins.size() = " << bins.size() << std::endl;
+  std::cout << "histtitles.size() = " << histtitles.size() << std::endl;
+  std::cout << "histnames.size() = " << histnames.size() << std::endl;
+  std::cout << "yrange.size() = " << yrange.size() << std::endl;
 
   // ----------------- MC
 
@@ -251,7 +276,6 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       mc_hists[i_pl][i_h] = new hist1D(std::string("h_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h),bins.at(i_h).at(0),bins.at(i_h).at(1),bins.at(i_h).at(2));
     }
   }
-
 
   // Loop through MC tree and fill plots
   for (int i = 0; i < t_bnbcos->GetEntries(); i++){
@@ -330,28 +354,33 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
   for (size_t i_pl=0; i_pl < nplanes; i_pl++){
     for (size_t i_h=0; i_h < nplots; i_h++){
       TCanvas *c1 = new TCanvas();
-      if (onminusoffbeam && templatefit == false){
-        DrawMC(mc_hists[i_pl][i_h],POTscaling,yrange.at(i_h));
+
+      double POTscaling_tmp = POTscaling; // Reset POT scaling for the next plot
+
+      if (templatefit){
+        TemplateFit(mc_hists[i_pl][i_h], onb_hists[i_pl][i_h], offb_hists[i_pl][i_h], offbeamscaling, POTscaling_tmp,yrange.at(i_h));
+        POTscaling_tmp = 1.; // We have already applied POT scaling to MC in the template fit function. Set it to 1 so it doesn't get applied again in DrawMC.
+      }
+
+      if (onminusoffbeam){
+        DrawMC(mc_hists[i_pl][i_h],POTscaling_tmp,yrange.at(i_h));
         if (f_onbeam && f_offbeam){
-          OverlayOnMinusOffData(c1,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling);
-          TString e_str("h_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          OverlayOnMinusOffData(c1,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling_tmp);
+          TString e_str("h_err");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
           OverlayChi2(c1, e_str, o_str);
         }
       }
-      else if (onminusoffbeam && templatefit == true){
-        TemplateFit(mc_hists[i_pl][i_h], onb_hists[i_pl][i_h], offb_hists[i_pl][i_h], offbeamscaling, POTscaling,yrange.at(i_h));
-      }
       else{
         if (f_onbeam && f_offbeam){
-          DrawMCPlusOffbeam(mc_hists[i_pl][i_h], offb_hists[i_pl][i_h], POTscaling, offbeamscaling,yrange.at(i_h));
+          DrawMCPlusOffbeam(mc_hists[i_pl][i_h], offb_hists[i_pl][i_h], POTscaling_tmp, offbeamscaling,yrange.at(i_h));
           OverlayOnBeamData(c1, onb_hists[i_pl][i_h]);
-          TString e_str("h_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          TString e_str("h_err");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
           OverlayChi2(c1, e_str, o_str);
         }
         else{
-          DrawMC(mc_hists[i_pl][i_h],POTscaling,yrange.at(i_h));
+          DrawMC(mc_hists[i_pl][i_h],POTscaling_tmp,yrange.at(i_h));
         }
       }
       c1->Print(std::string(histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());

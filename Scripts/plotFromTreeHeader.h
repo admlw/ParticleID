@@ -1,3 +1,5 @@
+#include "../../../../larana/larana/TruncatedMean/Algorithm/TruncMean.cxx"
+
 struct treevars{
   // These are the variables that are filled directly from the tree
   int true_PDG=-9999;
@@ -16,6 +18,21 @@ struct treevars{
   std::vector<double> *track_PIDA_kde=nullptr;
   std::vector<double> *track_PIDA_median=nullptr;
   std::vector<double> *track_depE=nullptr;
+  std::vector<double> *track_likelihood_shift_fwd_mu=nullptr;
+  std::vector<double> *track_likelihood_shift_fwd_p=nullptr;
+  std::vector<double> *track_likelihood_shift_fwd_pi=nullptr;
+  std::vector<double> *track_likelihood_shift_fwd_k=nullptr;
+  std::vector<double> *track_likelihood_shift_bwd_mu=nullptr;
+  std::vector<double> *track_likelihood_shift_bwd_p=nullptr;
+  std::vector<double> *track_likelihood_shift_bwd_pi=nullptr;
+  std::vector<double> *track_likelihood_shift_bwd_k=nullptr;
+  std::vector<double> *track_dEdx_perhit_u=nullptr;
+  std::vector<double> *track_dEdx_perhit_v=nullptr;
+  std::vector<double> *track_dEdx_perhit_y=nullptr;
+  std::vector<double> *track_resrange_perhit_u=nullptr;
+  std::vector<double> *track_resrange_perhit_v=nullptr;
+  std::vector<double> *track_resrange_perhit_y=nullptr;
+  std::vector<std::vector<double>> *track_Lmip_perhit=nullptr;
   double track_chi2mu_plane2=-9999;
   double track_chi2p_plane2=-9999;
   double track_chi2pi_plane2=-9999;
@@ -55,6 +72,10 @@ struct treevars{
   std::vector<double> *track_depE_minus_rangeE_mu;
   std::vector<double> *track_depE_minus_rangeE_p;
   std::vector<double> *track_chi2_muminusp;
+  std::vector<double> *track_shift_bestL;
+  std::vector<double> *track_Lmip_atstart;
+  std::vector<double> *track_lnLmip_atstart;
+  std::vector<double> *track_dEdx_mean_atstart;
 };
 
 void settreevars(TTree *intree, treevars *varstoset){
@@ -68,6 +89,14 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_likelihood_bwd_mu"  , &(varstoset->track_likelihood_bwd_mu));
   intree->SetBranchAddress("track_likelihood_bwd_pi"  , &(varstoset->track_likelihood_bwd_pi));
   intree->SetBranchAddress("track_likelihood_bwd_k"   , &(varstoset->track_likelihood_bwd_k));
+  intree->SetBranchAddress("track_likelihood_shift_fwd_mu"   , &(varstoset->track_likelihood_shift_fwd_mu));
+  intree->SetBranchAddress("track_likelihood_shift_fwd_p"   , &(varstoset->track_likelihood_shift_fwd_p));
+  intree->SetBranchAddress("track_likelihood_shift_fwd_pi"   , &(varstoset->track_likelihood_shift_fwd_pi));
+  intree->SetBranchAddress("track_likelihood_shift_fwd_k"   , &(varstoset->track_likelihood_shift_fwd_k));
+  intree->SetBranchAddress("track_likelihood_shift_bwd_mu"   , &(varstoset->track_likelihood_shift_bwd_mu));
+  intree->SetBranchAddress("track_likelihood_shift_bwd_p"   , &(varstoset->track_likelihood_shift_bwd_p));
+  intree->SetBranchAddress("track_likelihood_shift_bwd_pi"   , &(varstoset->track_likelihood_shift_bwd_pi));
+  intree->SetBranchAddress("track_likelihood_shift_bwd_k"   , &(varstoset->track_likelihood_shift_bwd_k));
   intree->SetBranchAddress("track_PIDA_mean"       , &(varstoset->track_PIDA_mean));
   intree->SetBranchAddress("track_PIDA_kde"        , &(varstoset->track_PIDA_kde));
   intree->SetBranchAddress("track_PIDA_median"     ,&(varstoset->track_PIDA_median));
@@ -79,6 +108,13 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_rangeE_mu", &(varstoset->track_rangeE_mu));
   intree->SetBranchAddress("track_rangeE_p", &(varstoset->track_rangeE_p));
   intree->SetBranchAddress("track_length", &(varstoset->track_length));
+  intree->SetBranchAddress("track_Lmip_perhit", &(varstoset->track_Lmip_perhit));
+  intree->SetBranchAddress("track_dEdx_perhit_u", &(varstoset->track_dEdx_perhit_u));
+  intree->SetBranchAddress("track_dEdx_perhit_v", &(varstoset->track_dEdx_perhit_v));
+  intree->SetBranchAddress("track_dEdx_perhit_y", &(varstoset->track_dEdx_perhit_y));
+  intree->SetBranchAddress("track_resrange_perhit_u", &(varstoset->track_resrange_perhit_u));
+  intree->SetBranchAddress("track_resrange_perhit_v", &(varstoset->track_resrange_perhit_v));
+  intree->SetBranchAddress("track_resrange_perhit_y", &(varstoset->track_resrange_perhit_y));
 
   intree->GetEntry(0);
   size_t nplanes = varstoset->track_likelihood_fwd_p->size();
@@ -111,6 +147,10 @@ void settreevars(TTree *intree, treevars *varstoset){
   varstoset->track_depE_minus_rangeE_mu = new std::vector<double>(nplanes);
   varstoset->track_depE_minus_rangeE_p = new std::vector<double>(nplanes);
   varstoset->track_chi2_muminusp = new std::vector<double>(nplanes);
+  varstoset->track_shift_bestL = new std::vector<double>(nplanes);
+  varstoset->track_Lmip_atstart = new std::vector<double>(nplanes);
+  varstoset->track_lnLmip_atstart = new std::vector<double>(nplanes);
+  varstoset->track_dEdx_mean_atstart = new std::vector<double>(nplanes);
 }
 
 std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
@@ -120,7 +160,7 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 
   for (int i = 0; i < o->GetNbinsX(); i++){
 
-    if (e->GetBinContent(i) != 0){
+    if (e->GetBinContent(i) > 0){
 
       chi2 += std::pow(o->GetBinContent(i) - e->GetBinContent(i),2)/e->GetBinContent(i);
 
@@ -133,6 +173,10 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 
   }
 
+  // std::cout << "Chi2 from our calculation: " << chi2 << std::endl;
+  // std::cout << "Chi2 from TH1: " << std::endl;
+  // double chi2_th1 = o->Chi2Test(e,"NORM UU P CHI2");
+
   std::pair<double,double> returner;
   returner.first = chi2;
   returner.second = dof;
@@ -142,7 +186,7 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 
 void OverlayChi2(TCanvas *c1, TString e_str, TString o_str){
 
-  TH1D* h_e = (TH1D*)c1->GetPrimitive("h_err");
+  TH1D* h_e = (TH1D*)c1->GetPrimitive(e_str.Data());
   TH1D* h_o = (TH1D*)c1->GetPrimitive(o_str.Data());
 
   std::pair<double,double> chi2 = GetChi2(h_o, h_e);
@@ -213,6 +257,71 @@ void CalcPIDvars(treevars *vars, bool isScale){
 
     vars->track_Lmumip_0to1_nopionkaon->at(i_pl) = (vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl))/(vars->track_likelihood_mu->at(i_pl)+vars->track_likelihood_mip->at(i_pl)+vars->track_likelihood_p->at(i_pl));
 
+    double maxl = std::max({vars->track_likelihood_fwd_p->at(i_pl),vars->track_likelihood_bwd_p->at(i_pl),vars->track_likelihood_fwd_mu->at(i_pl),vars->track_likelihood_bwd_mu->at(i_pl),vars->track_likelihood_fwd_pi->at(i_pl),vars->track_likelihood_bwd_pi->at(i_pl),vars->track_likelihood_fwd_k->at(i_pl),vars->track_likelihood_bwd_k->at(i_pl)});
+
+    if (maxl == vars->track_likelihood_fwd_p->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_fwd_p->at(i_pl);
+    else if (maxl == vars->track_likelihood_bwd_p->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_bwd_p->at(i_pl);
+    else if (maxl == vars->track_likelihood_fwd_mu->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_fwd_mu->at(i_pl);
+    else if (maxl == vars->track_likelihood_bwd_mu->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_bwd_mu->at(i_pl);
+    else if (maxl == vars->track_likelihood_fwd_pi->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_fwd_pi->at(i_pl);
+    else if (maxl == vars->track_likelihood_bwd_pi->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_bwd_pi->at(i_pl);
+    else if (maxl == vars->track_likelihood_fwd_k->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_fwd_k->at(i_pl);
+    else if (maxl == vars->track_likelihood_bwd_k->at(i_pl)) vars->track_shift_bestL->at(i_pl) = vars->track_likelihood_shift_bwd_k->at(i_pl);
+
+    int nhits_start = 10;
+    double Lmip_start_mean = 0.;
+    double dEdx_start_mean = 0.;
+     // std::cout << i_pl << ": " << vars->track_Lmip_perhit->at(i_pl).size() << ", " << vars->track_dEdx_perhit_u->size() << ", " << vars->track_dEdx_perhit_v->size() << ", " << vars->track_dEdx_perhit_y->size() << std::endl;
+    std::vector<float> dEdx_float;
+    //std::cout << "---" << std::endl;
+    for (int i=1; i<nhits_start; i++){
+      // Skip first hit (start from i=1) and last hit
+      if (i>=vars->track_Lmip_perhit->at(i_pl).size()) continue;
+      Lmip_start_mean += vars->track_Lmip_perhit->at(i_pl).at(i);
+      if (i_pl==0){
+        size_t perhit_size = vars->track_dEdx_perhit_u->size();
+        if (i>=perhit_size) continue;
+        // dEdx_start_mean += vars->track_dEdx_perhit_u->at(i);
+        int index = i;
+        if (vars->track_resrange_perhit_u->at(0)<vars->track_resrange_perhit_u->at(perhit_size-1)){ // start of vector is end of track
+          index = perhit_size-i;
+        }
+        dEdx_float.push_back((float)(vars->track_dEdx_perhit_u->at(index)));
+        // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_u->at(index) << " instead of " << vars->track_resrange_perhit_u->at(i) << std::endl;
+      }
+      else if (i_pl==1){
+        size_t perhit_size = vars->track_dEdx_perhit_v->size();
+        if (i>=perhit_size) continue;
+        // dEdx_start_mean += vars->track_dEdx_perhit_v->at(i);
+        int index = i;
+        if (vars->track_resrange_perhit_v->at(0)<vars->track_resrange_perhit_v->at(perhit_size-1)){ // start of vector is end of track
+          index = perhit_size-i;
+        }
+        dEdx_float.push_back((float)(vars->track_dEdx_perhit_v->at(index)));
+        // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_v->at(index) << " instead of " << vars->track_resrange_perhit_v->at(i) << std::endl;
+      }
+      else if (i_pl==2){
+        size_t perhit_size = vars->track_dEdx_perhit_y->size();
+        if (i>=perhit_size) continue;
+        // dEdx_start_mean += vars->track_dEdx_perhit_y->at(i);
+        int index = i;
+        if (vars->track_resrange_perhit_y->at(0)<vars->track_resrange_perhit_y->at(perhit_size-1)){ // start of vector is end of track
+          index = perhit_size-i;
+          // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_y->at(index) << " instead of " << vars->track_resrange_perhit_y->at(i) << std::endl;
+        }
+        else{
+          // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_y->at(index) << " instead of " << vars->track_resrange_perhit_y->at(perhit_size-i) << std::endl;
+        }
+        dEdx_float.push_back((float)(vars->track_dEdx_perhit_y->at(index)));
+      }
+    }
+    Lmip_start_mean /= (double)nhits_start;
+    vars->track_Lmip_atstart->at(i_pl) = Lmip_start_mean;
+    vars->track_lnLmip_atstart->at(i_pl) = TMath::Log(Lmip_start_mean);
+    // dEdx_start_mean /= (double)nhits_start;
+    // vars->track_dEdx_mean_atstart->at(i_pl) = dEdx_start_mean;
+    TruncMean trm;
+    if (dEdx_float.size()>0) vars->track_dEdx_mean_atstart->at(i_pl) = (double)trm.CalcIterativeTruncMean(dEdx_float, 1, 1, 0, 1, 0.1, 1.0);
   }
 }
 
@@ -363,7 +472,8 @@ void DrawMC(hist1D *hists, double POTScaling, double yrange){
   hists->h_all->SetMinimum(0);
   hists->h_all->Draw("hist"); // Draw this one first because it knows about the axis titles
   hs->Draw("same hist");
-  hists->h_all->Draw("same E2"); // Draw it again so errors are on top
+  TH1D *h_err = (TH1D*)hists->h_all->Clone("h_err");
+  h_err->Draw("same E2"); // Draw it again so errors are on top
 
   bool legendleft=false;
   int nbinsx = hists->h_all->GetXaxis()->GetNbins();
@@ -449,7 +559,7 @@ void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double
 }
 
 void OverlayOnMinusOffData(TCanvas *c, hist1D *onbeam, hist1D *offbeam, double OffBeamScaling, double POTScaling){
-  TH1D *h_onminusoff = (TH1D*)onbeam->h_all->Clone("h_onminusoff");
+  TH1D *h_onminusoff = (TH1D*)onbeam->h_all->Clone();
 
   h_onminusoff->Sumw2();
   offbeam->h_all->Sumw2();
@@ -486,15 +596,16 @@ void OverlayOnBeamData(TCanvas *c, hist1D *onbeam){
 /**
  * Function to perform template fit and draw result to canvas
  */
-void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double offbeamscaling, double POTscaling, double yrange){
+void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double offbeamscaling, double POTscaling, double yrange, bool onminusoffbeam=false){
 
   /** Scale offbeam to onbeam */
   offb_hists->h_all->Sumw2();
-  offb_hists->h_all->Scale(offbeamscaling);
+  // offb_hists->h_all->Scale(offbeamscaling);
 
   /** create on-beam minus off-beam */
+  /** do this for the template fit, whether you want the final plot to show on-off beam or not */
   TH1D* data = (TH1D*)onb_hists->h_all->Clone("data");
-  data->Add(offb_hists->h_all, -1);
+  data->Add(offb_hists->h_all, -1.*offbeamscaling);
 
   /** check kaons exist in sample */
   bool isK = true;
@@ -566,10 +677,11 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   std::cout << "[TemplateFit] pi    : " << result_pi << "+/-" << result_pi_err << std::endl;
   std::cout << "[TemplateFit] k     : " << result_k << "+/-" << result_k_err << std::endl;
   std::cout << "[TemplateFit] other : " << result_other << "+/-" << result_other_err << std::endl;
+  // std::cout << "[TemplateFit] chi2 = " << fit->GetChisquare() << std::endl;
 
   /**
-   * draw result: because data histograms modified directly just
-   * draw them in this function rather than drawing using the function
+   * Apply scaling directly to histograms
+   * Modify mchists histograms directly so that they can be drawn using DrawMC or DrawMCPlusOffbeam
    */
 
   mchists->h_p->Sumw2();
@@ -577,19 +689,34 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
   mchists->h_pi->Sumw2();
   if (isK) mchists->h_k->Sumw2();
   mchists->h_other->Sumw2();
+  mchists->h_all->Sumw2();
 
-  mchists->h_mu->Scale(result_mu * (data->Integral()/mchists->h_mu->Integral()));
-  mchists->h_p->Scale(result_p * (data->Integral()/mchists->h_p->Integral()));
-  mchists->h_pi->Scale(result_pi * (data->Integral()/mchists->h_pi->Integral()));
-  if (isK) mchists->h_k->Scale(result_k * (data->Integral()/mchists->h_k->Integral()));
-  mchists->h_other->Scale(result_other * (data->Integral()/mchists->h_other->Integral()));
+  mchists->h_mu->Scale(result_mu*data->Integral()/mchists->h_mu->Integral());
+  mchists->h_p->Scale(result_p* (data->Integral()/mchists->h_p->Integral()));
+  mchists->h_pi->Scale(result_pi* (data->Integral()/mchists->h_pi->Integral()));
+  if (isK) mchists->h_k->Scale(result_k* (data->Integral()/mchists->h_k->Integral()));
+  mchists->h_other->Scale(result_other* (data->Integral()/mchists->h_other->Integral()));
 
-  TH1D* hTotal = (TH1D*)mchists->h_mu->Clone("hTotal");
+  mchists->h_all->Reset();
+  mchists->h_all->Add(mchists->h_mu);
+  mchists->h_all->Add(mchists->h_p);
+  mchists->h_all->Add(mchists->h_pi);
+  mchists->h_all->Add(mchists->h_k);
+  mchists->h_all->Add(mchists->h_other);
+
+  /*TH1D *hTotal = (TH1D*)mchists->h_mu->Clone("hTotal");
   hTotal->Add(mchists->h_p);
   hTotal->Add(mchists->h_pi);
   hTotal->Add(mchists->h_k);
-  hTotal->Add(mchists->h_other);
+  hTotal->Add(mchists->h_other);*/
 
+
+  /**
+   * draw result: because data histograms modified directly just
+   * draw using the function rather than drawing here (so this is commented out)
+   */
+
+/*
   hTotal->SetFillColor(kBlack);
   hTotal->SetFillStyle(3345);
   hTotal->SetMarkerSize(0);
@@ -638,7 +765,7 @@ void TemplateFit(hist1D* mchists, hist1D* onb_hists, hist1D* offb_hists, double 
     mchists->l->SetX2(0.41);
   }
   mchists->l->AddEntry(data,"Data (on beam - off beam)","lp");
-  mchists->l->Draw();
+  mchists->l->Draw();*/
 }
 
 void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *hists, bool MIPlow, double cut_value, double twodvar1, double twodvar2, std::vector<string> var_names, TFile *fout = nullptr){
@@ -648,6 +775,10 @@ void DrawMCEffPur2D(TCanvas *c_eff, TCanvas *c_pur, TCanvas *c_effpur, hist2D *h
   c_eff->Divide(2,2,0.0005,0.0005);
   c_pur->Divide(2,2,0.0005,0.0005);
   c_effpur->Divide(2,2,0.0005,0.0005);
+
+  c_eff->SetLogz();
+  c_pur->SetLogz();
+  c_effpur->SetLogz();
 
   std::vector<TH3D*> histstoeval = {
     hists->h2D_mu,

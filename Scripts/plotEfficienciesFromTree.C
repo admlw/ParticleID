@@ -205,7 +205,7 @@ std::vector<double> cutValues = {
                     -999, // track_chi2k
                     -999, // track_PIDA_kde
                     -999, // track_PIDA_median
-                    12.5, // track_PIDA_mean
+                    10,// 12.5, // track_PIDA_mean
                     -999, // track_likelihood_muminusp
                     2.0, // track_likelihood_mipminusp
                     1.0, // track_lnlikelihood_mipoverp
