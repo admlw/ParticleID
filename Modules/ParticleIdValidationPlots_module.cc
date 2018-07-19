@@ -349,9 +349,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
   TVector3 true_start;
   TVector3 true_end;
 
-
   for (auto& track : trackPtrVector){
-    std::cout << "found track" << std::endl;
+    //std::cout << "found track" << std::endl;
 
     /** reset default values */
     dEdx.resize(3);
@@ -470,6 +469,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
 
     } // end if(!fIsDataPlots)
 
+    std::vector<std::vector<double>> Lmip_perhit(3);
+
     art::Ptr< anab:: Calorimetry > calo;
     int planenum = -1;
     int hitsToUse = 0;
@@ -481,6 +482,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
           << planenum << std::endl;
         continue;
       }
+      dEdx.at(planenum).clear();
+      resRange.at(planenum).clear();
       dEdx.at(planenum) = calo->dEdx();
       resRange.at(planenum) = calo->ResidualRange();
 
@@ -489,13 +492,13 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
       // For each hit, make a new dEdx vector for that hit only and use it to get the likelihood for that hit. That way we can average the likelihoods over the number of hits we care about later.
       std::vector<double> dEdx_dummy = {0.};
       std::vector<double> rr_dummy = {0.};
-      for (size_t i_hit=0; i_hit < dEdx.size(); i_hit++){
+      for (size_t i_hit=0; i_hit < dEdx.at(planenum).size(); i_hit++){
         double Lmip = -9999.;
         dEdx_dummy.at(0) = dEdx.at(planenum).at(i_hit);
         rr_dummy.at(0) = resRange.at(planenum).at(i_hit);
 
         Lmip = braggcalc.getLikelihood(dEdx_dummy,rr_dummy,0,1,planenum);
-        track_Lmip_perhit.at(planenum).push_back(Lmip);
+        Lmip_perhit.at(planenum).push_back(Lmip);
       }
 
       /**
@@ -788,7 +791,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
     track_resrange_perhit_u = resRange.at(0);
     track_resrange_perhit_v = resRange.at(1);
     track_resrange_perhit_y = resRange.at(2);
-    std::cout << "done" << std::endl;
+    track_Lmip_perhit = Lmip_perhit;
+    //std::cout << "done" << std::endl;
     /**
      * Testing to see whether we can predict the direction of the track from
      * the fwd/bwd likelihood variables
