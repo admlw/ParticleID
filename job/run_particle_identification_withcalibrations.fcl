@@ -3,7 +3,7 @@
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
 #include "config_particle_identification_validation.fcl"
-#include "config_simulation_calibration.fcl"
+#include "config_dedx_calibration.fcl"
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"
 #include "particleid_microboone.fcl"
@@ -34,12 +34,12 @@ physics:
     producers:
     {
         pidcalibration: @local::microboone_calibrationdedx
-        simcalibration: @local::simulation_calibration
+        dedxcalibration: @local::simulation_calibration
         pid: @local::particleidconfig
     }
 
     stream1: [ out1 ]
-    analysis: [ pidcalibration, simcalibration, pid ]
+    analysis: [ pidcalibration, dedxcalibration, pid ]
     trigger_paths: [ analysis ]
     end_paths: [ stream1 ]
 }
@@ -57,9 +57,9 @@ outputs:
 physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::McRecoStage2"
 physisc.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNuCalo::McRecoStage2"
 
-physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_uncalib_simcalib
+physics.producers.dedxcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_uncalib_dedxcalib
 
-physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_simcalib
-physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_simcalib
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_dedxcalib
+physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_dedxcalib
 
 services.DetectorClocksService.InheritClockConfig: false

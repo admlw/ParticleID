@@ -1,20 +1,20 @@
 #
 # configuration fcl file for particleId fcl parameters
 #
-# naming convention is procuerlabels_< 1 >_simcalib< 2 >
+# naming convention is procuerlabels_< 1 >_dedxcalib< 2 >
 # < 1 > - which MCC version is this for? If running only over UBXSec tagged tracks then use
 #         mcc8_UBXSec, for instance
 # < 2 > - if this is for data then use '_data', else nothing
-# 
+#
 
 BEGIN_PROLOG
 
-producerlabels_mcc8_simcalib:
+producerlabels_mcc8_dedxcalib:
 {
 
   # producer label names
   TrackLabel       : "pandoraNu::McRecoStage2"
-  CalorimetryLabel : "simcalibration::particleid"
+  CalorimetryLabel : "dedxcalibration::particleid"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
@@ -25,12 +25,12 @@ producerlabels_mcc8_simcalib:
 
 }
 
-producerlabels_mcc8_simcalib_data:
+producerlabels_mcc8_dedxcalib_data:
 {
 
   # producer label names
   TrackLabel       : "pandoraNu::DataRecoStage2"
-  CalorimetryLabel : "simcalibration::particleid"
+  CalorimetryLabel : "dedxcalibration::particleid"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
@@ -40,12 +40,12 @@ producerlabels_mcc8_simcalib_data:
 
 }
 
-producerlabels_mcc8_simcalib_data_pmtremap:
+producerlabels_mcc8_dedxcalib_data_pmtremap:
 {
 
   # producer label names
   TrackLabel       : "pandoraNu::DataPMTRemapRecoStage2"
-  CalorimetryLabel : "simcalibration::particleid"
+  CalorimetryLabel : "dedxcalibration::particleid"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
@@ -55,34 +55,34 @@ producerlabels_mcc8_simcalib_data_pmtremap:
 
 }
 
-producerlabels_mcc8_UBXSec_simcalib:
+producerlabels_mcc8_UBXSec_dedxcalib:
 {
 
 # producer label names
   TrackLabel       : "pandoraNu::UBXSec"
-  CalorimetryLabel : "simcalibration::particleid"
+  CalorimetryLabel : "dedxcalibration::particleid"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
   HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
   HitTrackAssn        : "pandoraNu::UBXSec"
   HitTruthAssn        : "pandoraCosmicHitRemoval::UBXSec"
-  CaloTrackAssn       : "simcalibration::particleid"
+  CaloTrackAssn       : "dedxcalibration::particleid"
 
 }
 
-producerlabels_mcc8_UBXSec_simcalib_data:
+producerlabels_mcc8_UBXSec_dedxcalib_data:
 {
 
 # producer label names
   TrackLabel       : "pandoraNu::UBXSec"
-  CalorimetryLabel : "simcalibration::particleid"
+  CalorimetryLabel : "dedxcalibration::particleid"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
   HitLabel            : "pandoraCosmicHitRemoval::UBXSec"
   HitTrackAssn        : "pandoraNu::UBXSec"
-  CaloTrackAssn       : "simcalibration::particleid"
+  CaloTrackAssn       : "dedxcalibration::particleid"
 
 }
 

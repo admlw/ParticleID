@@ -19,8 +19,8 @@ braggalgo_mcc8:
   dEdxGausWidthK    : [ 0.09, 0.19, 0.09 ]
   dEdxGausWidthMIP  : [ 0.09, 0.19, 0.09 ]
 
-  # offsets: 
-  #   - negative shifts the peak of the landaugaussian left 
+  # offsets:
+  #   - negative shifts the peak of the landaugaussian left
   #   - positive shifts the peak of the landaugaussian right
   PeakOffsetP : 0
   PeakOffsetMu: 0
@@ -42,7 +42,7 @@ braggalgo_mcc8:
 
 }
 
-braggalgo_mcc8_simcalib:
+braggalgo_mcc8_dedxcalib:
 {
 
   # dEdx widths, per plane
@@ -58,8 +58,8 @@ braggalgo_mcc8_simcalib:
   dEdxGausWidthMIP  : [ 0.33, 0.53, 0.20 ]
 
 
-  # offsets: 
-  #   - negative shifts the peak of the landaugaussian left 
+  # offsets:
+  #   - negative shifts the peak of the landaugaussian left
   #   - positive shifts the peak of the landaugaussian right
   PeakOffsetP : 0
   PeakOffsetMu: 0
@@ -96,8 +96,8 @@ braggalgo_mcc8_data:
   dEdxGausWidthK    : [ 0.33, 0.53, 0.20 ]
   dEdxGausWidthMIP  : [ 0.33, 0.53, 0.20 ]
 
-  # offsets: 
-  #   - negative shifts the peak of the landaugaussian left 
+  # offsets:
+  #   - negative shifts the peak of the landaugaussian left
   #   - positive shifts the peak of the landaugaussian right
   PeakOffsetP : 0
   PeakOffsetMu: 0

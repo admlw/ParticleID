@@ -12,7 +12,7 @@ particleidvalidconfig:
 
   module_type: "ParticleIdValidationPlots"
 
-  ProducerLabels: @local::producerlabels_mcc8_simcalib
+  ProducerLabels: @local::producerlabels_mcc8_dedxcalib
 
   FiducialVolume: @local::pidfidvol
 
@@ -23,7 +23,7 @@ particleidvalidconfig:
   IsUBXSecSelected: true
 
   # bragg algorithm fcl parameters
-  BraggAlgo: @local::braggalgo_mcc8_simcalib
+  BraggAlgo: @local::braggalgo_mcc8_dedxcalib
 }
 
 END_PROLOG

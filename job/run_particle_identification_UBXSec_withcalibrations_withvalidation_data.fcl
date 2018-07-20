@@ -3,7 +3,7 @@
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
 #include "config_particle_identification_validation.fcl"
-#include "config_simulation_calibration.fcl"
+#include "config_dedx_calibration.fcl"
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"
 #include "particleid_microboone.fcl"
@@ -43,7 +43,7 @@ physics:
     {
 
       pidcalibration: @local::microboone_calibrationdedx
-      simcalibration: @local::simulation_calibration
+      dedxcalibration: @local::data_newboxrecomb
       pid: @local::particleidconfig
 
     }
@@ -54,7 +54,7 @@ physics:
     }
 
     stream1: [ out1 ]
-    analysis: [ pidcalibration, simcalibration, pid ]
+    analysis: [ pidcalibration, dedxcalibration, pid ]
     validation: [ pidvalid ]
     trigger_paths: [ analysis ]
     end_paths: [ validation, stream1 ]
@@ -74,13 +74,14 @@ physics.producers.pidcalibration.CaloAlg: @local::microboone_calorimetryalgmcc84
 physics.producers.pidcalibration.TrackModuleLabel:       "pandoraNu::UBXSec"
 physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraNucalo::UBXSec"
 
-physics.producers.simcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_UBXSec_uncalib_simcalib_data
-physics.producers.simcalibration.IsSimulationSmearing: false
+physics.producers.dedxcalibration.ProducerLabels: @local::cs_producerlabels_mcc8_UBXSec_uncalib_dedxcalib_data
+physics.producers.dedxcalibration.IsSimulationSmearing: false
+physics.producers.dedxcalibration.IsDataNewRecombination: true
 
-physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib_data
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_dedxcalib_data
 physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_data
 
-physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_simcalib_data
+physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc8_UBXSec_dedxcalib_data
 physics.analyzers.pidvalid.BraggAlgo: @local::braggalgo_mcc8_data
 physics.analyzers.pidvalid.IsDataPlotsOnly: true
 

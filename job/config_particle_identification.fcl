@@ -15,10 +15,10 @@ particleidconfig:
   module_type: "ParticleId"
 
   # producer labels for PID + validation
-  ProducerLabels: @local::producerlabels_mcc8_simcalib
+  ProducerLabels: @local::producerlabels_mcc8_dedxcalib
 
   # bragg algorithm fcl parameters
-  BraggAlgo: @local::braggalgo_mcc8_simcalib
+  BraggAlgo: @local::braggalgo_mcc8_dedxcalib
 
   # fiducial volume dimensions
   FiducialVolume: @local::pidfidvol
