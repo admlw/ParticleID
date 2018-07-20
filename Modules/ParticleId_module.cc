@@ -53,6 +53,7 @@
 
 // cpp includes
 #include <memory>
+#include <bitset>
 
 namespace UBPID{
   class ParticleId;
@@ -550,6 +551,7 @@ void UBPID::ParticleId::produce(art::Event & e)
     trklen.fAlgName = "TruncatedMean";
     trklen.fVariableType = anab::kTrackLength;
     trklen.fTrackDir = anab::kNoDirection;
+    trklen.fPlaneID = UBPID::uB_SinglePlaneGetBitset(2); // dummy
     trklen.fValue = track->Length();
     AlgScoresVec.push_back(trklen);
 
@@ -579,10 +581,12 @@ void UBPID::ParticleId::produce(art::Event & e)
     trk_rangeE_mu.fVariableType = anab::kEbyRange;
     trk_rangeE_mu.fTrackDir = anab::kNoDirection;
     trk_rangeE_mu.fAssumedPdg = 13;
+    trk_rangeE_mu.fPlaneID = UBPID::uB_SinglePlaneGetBitset(2); // dummy
     trk_rangeE_p.fAlgName = "DepEvsRangeE";
     trk_rangeE_p.fVariableType = anab::kEbyRange;
     trk_rangeE_p.fTrackDir = anab::kNoDirection;
     trk_rangeE_p.fAssumedPdg = 2212;
+    trk_rangeE_mu.fPlaneID = UBPID::uB_SinglePlaneGetBitset(2); // dummy
     trk_rangeE_mu.fValue = TMath::Sqrt((track_rangeP_mu*track_rangeP_mu)+(105.7*105.7)) - 105.7;
     trk_rangeE_p.fValue = TMath::Sqrt((track_rangeP_p*track_rangeP_p)+(938.272*938.272)) - 938.272;
     AlgScoresVec.push_back(trk_rangeE_mu);
