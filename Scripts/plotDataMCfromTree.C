@@ -283,7 +283,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
     CalcPIDvars(&mc_vars, true);
     std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&mc_vars);
 
-    if (mc_vars.track_length > 0 && mc_vars.track_length < 10000){
+    if (mc_vars.track_theta_x > 75 && mc_vars.track_theta_x < 90){
       for (size_t i_pl=0; i_pl < nplanes; i_pl++){
         for (size_t i_h = 0; i_h < nplots; i_h++){
           FillHist(mc_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),mc_vars.true_PDG);
@@ -311,7 +311,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       CalcPIDvars(&onbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&onbeam_vars);
 
-      if (onbeam_vars.track_length > 0 && onbeam_vars.track_length < 10000){
+      if (onbeam_vars.track_theta_x > 75 && onbeam_vars.track_theta_x < 90){
         for (size_t i_pl=0; i_pl < nplanes; i_pl++){
           for (size_t i_h = 0; i_h < nplots; i_h++){
             FillHist(onb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0); // 0 because there is no "true PDG" for data
@@ -338,7 +338,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       CalcPIDvars(&offbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&offbeam_vars);
 
-      if (offbeam_vars.track_length > 0 && offbeam_vars.track_length < 10000){
+      if (offbeam_vars.track_theta_x >75 && offbeam_vars.track_theta_x < 90){
         for (size_t i_pl=0; i_pl < nplanes; i_pl++){
           for (size_t i_h = 0; i_h < nplots; i_h++){
             FillHist(offb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0.); // 0 because there is no "true PDG" for data

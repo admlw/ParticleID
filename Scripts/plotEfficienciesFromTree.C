@@ -238,7 +238,7 @@ std::vector<std::vector<double>> twodEffPurVars_bins = {
 //  Now the function starts
 // ---------------------------------------------------- //
 
-void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
+void plotEfficienciesFromTree(std::string mcfile, double POTscaling=0., std::string onbeamdatafile="", std::string offbeamdatafile="", double offbeamscaling=0., bool onminusoffbeam=true, std::string outfile=NULL){
 
   // Make a file to store output
   TFile *fout = nullptr;
@@ -255,6 +255,25 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
   TTree *t_bnbcos = (TTree*)f_bnbcos->Get("pidvalid/pidTree");
   treevars mc_vars;
   settreevars(t_bnbcos,&mc_vars);
+
+  TFile *f_onbeam=nullptr;
+  TTree *t_onbeam=nullptr;
+  treevars onbeam_vars;
+  if (onbeamdatafile!=""){
+    std::cout << "Making data-MC comparisons" << std::endl;
+    f_onbeam = new TFile(onbeamdatafile.c_str(), "read");
+    t_onbeam = (TTree*)f_onbeam->Get("pidvalid/pidTree");
+    settreevars(t_onbeam,&onbeam_vars);
+  }
+
+  TFile *f_offbeam=nullptr;
+  TTree *t_offbeam=nullptr;
+  treevars offbeam_vars;
+  if (offbeamdatafile!=""){
+    f_offbeam = new TFile(offbeamdatafile.c_str(), "read");
+    t_offbeam = (TTree*)f_offbeam->Get("pidvalid/pidTree");
+    settreevars(t_offbeam,&offbeam_vars);
+  }
 
   // Sanity check: the plot vectors should be the same size
   t_bnbcos->GetEntry(0);
@@ -274,17 +293,21 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
   double twodvar1 = -999;
   double twodvar2 = -999;
 
-  t_bnbcos->SetBranchAddress(twodEffPurVars.at(0).c_str(), &twodvar1);
-  t_bnbcos->SetBranchAddress(twodEffPurVars.at(1).c_str(), &twodvar2);
+  // t_bnbcos->SetBranchAddress(twodEffPurVars.at(0).c_str(), &twodvar1);
+  // t_bnbcos->SetBranchAddress(twodEffPurVars.at(1).c_str(), &twodvar2);
 
   // Make histograms to fill
   const size_t nplanes = PIDvarstoplot_dummy.size();
   const size_t nplots = PIDvarstoplot_dummy.at(0).size();
   hist1D *mc_hists[nplanes][nplots];
+  hist1D *mc_passingfrac_hists[nplanes][nplots];
   hist2D *mc_2dhists[nplanes][nplots];
   for (int i_pl=0; i_pl<nplanes; i_pl++){
     for (int i_h=0; i_h<nplots; i_h++){
       mc_hists[i_pl][i_h] = new hist1D(std::string("h_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h),bins.at(i_h).at(0),bins.at(i_h).at(1),bins.at(i_h).at(2));
+
+      mc_passingfrac_hists[i_pl][i_h] = new hist1D(std::string("h_pf_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h),2,0,2);
+
       mc_2dhists[i_pl][i_h] = new hist2D(std::string("h2d_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h)+";"+twodEffPurVars.at(0)+";"+twodEffPurVars.at(1), twodEffPurVars_bins.at(0).at(0), twodEffPurVars_bins.at(0).at(1), twodEffPurVars_bins.at(0).at(2), twodEffPurVars_bins.at(1).at(0), twodEffPurVars_bins.at(1).at(1), twodEffPurVars_bins.at(1).at(2), bins.at(i_h).at(0),bins.at(i_h).at(1),bins.at(i_h).at(2));
     }
   }
@@ -295,10 +318,18 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
     CalcPIDvars(&mc_vars, false);
     std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&mc_vars);
 
+    if (!(mc_vars.track_theta_x > 0 && mc_vars.track_theta_x < 45)) continue;
+
     for (size_t i_pl=0; i_pl < nplanes; i_pl++){
       for (size_t i_h = 0; i_h < nplots; i_h++){
+
         FillHist(mc_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),mc_vars.true_PDG);
+
         Fill2DHist(mc_2dhists[i_pl][i_h], twodvar1, twodvar2, PIDvarstoplot.at(i_pl).at(i_h), mc_vars.true_PDG);
+
+        double passes = 0;
+        if (PIDvarstoplot.at(i_pl).at(i_h)>cutValues.at(i_h)) passes = 1;
+        FillHist(mc_passingfrac_hists[i_pl][i_h],passes,mc_vars.true_PDG);
       }
     }
 
@@ -306,15 +337,76 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
 
   } // end loop over entries in tree
 
+  // ----------------- On-beam data
+
+  // Make histograms to fill
+  hist1D *onb_hists[nplanes][nplots];
+  if (t_onbeam){
+    for (int i_pl=0; i_pl<nplanes; i_pl++){
+      for (int i_h=0; i_h<nplots; i_h++){
+        onb_hists[i_pl][i_h] = new hist1D(std::string("h_ondat_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h),2,0,2);
+      }
+    }
+
+    // Loop through on-beam data tree and fill plots
+    for (int i = 0; i < t_onbeam->GetEntries(); i++){
+      t_onbeam->GetEntry(i);
+      CalcPIDvars(&onbeam_vars, false);
+      std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&onbeam_vars);
+
+      if (!(onbeam_vars.track_theta_x > 0 && onbeam_vars.track_theta_x < 45)) continue;
+
+      for (size_t i_pl=0; i_pl < nplanes; i_pl++){
+        for (size_t i_h = 0; i_h < nplots; i_h++){
+          double passes = 0;
+          if (PIDvarstoplot.at(i_pl).at(i_h)>cutValues.at(i_h)) passes = 1;
+          FillHist(onb_hists[i_pl][i_h],passes,0);
+        }
+      }
+    } // end loop over entries in tree
+  } // end if (t_onbeam)
+
+  // ----------------- Off-beam data
+
+  // Make histograms to fill
+  hist1D *offb_hists[nplanes][nplots];
+  if (t_offbeam){
+    for (int i_pl=0; i_pl<nplanes; i_pl++){
+      for (int i_h=0; i_h<nplots; i_h++){
+        offb_hists[i_pl][i_h] = new hist1D(std::string("h_offdat_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h),2,0,2);
+      }
+    }
+
+    // Loop through on-beam data tree and fill plots
+    for (int i = 0; i < t_offbeam->GetEntries(); i++){
+      t_offbeam->GetEntry(i);
+      CalcPIDvars(&offbeam_vars, false);
+      std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&offbeam_vars);
+
+      if (!(offbeam_vars.track_theta_x > 0 && offbeam_vars.track_theta_x < 45)) continue;
+
+      for (size_t i_pl=0; i_pl < nplanes; i_pl++){
+        for (size_t i_h = 0; i_h < nplots; i_h++){
+          double passes = 0;
+          if (PIDvarstoplot.at(i_pl).at(i_h)>cutValues.at(i_h)) passes = 1;
+          FillHist(offb_hists[i_pl][i_h],passes,0);
+        }
+      }
+    } // end loop over entries in tree
+  } // end if (t_onbeam)
+
 
   // -------------------- Now make all the plots
 
   for (size_t i_pl=0; i_pl < nplanes; i_pl++){
     for (size_t i_h=0; i_h < nplots; i_h++){
+      // Efficiency and purity: MC only
+      // -- 1D
       TCanvas *c1 = new TCanvas();
       DrawMCEffPur(c1, mc_hists[i_pl][i_h],MIPlow.at(i_h),cutValues.at(i_h),fout);
       c1->Print(std::string(histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());
       delete c1;
+      // -- 2D
       TCanvas *c2 = new TCanvas();
       TCanvas *c3 = new TCanvas();
       TCanvas *c4 = new TCanvas();
@@ -327,6 +419,38 @@ void plotEfficienciesFromTree(std::string mcfile, std::string outfile=NULL){
       delete c2;
       delete c3;
       delete c4;
+
+      // Now plot passing fractions: can be MC and data
+      TCanvas *c5 = new TCanvas();
+      if (onminusoffbeam){
+        DrawMC(mc_passingfrac_hists[i_pl][i_h],POTscaling,-999);
+        if (f_onbeam && f_offbeam){
+          OverlayOnMinusOffData(c5,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling);
+          TString e_str("h_err");
+          TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          OverlayChi2(c5, e_str, o_str);
+        }
+      }
+
+      else{
+        if (f_onbeam && f_offbeam){
+          DrawMCPlusOffbeam(mc_passingfrac_hists[i_pl][i_h],offb_hists[i_pl][i_h],POTscaling,offbeamscaling,-999);
+          OverlayOnBeamData(c5,onb_hists[i_pl][i_h]);
+          TString e_str("h_err");
+          TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
+          OverlayChi2(c5, e_str, o_str);
+        }
+        else{
+          DrawMC(mc_hists[i_pl][i_h],POTscaling,-999);
+        }
+      }
+      if (cutValues.at(i_h)!=-999)
+        c5->Print(std::string(std::string("PassingFrac_")+histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());
+      delete c5;
     }
   }
+  if (outfile!=NULL) fout->Close();
+  delete f_bnbcos;
+  if (offbeamdatafile!="") delete f_offbeam;
+  if (onbeamdatafile!="") delete f_onbeam;
 }

@@ -40,6 +40,9 @@ struct treevars{
   double track_rangeE_mu=-9999;
   double track_rangeE_p=-9999;
   double track_length = -9999;
+  double track_theta = -9999;
+  double track_phi = -9999;
+  double track_theta_x = -9999;
 
   // Make the chi2 variables std::vector<doubles> so we can handle them in the same way as the other variables
   // This is just a cheat - we only have chi2 variables for collection plane right now, so set other values to 0 by hand. Fix this in the future!
@@ -115,6 +118,9 @@ void settreevars(TTree *intree, treevars *varstoset){
   intree->SetBranchAddress("track_resrange_perhit_u", &(varstoset->track_resrange_perhit_u));
   intree->SetBranchAddress("track_resrange_perhit_v", &(varstoset->track_resrange_perhit_v));
   intree->SetBranchAddress("track_resrange_perhit_y", &(varstoset->track_resrange_perhit_y));
+  intree->SetBranchAddress("track_theta", &(varstoset->track_theta));
+  intree->SetBranchAddress("track_phi", &(varstoset->track_phi));
+
 
   intree->GetEntry(0);
   size_t nplanes = varstoset->track_likelihood_fwd_p->size();
@@ -323,6 +329,15 @@ void CalcPIDvars(treevars *vars, bool isScale){
     TruncMean trm;
     if (dEdx_float.size()>0) vars->track_dEdx_mean_atstart->at(i_pl) = (double)trm.CalcIterativeTruncMean(dEdx_float, 1, 1, 0, 1, 0.1, 1.0);
   }
+
+  // Theta_x: angle w.r.t. x axis (drift direction), between 0 and 90 degrees
+  TVector3 vec;
+  vec.SetMagThetaPhi(1,vars->track_theta,vars->track_phi);
+  TVector3 x_axis(1,0,0);
+  double theta_x = vec.Angle(x_axis)*180.0/TMath::Pi();
+  if (theta_x>90) theta_x = 180-theta_x;
+  vars->track_theta_x = theta_x;
+
 }
 
 
