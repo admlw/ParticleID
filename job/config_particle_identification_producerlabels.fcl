@@ -86,4 +86,17 @@ producerlabels_mcc8_UBXSec_dedxcalib_data:
 
 }
 
+producerlabels_mcc9_UBXSec:
+{
+
+# producer label names
+  TrackLabel       : "pandora"
+
+  # validator labels
+  ParticleIdLabel     : "pid::particleid"
+#the hitlabel and hittruthassn were pandoraNucosmichitremoval....how do I fix this with pandoraconsolidated?
+  HitLabel            : "pandoraCosmicHitRemoval"
+  HitTrackAssn        : "pandora"
+  HitTruthAssn        : "pandoraCosmicHitRemoval"
+
 END_PROLOG
