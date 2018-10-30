@@ -48,8 +48,8 @@
 #include "larcoreobj/SummaryData/POTSummary.h"
 
 // UBXSec
-#include "uboone/UBXSec/DataTypes/SelectionResult.h"
-#include "uboone/UBXSec/DataTypes/TPCObject.h"
+#include "ubobj/UBXSec/SelectionResult.h"
+#include "ubobj/UBXSec/TPCObject.h"
 
 // ROOT
 #include "TH1F.h"
@@ -57,10 +57,10 @@
 #include "TTree.h"
 
 // Algorithms
-#include "uboone/ParticleID/Algorithms/FiducialVolume.h"
-#include "uboone/ParticleID/Algorithms/dQdxSeparatorMarco.h"
-#include "uboone/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
-#include "uboone/ParticleID/Algorithms/uB_PlaneIDBitsetHelperFunctions.h"
+#include "ubana/ubana/ParticleID/Algorithms/FiducialVolume.h"
+#include "ubana/ubana/ParticleID/Algorithms/dQdxSeparatorMarco.h"
+#include "ubana/ubana/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
+#include "ubana/ubana/ParticleID/Algorithms/uB_PlaneIDBitsetHelperFunctions.h"
 
 // cpp
 #include <vector>

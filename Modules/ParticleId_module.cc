@@ -40,13 +40,13 @@
 #include "larreco/RecoAlg/TrackMomentumCalculator.h"
 
 // local includes
-#include "uboone/ParticleID/Algorithms/GetDaughterTracksShowers.h"
-#include "uboone/ParticleID/Algorithms/FiducialVolume.h"
-#include "uboone/ParticleID/Algorithms/PIDA.h"
-#include "uboone/ParticleID/Algorithms/Chisq.h"
-#include "uboone/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
-#include "uboone/ParticleID/Algorithms/LandauGaussian.h"
-#include "uboone/ParticleID/Algorithms/uB_PlaneIDBitsetHelperFunctions.h"
+#include "ubana/ParticleID/Algorithms/GetDaughterTracksShowers.h"
+#include "ubana/ParticleID/Algorithms/FiducialVolume.h"
+#include "ubana/ParticleID/Algorithms/PIDA.h"
+#include "ubana/ParticleID/Algorithms/Chisq.h"
+#include "ubana/ParticleID/Algorithms/Bragg_Likelihood_Estimator.h"
+#include "ubana/ParticleID/Algorithms/LandauGaussian.h"
+#include "ubana/ParticleID/Algorithms/uB_PlaneIDBitsetHelperFunctions.h"
 
 // root includes
 #include "TVector3.h"

@@ -10,21 +10,21 @@ set( ROOTLIB -L$ENV{ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpa
 link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} )
 
 art_make( BASENAME_ONLY
-  LIBRARY_NAME     uboonecode_uboone_ParticleID_Algorithms
+  LIBRARY_NAME     ubana_ubana_ParticleID_Algorithms
   LIB_LIBRARIES
-  uboonecode_uboone_BasicTool_GeoAlgo
+  ubana_BasicTool_GeoAlgo
   uboone_UBFlashFinder
-  uboonecode_uboone_SelectionTool_OpT0FinderBase
-  uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
+  ubana_SelectionTool_OpT0FinderBase
+  ubana_SelectionTool_OpT0FinderAlgorithms
   larana_ParticleIdentification
 
-  larcore_Geometry
+  larcorealg_Geometry
   larcore_Geometry_Geometry_service
-  uboone_RawData
+  ubraw_RawData
   SignalShapingServiceMicroBooNE_service
   larevt_CalibrationDBI_IOVData
   larevt_CalibrationDBI_Providers
-  larsim_MCCheater_BackTracker_service
+  larsim_MCCheater_BackTracker
   larsim_Simulation
   lardataobj_RawData
   lardataobj_RecoBase
@@ -43,9 +43,11 @@ art_make( BASENAME_ONLY
   ${ART_FRAMEWORK_SERVICES_REGISTRY}
   ${ART_FRAMEWORK_SERVICES_OPTIONAL}
   ${ART_FRAMEWORK_SERVICES_OPTIONAL_TFILESERVICE_SERVICE}
-  art_Persistency_Common canvas_Persistency_Common
-  art_Persistency_Provenance canvas_Persistency_Provenance
-  art_Utilities canvas_Utilities
+  #art_Persistency_Common canvas_Persistency_Common
+  #art_Persistency_Provenance canvas_Persistency_Provenance
+  #art_Utilities canvas_Utilities
+  art_Persistency_Common canvas
+  art_Utilities canvas
   ${ART_PERSISTENCY_COMMON}
   ${ART_PERSISTENCY_PROVENANCE}
   ${ART_UTILITIES}
@@ -59,17 +61,17 @@ art_make( BASENAME_ONLY
   ${ROOT_BASIC_LIB_LIST}
 
   MODULE_LIBRARIES
-  uboonecode_uboone_ParticleID_Algorithms
-  larsim_MCCheater_BackTracker_service
+  ubana_ubana_ParticleID_Algorithms
+  larsim_MCCheater_BackTracker
   larpandora_LArPandoraInterface
   #                   larpandora_LArPandoraContent
 
-  uboonecode_uboone_BasicTool_GeoAlgo
-  uboonecode_uboone_SelectionTool_OpT0FinderBase
-  uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
-  uboone_UBFlashFinder
+  ubcore_LLBasicTool_GeoAlgo
+  ubreco_UBFlashFinder
+  ubana_LLSelectionTool_OpT0Finder_Base
+  ubana_LLSelectionTool_OpT0Finder_Algorithms
 
-  uboone_RawData
+  ubraw_RawData
   SignalShapingServiceMicroBooNE_service
   larevt_CalibrationDBI_IOVData
   larevt_CalibrationDBI_Providers
