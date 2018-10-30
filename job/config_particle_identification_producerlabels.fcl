@@ -91,6 +91,7 @@ producerlabels_mcc9_UBXSec:
 
 # producer label names
   TrackLabel       : "pandora"
+  CalorimetryLabel : "pandoracalo::particleid"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
@@ -98,5 +99,7 @@ producerlabels_mcc9_UBXSec:
   HitLabel            : "pandoraCosmicHitRemoval"
   HitTrackAssn        : "pandora"
   HitTruthAssn        : "pandoraCosmicHitRemoval"
+
+}
 
 END_PROLOG
