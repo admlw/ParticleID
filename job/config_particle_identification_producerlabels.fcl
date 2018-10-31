@@ -92,13 +92,13 @@ producerlabels_mcc9:
 # producer label names
   TrackLabel       : "pandora"
   #Do I need to fix this? It seems to run fine without it????????
-  CalorimetryLabel : "pandoracalo::particleid"
+  CalorimetryLabel : "pandoracalo"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
   HitLabel            : "pandoraCosmicHitRemoval"
   HitTrackAssn        : "pandora"
-  CaloTrackAssn       : "pandoracali"
+  CaloTrackAssn       : "pandoracalo"
 
 }
 
