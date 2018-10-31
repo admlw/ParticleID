@@ -23,6 +23,9 @@ services:
   TimeTracker:    @local::microboone_time_tracker
   MemoryTracker:  @local::microboone_memory_tracker
                   @table::microboone_simulation_services
+  TPCEnergyCalib: @local::microboone_tpcenergycalib_service
+		  
+		  
 } # services
 
 source:
@@ -36,17 +39,23 @@ source:
 
 physics:
 {
-    producers:
+    producers:    
     {
 
       pid: @local::particleidconfig
 
     }
 
+    analyzers:
+    {
+       pidvalid: @local::particleidvalidconfig
+    }
+
     stream1: [ out1 ]
     analysis: [ pid ]
+    validation: [ pidvalid ]
     trigger_paths: [ analysis ]
-    end_paths: [ stream1 ]
+    end_paths: [ validation, stream1 ]
 }
 
 outputs:
@@ -59,8 +68,11 @@ outputs:
   }
 }
 
+#physics.producers.pidcalibration.TrackModuleLabel:       "pandora"
+#physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoracalo"
 
-physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9_UBXSec
-physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_dedxcalib
+
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9
+physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc9
 
 services.DetectorClocksService.InheritClockConfig: false

@@ -232,10 +232,10 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
 
   fIsDataPlots = p.get<bool>("IsDataPlotsOnly", "false");
   fIsUBXSecSelected = p.get<bool>("IsUBXSecSelected", "false");
-  fTrackLabel = p_labels.get<std::string>("TrackLabel","pandoraNu::McRecoStage2");
-  fHitLabel = p_labels.get<std::string>("HitLabel","pandoraCosmicHitRemoval::McRecoStage2");
-  fHitTrackAssns = p_labels.get<std::string>("HitTrackAssn","pandoraNu::McRecoStage2");
-  fCaloTrackAssns = p_labels.get<std::string>("CaloTrackAssn", "pandoraNucali::McRecoStage2");
+  fTrackLabel = p_labels.get<std::string>("TrackLabel","pandora::McRecoStage2");
+  fHitLabel = p_labels.get<std::string>("HitLabel","crhitremovalTruthMatch::McRecoStage2");
+  fHitTrackAssns = p_labels.get<std::string>("HitTrackAssn","crthitremovalTruthMatch::McRecoStage2");
+  fCaloTrackAssns = p_labels.get<std::string>("CaloTrackAssn", "pandoracali::McRecoStage2");
   fHitTruthAssns = p_labels.get<std::string>("HitTruthAssn","crHitRemovalTruthMatch::McRecoStage2");
   fPIDLabel = p_labels.get<std::string>("ParticleIdLabel");
   //fPIDLabelChi2 = p_labels.get<std::string>("ParticleIdChi2Label");
