@@ -95,9 +95,9 @@ producerlabels_mcc9:
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
-  HitLabel            : "pandoraCosmicHitRemoval"
+  HitLabel            : "gaushit"
   HitTrackAssn        : "pandora"
-  HitTruthAssn        : "crHitRemovalTruthMatch"
+  HitTruthAssn        : "gaushitTruthMatch"
   CaloTrackAssn       : "pandoracalo"
 
 }
