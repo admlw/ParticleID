@@ -232,10 +232,10 @@ ParticleIdValidationPlots::ParticleIdValidationPlots(fhicl::ParameterSet const &
 
   fIsDataPlots = p.get<bool>("IsDataPlotsOnly", "false");
   fIsUBXSecSelected = p.get<bool>("IsUBXSecSelected", "false");
-  fTrackLabel = p_labels.get<std::string>("TrackLabel","pandora::McRecoStage2");
+  fTrackLabel = p_labels.get<std::string>("TrackLabel","myTracks::PandoraWorkshopTrackShower");
   fHitLabel = p_labels.get<std::string>("HitLabel","gaushit::McRecoStage1");
   //This should just be the neutrino slice........
-  fHitTrackAssns = p_labels.get<std::string>("HitTrackAssn","pandora::McRecoStage2");
+  fHitTrackAssns = p_labels.get<std::string>("HitTrackAssn","myTracks::PandoraWorkshopTrackShower");
   fCaloTrackAssns = p_labels.get<std::string>("CaloTrackAssn", "pandoracalo::McRecoStage2");
   fHitTruthAssns = p_labels.get<std::string>("HitTruthAssn","gaushitTruthMatch::McRecoStage1");
   fPIDLabel = p_labels.get<std::string>("ParticleIdLabel");

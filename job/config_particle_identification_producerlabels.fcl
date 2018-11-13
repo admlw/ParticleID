@@ -102,4 +102,20 @@ producerlabels_mcc9:
 
 }
 
+producerlabels_mcc9_track_stuff:
+{
+
+# producer label names
+  TrackLabel       : "myTracks"
+  CalorimetryLabel : "pandoracalo"
+
+  # validator labels
+  ParticleIdLabel     : "pid::particleid"
+  HitLabel            : "gaushit"
+  HitTrackAssn        : "myTracks"
+  HitTruthAssn        : "gaushitTruthMatch"
+  CaloTrackAssn       : "pandoracalo"
+
+}
+
 END_PROLOG
