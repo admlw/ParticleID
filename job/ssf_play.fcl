@@ -6,6 +6,7 @@
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"
 #include "particleid_microboone.fcl"
+#include "calorimetry_microboone.fcl"
 
 #
 # fcl file produces pandoraNucali calibrated objects and runs the particleid
@@ -43,6 +44,7 @@ physics:
     {
 
       pid: @local::particleidconfig
+      
 
     }
 
@@ -71,6 +73,10 @@ outputs:
 #physics.producers.pidcalibration.TrackModuleLabel:       "pandora"
 #physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoracalo"
 
+
+#physics.producers.pandoraalltrackscalo:@local::microboone_calomc
+physics.producers.pandoraalltrackscalo.SpacePointModuleLabel: "myTracks"
+physics.producers.pandoraalltrackscalo.TrackModuleLabel: "myTracks"
 
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9_track_stuff
 physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc9_track_stuff

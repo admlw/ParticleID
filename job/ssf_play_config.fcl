@@ -24,6 +24,7 @@ particleidvalidconfig:
 
   # bragg algorithm fcl parameters
   BraggAlgo: @local::braggalgo_mcc8_dedxcalib
+
 }
 
 END_PROLOG
