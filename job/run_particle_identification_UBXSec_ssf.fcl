@@ -72,7 +72,8 @@ outputs:
 #physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoracalo"
 
 
-physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9_nov27
-physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc9_nov27
+physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9_nov27_MC
+physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc9_nov27_MC
+physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_dedxcalib
 
 services.DetectorClocksService.InheritClockConfig: false
