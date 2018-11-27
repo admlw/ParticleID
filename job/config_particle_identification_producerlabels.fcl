@@ -86,7 +86,7 @@ producerlabels_mcc8_UBXSec_dedxcalib_data:
 
 }
 
-producerlabels_mcc9:
+producerlabels_mcc9_nov13:
 {
 
 # producer label names
@@ -99,6 +99,22 @@ producerlabels_mcc9:
   HitTrackAssn        : "pandora"
   HitTruthAssn        : "gaushitTruthMatch"
   CaloTrackAssn       : "pandoracalo"
+
+}
+
+producerlabels_mcc9_nov27:
+{
+
+# producer label names
+  TrackLabel       : "pandoraTrack"
+  CalorimetryLabel : "pandoraTrackcalo"
+
+  # validator labels
+  ParticleIdLabel     : "pid::particleid"
+  HitLabel            : "gaushit"
+  HitTrackAssn        : "pandoraTrack"
+  HitTruthAssn        : "gaushitTruthMatch"
+  CaloTrackAssn       : "pandoraTrackcalo"
 
 }
 
