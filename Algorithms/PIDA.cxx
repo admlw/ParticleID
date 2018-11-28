@@ -6,11 +6,7 @@
 
 namespace particleid{
 
-<<<<<<< HEAD
   double PIDA::getPida(std::vector<double> dEdx, std::vector<double> resRange, std::string method){
-=======
-  double PIDA::getPida(std::vector<float> dEdx, std::vector<float> resRange, std::string method){
->>>>>>> temp
 
     kde::KernelDensityEstimator kde;
     double pida = -1.0;

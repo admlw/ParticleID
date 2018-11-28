@@ -1,11 +1,7 @@
 #include "services_microboone.fcl"
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
-<<<<<<< HEAD
 #include "config_particle_identification.fcl"
-=======
-#include "config_particle_identification_ssf.fcl"
->>>>>>> temp
 #include "config_particle_identification_validation_ssf.fcl"
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"
@@ -15,11 +11,7 @@
 # fcl file produces pandoraNucali calibrated objects and runs the particleid
 # on them, then performs validation.
 #
-<<<<<<< HEAD
 # intended to be used on CC-inclusive filtered events
-=======
-# intended to be used on CC-inclusive filtered events: THIS IS NOT THE CASE IN MCC9
->>>>>>> temp
 #
 
 process_name: particleid
@@ -76,21 +68,11 @@ outputs:
   }
 }
 
-<<<<<<< HEAD
 #physics.producers.pidcalibration.TrackModuleLabel:       "pandora"
 #physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoracalo"
 
 
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9
 physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc9
-=======
-#physics.producers.pidcalibration.TrackModuleLabel:       "pandoraTrack"
-#physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraTrackcalo"
-
-
-physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9_nov27_MC
-physics.analyzers.pidvalid.ProducerLabels: @local::producerlabels_mcc9_nov27_MC
-physics.producers.pid.BraggAlgo: @local::braggalgo_mcc8_dedxcalib
->>>>>>> temp
 
 services.DetectorClocksService.InheritClockConfig: false

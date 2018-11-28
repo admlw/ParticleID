@@ -240,17 +240,10 @@ void UBPID::ParticleId::produce(art::Event & e)
         continue;
       }
 
-<<<<<<< HEAD
       std::vector<double> dEdx = calo->dEdx();
       std::vector<double> dQdx = calo->dQdx();
       std::vector<double> resRange = calo->ResidualRange();
       std::vector<double> trkpitchvec = calo->TrkPitchVec();
-=======
-      std::vector<float> dEdx = calo->dEdx();
-      std::vector<float> dQdx = calo->dQdx();
-      std::vector<float> resRange = calo->ResidualRange();
-      std::vector<float> trkpitchvec = calo->TrkPitchVec();
->>>>>>> temp
 
       /**
        * Initially wanted to only perform particle ID on tracks which Bragged,

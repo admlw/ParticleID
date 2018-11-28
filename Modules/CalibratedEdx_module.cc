@@ -171,13 +171,8 @@ void UBPID::CalibratedEdx::produce(art::Event & e)
       planenum = c->PlaneID().Plane;
       calo = c;
 
-<<<<<<< HEAD
       std::vector<double> dEdx = calo->dEdx();
       std::vector<double> dQdx = calo->dQdx();
-=======
-      std::vector<float> dEdx = calo->dEdx();
-      std::vector<float> dQdx = calo->dQdx();
->>>>>>> temp
 
       if (!calo || planenum < 0 || planenum > 2){
         std::cout << "[CalibratedEdx] Calorimetry on plane " << planenum << " is unavailable. Not smearing or applying new recombination." << std::endl;

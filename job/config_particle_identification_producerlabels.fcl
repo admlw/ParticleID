@@ -86,11 +86,7 @@ producerlabels_mcc8_UBXSec_dedxcalib_data:
 
 }
 
-<<<<<<< HEAD
 producerlabels_mcc9:
-=======
-producerlabels_mcc9_nov13:
->>>>>>> temp
 {
 
 # producer label names
@@ -106,62 +102,19 @@ producerlabels_mcc9_nov13:
 
 }
 
-<<<<<<< HEAD
-=======
-producerlabels_mcc9_nov27_MC:
-{
-
-# producer label names
-  TrackLabel       : "pandoraTrack::McRecoStage2"
-  CalorimetryLabel : "pandoraTrackcalo::McRecoStage2"
-
-  # validator labels
-  ParticleIdLabel     : "pid::particleid"
-  HitLabel            : "gaushit"
-  HitTrackAssn        : "pandoraTrack::McRecoStage2"
-  HitTruthAssn        : "gaushitTruthMatch"
-  CaloTrackAssn       : "pandoraTrackcalo::McRecoStage2"
-
-}
-
-producerlabels_mcc9_nov27_data:
-{
-
-# producer label names
-  TrackLabel       : "pandoraTrack::DataRecoStage2"
-  CalorimetryLabel : "pandoraTrackcalo::DataRecoStage2"
-
-  # validator labels
-  ParticleIdLabel     : "pid::particleid"
-  HitLabel            : "gaushit"
-  HitTrackAssn        : "pandoraTrack::DataRecoStage2"
-  HitTruthAssn        : "gaushitTruthMatch"
-  CaloTrackAssn       : "pandoraTrackcalo::DataRecoStage2"
-
-}
-
->>>>>>> temp
 producerlabels_mcc9_track_stuff:
 {
 
 # producer label names
   TrackLabel       : "myTracks"
-<<<<<<< HEAD
   CalorimetryLabel : "pandoracalo"
-=======
-  CalorimetryLabel : "pandoraalltrackscalo"
->>>>>>> temp
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
   HitLabel            : "gaushit"
   HitTrackAssn        : "myTracks"
   HitTruthAssn        : "gaushitTruthMatch"
-<<<<<<< HEAD
   CaloTrackAssn       : "pandoracalo"
-=======
-  CaloTrackAssn       : "pandoraalltrackscalo"
->>>>>>> temp
 
 }
 

@@ -12,11 +12,7 @@ particleidvalidconfig:
 
   module_type: "ParticleIdValidationPlots"
 
-<<<<<<< HEAD
   ProducerLabels: @local::producerlabels_mcc9
-=======
-  ProducerLabels: @local::producerlabels_mcc9_nov27_MC
->>>>>>> temp
 
   FiducialVolume: @local::pidfidvol
 
