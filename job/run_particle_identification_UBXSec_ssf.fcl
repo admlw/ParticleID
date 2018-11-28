@@ -68,8 +68,8 @@ outputs:
   }
 }
 
-physics.producers.pidcalibration.TrackModuleLabel:       "pandoraTrack"
-physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraTrackcalo"
+#physics.producers.pidcalibration.TrackModuleLabel:       "pandoraTrack"
+#physics.producers.pidcalibration.CalorimetryModuleLabel: "pandoraTrackcalo"
 
 
 physics.producers.pid.ProducerLabels: @local::producerlabels_mcc9_nov27_MC
