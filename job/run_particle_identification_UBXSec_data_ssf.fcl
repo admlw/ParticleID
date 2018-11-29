@@ -2,7 +2,7 @@
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
 #include "config_particle_identification.fcl"
-#include "config_particle_identification_validation_ssf.fcl"
+#include "config_particle_identification_validation_data_ssf.fcl"
 #include "config_dedx_calibration.fcl"
 #include "calibration_microboone.fcl"
 #include "caldata_microboone.fcl"

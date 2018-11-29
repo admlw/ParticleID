@@ -106,15 +106,15 @@ producerlabels_mcc9_data:
 {
 
 # producer label names
-  TrackLabel       : "pandoraTrack:DataRecoStage2"
-  CalorimetryLabel : "pandoraTrackcalo:DataRecoStage2"
+  TrackLabel       : "pandoraTrack"
+  CalorimetryLabel : "pandoraTrackcalo"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
   HitLabel            : "gaushit"
-  HitTrackAssn        : "pandoraTrack:DataRecoStage2"
-  HitTruthAssn        : "gaushitTruthMatch"
-  CaloTrackAssn       : "pandoraTrackcalo:DataRecoStage2"
+  HitTrackAssn        : "pandoraTrack"
+  #HitTruthAssn        : "gaushitTruthMatch"
+  CaloTrackAssn       : "pandoraTrackcalo"
 
 }
 
