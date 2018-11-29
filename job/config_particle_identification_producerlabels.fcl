@@ -90,15 +90,31 @@ producerlabels_mcc9:
 {
 
 # producer label names
-  TrackLabel       : "pandora"
-  CalorimetryLabel : "pandoracalo"
+  TrackLabel       : "pandoraTrack:McRecoStage2"
+  CalorimetryLabel : "pandoraTrackcalo:McRecoStage2"
 
   # validator labels
   ParticleIdLabel     : "pid::particleid"
   HitLabel            : "gaushit"
-  HitTrackAssn        : "pandora"
+  HitTrackAssn        : "pandoraTrack:McRecoStage2"
   HitTruthAssn        : "gaushitTruthMatch"
-  CaloTrackAssn       : "pandoracalo"
+  CaloTrackAssn       : "pandoraTrackcalo:McRecoStage2"
+
+}
+
+producerlabels_mcc9_data:
+{
+
+# producer label names
+  TrackLabel       : "pandoraTrack:DataRecoStage2"
+  CalorimetryLabel : "pandoraTrackcalo:DataRecoStage2"
+
+  # validator labels
+  ParticleIdLabel     : "pid::particleid"
+  HitLabel            : "gaushit"
+  HitTrackAssn        : "pandoraTrack:DataRecoStage2"
+  HitTruthAssn        : "gaushitTruthMatch"
+  CaloTrackAssn       : "pandoraTrackcalo:DataRecoStage2"
 
 }
 
