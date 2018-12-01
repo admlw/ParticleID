@@ -733,7 +733,8 @@ void ParticleIdValidationPlots::analyze(art::Event const & e)
        */
        // dQdx needs to be multiplied by a constant factor to convert from ADC to e/cm
        // Multiply MC by 198 and data by 243
-       double dQdxcalibval = 198.;
+      //FOR MCC9 TAG1 DATA IS NOW 242 on plane 2 and Tag2 MC is 178 on plane 2
+       double dQdxcalibval = 178.;
        if (isData){
          dQdxcalibval = 243.;
        }
