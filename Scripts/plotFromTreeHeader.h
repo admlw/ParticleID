@@ -179,10 +179,6 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 
   }
 
-  // std::cout << "Chi2 from our calculation: " << chi2 << std::endl;
-  // std::cout << "Chi2 from TH1: " << std::endl;
-  // double chi2_th1 = o->Chi2Test(e,"NORM UU P CHI2");
-
   std::pair<double,double> returner;
   returner.first = chi2;
   returner.second = dof;
@@ -192,22 +188,21 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 
 void OverlayChi2(TCanvas *c1, TString e_str, TString o_str){
 
-  TH1D* h_e = (TH1D*)c1->GetPrimitive(e_str.Data());
-  TH1D* h_o = (TH1D*)c1->GetPrimitive(o_str.Data());
+  TH1D* h_e = (TH1D*)c1->cd(1)->GetPrimitive(e_str.Data());
+  TH1D* h_o = (TH1D*)c1->cd(1)->GetPrimitive(o_str.Data());
 
   std::pair<double,double> chi2 = GetChi2(h_o, h_e);
 
-  TPaveText *pt = new TPaveText(0.15, 0.87, 0.45, 0.92, "NDC");
+  TPaveText *pt = new TPaveText(0.5, 0.71, 0.87, 0.76, "NDC");
   TString chi2string = Form("Chi2/NDF: %.2f/%g", chi2.first, chi2.second);
   pt->SetFillColor(kWhite);
   pt->AddText(chi2string.Data());
-  pt->SetTextSize(0.05);
+  pt->SetTextAlign(32);
   pt->Draw("same");
 
 }
 
 void CalcPIDvars(treevars *vars, bool isScale){
-  //std::cout << "Calculating PID variables for " << vars->track_likelihood_fwd_p->size() << " planes" << std::endl;
   for (size_t i_pl=0; i_pl < vars->track_likelihood_fwd_p->size(); i_pl++){
     /*    if (i_pl==0 || i_pl==1){
           vars->track_chi2_muminusp->at(i_pl) = 0;
@@ -277,9 +272,7 @@ void CalcPIDvars(treevars *vars, bool isScale){
     int nhits_start = 10;
     double Lmip_start_mean = 0.;
     double dEdx_start_mean = 0.;
-     // std::cout << i_pl << ": " << vars->track_Lmip_perhit->at(i_pl).size() << ", " << vars->track_dEdx_perhit_u->size() << ", " << vars->track_dEdx_perhit_v->size() << ", " << vars->track_dEdx_perhit_y->size() << std::endl;
     std::vector<float> dEdx_float;
-    //std::cout << "---" << std::endl;
     for (int i=1; i<nhits_start; i++){
       // Skip first hit (start from i=1) and last hit
       if (i>=vars->track_Lmip_perhit->at(i_pl).size()) continue;
@@ -293,7 +286,6 @@ void CalcPIDvars(treevars *vars, bool isScale){
           index = perhit_size-i;
         }
         dEdx_float.push_back((float)(vars->track_dEdx_perhit_u->at(index)));
-        // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_u->at(index) << " instead of " << vars->track_resrange_perhit_u->at(i) << std::endl;
       }
       else if (i_pl==1){
         size_t perhit_size = vars->track_dEdx_perhit_v->size();
@@ -304,7 +296,6 @@ void CalcPIDvars(treevars *vars, bool isScale){
           index = perhit_size-i;
         }
         dEdx_float.push_back((float)(vars->track_dEdx_perhit_v->at(index)));
-        // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_v->at(index) << " instead of " << vars->track_resrange_perhit_v->at(i) << std::endl;
       }
       else if (i_pl==2){
         size_t perhit_size = vars->track_dEdx_perhit_y->size();
@@ -313,10 +304,8 @@ void CalcPIDvars(treevars *vars, bool isScale){
         int index = i;
         if (vars->track_resrange_perhit_y->at(0)<vars->track_resrange_perhit_y->at(perhit_size-1)){ // start of vector is end of track
           index = perhit_size-i;
-          // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_y->at(index) << " instead of " << vars->track_resrange_perhit_y->at(i) << std::endl;
         }
         else{
-          // std::cout << "Pushing back residual range " << vars->track_resrange_perhit_y->at(index) << " instead of " << vars->track_resrange_perhit_y->at(perhit_size-i) << std::endl;
         }
         dEdx_float.push_back((float)(vars->track_dEdx_perhit_y->at(index)));
       }
@@ -352,7 +341,8 @@ struct hist1D{
   TH1D *h_other;
   TH1D *h_all;
 
-  TLegend *l;
+  TLegend *l_left;
+  TLegend *l_right;
 
   // Constructor for this struct of hists
   hist1D(std::string name, std::string title, double nbins, double binlow, double binhigh){
@@ -369,17 +359,27 @@ struct hist1D{
     h_pi->SetFillColor(TColor::GetColor(166,217,106));
     h_k->SetFillColor(TColor::GetColor(133,1,98));
     h_other->SetFillColor(TColor::GetColor(197,197,197));
+    h_mu->SetLineWidth(0);
+    h_p->SetLineWidth(0);
+    h_pi->SetLineWidth(0);
+    h_k->SetLineWidth(0);
+    h_other->SetLineWidth(0);
     // "All" styling for MC (data styling is set in DrawData)
     h_all->SetFillStyle(3345);
     h_all->SetFillColor(kGray+2);
     h_all->SetMarkerSize(0.); // bad hack because root keeps drawing markers and I can't make it stop
 
-    l = new TLegend(0.59,0.64,0.81,0.87);
-    l->AddEntry(h_p,"True proton","f");
-    l->AddEntry(h_mu,"True muon","f");
-    l->AddEntry(h_pi,"True pion","f");
-    l->AddEntry(h_k,"True kaon","f");
-    l->AddEntry(h_other,"True other","f");
+    l_left = new TLegend(0.1,0.8,0.5,0.98);
+    l_left->AddEntry(h_p,"True proton","f");
+    l_left->AddEntry(h_mu,"True muon","f");
+    l_left->AddEntry(h_pi,"True pion","f");
+    l_left->SetName("l_left");
+    
+    l_right = new TLegend(0.5,0.8,0.9,0.98);
+    l_right->AddEntry(h_k,"True kaon","f");
+    l_right->AddEntry(h_other,"True other","f");
+    l_right->SetName("l_right");
+
   }
 };
 
@@ -448,7 +448,8 @@ void Fill2DHist(hist2D *hists, double valuex, double valuey, double valuez, int 
   }
 }
 
-void DrawMC(hist1D *hists, double POTScaling, double yrange){
+void DrawMC(TCanvas *c1, hist1D *hists, double POTScaling, double yrange){
+
   if (POTScaling == 0.){ // area normalise
     POTScaling = 1./hists->h_all->Integral();
     hists->h_all->GetYaxis()->SetTitle("No. tracks (area normalised)");
@@ -489,7 +490,7 @@ void DrawMC(hist1D *hists, double POTScaling, double yrange){
   hs->Draw("same hist");
   TH1D *h_err = (TH1D*)hists->h_all->Clone("h_err");
   h_err->Draw("same E2"); // Draw it again so errors are on top
-
+/*
   bool legendleft=false;
   int nbinsx = hists->h_all->GetXaxis()->GetNbins();
   for (int i_bin=(int)(nbinsx/2); i_bin < nbinsx+1; i_bin++){
@@ -501,10 +502,13 @@ void DrawMC(hist1D *hists, double POTScaling, double yrange){
     hists->l->SetX1(0.19);
     hists->l->SetX2(0.41);
   }
-  hists->l->Draw();
+  */
+  hists->l_left->Draw("same");
+  hists->l_right->Draw("same");
 }
 
-void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double OffBeamScaling, double yrange){
+void DrawMCPlusOffbeam(TCanvas* c1, hist1D *hists, hist1D *offbeam, double POTScaling, double OffBeamScaling, double yrange){
+
   // Note that there are no area-normalised options here because I'm not sure that makes sense
   hists->h_all->GetYaxis()->SetTitle("No. tracks (POT normalised)");
 
@@ -556,21 +560,11 @@ void DrawMCPlusOffbeam(hist1D *hists, hist1D *offbeam, double POTScaling, double
   hists->h_all->Draw("hist"); // Draw this one first because it knows about the axis titles
   hs->Draw("same hist");
   h_err->Draw("same E2"); // Draw it again so errors are on top
+ 
+  hists->l_right->AddEntry(offbeam->h_all,"Data (off-beam)","f");
+  hists->l_left->Draw("same");
+  hists->l_right->Draw("same");
 
-  bool legendleft=false;
-  int nbinsx = hists->h_all->GetXaxis()->GetNbins();
-  for (int i_bin=(int)(nbinsx/2); i_bin < nbinsx+1; i_bin++){
-    if (hists->h_all->GetBinContent(i_bin)>0.6*hists->h_all->GetMaximum()){
-      legendleft=true;
-    }
-  }
-  if (legendleft){
-    //std::cout << "Putting legend on the left" << std::endl;
-    hists->l->SetX1(0.19);
-    hists->l->SetX2(0.41);
-  }
-  hists->l->AddEntry(offbeam->h_all,"Data (off-beam)","f");
-  hists->l->Draw();
 }
 
 void OverlayOnMinusOffData(TCanvas *c, hist1D *onbeam, hist1D *offbeam, double OffBeamScaling, double POTScaling){
@@ -589,11 +583,13 @@ void OverlayOnMinusOffData(TCanvas *c, hist1D *onbeam, hist1D *offbeam, double O
   h_onminusoff->SetMarkerStyle(20);
   h_onminusoff->SetMarkerSize(0.6);
 
-  c->cd();
+  //c->cd(1);
   h_onminusoff->Draw("same p E1");
 
-  TLegend *l = (TLegend*)c->GetPrimitive("TPave");
+  TLegend *l = (TLegend*)c->cd(1)->GetPrimitive("l_right");
+ 
   l->AddEntry(h_onminusoff,"Data (on-off beam)","lp");
+
 }
 
 void OverlayOnBeamData(TCanvas *c, hist1D *onbeam){
@@ -601,10 +597,10 @@ void OverlayOnBeamData(TCanvas *c, hist1D *onbeam){
   onbeam->h_all->SetMarkerStyle(20);
   onbeam->h_all->SetMarkerSize(0.6);
 
-  c->cd();
+  //c->cd();
   onbeam->h_all->Draw("same p E1");
 
-  TLegend *l = (TLegend*)c->GetPrimitive("TPave");
+  TLegend *l = (TLegend*)c->cd(1)->GetPrimitive("l_right");
   l->AddEntry(onbeam->h_all,"Data (on-beam)","lp");
 }
 
@@ -1018,7 +1014,7 @@ void DrawMCEffPur(TCanvas *c, hist1D *hists, bool MIPlow, double cutval, TFile *
     }
 
     c->cd(2);
-    l->Draw();
+    l->Draw("same");
 
     if (fout){
       fout->cd();

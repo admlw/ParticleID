@@ -273,7 +273,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
   hist1D *mc_hists[nplanes][nplots];
   for (int i_pl=0; i_pl<nplanes; i_pl++){
     for (int i_h=0; i_h<nplots; i_h++){
-      mc_hists[i_pl][i_h] = new hist1D(std::string("h_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),std::string("Plane ")+std::to_string(i_pl)+histtitles.at(i_h),bins.at(i_h).at(0),bins.at(i_h).at(1),bins.at(i_h).at(2));
+      mc_hists[i_pl][i_h] = new hist1D(std::string("h_")+histnames.at(i_h)+std::string("_plane")+std::to_string(i_pl),histtitles.at(i_h),bins.at(i_h).at(0),bins.at(i_h).at(1),bins.at(i_h).at(2));
     }
   }
 
@@ -353,7 +353,13 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
 
   for (size_t i_pl=0; i_pl < nplanes; i_pl++){
     for (size_t i_h=0; i_h < nplots; i_h++){
-      TCanvas *c1 = new TCanvas();
+      TCanvas *c1 = new TCanvas("c1", "c1", 600, 500);
+      TPad *ptop = new TPad("ptop", "", 0.005, 0.1, 0.995, 0.995);
+      ptop->SetTopMargin(0.23);
+      ptop->SetBottomMargin(0.005);
+      ptop->Draw();
+
+      ptop->cd();
 
       double POTscaling_tmp = POTscaling; // Reset POT scaling for the next plot
 
@@ -363,7 +369,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       }
 
       if (onminusoffbeam){
-        DrawMC(mc_hists[i_pl][i_h],POTscaling_tmp,yrange.at(i_h));
+        DrawMC(c1, mc_hists[i_pl][i_h],POTscaling_tmp,yrange.at(i_h));
         if (f_onbeam && f_offbeam){
           OverlayOnMinusOffData(c1,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling_tmp);
           TString e_str("h_err");
@@ -373,17 +379,18 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       }
       else{
         if (f_onbeam && f_offbeam){
-          DrawMCPlusOffbeam(mc_hists[i_pl][i_h], offb_hists[i_pl][i_h], POTscaling_tmp, offbeamscaling,yrange.at(i_h));
+          DrawMCPlusOffbeam(c1, mc_hists[i_pl][i_h], offb_hists[i_pl][i_h], POTscaling_tmp, offbeamscaling,yrange.at(i_h));
           OverlayOnBeamData(c1, onb_hists[i_pl][i_h]);
           TString e_str("h_err");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
           OverlayChi2(c1, e_str, o_str);
         }
         else{
-          DrawMC(mc_hists[i_pl][i_h],POTscaling_tmp,yrange.at(i_h));
+          DrawMC(c1, mc_hists[i_pl][i_h],POTscaling_tmp,yrange.at(i_h));
         }
       }
       c1->Print(std::string(histnames[i_h]+std::string("_plane")+std::to_string(i_pl)+".png").c_str());
+
     }
   }
 }
