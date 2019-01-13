@@ -456,9 +456,11 @@ void DrawMC(TCanvas *c1, hist1D *hists, double POTScaling, double yrange){
 
   if (POTScaling == 0.){ // area normalise
     POTScaling = 1./hists->h_all->Integral();
-    hists->h_all->GetYaxis()->SetTitle("No. tracks (area normalised)");
+    hists->h_all->GetYaxis()->SetTitle("No. tracks");
   }
-  else hists->h_all->GetYaxis()->SetTitle("No. tracks (POT normalised)");
+  else hists->h_all->GetYaxis()->SetTitle("No. tracks");
+
+  hists->h_all->GetYaxis()->SetTitleOffset(1.4);
 
   hists->h_mu->Sumw2();
   hists->h_p->Sumw2();
@@ -514,7 +516,8 @@ void DrawMC(TCanvas *c1, hist1D *hists, double POTScaling, double yrange){
 void DrawMCPlusOffbeam(TCanvas* c1, hist1D *hists, hist1D *offbeam, double POTScaling, double OffBeamScaling, double yrange){
 
   // Note that there are no area-normalised options here because I'm not sure that makes sense
-  hists->h_all->GetYaxis()->SetTitle("No. tracks (POT normalised)");
+  hists->h_all->GetYaxis()->SetTitle("No. tracks");
+  hists->h_all->GetYaxis()->SetTitleOffset(1.4);
 
   hists->h_mu->Sumw2();
   hists->h_p->Sumw2();
