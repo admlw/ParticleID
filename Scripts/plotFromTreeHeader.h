@@ -159,7 +159,7 @@ void settreevars(TTree *intree, treevars *varstoset){
   varstoset->track_dEdx_mean_atstart = new std::vector<double>(nplanes);
 }
 
-std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
+std::pair<double,double> GetChi2(TH1D *o, TH1D* e, bool is_templatefit){
 
   double chi2 = 0;
   double dof = 0;
@@ -179,6 +179,10 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 
   }
 
+  // account for DOF lost from normalisation
+  if (is_templatefit == true)
+      dof = dof - 5;
+
   std::pair<double,double> returner;
   returner.first = chi2;
   returner.second = dof;
@@ -186,12 +190,12 @@ std::pair<double,double> GetChi2(TH1D *o, TH1D* e){
 
 }
 
-void OverlayChi2(TCanvas *c1, TString e_str, TString o_str){
+void OverlayChi2(TCanvas *c1, TString e_str, TString o_str, bool is_templatefit){
 
   TH1D* h_e = (TH1D*)c1->cd(1)->GetPrimitive(e_str.Data());
   TH1D* h_o = (TH1D*)c1->cd(1)->GetPrimitive(o_str.Data());
 
-  std::pair<double,double> chi2 = GetChi2(h_o, h_e);
+  std::pair<double,double> chi2 = GetChi2(h_o, h_e, is_templatefit);
 
   TPaveText *pt = new TPaveText(0.5, 0.71, 0.87, 0.76, "NDC");
   TString chi2string = Form("Chi2/NDF: %.2f/%g", chi2.first, chi2.second);

@@ -205,10 +205,10 @@ std::vector<double> cutValues = {
                     -999, // track_chi2k
                     -999, // track_PIDA_kde
                     -999, // track_PIDA_median
-                    10,// 12.5, // track_PIDA_mean
+                    9.0,// 12.5, // track_PIDA_mean
                     -999, // track_likelihood_muminusp
                     2.0, // track_likelihood_mipminusp
-                    1.0, // track_lnlikelihood_mipoverp
+                    0.0, // track_lnlikelihood_mipoverp
                     -999, // track_likelihood_minmumipminusp
                     -90.0, // track_chi2_muminusp
                     -999, // track_Lmu_0to1
@@ -221,7 +221,7 @@ std::vector<double> cutValues = {
                     0.68, // track_Lmumip0to1nopionkaon
                     -999, // track_Lmuovermip
                     -999, // track_Lmumipoverpi
-                    0.0, // track_depE_minus_rangeE_mu
+                    10.0, // track_depE_minus_rangeE_mu
                     -999 // track_depE_minus_rangeE_p
 };
 
@@ -318,7 +318,7 @@ void plotEfficienciesFromTree(std::string mcfile, double POTscaling=0., std::str
     CalcPIDvars(&mc_vars, false);
     std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&mc_vars);
 
-    if (!(mc_vars.track_theta_x > 0 && mc_vars.track_theta_x < 45)) continue;
+    //if (!(mc_vars.track_theta_x > 0 && mc_vars.track_theta_x < 45)) continue;
 
     for (size_t i_pl=0; i_pl < nplanes; i_pl++){
       for (size_t i_h = 0; i_h < nplots; i_h++){
@@ -354,7 +354,7 @@ void plotEfficienciesFromTree(std::string mcfile, double POTscaling=0., std::str
       CalcPIDvars(&onbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&onbeam_vars);
 
-      if (!(onbeam_vars.track_theta_x > 0 && onbeam_vars.track_theta_x < 45)) continue;
+      //if (!(onbeam_vars.track_theta_x > 0 && onbeam_vars.track_theta_x < 45)) continue;
 
       for (size_t i_pl=0; i_pl < nplanes; i_pl++){
         for (size_t i_h = 0; i_h < nplots; i_h++){
@@ -383,7 +383,7 @@ void plotEfficienciesFromTree(std::string mcfile, double POTscaling=0., std::str
       CalcPIDvars(&offbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&offbeam_vars);
 
-      if (!(offbeam_vars.track_theta_x > 0 && offbeam_vars.track_theta_x < 45)) continue;
+      //if (!(offbeam_vars.track_theta_x > 0 && offbeam_vars.track_theta_x < 45)) continue;
 
       for (size_t i_pl=0; i_pl < nplanes; i_pl++){
         for (size_t i_h = 0; i_h < nplots; i_h++){
@@ -423,25 +423,25 @@ void plotEfficienciesFromTree(std::string mcfile, double POTscaling=0., std::str
       // Now plot passing fractions: can be MC and data
       TCanvas *c5 = new TCanvas();
       if (onminusoffbeam){
-        DrawMC(mc_passingfrac_hists[i_pl][i_h],POTscaling,-999);
+        DrawMC(c5, mc_passingfrac_hists[i_pl][i_h],POTscaling,-999);
         if (f_onbeam && f_offbeam){
           OverlayOnMinusOffData(c5,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling);
           TString e_str("h_err");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
-          OverlayChi2(c5, e_str, o_str);
+          OverlayChi2(c5, e_str, o_str, false);
         }
       }
 
       else{
         if (f_onbeam && f_offbeam){
-          DrawMCPlusOffbeam(mc_passingfrac_hists[i_pl][i_h],offb_hists[i_pl][i_h],POTscaling,offbeamscaling,-999);
+          DrawMCPlusOffbeam(c5, mc_passingfrac_hists[i_pl][i_h],offb_hists[i_pl][i_h],POTscaling,offbeamscaling,-999);
           OverlayOnBeamData(c5,onb_hists[i_pl][i_h]);
           TString e_str("h_err");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
-          OverlayChi2(c5, e_str, o_str);
+          OverlayChi2(c5, e_str, o_str, false);
         }
         else{
-          DrawMC(mc_hists[i_pl][i_h],POTscaling,-999);
+          DrawMC(c5, mc_hists[i_pl][i_h],POTscaling,-999);
         }
       }
       if (cutValues.at(i_h)!=-999)

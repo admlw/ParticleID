@@ -283,13 +283,13 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
     CalcPIDvars(&mc_vars, true);
     std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&mc_vars);
 
-    if (mc_vars.track_theta_x > 75 && mc_vars.track_theta_x < 90){
+    //if (mc_vars.track_theta_x > 75 && mc_vars.track_theta_x < 90){
       for (size_t i_pl=0; i_pl < nplanes; i_pl++){
         for (size_t i_h = 0; i_h < nplots; i_h++){
           FillHist(mc_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),mc_vars.true_PDG);
         }
       }
-    }
+    //}
 
 
   } // end loop over entries in tree
@@ -311,13 +311,13 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       CalcPIDvars(&onbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&onbeam_vars);
 
-      if (onbeam_vars.track_theta_x > 75 && onbeam_vars.track_theta_x < 90){
+      //if (onbeam_vars.track_theta_x > 75 && onbeam_vars.track_theta_x < 90){
         for (size_t i_pl=0; i_pl < nplanes; i_pl++){
           for (size_t i_h = 0; i_h < nplots; i_h++){
             FillHist(onb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0); // 0 because there is no "true PDG" for data
           }
         }
-      }
+      //}
     }
   }
 
@@ -338,13 +338,13 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
       CalcPIDvars(&offbeam_vars, false);
       std::vector<std::vector<double>> PIDvarstoplot = GetPIDvarstoplot(&offbeam_vars);
 
-      if (offbeam_vars.track_theta_x >75 && offbeam_vars.track_theta_x < 90){
+     //if (offbeam_vars.track_theta_x >75 && offbeam_vars.track_theta_x < 90){
         for (size_t i_pl=0; i_pl < nplanes; i_pl++){
           for (size_t i_h = 0; i_h < nplots; i_h++){
             FillHist(offb_hists[i_pl][i_h],PIDvarstoplot.at(i_pl).at(i_h),0.); // 0 because there is no "true PDG" for data
           }
         }
-      }
+      //}
     } // end loop over entries in tree
   }
 
@@ -374,7 +374,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
           OverlayOnMinusOffData(c1,onb_hists[i_pl][i_h],offb_hists[i_pl][i_h],offbeamscaling,POTscaling_tmp);
           TString e_str("h_err");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
-          OverlayChi2(c1, e_str, o_str);
+          OverlayChi2(c1, e_str, o_str, templatefit);
         }
       }
       else{
@@ -383,7 +383,7 @@ void plotDataMCFromTree(std::string mcfile, double POTscaling=0., std::string on
           OverlayOnBeamData(c1, onb_hists[i_pl][i_h]);
           TString e_str("h_err");
           TString o_str("h_ondat_"+histnames[i_h]+"_plane"+std::to_string(i_pl)+"_all");
-          OverlayChi2(c1, e_str, o_str);
+          OverlayChi2(c1, e_str, o_str, templatefit);
         }
         else{
           DrawMC(c1, mc_hists[i_pl][i_h],POTscaling_tmp,yrange.at(i_h));
